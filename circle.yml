@@ -1,0 +1,36 @@
+machine:
+  java:
+    version: oraclejdk8
+  environment:
+    TERM: dumb
+    GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx3g -XX:+HeapDumpOnOutOfMemoryError"'
+
+dependencies:
+  override:
+    - ./gradlew resolveConfigurations
+    - ./gradlew --stacktrace generateLock verifyDependencyLocksAreCurrent
+    - ./gradlew testClasses
+
+test:
+  override:
+    - ? |
+          set -eu
+          set -o pipefail
+
+          case $CIRCLE_NODE_INDEX in
+          0)
+            ./gradlew build
+            ;;
+          1)
+            ./gradlew testBouncyCastle testSun
+            ;;
+          esac
+      :
+        parallel: true
+        timeout: 1200
+
+deployment:
+  release:
+    tag: /[0-9]+(\.[0-9]+)+(-rc[0-9]+)?(-alpha[0-9]+)?/
+    commands:
+      - ./gradlew --info bintrayUpload
