@@ -1,0 +1,18 @@
+apply plugin: "org.inferred.processors"
+
+apply from: "$rootDir/gradle/publish.gradle"
+
+dependencies {
+    compile project(":ssl-config")
+    compile "com.google.guava:guava"  // TODO(rfink): Remove this dependency
+
+    compile "com.palantir.tokens2:auth-tokens"
+
+    testCompile project(":extras:jackson-support")
+    testCompile "junit:junit"
+    testCompile "org.assertj:assertj-core"
+    testCompile "org.mockito:mockito-core"
+    testCompile "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
+
+    processor "org.immutables:value"
+}
