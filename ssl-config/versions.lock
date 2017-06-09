@@ -14,9 +14,6 @@
         },
         "com.fasterxml.jackson.core:jackson-databind": {
             "locked": "2.6.7"
-        },
-        "com.google.guava:guava": {
-            "locked": "18.0"
         }
     },
     "runtime": {
@@ -34,9 +31,6 @@
         },
         "com.fasterxml.jackson.core:jackson-databind": {
             "locked": "2.6.7"
-        },
-        "com.google.guava:guava": {
-            "locked": "18.0"
         }
     }
 }
