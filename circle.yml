@@ -21,9 +21,6 @@ test:
           0)
             ./gradlew build
             ;;
-          1)
-            ./gradlew testBouncyCastle testSun
-            ;;
           esac
       :
         parallel: true
