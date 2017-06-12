@@ -16,33 +16,14 @@
 
 package com.palantir.remoting.api.config.service;
 
-import com.palantir.remoting.api.config.ssl.SslConfiguration;
-import com.palantir.tokens2.auth.BearerToken;
-import java.time.Duration;
-import java.util.List;
-import java.util.Optional;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.immutables.value.Value;
+import org.immutables.value.Value.Style.ImplementationVisibility;
 
-/** A fully-instantiated variant of {@link PartialServiceConfiguration}. */
-@Value.Immutable
-@ImmutablesStyle
-public interface ServiceConfiguration {
-
-    Optional<BearerToken> apiToken();
-
-    SslConfiguration security();
-
-    List<String> uris();
-
-    Duration connectTimeout();
-
-    Duration readTimeout();
-
-    Duration writeTimeout();
-
-    boolean enableGcmCipherSuites();
-
-    ProxyConfiguration proxy();
-
-    int maxNumRetries();
-}
+@JsonDeserialize
+@Value.Style(
+        jdkOnly = true,
+        overshadowImplementation = true,
+        visibility = ImplementationVisibility.PACKAGE
+)
+@interface ImmutablesStyle {}

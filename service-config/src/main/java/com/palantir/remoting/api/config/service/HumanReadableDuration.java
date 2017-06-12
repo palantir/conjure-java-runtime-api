@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class Duration implements Comparable<Duration> {
+public final class HumanReadableDuration implements Comparable<HumanReadableDuration> {
     private static final Pattern DURATION_PATTERN = Pattern.compile("(\\d+)\\s*(\\S+)");
 
     private static final ImmutableMap<String, TimeUnit> SUFFIXES = new ImmutableMap.Builder<String, TimeUnit>()
@@ -54,36 +54,36 @@ public final class Duration implements Comparable<Duration> {
             .put("days", TimeUnit.DAYS)
             .build();
 
-    public static Duration nanoseconds(long count) {
-        return new Duration(count, TimeUnit.NANOSECONDS);
+    public static HumanReadableDuration nanoseconds(long count) {
+        return new HumanReadableDuration(count, TimeUnit.NANOSECONDS);
     }
 
-    public static Duration microseconds(long count) {
-        return new Duration(count, TimeUnit.MICROSECONDS);
+    public static HumanReadableDuration microseconds(long count) {
+        return new HumanReadableDuration(count, TimeUnit.MICROSECONDS);
     }
 
-    public static Duration milliseconds(long count) {
-        return new Duration(count, TimeUnit.MILLISECONDS);
+    public static HumanReadableDuration milliseconds(long count) {
+        return new HumanReadableDuration(count, TimeUnit.MILLISECONDS);
     }
 
-    public static Duration seconds(long count) {
-        return new Duration(count, TimeUnit.SECONDS);
+    public static HumanReadableDuration seconds(long count) {
+        return new HumanReadableDuration(count, TimeUnit.SECONDS);
     }
 
-    public static Duration minutes(long count) {
-        return new Duration(count, TimeUnit.MINUTES);
+    public static HumanReadableDuration minutes(long count) {
+        return new HumanReadableDuration(count, TimeUnit.MINUTES);
     }
 
-    public static Duration hours(long count) {
-        return new Duration(count, TimeUnit.HOURS);
+    public static HumanReadableDuration hours(long count) {
+        return new HumanReadableDuration(count, TimeUnit.HOURS);
     }
 
-    public static Duration days(long count) {
-        return new Duration(count, TimeUnit.DAYS);
+    public static HumanReadableDuration days(long count) {
+        return new HumanReadableDuration(count, TimeUnit.DAYS);
     }
 
     @JsonCreator
-    public static Duration parse(String duration) {
+    public static HumanReadableDuration valueOf(String duration) {
         final Matcher matcher = DURATION_PATTERN.matcher(duration);
         checkArgument(matcher.matches(), "Invalid duration: " + duration);
 
@@ -93,13 +93,13 @@ public final class Duration implements Comparable<Duration> {
             throw new IllegalArgumentException("Invalid duration: " + duration + ". Wrong time unit");
         }
 
-        return new Duration(count, unit);
+        return new HumanReadableDuration(count, unit);
     }
 
     private final long count;
     private final TimeUnit unit;
 
-    private Duration(long count, TimeUnit unit) {
+    private HumanReadableDuration(long count, TimeUnit unit) {
         this.count = count;
         this.unit = checkNotNull(unit);
     }
@@ -148,7 +148,7 @@ public final class Duration implements Comparable<Duration> {
         if ((obj == null) || (getClass() != obj.getClass())) {
             return false;
         }
-        final Duration duration = (Duration) obj;
+        final HumanReadableDuration duration = (HumanReadableDuration) obj;
         return (count == duration.count) && (unit == duration.unit);
 
     }
@@ -169,7 +169,7 @@ public final class Duration implements Comparable<Duration> {
     }
 
     @Override
-    public int compareTo(Duration other) {
+    public int compareTo(HumanReadableDuration other) {
         if (unit == other.unit) {
             return Long.compare(count, other.count);
         }
