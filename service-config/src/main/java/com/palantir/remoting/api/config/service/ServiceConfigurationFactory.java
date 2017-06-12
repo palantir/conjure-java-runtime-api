@@ -22,7 +22,6 @@ import com.google.common.collect.Maps;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 /** Given a {@link ServicesConfiguration}, populates {@link ServiceConfiguration} instances for configured services. */
 public final class ServiceConfigurationFactory {
@@ -35,27 +34,27 @@ public final class ServiceConfigurationFactory {
     private static final boolean DEFAULT_ENABLE_GCM_CIPHERS = false;
     private static final int DEFAULT_MAX_NUM_RETRIES = 0;
 
-    private final Supplier<ServicesConfiguration> services;
+    private final ServicesConfiguration services;
 
-    private ServiceConfigurationFactory(Supplier<ServicesConfiguration> services) {
+    private ServiceConfigurationFactory(ServicesConfiguration services) {
         this.services = services;
     }
 
     /** Constructs a factory for a fixed ServicesConfiguration. */
-    public static ServiceConfigurationFactory fixed(ServicesConfiguration services) {
-        return new ServiceConfigurationFactory(() -> services);
+    public static ServiceConfigurationFactory of(ServicesConfiguration services) {
+        return new ServiceConfigurationFactory(services);
     }
 
     /** Returns the {@link ServiceConfiguration} for the given name. */
     public ServiceConfiguration get(String serviceName) {
-        PartialServiceConfiguration partial = services.get().services().get(serviceName);
+        PartialServiceConfiguration partial = services.services().get(serviceName);
         Preconditions.checkNotNull(partial, "No configuration found for service: %s", serviceName);
         return constructClient(serviceName, partial);
     }
 
     /** Returns all {@link ServiceConfiguration}s. */
     public Map<String, ServiceConfiguration> getAll() {
-        return ImmutableMap.copyOf(Maps.transformEntries(services.get().services(), this::constructClient));
+        return ImmutableMap.copyOf(Maps.transformEntries(services.services(), this::constructClient));
     }
 
     /**
@@ -63,7 +62,7 @@ public final class ServiceConfigurationFactory {
      * given name, and the configuration has at least for {@link PartialServiceConfiguration#uris() URI}.
      */
     public boolean isEnabled(String serviceName) {
-        PartialServiceConfiguration serviceConfig = services.get().services().get(serviceName);
+        PartialServiceConfiguration serviceConfig = services.services().get(serviceName);
         return serviceConfig != null && !serviceConfig.uris().isEmpty();
     }
 
@@ -73,28 +72,26 @@ public final class ServiceConfigurationFactory {
      * ServicesConfiguration}.
      */
     private ServiceConfiguration constructClient(String serviceName, PartialServiceConfiguration partial) {
-        ServicesConfiguration defaults = services.get();
-
         return ImmutableServiceConfiguration.builder()
-                .apiToken(orElse(partial.apiToken(), defaults.defaultApiToken()))
-                .security(orElse(partial.security(), defaults.defaultSecurity()).orElseThrow(
+                .apiToken(orElse(partial.apiToken(), services.defaultApiToken()))
+                .security(orElse(partial.security(), services.defaultSecurity()).orElseThrow(
                         () -> new IllegalArgumentException("Must provide default security or"
                                 + "service-specific security block for service: " + serviceName)))
                 .uris(partial.uris())
                 .connectTimeout(Duration.ofSeconds(
                         orElse(partial.connectTimeout(),
-                                defaults.defaultConnectTimeout())
+                                services.defaultConnectTimeout())
                                 .orElse(DEFAULT_CONNECT_TIMEOUT).toSeconds()))
                 .readTimeout(Duration.ofSeconds(
                         orElse(partial.readTimeout(),
-                                defaults.defaultReadTimeout())
+                                services.defaultReadTimeout())
                                 .orElse(DEFAULT_READ_TIMEOUT).toSeconds()))
                 .writeTimeout(Duration.ofSeconds(
                         partial.writeTimeout().orElse(DEAULT_WRITE_TIMEOUT).toSeconds()))
-                .proxy(orElse(partial.proxyConfiguration(), defaults.defaultProxyConfiguration())
+                .proxy(orElse(partial.proxyConfiguration(), services.defaultProxyConfiguration())
                         .orElse(DEFAULT_PROXY_CONFIG))
                 .enableGcmCipherSuites(orElse(partial.enableGcmCipherSuites(),
-                        defaults.defaultEnableGcmCipherSuites()).orElse(DEFAULT_ENABLE_GCM_CIPHERS))
+                        services.defaultEnableGcmCipherSuites()).orElse(DEFAULT_ENABLE_GCM_CIPHERS))
                 .maxNumRetries(DEFAULT_MAX_NUM_RETRIES)
                 .build();
     }

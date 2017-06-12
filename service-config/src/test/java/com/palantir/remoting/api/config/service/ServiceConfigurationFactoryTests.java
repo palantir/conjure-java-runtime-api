@@ -60,7 +60,7 @@ public final class ServiceConfigurationFactoryTests {
 
     @Test
     public void testIsServiceEnabled_noEnabledIfNoUrisOrServiceDoesNotExist() throws IOException {
-        ServiceConfigurationFactory factory = ServiceConfigurationFactory.fixed(
+        ServiceConfigurationFactory factory = ServiceConfigurationFactory.of(
                 deserialize("configs/discovery-config-with-empty-uri.yml"));
 
         assertThat(factory.isEnabled("service1")).isFalse();
@@ -71,9 +71,9 @@ public final class ServiceConfigurationFactoryTests {
     @Test
     public void testDeserializationAndFallabckSanity() throws Exception {
         ServicesConfiguration services = deserialize("configs/discovery-config-with-fallback.yml");
-        ServiceConfiguration service1 = ServiceConfigurationFactory.fixed(services).get("service1");
-        ServiceConfiguration service2 = ServiceConfigurationFactory.fixed(services).get("service2");
-        ServiceConfiguration service3 = ServiceConfigurationFactory.fixed(services).get("service3");
+        ServiceConfiguration service1 = ServiceConfigurationFactory.of(services).get("service1");
+        ServiceConfiguration service2 = ServiceConfigurationFactory.of(services).get("service2");
+        ServiceConfiguration service3 = ServiceConfigurationFactory.of(services).get("service3");
 
         assertThat(service1.apiToken()).contains(BearerToken.valueOf("service1ApiToken"));
         assertThat(service2.apiToken()).contains(BearerToken.valueOf("service2ApiToken"));
@@ -87,7 +87,7 @@ public final class ServiceConfigurationFactoryTests {
                 .putAllServices(ImmutableMap.of("service1", partial))
                 .defaultSecurity(defaultSecurity)
                 .build();
-        ServiceConfiguration actual = ServiceConfigurationFactory.fixed(services).get("service1");
+        ServiceConfiguration actual = ServiceConfigurationFactory.of(services).get("service1");
 
         // The following are the compile-time defaults.
         ServiceConfiguration expected = ImmutableServiceConfiguration.builder()
@@ -116,7 +116,7 @@ public final class ServiceConfigurationFactoryTests {
                 .defaultReadTimeout(defaultReadTimeout)
                 .defaultEnableGcmCipherSuites(defaultEnableGcm)
                 .build();
-        ServiceConfiguration service = ServiceConfigurationFactory.fixed(services).get("service1");
+        ServiceConfiguration service = ServiceConfigurationFactory.of(services).get("service1");
 
         ServiceConfiguration expected = ImmutableServiceConfiguration.builder()
                 .apiToken(defaultApiToken)
@@ -154,7 +154,7 @@ public final class ServiceConfigurationFactoryTests {
                 .defaultReadTimeout(defaultReadTimeout)
                 .defaultEnableGcmCipherSuites(defaultEnableGcm)
                 .build();
-        ServiceConfiguration service = ServiceConfigurationFactory.fixed(services).get("service1");
+        ServiceConfiguration service = ServiceConfigurationFactory.of(services).get("service1");
 
         ServiceConfiguration expected = ImmutableServiceConfiguration.builder()
                 .apiToken(apiToken)
