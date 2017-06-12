@@ -10,7 +10,7 @@ bintray {
     publish = true
     pkg {
         repo = 'releases'
-        name = 'http-remoting'
+        name = 'http-remoting-api'
         userOrg = 'palantir'
         licenses = ['Apache-2.0']
         publications = ['nebula']
