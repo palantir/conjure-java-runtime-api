@@ -32,10 +32,10 @@ import org.immutables.value.Value.Immutable;
  * {@link ServiceConfiguration} objects.
  */
 @Immutable
-@JsonSerialize(as = ImmutableServicesConfiguration.class)
-@JsonDeserialize(builder = ServicesConfiguration.Builder.class)
+@JsonSerialize(as = ImmutableServicesConfigBlock.class)
+@JsonDeserialize(builder = ServicesConfigBlock.Builder.class)
 @ImmutablesStyle
-public abstract class ServicesConfiguration {
+public abstract class ServicesConfigBlock {
 
     /**
      * Fallback API token to be used if the service specific API token is not defined in the
@@ -83,7 +83,7 @@ public abstract class ServicesConfiguration {
     }
 
     // TODO(jnewman): #317 - remove kebab-case methods when Jackson 2.7 is picked up
-    public static final class Builder extends ImmutableServicesConfiguration.Builder {
+    public static final class Builder extends ImmutableServicesConfigBlock.Builder {
 
         @JsonProperty("api-token")
         Builder defaultApiTokenKebabCase(Optional<BearerToken> defaultApiToken) {

@@ -70,7 +70,7 @@ public final class ServiceConfigurationFactoryTests {
 
     @Test
     public void testDeserializationAndFallabckSanity() throws Exception {
-        ServicesConfiguration services = deserialize("configs/discovery-config-with-fallback.yml");
+        ServicesConfigBlock services = deserialize("configs/discovery-config-with-fallback.yml");
         ServiceConfiguration service1 = ServiceConfigurationFactory.of(services).get("service1");
         ServiceConfiguration service2 = ServiceConfigurationFactory.of(services).get("service2");
         ServiceConfiguration service3 = ServiceConfigurationFactory.of(services).get("service3");
@@ -83,7 +83,7 @@ public final class ServiceConfigurationFactoryTests {
     @Test
     public void testUsesCompileTimeDefaultConfigurationWhenNothingElseIsGiven() {
         PartialServiceConfiguration partial = PartialServiceConfiguration.of(uris, Optional.empty());
-        ServicesConfiguration services = ServicesConfiguration.builder()
+        ServicesConfigBlock services = ServicesConfigBlock.builder()
                 .putAllServices(ImmutableMap.of("service1", partial))
                 .defaultSecurity(defaultSecurity)
                 .build();
@@ -107,7 +107,7 @@ public final class ServiceConfigurationFactoryTests {
     @Test
     public void testUsesDefaultConfigurationWhenNoExplicitConfigIsGiven() {
         PartialServiceConfiguration partial = PartialServiceConfiguration.of(uris, Optional.empty());
-        ServicesConfiguration services = ServicesConfiguration.builder()
+        ServicesConfigBlock services = ServicesConfigBlock.builder()
                 .putAllServices(ImmutableMap.of("service1", partial))
                 .defaultSecurity(defaultSecurity)
                 .defaultApiToken(defaultApiToken)
@@ -145,7 +145,7 @@ public final class ServiceConfigurationFactoryTests {
                 .enableGcmCipherSuites(enableGcm)
                 .proxyConfiguration(proxy)
                 .build();
-        ServicesConfiguration services = ServicesConfiguration.builder()
+        ServicesConfigBlock services = ServicesConfigBlock.builder()
                 .putAllServices(ImmutableMap.of("service1", partial))
                 .defaultSecurity(defaultSecurity)
                 .defaultApiToken(defaultApiToken)
@@ -173,7 +173,7 @@ public final class ServiceConfigurationFactoryTests {
 
     @Test
     public void serDe() throws Exception {
-        ServicesConfiguration serialized = ServicesConfiguration.builder()
+        ServicesConfigBlock serialized = ServicesConfigBlock.builder()
                 .defaultApiToken(BearerToken.valueOf("bearerToken"))
                 .defaultSecurity(SslConfiguration.of(Paths.get("truststore.jks")))
                 .putServices("service", PartialServiceConfiguration.of(uris, Optional.empty()))
@@ -201,16 +201,16 @@ public final class ServiceConfigurationFactoryTests {
         assertThat(ObjectMappers.newClientObjectMapper().writeValueAsString(serialized))
                 .isEqualTo(camelCase);
         assertThat(ObjectMappers.newClientObjectMapper()
-                .readValue(camelCase, ServicesConfiguration.class))
+                .readValue(camelCase, ServicesConfigBlock.class))
                 .isEqualTo(serialized);
         assertThat(ObjectMappers.newClientObjectMapper()
-                .readValue(kebabCase, ServicesConfiguration.class))
+                .readValue(kebabCase, ServicesConfigBlock.class))
                 .isEqualTo(serialized);
     }
 
     @Test
     public void serDe_optional() throws Exception {
-        ServicesConfiguration serialized = ServicesConfiguration.builder().build();
+        ServicesConfigBlock serialized = ServicesConfigBlock.builder().build();
         String deserializedCamelCase = "{\"apiToken\":null,\"security\":null,\"services\":{},"
                 + "\"proxyConfiguration\":null,\"connectTimeout\":null,\"readTimeout\":null,"
                 + "\"enableGcmCipherSuites\":null}";
@@ -221,17 +221,17 @@ public final class ServiceConfigurationFactoryTests {
         assertThat(ObjectMappers.newClientObjectMapper().writeValueAsString(serialized))
                 .isEqualTo(deserializedCamelCase);
         assertThat(ObjectMappers.newClientObjectMapper()
-                .readValue(deserializedCamelCase, ServicesConfiguration.class))
+                .readValue(deserializedCamelCase, ServicesConfigBlock.class))
                 .isEqualTo(serialized);
         assertThat(ObjectMappers.newClientObjectMapper()
-                .readValue(deserializedKebabCase, ServicesConfiguration.class))
+                .readValue(deserializedKebabCase, ServicesConfigBlock.class))
                 .isEqualTo(serialized);
     }
 
-    private ServicesConfiguration deserialize(String file) {
+    private ServicesConfigBlock deserialize(String file) {
         URL resource = Resources.getResource(file);
         try {
-            return mapper.readValue(resource.openStream(), ServicesConfiguration.class);
+            return mapper.readValue(resource.openStream(), ServicesConfigBlock.class);
         } catch (IOException e) {
             throw new RuntimeException("Failed to open file: " + file);
         }

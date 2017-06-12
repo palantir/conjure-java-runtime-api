@@ -23,7 +23,7 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
 
-/** Given a {@link ServicesConfiguration}, populates {@link ServiceConfiguration} instances for configured services. */
+/** Given a {@link ServicesConfigBlock}, populates {@link ServiceConfiguration} instances for configured services. */
 public final class ServiceConfigurationFactory {
 
     // Defaults for parameters that are optional in PartialServiceConfiguration.
@@ -34,14 +34,14 @@ public final class ServiceConfigurationFactory {
     private static final boolean DEFAULT_ENABLE_GCM_CIPHERS = false;
     private static final int DEFAULT_MAX_NUM_RETRIES = 0;
 
-    private final ServicesConfiguration services;
+    private final ServicesConfigBlock services;
 
-    private ServiceConfigurationFactory(ServicesConfiguration services) {
+    private ServiceConfigurationFactory(ServicesConfigBlock services) {
         this.services = services;
     }
 
-    /** Constructs a factory for a fixed ServicesConfiguration. */
-    public static ServiceConfigurationFactory of(ServicesConfiguration services) {
+    /** Constructs a factory for a fixed ServicesConfigBlock. */
+    public static ServiceConfigurationFactory of(ServicesConfigBlock services) {
         return new ServiceConfigurationFactory(services);
     }
 
@@ -49,12 +49,12 @@ public final class ServiceConfigurationFactory {
     public ServiceConfiguration get(String serviceName) {
         PartialServiceConfiguration partial = services.services().get(serviceName);
         Preconditions.checkNotNull(partial, "No configuration found for service: %s", serviceName);
-        return constructClient(serviceName, partial);
+        return propagateDefaults(serviceName, partial);
     }
 
     /** Returns all {@link ServiceConfiguration}s. */
     public Map<String, ServiceConfiguration> getAll() {
-        return ImmutableMap.copyOf(Maps.transformEntries(services.services(), this::constructClient));
+        return ImmutableMap.copyOf(Maps.transformEntries(services.services(), this::propagateDefaults));
     }
 
     /**
@@ -67,11 +67,11 @@ public final class ServiceConfigurationFactory {
     }
 
     /**
-     * Returns a new {@link ServicesConfiguration} obtained by copying all values from the given {@link
+     * Returns a new {@link ServiceConfiguration} obtained by copying all values from the given {@link
      * PartialServiceConfiguration} and then filling in absent optional values with defaults from this {@link
-     * ServicesConfiguration}.
+     * ServicesConfigBlock}.
      */
-    private ServiceConfiguration constructClient(String serviceName, PartialServiceConfiguration partial) {
+    private ServiceConfiguration propagateDefaults(String serviceName, PartialServiceConfiguration partial) {
         return ImmutableServiceConfiguration.builder()
                 .apiToken(orElse(partial.apiToken(), services.defaultApiToken()))
                 .security(orElse(partial.security(), services.defaultSecurity()).orElseThrow(
