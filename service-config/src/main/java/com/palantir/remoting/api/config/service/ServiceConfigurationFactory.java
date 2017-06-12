@@ -29,7 +29,7 @@ public final class ServiceConfigurationFactory {
     // Defaults for parameters that are optional in PartialServiceConfiguration.
     private static final HumanReadableDuration DEFAULT_CONNECT_TIMEOUT = HumanReadableDuration.seconds(10);
     private static final HumanReadableDuration DEFAULT_READ_TIMEOUT = HumanReadableDuration.minutes(10);
-    private static final HumanReadableDuration DEAULT_WRITE_TIMEOUT = HumanReadableDuration.minutes(10);
+    private static final HumanReadableDuration DEFAULT_WRITE_TIMEOUT = HumanReadableDuration.minutes(10);
     private static final ProxyConfiguration DEFAULT_PROXY_CONFIG = ProxyConfiguration.SYSTEM;
     private static final boolean DEFAULT_ENABLE_GCM_CIPHERS = false;
     private static final int DEFAULT_MAX_NUM_RETRIES = 0;
@@ -59,7 +59,7 @@ public final class ServiceConfigurationFactory {
 
     /**
      * Checks if a service is enabled, i.e., if the configured {@link #services} contains a service configuration of the
-     * given name, and the configuration has at least for {@link PartialServiceConfiguration#uris() URI}.
+     * given name, and the configuration has at least one {@link PartialServiceConfiguration#uris() URI}.
      */
     public boolean isEnabled(String serviceName) {
         PartialServiceConfiguration serviceConfig = services.services().get(serviceName);
@@ -87,7 +87,7 @@ public final class ServiceConfigurationFactory {
                                 services.defaultReadTimeout())
                                 .orElse(DEFAULT_READ_TIMEOUT).toSeconds()))
                 .writeTimeout(Duration.ofSeconds(
-                        partial.writeTimeout().orElse(DEAULT_WRITE_TIMEOUT).toSeconds()))
+                        partial.writeTimeout().orElse(DEFAULT_WRITE_TIMEOUT).toSeconds()))
                 .proxy(orElse(partial.proxyConfiguration(), services.defaultProxyConfiguration())
                         .orElse(DEFAULT_PROXY_CONFIG))
                 .enableGcmCipherSuites(orElse(partial.enableGcmCipherSuites(),

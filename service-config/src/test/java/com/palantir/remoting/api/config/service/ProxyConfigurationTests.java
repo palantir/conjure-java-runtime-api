@@ -71,18 +71,17 @@ public final class ProxyConfigurationTests {
 
     @Test
     public void serDe() throws Exception {
-        ProxyConfiguration serialized = ProxyConfiguration.of("host:80", BasicCredentials.of("username", "password"));
-        String deserializedCamelCase = "{\"hostAndPort\":\"host:80\",\"credentials\":{\"username\":\"username\","
+        ProxyConfiguration config = ProxyConfiguration.of("host:80", BasicCredentials.of("username", "password"));
+        String camelCase = "{\"hostAndPort\":\"host:80\",\"credentials\":{\"username\":\"username\","
                 + "\"password\":\"password\"},\"type\":\"HTTP\"}";
-        String deserializedKebabCase = "{\"host-and-port\":\"host:80\",\"credentials\":{\"username\":\"username\","
+        String kebabCase = "{\"host-and-port\":\"host:80\",\"credentials\":{\"username\":\"username\","
                 + "\"password\":\"password\"},\"type\":\"HTTP\"}";
 
-        assertThat(ObjectMappers.newClientObjectMapper().writeValueAsString(serialized))
-                .isEqualTo(deserializedCamelCase);
-        assertThat(ObjectMappers.newClientObjectMapper().readValue(deserializedCamelCase, ProxyConfiguration.class))
-                .isEqualTo(serialized);
-        assertThat(ObjectMappers.newClientObjectMapper().readValue(deserializedKebabCase, ProxyConfiguration.class))
-                .isEqualTo(serialized);
+        assertThat(ObjectMappers.newClientObjectMapper().writeValueAsString(config)).isEqualTo(camelCase);
+        assertThat(ObjectMappers.newClientObjectMapper().readValue(camelCase, ProxyConfiguration.class))
+                .isEqualTo(config);
+        assertThat(ObjectMappers.newClientObjectMapper().readValue(kebabCase, ProxyConfiguration.class))
+                .isEqualTo(config);
     }
 
 }

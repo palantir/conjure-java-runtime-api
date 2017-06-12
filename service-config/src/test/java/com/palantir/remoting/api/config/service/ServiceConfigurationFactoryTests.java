@@ -69,7 +69,7 @@ public final class ServiceConfigurationFactoryTests {
     }
 
     @Test
-    public void testDeserializationAndFallabckSanity() throws Exception {
+    public void testDeserializationAndFallbackSanity() throws Exception {
         ServicesConfigBlock services = deserialize("configs/discovery-config-with-fallback.yml");
         ServiceConfiguration service1 = ServiceConfigurationFactory.of(services).get("service1");
         ServiceConfiguration service2 = ServiceConfigurationFactory.of(services).get("service2");

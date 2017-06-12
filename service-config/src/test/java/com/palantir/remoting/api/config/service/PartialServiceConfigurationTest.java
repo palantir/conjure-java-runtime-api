@@ -54,12 +54,9 @@ public final class PartialServiceConfigurationTest {
                 + "\"uris\":[\"uri1\"],\"proxy-configuration\":{\"host-and-port\":\"host:80\",\"credentials\":null},"
                 + "\"enable-gcm-cipher-suites\":null}";
 
-        assertThat(mapper.writeValueAsString(serialized))
-                .isEqualTo(camelCase);
-        assertThat(mapper.readValue(camelCase, PartialServiceConfiguration.class))
-                .isEqualTo(serialized);
-        assertThat(mapper.readValue(kebabCase, PartialServiceConfiguration.class))
-                .isEqualTo(serialized);
+        assertThat(mapper.writeValueAsString(serialized)).isEqualTo(camelCase);
+        assertThat(mapper.readValue(camelCase, PartialServiceConfiguration.class)).isEqualTo(serialized);
+        assertThat(mapper.readValue(kebabCase, PartialServiceConfiguration.class)).isEqualTo(serialized);
     }
 
     @Test
@@ -72,11 +69,8 @@ public final class PartialServiceConfigurationTest {
                 + "\"read-timeout\":null,\"write-timeout\":null,\"enable-gcm-cipher-suites\":null,"
                 + "\"uris\":[],\"proxy-configuration\":null}";
 
-        assertThat(ObjectMappers.newClientObjectMapper().writeValueAsString(serialized))
-                .isEqualTo(camelCase);
-        assertThat(mapper.readValue(camelCase, PartialServiceConfiguration.class))
-                .isEqualTo(serialized);
-        assertThat(mapper.readValue(kebabCase, PartialServiceConfiguration.class))
-                .isEqualTo(serialized);
+        assertThat(ObjectMappers.newClientObjectMapper().writeValueAsString(serialized)).isEqualTo(camelCase);
+        assertThat(mapper.readValue(camelCase, PartialServiceConfiguration.class)).isEqualTo(serialized);
+        assertThat(mapper.readValue(kebabCase, PartialServiceConfiguration.class)).isEqualTo(serialized);
     }
 }
