@@ -135,7 +135,7 @@ public final class ServiceConfigurationFactoryTests {
 
     @Test
     public void testServiceSpecificConfigTrumpsDefaultConfig() {
-        PartialServiceConfiguration partial = ImmutablePartialServiceConfiguration.builder()
+        PartialServiceConfiguration partial = PartialServiceConfiguration.builder()
                 .apiToken(apiToken)
                 .uris(uris)
                 .security(security)

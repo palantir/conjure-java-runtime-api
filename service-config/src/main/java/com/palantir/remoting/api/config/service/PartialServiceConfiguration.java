@@ -29,45 +29,45 @@ import org.immutables.value.Value.Immutable;
 @JsonSerialize(as = ImmutablePartialServiceConfiguration.class)
 @JsonDeserialize(builder = PartialServiceConfiguration.Builder.class)
 @ImmutablesStyle
-abstract class PartialServiceConfiguration {
+interface PartialServiceConfiguration {
 
     /** The API token to be used to interact with the service. */
-    public abstract Optional<BearerToken> apiToken();
+    Optional<BearerToken> apiToken();
 
     /** The SSL configuration needed to interact with the service. */
-    public abstract Optional<SslConfiguration> security();
+    Optional<SslConfiguration> security();
 
     /** A list of service URIs. */
-    public abstract List<String> uris();
+    List<String> uris();
 
     /** Connect timeout for requests. */
-    public abstract Optional<HumanReadableDuration> connectTimeout();
+    Optional<HumanReadableDuration> connectTimeout();
 
     /** Read timeout for requests. */
-    public abstract Optional<HumanReadableDuration> readTimeout();
+    Optional<HumanReadableDuration> readTimeout();
 
     /** Write timeout for requests. */
-    public abstract Optional<HumanReadableDuration> writeTimeout();
+    Optional<HumanReadableDuration> writeTimeout();
 
     /** Enables slower, but more standard cipher suite support, defaults to false. */
-    public abstract Optional<Boolean> enableGcmCipherSuites();
+    Optional<Boolean> enableGcmCipherSuites();
 
     /** Proxy configuration for connecting to the service. If absent, uses system proxy configuration. */
-    public abstract Optional<ProxyConfiguration> proxyConfiguration();
+    Optional<ProxyConfiguration> proxyConfiguration();
 
-    public static PartialServiceConfiguration of(List<String> uris, Optional<SslConfiguration> sslConfig) {
+    static PartialServiceConfiguration of(List<String> uris, Optional<SslConfiguration> sslConfig) {
         return PartialServiceConfiguration.builder()
                 .uris(uris)
                 .security(sslConfig)
                 .build();
     }
 
-    public static Builder builder() {
+    static Builder builder() {
         return new Builder();
     }
 
     // TODO(jnewman): #317 - remove kebab-case methods when Jackson 2.7 is picked up
-    public static final class Builder extends ImmutablePartialServiceConfiguration.Builder {
+    class Builder extends ImmutablePartialServiceConfiguration.Builder {
 
         @JsonProperty("api-token")
         Builder apiTokenKebabCase(Optional<BearerToken> apiToken) {
