@@ -17,6 +17,7 @@
 package com.palantir.remoting.api.config.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,8 +26,6 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.google.common.io.Resources;
 import com.palantir.remoting.api.ext.jackson.ObjectMappers;
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.net.URL;
 import org.junit.Test;
 
@@ -57,40 +56,32 @@ public final class ProxyConfigurationTests {
     public void testDeserializationDirect() throws Exception {
         URL resource = Resources.getResource("configs/proxy-config-direct.yml");
         ProxyConfiguration config = mapper.readValue(resource, ProxyConfiguration.class);
-        assertEquals(config, ProxyConfiguration.direct());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testDirectProxyWithHostAndPort() {
-        new ProxyConfiguration.Builder()
-                .maybeHostAndPort("squid:3128")
-                .type(ProxyConfiguration.Type.DIRECT)
-                .build();
+        assertEquals(config, ProxyConfiguration.DIRECT);
     }
 
     @Test
-    public void testToProxy() {
-        ProxyConfiguration proxyConfiguration = ProxyConfiguration.of("squid:3128");
-
-        Proxy expected = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("squid", 3128));
-        assertEquals(expected, proxyConfiguration.toProxy());
+    public void testDirectProxyWithHostAndPort() {
+        assertThatThrownBy(() -> new ProxyConfiguration.Builder()
+                .hostAndPort("squid:3128")
+                .type(ProxyConfiguration.Type.DIRECT)
+                .build())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Neither credential nor host-and-port may be configured for DIRECT or SYSTEM proxies");
     }
-
 
     @Test
     public void serDe() throws Exception {
-        ProxyConfiguration serialized = ProxyConfiguration.of("host:80", BasicCredentials.of("username", "password"));
-        String deserializedCamelCase = "{\"hostAndPort\":\"host:80\",\"credentials\":{\"username\":\"username\","
+        ProxyConfiguration config = ProxyConfiguration.of("host:80", BasicCredentials.of("username", "password"));
+        String camelCase = "{\"hostAndPort\":\"host:80\",\"credentials\":{\"username\":\"username\","
                 + "\"password\":\"password\"},\"type\":\"HTTP\"}";
-        String deserializedKebabCase = "{\"host-and-port\":\"host:80\",\"credentials\":{\"username\":\"username\","
+        String kebabCase = "{\"host-and-port\":\"host:80\",\"credentials\":{\"username\":\"username\","
                 + "\"password\":\"password\"},\"type\":\"HTTP\"}";
 
-        assertThat(ObjectMappers.newClientObjectMapper().writeValueAsString(serialized))
-                .isEqualTo(deserializedCamelCase);
-        assertThat(ObjectMappers.newClientObjectMapper().readValue(deserializedCamelCase, ProxyConfiguration.class))
-                .isEqualTo(serialized);
-        assertThat(ObjectMappers.newClientObjectMapper().readValue(deserializedKebabCase, ProxyConfiguration.class))
-                .isEqualTo(serialized);
+        assertThat(ObjectMappers.newClientObjectMapper().writeValueAsString(config)).isEqualTo(camelCase);
+        assertThat(ObjectMappers.newClientObjectMapper().readValue(camelCase, ProxyConfiguration.class))
+                .isEqualTo(config);
+        assertThat(ObjectMappers.newClientObjectMapper().readValue(kebabCase, ProxyConfiguration.class))
+                .isEqualTo(config);
     }
 
 }

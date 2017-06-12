@@ -18,16 +18,13 @@ package com.palantir.remoting.api.config.ssl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.nio.file.Path;
 import java.util.Optional;
 import org.immutables.value.Value;
-import org.immutables.value.Value.Style.ImplementationVisibility;
 
 @JsonDeserialize(builder = SslConfiguration.Builder.class)
-@JsonSerialize(as = ImmutableSslConfiguration.class)
 @Value.Immutable
-@Value.Style(visibility = ImplementationVisibility.PACKAGE, builder = "new")
+@ImmutablesStyle
 public abstract class SslConfiguration {
 
     public enum StoreType {
@@ -57,8 +54,7 @@ public abstract class SslConfiguration {
         return DEFAULT_STORE_TYPE;
     }
 
-    // alias of the key that should be used in the key store.
-    // If absent, first entry returned by key store is used.
+    /** Alias of the key that should be used in the key store. If absent, first entry returned by key store is used. */
     public abstract Optional<String> keyStoreKeyAlias();
 
     @Value.Check

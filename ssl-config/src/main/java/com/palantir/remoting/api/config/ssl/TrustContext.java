@@ -22,6 +22,7 @@ import org.immutables.value.Value;
 
 /** A wrapper for {@link javax.net.ssl.SSLSocketFactory} and {@link javax.net.ssl.X509TrustManager}. */
 @Value.Immutable
+@ImmutablesStyle
 public abstract class TrustContext {
     @Value.Parameter
     public abstract SSLSocketFactory sslSocketFactory();

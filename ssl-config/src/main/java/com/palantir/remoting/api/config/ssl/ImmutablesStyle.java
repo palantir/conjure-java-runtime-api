@@ -14,27 +14,16 @@
  * limitations under the License.
  */
 
-package com.palantir.remoting.api.config.service;
-
+package com.palantir.remoting.api.config.ssl;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.immutables.value.Value;
-import org.immutables.value.Value.Immutable;
+import org.immutables.value.Value.Style.ImplementationVisibility;
 
-@Immutable
-@JsonSerialize(as = ImmutableBasicCredentials.class)
-@JsonDeserialize(as = ImmutableBasicCredentials.class)
-@ImmutablesStyle
-public abstract class BasicCredentials {
-
-    @Value.Parameter
-    public abstract String username();
-
-    @Value.Parameter
-    public abstract String password();
-
-    public static BasicCredentials of(String username, String password) {
-        return ImmutableBasicCredentials.of(username, password);
-    }
-}
+@JsonDeserialize
+@Value.Style(
+        jdkOnly = true,
+        overshadowImplementation = true,
+        visibility = ImplementationVisibility.PACKAGE
+)
+@interface ImmutablesStyle {}
