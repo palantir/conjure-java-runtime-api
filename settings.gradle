@@ -1,4 +1,3 @@
-include 'http-clients-api'
 include 'service-config'
 include 'ssl-config'
 include 'extras:jackson-support'
