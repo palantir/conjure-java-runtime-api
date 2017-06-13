@@ -75,7 +75,7 @@ public final class ServiceConfigurationFactory {
         return ImmutableServiceConfiguration.builder()
                 .apiToken(orElse(partial.apiToken(), services.defaultApiToken()))
                 .security(orElse(partial.security(), services.defaultSecurity()).orElseThrow(
-                        () -> new IllegalArgumentException("Must provide default security or"
+                        () -> new IllegalArgumentException("Must provide default security or "
                                 + "service-specific security block for service: " + serviceName)))
                 .uris(partial.uris())
                 .connectTimeout(Duration.ofSeconds(

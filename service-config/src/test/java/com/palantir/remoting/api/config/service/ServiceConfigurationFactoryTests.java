@@ -17,6 +17,7 @@
 package com.palantir.remoting.api.config.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,6 +36,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.Optional;
+import org.assertj.core.util.Lists;
 import org.junit.Test;
 
 public final class ServiceConfigurationFactoryTests {
@@ -172,8 +174,17 @@ public final class ServiceConfigurationFactoryTests {
     }
 
     @Test
+    public void testIllegalArgumentExceptionForEmptySecurity() {
+        PartialServiceConfiguration partial = PartialServiceConfiguration.of(Lists.newArrayList(), Optional.empty());
+        ServicesConfigBlock services = ServicesConfigBlock.builder().putServices("service1", partial).build();
+        assertThatThrownBy(() -> ServiceConfigurationFactory.of(services).get("service1"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Must provide default security or service-specific security block for service: service1");
+    }
+
+    @Test
     public void serDe() throws Exception {
-        ServicesConfigBlock serialized = ServicesConfigBlock.builder()
+        ServicesConfigBlock deserialized = ServicesConfigBlock.builder()
                 .defaultApiToken(BearerToken.valueOf("bearerToken"))
                 .defaultSecurity(SslConfiguration.of(Paths.get("truststore.jks")))
                 .putServices("service", PartialServiceConfiguration.of(uris, Optional.empty()))
@@ -198,34 +209,33 @@ public final class ServiceConfigurationFactoryTests {
                 + "{\"host-and-port\":\"host:80\",\"credentials\":null},\"connect-timeout\":\"1 day\","
                 + "\"read-timeout\":\"1 day\"}";
 
-        assertThat(ObjectMappers.newClientObjectMapper().writeValueAsString(serialized))
-                .isEqualTo(camelCase);
+        assertThat(ObjectMappers.newClientObjectMapper().writeValueAsString(deserialized)).isEqualTo(camelCase);
         assertThat(ObjectMappers.newClientObjectMapper()
                 .readValue(camelCase, ServicesConfigBlock.class))
-                .isEqualTo(serialized);
+                .isEqualTo(deserialized);
         assertThat(ObjectMappers.newClientObjectMapper()
                 .readValue(kebabCase, ServicesConfigBlock.class))
-                .isEqualTo(serialized);
+                .isEqualTo(deserialized);
     }
 
     @Test
     public void serDe_optional() throws Exception {
-        ServicesConfigBlock serialized = ServicesConfigBlock.builder().build();
-        String deserializedCamelCase = "{\"apiToken\":null,\"security\":null,\"services\":{},"
+        ServicesConfigBlock deserialized = ServicesConfigBlock.builder().build();
+        String serializedCamelCase = "{\"apiToken\":null,\"security\":null,\"services\":{},"
                 + "\"proxyConfiguration\":null,\"connectTimeout\":null,\"readTimeout\":null,"
                 + "\"enableGcmCipherSuites\":null}";
-        String deserializedKebabCase = "{\"api-token\":null,\"security\":null,\"services\":{},"
+        String serializedKebabCase = "{\"api-token\":null,\"security\":null,\"services\":{},"
                 + "\"proxy-configuration\":null,\"connect-timeout\":null,\"read-timeout\":null,"
                 + "\"enable-gcm-cipher-suites\":null}";
 
-        assertThat(ObjectMappers.newClientObjectMapper().writeValueAsString(serialized))
-                .isEqualTo(deserializedCamelCase);
+        assertThat(ObjectMappers.newClientObjectMapper().writeValueAsString(deserialized))
+                .isEqualTo(serializedCamelCase);
         assertThat(ObjectMappers.newClientObjectMapper()
-                .readValue(deserializedCamelCase, ServicesConfigBlock.class))
-                .isEqualTo(serialized);
+                .readValue(serializedCamelCase, ServicesConfigBlock.class))
+                .isEqualTo(deserialized);
         assertThat(ObjectMappers.newClientObjectMapper()
-                .readValue(deserializedKebabCase, ServicesConfigBlock.class))
-                .isEqualTo(serialized);
+                .readValue(serializedKebabCase, ServicesConfigBlock.class))
+                .isEqualTo(deserialized);
     }
 
     private ServicesConfigBlock deserialize(String file) {
