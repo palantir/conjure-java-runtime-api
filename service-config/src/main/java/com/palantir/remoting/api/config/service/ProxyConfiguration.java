@@ -35,7 +35,7 @@ public abstract class ProxyConfiguration {
     public static final ProxyConfiguration DIRECT = new ProxyConfiguration.Builder().type(Type.DIRECT).build();
     public static final ProxyConfiguration SYSTEM = new ProxyConfiguration.Builder().type(Type.SYSTEM).build();
 
-    enum Type {
+    public enum Type {
 
         /** Use a direct connection. This option will bypass any JVM-level configured proxy settings. */
         DIRECT,
