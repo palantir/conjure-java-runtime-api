@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import org.immutables.value.Value;
 
-/** A fully-instantiated variant of {@link PartialServiceConfiguration}. */
+/** A variant of {@link PartialServiceConfiguration} in which some fields are required. */
 @Value.Immutable
 @ImmutablesStyle
 public interface ServiceConfiguration {
@@ -34,15 +34,13 @@ public interface ServiceConfiguration {
 
     List<String> uris();
 
-    Duration connectTimeout();
+    Optional<Duration> connectTimeout();
 
-    Duration readTimeout();
+    Optional<Duration> readTimeout();
 
-    Duration writeTimeout();
+    Optional<Duration> writeTimeout();
 
-    boolean enableGcmCipherSuites();
+    Optional<Boolean> enableGcmCipherSuites();
 
-    ProxyConfiguration proxy();
-
-    int maxNumRetries();
+    Optional<ProxyConfiguration> proxy();
 }
