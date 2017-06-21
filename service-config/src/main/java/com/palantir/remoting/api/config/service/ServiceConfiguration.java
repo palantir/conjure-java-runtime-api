@@ -16,6 +16,7 @@
 
 package com.palantir.remoting.api.config.service;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.palantir.remoting.api.config.ssl.SslConfiguration;
 import com.palantir.tokens2.auth.BearerToken;
 import java.time.Duration;
@@ -24,6 +25,7 @@ import java.util.Optional;
 import org.immutables.value.Value;
 
 /** A variant of {@link PartialServiceConfiguration} in which some fields are required. */
+@JsonDeserialize(as = ImmutableServiceConfiguration.class)
 @Value.Immutable
 @ImmutablesStyle
 public interface ServiceConfiguration {

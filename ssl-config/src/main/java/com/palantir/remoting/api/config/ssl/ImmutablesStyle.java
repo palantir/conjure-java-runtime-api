@@ -16,14 +16,16 @@
 
 package com.palantir.remoting.api.config.ssl;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import org.immutables.value.Value;
-import org.immutables.value.Value.Style.ImplementationVisibility;
 
-@JsonDeserialize
+@Target({ElementType.PACKAGE, ElementType.TYPE})
+@Retention(RetentionPolicy.CLASS)
 @Value.Style(
-        jdkOnly = true,
+        visibility = Value.Style.ImplementationVisibility.PACKAGE,
         overshadowImplementation = true,
-        visibility = ImplementationVisibility.PACKAGE
-)
-@interface ImmutablesStyle {}
+        jdkOnly = true)
+public @interface ImmutablesStyle {}
