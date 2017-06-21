@@ -99,7 +99,7 @@ public final class ServiceConfigurationFactoryTests {
                 .build();
         ServiceConfiguration service = ServiceConfigurationFactory.of(services).get("service1");
 
-        ServiceConfiguration expected = ImmutableServiceConfiguration.builder()
+        ServiceConfiguration expected = ServiceConfiguration.builder()
                 .apiToken(defaultApiToken)
                 .security(defaultSecurity)
                 .uris(uris)
@@ -137,7 +137,7 @@ public final class ServiceConfigurationFactoryTests {
                 .build();
         ServiceConfiguration service = ServiceConfigurationFactory.of(services).get("service1");
 
-        ServiceConfiguration expected = ImmutableServiceConfiguration.builder()
+        ServiceConfiguration expected = ServiceConfiguration.builder()
                 .apiToken(apiToken)
                 .security(security)
                 .uris(uris)

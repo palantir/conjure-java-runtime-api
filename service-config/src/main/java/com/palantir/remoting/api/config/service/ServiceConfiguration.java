@@ -43,4 +43,10 @@ public interface ServiceConfiguration {
     Optional<Boolean> enableGcmCipherSuites();
 
     Optional<ProxyConfiguration> proxy();
+
+    static ImmutableServiceConfiguration.Builder builder() {
+        return new Builder();
+    }
+
+    class Builder extends ImmutableServiceConfiguration.Builder {}
 }

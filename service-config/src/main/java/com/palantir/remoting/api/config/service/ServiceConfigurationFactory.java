@@ -65,7 +65,7 @@ public final class ServiceConfigurationFactory {
      * ServicesConfigBlock}.
      */
     private ServiceConfiguration propagateDefaults(String serviceName, PartialServiceConfiguration partial) {
-        return ImmutableServiceConfiguration.builder()
+        return ServiceConfiguration.builder()
                 .apiToken(orElse(partial.apiToken(), services.defaultApiToken()))
                 .security(orElse(partial.security(), services.defaultSecurity()).orElseThrow(
                         () -> new IllegalArgumentException("Must provide default security or "
