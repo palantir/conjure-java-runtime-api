@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import org.immutables.value.Value;
 
-/** A variant of {@link PartialServiceConfiguration} in which some fields are required. */
+/** A variant of {@link PartialServiceConfiguration} in which some fields (e.g., {@link #security}) are required. */
 @JsonDeserialize(as = ImmutableServiceConfiguration.class)
 @Value.Immutable
 @ImmutablesStyle
