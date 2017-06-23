@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.base.Preconditions;
 import com.google.common.net.HostAndPort;
-import java.net.ProxySelector;
 import java.util.Optional;
 import org.immutables.value.Value;
 import org.immutables.value.Value.Immutable;
@@ -33,9 +32,8 @@ import org.immutables.value.Value.Immutable;
 public abstract class ProxyConfiguration {
 
     public static final ProxyConfiguration DIRECT = new ProxyConfiguration.Builder().type(Type.DIRECT).build();
-    public static final ProxyConfiguration SYSTEM = new ProxyConfiguration.Builder().type(Type.SYSTEM).build();
 
-    enum Type {
+    public enum Type {
 
         /** Use a direct connection. This option will bypass any JVM-level configured proxy settings. */
         DIRECT,
@@ -45,9 +43,6 @@ public abstract class ProxyConfiguration {
          * {@link ProxyConfiguration#credentials()}.
          */
         HTTP,
-
-        /** Use the system default proxy as per {@link ProxySelector#getDefault()}. */
-        SYSTEM
     }
 
     /**
@@ -84,9 +79,8 @@ public abstract class ProxyConfiguration {
                         "Given hostname does not contain a port number: " + host);
                 break;
             case DIRECT:
-            case SYSTEM:
                 Preconditions.checkArgument(!hostAndPort().isPresent() && !credentials().isPresent(),
-                        "Neither credential nor host-and-port may be configured for DIRECT or SYSTEM proxies");
+                        "Neither credential nor host-and-port may be configured for DIRECT proxies");
                 break;
             default:
                 throw new IllegalStateException("Unrecognized case; this is a library bug");

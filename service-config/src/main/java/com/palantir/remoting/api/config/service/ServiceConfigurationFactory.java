@@ -26,13 +26,6 @@ import java.util.Optional;
 /** Given a {@link ServicesConfigBlock}, populates {@link ServiceConfiguration} instances for configured services. */
 public final class ServiceConfigurationFactory {
 
-    // Defaults for parameters that are optional in PartialServiceConfiguration.
-    private static final HumanReadableDuration DEFAULT_CONNECT_TIMEOUT = HumanReadableDuration.seconds(10);
-    private static final HumanReadableDuration DEFAULT_READ_TIMEOUT = HumanReadableDuration.minutes(10);
-    private static final HumanReadableDuration DEFAULT_WRITE_TIMEOUT = HumanReadableDuration.minutes(10);
-    private static final ProxyConfiguration DEFAULT_PROXY_CONFIG = ProxyConfiguration.SYSTEM;
-    private static final boolean DEFAULT_ENABLE_GCM_CIPHERS = false;
-    private static final int DEFAULT_MAX_NUM_RETRIES = 0;
 
     private final ServicesConfigBlock services;
 
@@ -72,27 +65,21 @@ public final class ServiceConfigurationFactory {
      * ServicesConfigBlock}.
      */
     private ServiceConfiguration propagateDefaults(String serviceName, PartialServiceConfiguration partial) {
-        return ImmutableServiceConfiguration.builder()
+        return ServiceConfiguration.builder()
                 .apiToken(orElse(partial.apiToken(), services.defaultApiToken()))
                 .security(orElse(partial.security(), services.defaultSecurity()).orElseThrow(
                         () -> new IllegalArgumentException("Must provide default security or "
                                 + "service-specific security block for service: " + serviceName)))
                 .uris(partial.uris())
-                .connectTimeout(Duration.ofSeconds(
-                        orElse(partial.connectTimeout(),
-                                services.defaultConnectTimeout())
-                                .orElse(DEFAULT_CONNECT_TIMEOUT).toSeconds()))
-                .readTimeout(Duration.ofSeconds(
-                        orElse(partial.readTimeout(),
-                                services.defaultReadTimeout())
-                                .orElse(DEFAULT_READ_TIMEOUT).toSeconds()))
-                .writeTimeout(Duration.ofSeconds(
-                        partial.writeTimeout().orElse(DEFAULT_WRITE_TIMEOUT).toSeconds()))
-                .proxy(orElse(partial.proxyConfiguration(), services.defaultProxyConfiguration())
-                        .orElse(DEFAULT_PROXY_CONFIG))
-                .enableGcmCipherSuites(orElse(partial.enableGcmCipherSuites(),
-                        services.defaultEnableGcmCipherSuites()).orElse(DEFAULT_ENABLE_GCM_CIPHERS))
-                .maxNumRetries(DEFAULT_MAX_NUM_RETRIES)
+                .connectTimeout(orElse(partial.connectTimeout(), services.defaultConnectTimeout())
+                        .map(t -> Duration.ofSeconds(t.toSeconds())))
+                .readTimeout(orElse(partial.readTimeout(), services.defaultReadTimeout())
+                        .map(t -> Duration.ofSeconds(t.toSeconds())))
+                .writeTimeout(orElse(partial.writeTimeout(), services.defaultWriteTimeout())
+                        .map(t -> Duration.ofSeconds(t.toSeconds())))
+                .proxy(orElse(partial.proxyConfiguration(), services.defaultProxyConfiguration()))
+                .enableGcmCipherSuites(
+                        orElse(partial.enableGcmCipherSuites(), services.defaultEnableGcmCipherSuites()))
                 .build();
     }
 

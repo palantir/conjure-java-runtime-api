@@ -50,6 +50,7 @@ public final class ServiceConfigurationFactoryTests {
     private static final HumanReadableDuration readTimeout = HumanReadableDuration.minutes(1);
     private static final HumanReadableDuration defaultReadTimeout = HumanReadableDuration.minutes(2);
     private static final HumanReadableDuration writeTimeout = HumanReadableDuration.days(1);
+    private static final HumanReadableDuration defaultWriteTimeout = HumanReadableDuration.days(2);
     private static final ProxyConfiguration proxy = ProxyConfiguration.DIRECT;
     private static final ProxyConfiguration defaultProxyConfiguration = ProxyConfiguration.of("globalsquid:3128");
     private static final ImmutableList<String> uris = ImmutableList.of("uri");
@@ -82,29 +83,6 @@ public final class ServiceConfigurationFactoryTests {
         assertThat(service3.apiToken()).contains(BearerToken.valueOf("defaultApiToken"));
     }
 
-    @Test
-    public void testUsesCompileTimeDefaultConfigurationWhenNothingElseIsGiven() {
-        PartialServiceConfiguration partial = PartialServiceConfiguration.of(uris, Optional.empty());
-        ServicesConfigBlock services = ServicesConfigBlock.builder()
-                .putAllServices(ImmutableMap.of("service1", partial))
-                .defaultSecurity(defaultSecurity)
-                .build();
-        ServiceConfiguration actual = ServiceConfigurationFactory.of(services).get("service1");
-
-        // The following are the compile-time defaults.
-        ServiceConfiguration expected = ImmutableServiceConfiguration.builder()
-                .security(defaultSecurity)
-                .uris(uris)
-                .connectTimeout(Duration.ofSeconds(10))
-                .readTimeout(Duration.ofMinutes(10))
-                .writeTimeout(Duration.ofMinutes(10))
-                .enableGcmCipherSuites(false)
-                .proxy(ProxyConfiguration.SYSTEM)
-                .maxNumRetries(0)
-                .build();
-
-        assertThat(actual).isEqualTo(expected);
-    }
 
     @Test
     public void testUsesDefaultConfigurationWhenNoExplicitConfigIsGiven() {
@@ -116,20 +94,20 @@ public final class ServiceConfigurationFactoryTests {
                 .defaultProxyConfiguration(defaultProxyConfiguration)
                 .defaultConnectTimeout(defaultConnectTimeout)
                 .defaultReadTimeout(defaultReadTimeout)
+                .defaultWriteTimeout(defaultWriteTimeout)
                 .defaultEnableGcmCipherSuites(defaultEnableGcm)
                 .build();
         ServiceConfiguration service = ServiceConfigurationFactory.of(services).get("service1");
 
-        ServiceConfiguration expected = ImmutableServiceConfiguration.builder()
+        ServiceConfiguration expected = ServiceConfiguration.builder()
                 .apiToken(defaultApiToken)
                 .security(defaultSecurity)
                 .uris(uris)
                 .connectTimeout(Duration.ofSeconds(defaultConnectTimeout.toSeconds()))
                 .readTimeout(Duration.ofMinutes(defaultReadTimeout.toMinutes()))
-                .writeTimeout(Duration.ofMinutes(10))  // doesn't exist in services config
+                .writeTimeout(Duration.ofHours(defaultWriteTimeout.toHours()))
                 .enableGcmCipherSuites(defaultEnableGcm)
                 .proxy(defaultProxyConfiguration)
-                .maxNumRetries(0)  // doesn't exist in services config
                 .build();
 
         assertThat(service).isEqualTo(expected);
@@ -154,11 +132,12 @@ public final class ServiceConfigurationFactoryTests {
                 .defaultProxyConfiguration(defaultProxyConfiguration)
                 .defaultConnectTimeout(defaultConnectTimeout)
                 .defaultReadTimeout(defaultReadTimeout)
+                .defaultWriteTimeout(defaultWriteTimeout)
                 .defaultEnableGcmCipherSuites(defaultEnableGcm)
                 .build();
         ServiceConfiguration service = ServiceConfigurationFactory.of(services).get("service1");
 
-        ServiceConfiguration expected = ImmutableServiceConfiguration.builder()
+        ServiceConfiguration expected = ServiceConfiguration.builder()
                 .apiToken(apiToken)
                 .security(security)
                 .uris(uris)
@@ -167,7 +146,6 @@ public final class ServiceConfigurationFactoryTests {
                 .writeTimeout(Duration.ofHours(writeTimeout.toHours()))
                 .enableGcmCipherSuites(enableGcm)
                 .proxy(proxy)
-                .maxNumRetries(0)
                 .build();
 
         assertThat(service).isEqualTo(expected);
@@ -191,6 +169,7 @@ public final class ServiceConfigurationFactoryTests {
                 .defaultProxyConfiguration(ProxyConfiguration.of("host:80"))
                 .defaultConnectTimeout(HumanReadableDuration.days(1))
                 .defaultReadTimeout(HumanReadableDuration.days(1))
+                .defaultWriteTimeout(HumanReadableDuration.days(1))
                 .build();
         String camelCase = "{\"apiToken\":\"bearerToken\",\"security\":"
                 + "{\"trustStorePath\":\"truststore.jks\",\"trustStoreType\":\"JKS\",\"keyStorePath\":null,"
@@ -199,7 +178,7 @@ public final class ServiceConfigurationFactoryTests {
                 + "\"readTimeout\":null,\"writeTimeout\":null,\"enableGcmCipherSuites\":null,"
                 + "\"proxyConfiguration\":null}},\"proxyConfiguration\":"
                 + "{\"hostAndPort\":\"host:80\",\"credentials\":null,\"type\":\"HTTP\"},\"connectTimeout\":\"1 day\","
-                + "\"readTimeout\":\"1 day\",\"enableGcmCipherSuites\":null}";
+                + "\"readTimeout\":\"1 day\",\"writeTimeout\":\"1 day\",\"enableGcmCipherSuites\":null}";
         String kebabCase = "{\"api-token\":\"bearerToken\",\"security\":"
                 + "{\"trust-store-path\":\"truststore.jks\",\"trust-store-type\":\"JKS\",\"key-store-path\":null,"
                 + "\"key-store-password\":null,\"key-store-type\":\"JKS\",\"key-store-key-alias\":null},\"services\":"
@@ -207,7 +186,7 @@ public final class ServiceConfigurationFactoryTests {
                 + "\"write-timeout\":null,\"uris\":[\"uri\"],\"enable-gcm-cipher-suites\":null,"
                 + "\"proxy-configuration\":null}},\"proxy-configuration\":"
                 + "{\"host-and-port\":\"host:80\",\"credentials\":null},\"connect-timeout\":\"1 day\","
-                + "\"read-timeout\":\"1 day\"}";
+                + "\"read-timeout\":\"1 day\",\"write-timeout\":\"1 day\"}";
 
         assertThat(ObjectMappers.newClientObjectMapper().writeValueAsString(deserialized)).isEqualTo(camelCase);
         assertThat(ObjectMappers.newClientObjectMapper()
@@ -222,10 +201,10 @@ public final class ServiceConfigurationFactoryTests {
     public void serDe_optional() throws Exception {
         ServicesConfigBlock deserialized = ServicesConfigBlock.builder().build();
         String serializedCamelCase = "{\"apiToken\":null,\"security\":null,\"services\":{},"
-                + "\"proxyConfiguration\":null,\"connectTimeout\":null,\"readTimeout\":null,"
+                + "\"proxyConfiguration\":null,\"connectTimeout\":null,\"readTimeout\":null,\"writeTimeout\":null,"
                 + "\"enableGcmCipherSuites\":null}";
         String serializedKebabCase = "{\"api-token\":null,\"security\":null,\"services\":{},"
-                + "\"proxy-configuration\":null,\"connect-timeout\":null,\"read-timeout\":null,"
+                + "\"proxy-configuration\":null,\"connect-timeout\":null,\"read-timeout\":null,\"write-timeout\":null,"
                 + "\"enable-gcm-cipher-suites\":null}";
 
         assertThat(ObjectMappers.newClientObjectMapper().writeValueAsString(deserialized))
