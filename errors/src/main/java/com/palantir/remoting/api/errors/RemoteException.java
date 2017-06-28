@@ -36,7 +36,10 @@ public final class RemoteException extends RuntimeException {
     }
 
     public RemoteException(SerializableError error, int status) {
-        super(error.getMessage() + error.toString());
+        super(error.getErrorName().equals(error.getMessage())
+                ? String.format("RemoteException: %s", error.getErrorName())
+                : String.format("RemoteException: %s (%s)", error.getErrorName(), error.getMessage()));
+
         this.error = error;
         this.status = status;
     }

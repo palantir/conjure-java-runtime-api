@@ -33,4 +33,19 @@ public final class RemoteExceptionTest {
         RemoteException actual = SerializationUtils.deserialize(SerializationUtils.serialize(expected));
         assertThat(expected).isEqualToComparingFieldByField(actual);
     }
+
+    @Test
+    public void testSuperMessage() {
+        SerializableError error = new SerializableError.Builder()
+                .message("message")
+                .errorName("errorName")
+                .build();
+        assertThat(new RemoteException(error, 500).getMessage()).isEqualTo("RemoteException: errorName (message)");
+
+        error = new SerializableError.Builder()
+                .message("errorName")
+                .errorName("errorName")
+                .build();
+        assertThat(new RemoteException(error, 500).getMessage()).isEqualTo("RemoteException: errorName");
+    }
 }
