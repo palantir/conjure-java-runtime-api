@@ -76,10 +76,14 @@ public abstract class SerializableError implements Serializable {
     }
 
     // TODO(rfink): Remove once all error producers have switched to errorName.
-    static final class Builder extends ImmutableSerializableError.Builder {
+    public static final class Builder extends ImmutableSerializableError.Builder {
         @JsonProperty("exceptionClass")
         Builder exceptionClass(String exceptionClass) {
             return errorName(exceptionClass);
         }
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 }
