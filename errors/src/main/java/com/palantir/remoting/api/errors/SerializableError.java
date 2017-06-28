@@ -60,12 +60,13 @@ public abstract class SerializableError implements Serializable {
     }
 
     /**
-     * Creates a {@link SerializableError} representation of this exception.
+     * Creates a {@link SerializableError} representation of this exception that derives from the error name and
+     * message, as well as the {@link Arg#isSafeForLogging safe} {@link ServiceException#args parameters}.
      */
     public static SerializableError forException(ServiceException exception) {
         Builder builder = new Builder()
-                .message(exception.getErrorType().name().name())
-                .errorName(exception.getErrorType().description());
+                .errorName(exception.getErrorType().name().name())
+                .message(exception.getErrorType().description() + " (ErrorId " + exception.getErrorId() + ")");
         for (Arg<?> arg : exception.getArgs()) {
             if (arg.isSafeForLogging()) {
                 builder.putParameters(arg.getName(), arg.getValue().toString());
