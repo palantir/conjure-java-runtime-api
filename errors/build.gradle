@@ -1,0 +1,17 @@
+apply plugin: 'org.inferred.processors'
+
+apply from: "${rootDir}/gradle/publish.gradle"
+
+dependencies {
+    compile "com.fasterxml.jackson.core:jackson-databind"
+    compile "com.google.code.findbugs:jsr305"
+    compile "com.palantir.safe-logging:safe-logging"
+    compile "javax.ws.rs:javax.ws.rs-api"
+
+    testCompile project(":extras:jackson-support")
+    testCompile "org.assertj:assertj-core"
+    testCompile "junit:junit"
+    testCompile "org.apache.commons:commons-lang3"
+
+    processor "org.immutables:value"
+}

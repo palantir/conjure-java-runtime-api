@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.palantir.remoting.api.config.service;
+package com.palantir.remoting.api.errors;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
