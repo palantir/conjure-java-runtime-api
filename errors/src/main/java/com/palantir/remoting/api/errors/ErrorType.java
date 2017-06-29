@@ -63,13 +63,13 @@ public abstract class ErrorType {
      * Creates a new error type with the given name and HTTP error code, and error type{@link Code#CUSTOM}.
      * Allowed error codes are {@code 400 BAD REQUEST} and {@code 500 INTERNAL SERVER ERROR}.
      */
-    public static ErrorType custom(String description, int httpErrorCode) {
+    public static ErrorType custom(String name, int httpErrorCode) {
         if (httpErrorCode != 400 && httpErrorCode != 500) {
             throw new IllegalArgumentException("CUSTOM ErrorTypes must have HTTP error code 400 or 500");
         }
         return ImmutableErrorType.builder()
                 .code(Code.CUSTOM)
-                .name(description)
+                .name(name)
                 .httpErrorCode(httpErrorCode)
                 .build();
     }
@@ -78,13 +78,13 @@ public abstract class ErrorType {
      * Constructs an {@link ErrorType} with the given error {@link Code} and name. Cannot use the {@link
      * Code#CUSTOM} error code, see {@link #custom} instead.
      */
-    public static ErrorType of(Code code, String description) {
+    public static ErrorType of(Code code, String name) {
         if (code == Code.CUSTOM) {
             throw new IllegalArgumentException("Use the custom() method to construct ErrorTypes with code CUSTOM");
         }
         return ImmutableErrorType.builder()
                 .code(code)
-                .name(description)
+                .name(name)
                 .httpErrorCode(code.httpErrorCode)
                 .build();
     }
