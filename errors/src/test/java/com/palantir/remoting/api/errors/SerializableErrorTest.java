@@ -28,8 +28,8 @@ import org.junit.Test;
 public final class SerializableErrorTest {
 
     private static final SerializableError ERROR = new SerializableError.Builder()
-            .message("foo")
-            .errorName("bar")
+            .errorCode("code")
+            .errorName("name")
             .build();
     private static final ObjectMapper mapper = ObjectMappers.newServerObjectMapper();
 
@@ -39,34 +39,37 @@ public final class SerializableErrorTest {
         ServiceException exception =
                 new ServiceException(error, SafeArg.of("safeKey", 42), UnsafeArg.of("foo", "bar"));
         SerializableError expected = new SerializableError.Builder()
-                .errorName(error.code().name())
-                .message(error.name() + " (ErrorId " + exception.getErrorId() + ")")
+                .errorCode(error.code().name())
+                .errorName(error.name())
+                .putParameters("errorId", exception.getErrorId())
                 .putParameters("safeKey", "42")
                 .build();
         assertThat(SerializableError.forException(exception)).isEqualTo(expected);
     }
 
     @Test
-    public void testSerializationContainsBothErrorNameAndExceptionClass() throws Exception {
+    public void testSerializationContainsRedundantParameters() throws Exception {
         assertThat(mapper.writeValueAsString(ERROR))
-                .isEqualTo("{\"errorName\":\"bar\",\"message\":\"foo\",\"parameters\":{},\"exceptionClass\":\"bar\"}");
+                .isEqualTo("{\"errorCode\":\"code\",\"errorName\":\"name\",\"parameters\":{},"
+                        + "\"exceptionClass\":\"code\",\"message\":\"name\"}");
     }
 
     @Test
-    public void testDeserializesWithBothErrorNameOnlyAndExceptionClass() throws Exception {
-        String serialized = "{\"errorName\":\"bar\",\"message\":\"foo\",\"exceptionClass\":\"bar\"}";
+    public void testDeserializesWithWhenRedundantParamerersAreGiven() throws Exception {
+        String serialized =
+                "{\"errorCode\":\"code\",\"errorName\":\"name\",\"exceptionClass\":\"code\",\"message\":\"name\"}";
         assertThat(deserialize(serialized)).isEqualTo(ERROR);
     }
 
     @Test
-    public void testDeserializesWithErrorNameOnly() throws Exception {
-        String serialized = "{\"errorName\":\"bar\",\"message\":\"foo\"}";
+    public void testDeserializesWithDefaultNamesOnly() throws Exception {
+        String serialized = "{\"errorCode\":\"code\",\"errorName\":\"name\"}";
         assertThat(deserialize(serialized)).isEqualTo(ERROR);
     }
 
     @Test
-    public void testDeserializesWithExceptionClassOnly() throws Exception {
-        String serialized = "{\"message\":\"foo\",\"exceptionClass\":\"bar\"}";
+    public void testDeserializesWithBackupNamesOnly() throws Exception {
+        String serialized = "{\"message\":\"name\",\"exceptionClass\":\"code\"}";
         assertThat(deserialize(serialized)).isEqualTo(ERROR);
     }
 

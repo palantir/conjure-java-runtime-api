@@ -26,8 +26,8 @@ import java.util.Map;
 import org.immutables.value.Value;
 
 /**
- * A JSON-serializable representation of an exception/error, represented by its exception message, an error name
- * identifying the type of error, an optional set of named parameters detailing the error condition. Intended to
+ * A JSON-serializable representation of an exception/error, represented by its error code, an error name identifying
+ * the (specific sub-) type of error, an optional set of named parameters detailing the error condition. Intended to
  * transport errors through RPC channels such as HTTP responses.
  */
 @JsonDeserialize(builder = SerializableError.Builder.class)
@@ -38,25 +38,48 @@ import org.immutables.value.Value;
 public abstract class SerializableError implements Serializable {
 
     /**
-     * A name identifying the type of error; this is typically the fully-qualified name of a server-side exception or
-     * some other application-defined string identifying the error. Clients are given access to the server-side error
-     * name via {@link RemoteException#getError} and typically switch&dispatch on the error name.
+     * A fixed code word identifying the type of error. For errors generated from {@link ServiceException}, this
+     * corresponds to the {@link ErrorType#code} and is part of the service's API surface. Clients are given access to
+     * the server-side error code via {@link RemoteException#getError} and typically switch&dispatch on the error code
+     * and/or name.
+     */
+    @JsonProperty("errorCode")
+    public abstract String errorCode();
+
+    /**
+     * A fixed name identifying the error. For errors generated from {@link ServiceException}, this corresponding to the
+     * {@link ErrorType#name} and is part of the service's API surface. Clients are given access to the service-side
+     * error name via {@link RemoteException#getError} and typically switch&dispatch on the error code and/or name.
      */
     @JsonProperty("errorName")
-    public abstract String getErrorName();
-
-    /** A description of the error. */
-    public abstract String getMessage();
+    public abstract String errorName();
 
     /** A set of parameters that further explain the error. */
     public abstract Map<String, String> parameters();
 
-    // TODO(rfink): Remove once all error producers have switched to errorName.
+
+    /**
+     * @deprecated Used by the serialization-mechanism for back-compat only. Do not use.
+     */
+    @Deprecated
     @Value.Derived
     @JsonProperty("exceptionClass")
     @SuppressWarnings("checkstyle:designforextension")
-    public String getExceptionClass() {
-        return getErrorName();
+    // TODO(rfink): Remove once all error producers have switched to errorCode.
+    String getExceptionClass() {
+        return errorCode();
+    }
+
+    /**
+     * @deprecated Used by the serialization-mechanism for back-compat only. Do not use.
+     */
+    @Deprecated
+    @Value.Derived
+    @JsonProperty("message")
+    @SuppressWarnings("checkstyle:designforextension")
+    // TODO(rfink): Remove once all error producers have switched to errorName.
+    String getMessage() {
+        return errorName();
     }
 
     /**
@@ -65,8 +88,9 @@ public abstract class SerializableError implements Serializable {
      */
     public static SerializableError forException(ServiceException exception) {
         Builder builder = new Builder()
-                .errorName(exception.getErrorType().code().name())
-                .message(exception.getErrorType().name() + " (ErrorId " + exception.getErrorId() + ")");
+                .errorCode(exception.getErrorType().code().name())
+                .errorName(exception.getErrorType().name())
+                .putParameters("errorId", exception.getErrorId());
         for (Arg<?> arg : exception.getArgs()) {
             if (arg.isSafeForLogging()) {
                 builder.putParameters(arg.getName(), arg.getValue().toString());
@@ -76,11 +100,16 @@ public abstract class SerializableError implements Serializable {
         return builder.build();
     }
 
-    // TODO(rfink): Remove once all error producers have switched to errorName.
+    // TODO(rfink): Remove once all error producers have switched to errorCode/errorName.
     public static final class Builder extends ImmutableSerializableError.Builder {
         @JsonProperty("exceptionClass")
         Builder exceptionClass(String exceptionClass) {
-            return errorName(exceptionClass);
+            return errorCode(exceptionClass);
+        }
+
+        @JsonProperty("message")
+        Builder message(String message) {
+            return errorName(message);
         }
     }
 
