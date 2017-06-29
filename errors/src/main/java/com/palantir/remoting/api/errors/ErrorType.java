@@ -19,33 +19,41 @@ package com.palantir.remoting.api.errors;
 import org.immutables.value.Value;
 
 /**
- * Represents errors by name and description. {@link ErrorType} instance are meant to be compile-time constants in
+ * Represents errors by code and description. {@link ErrorType} instance are meant to be compile-time constants in
  * the sense that the description should not contain information that is available at runtime only.
  */
 @Value.Immutable
 @ImmutablesStyle
 public abstract class ErrorType {
 
-    public enum Name {
-        UNKNOWN,
-        PERMISSION_DENIED,
-        INVALID_ARGUMENT,
-        FAILED_PRECONDITION,
-        CUSTOM,
+    public enum Code {
+        UNKNOWN(500),
+        PERMISSION_DENIED(403),
+        INVALID_ARGUMENT(400),
+        FAILED_PRECONDITION(400),
+        INTERNAL(500),
+        CUSTOM(null /* unused */);
+
+        private final Integer httpErrorCode; // boxed so that we fail loudly if someone accesses CUSTOM.httpErrorCode
+
+        Code(Integer httpErrorCode) {
+            this.httpErrorCode = httpErrorCode;
+        }
     }
 
-    public static final ErrorType UNKNOWN = create(Name.UNKNOWN, 500);
-    public static final ErrorType PERMISSION_DENIED = create(Name.PERMISSION_DENIED, 403);
-    public static final ErrorType INVALID_ARGUMENT = create(Name.INVALID_ARGUMENT, 400);
-    public static final ErrorType FAILED_PRECONDITION = create(Name.FAILED_PRECONDITION, 400);
+    public static final ErrorType UNKNOWN = create(Code.UNKNOWN);
+    public static final ErrorType PERMISSION_DENIED = create(Code.PERMISSION_DENIED);
+    public static final ErrorType INVALID_ARGUMENT = create(Code.INVALID_ARGUMENT);
+    public static final ErrorType FAILED_PRECONDITION = create(Code.FAILED_PRECONDITION);
+    public static final ErrorType INTERNAL = create(Code.INTERNAL);
 
-    /** The {@link Name} of this error, one of a fixed number of constant names. */
-    public abstract Name name();
+    /** The {@link Code} of this error. */
+    public abstract Code code();
 
     /**
      * The description of this error; for standard errors defined as constants in this class (e.g., {@link
-     * #PERMISSION_DENIED}, {@link #INVALID_ARGUMENT}, etc), the description is identical to the error {@link #name},
-     * while for {@link Name#CUSTOM} exceptions the description can differ from the {@link #name} in order to allow
+     * #PERMISSION_DENIED}, {@link #INVALID_ARGUMENT}, etc), the description is identical to the error {@link #code},
+     * while for {@link Code#CUSTOM} exceptions the description can differ from the {@link #code} in order to allow
      * error producers to provide additional, application-specific context on the nature of the error.
      */
     public abstract String description();
@@ -54,25 +62,40 @@ public abstract class ErrorType {
     public abstract int httpErrorCode();
 
     /**
-     * Creates a new error type with the given description and HTTP error code. Allowed error codes are {@code 400 BAD
-     * REQUEST} and {@code 500 INTERNAL SERVER ERROR}.
+     * Creates a new error type with the given description and HTTP error code, and error type{@link Code#CUSTOM}.
+     * Allowed error codes are {@code 400 BAD REQUEST} and {@code 500 INTERNAL SERVER ERROR}.
      */
     public static ErrorType custom(String description, int httpErrorCode) {
         if (httpErrorCode != 400 && httpErrorCode != 500) {
-            throw new IllegalArgumentException("Custom ErrorTypes must have HTTP error code 400 or 500");
+            throw new IllegalArgumentException("CUSTOM ErrorTypes must have HTTP error code 400 or 500");
         }
-        return create(Name.CUSTOM, description, httpErrorCode);
-    }
-
-    private static ErrorType create(Name name, int httpErrorCode) {
-        return create(name, name.name(), httpErrorCode);
-    }
-
-    private static ErrorType create(Name name, String description, int httpErrorCode) {
         return ImmutableErrorType.builder()
-                .name(name)
+                .code(Code.CUSTOM)
                 .description(description)
                 .httpErrorCode(httpErrorCode)
+                .build();
+    }
+
+    /**
+     * Constructs an {@link ErrorType} with the given error {@link Code} and description. Cannot use the {@link
+     * Code#CUSTOM} error code, see {@link #custom} instead.
+     */
+    public static ErrorType of(Code code, String description) {
+        if (code == Code.CUSTOM) {
+            throw new IllegalArgumentException("Use the custom() method to construct ErrorTypes with code CUSTOM");
+        }
+        return ImmutableErrorType.builder()
+                .code(code)
+                .description(description)
+                .httpErrorCode(code.httpErrorCode)
+                .build();
+    }
+
+    private static ErrorType create(Code code) {
+        return ImmutableErrorType.builder()
+                .code(code)
+                .description(code.name())
+                .httpErrorCode(code.httpErrorCode)
                 .build();
     }
 }

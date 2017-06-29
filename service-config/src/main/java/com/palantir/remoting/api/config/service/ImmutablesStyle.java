@@ -28,4 +28,4 @@ import org.immutables.value.Value;
         visibility = Value.Style.ImplementationVisibility.PACKAGE,
         overshadowImplementation = true,
         jdkOnly = true)
-public @interface ImmutablesStyle {}
+@interface ImmutablesStyle {}

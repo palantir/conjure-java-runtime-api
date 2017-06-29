@@ -27,8 +27,7 @@ import org.junit.Test;
 public final class ServiceExceptionTest {
 
     private static final ErrorType ERROR = ErrorType.custom("myDesc", 400);
-    private static final String EXPECTED_ERROR_MSG =
-            "ErrorType with name CUSTOM and description myDesc";
+    private static final String EXPECTED_ERROR_MSG = "ServiceException: CUSTOM (myDesc)";
 
     @Test
     public void testExceptionMessageContainsSafeAndUnsafeArgs() {
@@ -40,6 +39,14 @@ public final class ServiceExceptionTest {
 
         String expectedMessage = EXPECTED_ERROR_MSG + ": {arg1=foo, arg2=2, arg3=null}";
         assertThat(ex.getMessage()).isEqualTo(expectedMessage);
+    }
+
+    @Test
+    public void testExceptionLogMessageContainsNoArgs() {
+        Arg<?>[] args = {SafeArg.of("safeKey", "foo"), UnsafeArg.of("unsafeKey", 2)};
+        ServiceException ex = new ServiceException(ERROR, args);
+
+        assertThat(ex.getLogMessage()).isEqualTo(EXPECTED_ERROR_MSG);
     }
 
     @Test

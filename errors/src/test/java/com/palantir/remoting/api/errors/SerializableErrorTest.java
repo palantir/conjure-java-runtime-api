@@ -39,7 +39,7 @@ public final class SerializableErrorTest {
         ServiceException exception =
                 new ServiceException(error, SafeArg.of("safeKey", 42), UnsafeArg.of("foo", "bar"));
         SerializableError expected = new SerializableError.Builder()
-                .errorName(error.name().name())
+                .errorName(error.code().name())
                 .message(error.description() + " (ErrorId " + exception.getErrorId() + ")")
                 .putParameters("safeKey", "42")
                 .build();

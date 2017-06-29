@@ -31,7 +31,7 @@ public final class ServiceException extends RuntimeException implements SafeLogg
     private final List<Arg<?>> args;  // unmodifiable
 
     private final String errorId = UUID.randomUUID().toString();
-    private final String message;
+    private final String fullMessage;
 
     /**
      * Creates a new exception for the given error. All {@link com.palantir.logsafe.SafeArg safe} parameters are
@@ -47,12 +47,12 @@ public final class ServiceException extends RuntimeException implements SafeLogg
     }
 
     private ServiceException(ErrorType errorType, @Nullable Throwable cause, List<Arg<?>> args) {
-        super(formatMessage(errorType, args), cause);
+        super(formatFullMessage(errorType, args), cause);
 
         // TODO(rfink): Memoize formatting?
         this.errorType = errorType;
         this.args = Collections.unmodifiableList(args);
-        this.message = formatMessage(errorType, args);
+        this.fullMessage = formatFullMessage(errorType, args);
     }
 
     /** The {@link ErrorType} that gave rise to this exception. */
@@ -67,17 +67,22 @@ public final class ServiceException extends RuntimeException implements SafeLogg
 
     @Override
     public String getMessage() {
-        return message;
+        return fullMessage;
     }
 
     @Override
     public String getLogMessage() {
-        return message;
+        return formatLogMessage(errorType);
     }
 
-    private static String formatMessage(ErrorType errorType, List<Arg<?>> args) {
-        String message = String.format("%s with name %s and description %s",
-                ErrorType.class.getSimpleName(), errorType.name(), errorType.description());
+    private static String formatLogMessage(ErrorType errorType) {
+        return errorType.code().name().equals(errorType.description())
+                ? String.format("ServiceException: %s", errorType.code())
+                : String.format("ServiceException: %s (%s)", errorType.code(), errorType.description());
+    }
+
+    private static String formatFullMessage(ErrorType errorType, List<Arg<?>> args) {
+        String message = formatLogMessage(errorType);
         if (args.isEmpty()) {
             return message;
         }
