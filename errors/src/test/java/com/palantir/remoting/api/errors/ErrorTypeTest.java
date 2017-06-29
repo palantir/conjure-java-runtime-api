@@ -37,12 +37,12 @@ public final class ErrorTypeTest {
         ErrorType custom400 = ErrorType.custom("myDesc", 400);
         assertThat(custom400.code()).isEqualTo(ErrorType.Code.CUSTOM);
         assertThat(custom400.httpErrorCode()).isEqualTo(400);
-        assertThat(custom400.description()).isEqualTo("myDesc");
+        assertThat(custom400.name()).isEqualTo("myDesc");
 
         ErrorType custom500 = ErrorType.custom("myDesc", 500);
         assertThat(custom500.code()).isEqualTo(ErrorType.Code.CUSTOM);
         assertThat(custom500.httpErrorCode()).isEqualTo(500);
-        assertThat(custom500.description()).isEqualTo("myDesc");
+        assertThat(custom500.name()).isEqualTo("myDesc");
 
         assertThatThrownBy(() -> ErrorType.custom("myDesc", 403))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -54,7 +54,7 @@ public final class ErrorTypeTest {
         ErrorType error = ErrorType.of(ErrorType.Code.FAILED_PRECONDITION, "myDesc");
         assertThat(error.code()).isEqualTo(ErrorType.Code.FAILED_PRECONDITION);
         assertThat(error.httpErrorCode()).isEqualTo(400);
-        assertThat(error.description()).isEqualTo("myDesc");
+        assertThat(error.name()).isEqualTo("myDesc");
 
         assertThatThrownBy(() -> ErrorType.of(ErrorType.Code.CUSTOM, "myDesc"))
                 .isInstanceOf(IllegalArgumentException.class)

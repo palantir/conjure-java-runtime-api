@@ -66,7 +66,7 @@ public abstract class SerializableError implements Serializable {
     public static SerializableError forException(ServiceException exception) {
         Builder builder = new Builder()
                 .errorName(exception.getErrorType().code().name())
-                .message(exception.getErrorType().description() + " (ErrorId " + exception.getErrorId() + ")");
+                .message(exception.getErrorType().name() + " (ErrorId " + exception.getErrorId() + ")");
         for (Arg<?> arg : exception.getArgs()) {
             if (arg.isSafeForLogging()) {
                 builder.putParameters(arg.getName(), arg.getValue().toString());

@@ -19,8 +19,8 @@ package com.palantir.remoting.api.errors;
 import org.immutables.value.Value;
 
 /**
- * Represents errors by code and description. {@link ErrorType} instance are meant to be compile-time constants in
- * the sense that the description should not contain information that is available at runtime only.
+ * Represents errors by code and name. {@link ErrorType} instance are meant to be compile-time constants in
+ * the sense that the name should not contain information that is available at runtime only.
  */
 @Value.Immutable
 @ImmutablesStyle
@@ -51,18 +51,16 @@ public abstract class ErrorType {
     public abstract Code code();
 
     /**
-     * The description of this error; for standard errors defined as constants in this class (e.g., {@link
-     * #PERMISSION_DENIED}, {@link #INVALID_ARGUMENT}, etc), the description is identical to the error {@link #code},
-     * while for {@link Code#CUSTOM} exceptions the description can differ from the {@link #code} in order to allow
-     * error producers to provide additional, application-specific context on the nature of the error.
+     * The name of this error type. Names should be compile-time constants and are considered part of the API of a
+     * service that produces this error.
      */
-    public abstract String description();
+    public abstract String name();
 
     /** The HTTP error code used to convey this error to HTTP clients. */
     public abstract int httpErrorCode();
 
     /**
-     * Creates a new error type with the given description and HTTP error code, and error type{@link Code#CUSTOM}.
+     * Creates a new error type with the given name and HTTP error code, and error type{@link Code#CUSTOM}.
      * Allowed error codes are {@code 400 BAD REQUEST} and {@code 500 INTERNAL SERVER ERROR}.
      */
     public static ErrorType custom(String description, int httpErrorCode) {
@@ -71,13 +69,13 @@ public abstract class ErrorType {
         }
         return ImmutableErrorType.builder()
                 .code(Code.CUSTOM)
-                .description(description)
+                .name(description)
                 .httpErrorCode(httpErrorCode)
                 .build();
     }
 
     /**
-     * Constructs an {@link ErrorType} with the given error {@link Code} and description. Cannot use the {@link
+     * Constructs an {@link ErrorType} with the given error {@link Code} and name. Cannot use the {@link
      * Code#CUSTOM} error code, see {@link #custom} instead.
      */
     public static ErrorType of(Code code, String description) {
@@ -86,7 +84,7 @@ public abstract class ErrorType {
         }
         return ImmutableErrorType.builder()
                 .code(code)
-                .description(description)
+                .name(description)
                 .httpErrorCode(code.httpErrorCode)
                 .build();
     }
@@ -94,7 +92,7 @@ public abstract class ErrorType {
     private static ErrorType create(Code code) {
         return ImmutableErrorType.builder()
                 .code(code)
-                .description(code.name())
+                .name(code.name())
                 .httpErrorCode(code.httpErrorCode)
                 .build();
     }

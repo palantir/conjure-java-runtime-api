@@ -76,9 +76,9 @@ public final class ServiceException extends RuntimeException implements SafeLogg
     }
 
     private static String formatLogMessage(ErrorType errorType) {
-        return errorType.code().name().equals(errorType.description())
+        return errorType.code().name().equals(errorType.name())
                 ? String.format("ServiceException: %s", errorType.code())
-                : String.format("ServiceException: %s (%s)", errorType.code(), errorType.description());
+                : String.format("ServiceException: %s (%s)", errorType.code(), errorType.name());
     }
 
     private static String formatFullMessage(ErrorType errorType, List<Arg<?>> args) {

@@ -40,7 +40,7 @@ public final class SerializableErrorTest {
                 new ServiceException(error, SafeArg.of("safeKey", 42), UnsafeArg.of("foo", "bar"));
         SerializableError expected = new SerializableError.Builder()
                 .errorName(error.code().name())
-                .message(error.description() + " (ErrorId " + exception.getErrorId() + ")")
+                .message(error.name() + " (ErrorId " + exception.getErrorId() + ")")
                 .putParameters("safeKey", "42")
                 .build();
         assertThat(SerializableError.forException(exception)).isEqualTo(expected);
