@@ -85,7 +85,7 @@ public final class HumanReadableDuration implements Comparable<HumanReadableDura
     @JsonCreator
     public static HumanReadableDuration valueOf(String duration) {
         final Matcher matcher = DURATION_PATTERN.matcher(duration);
-        checkArgument(matcher.matches(), "Invalid duration: " + duration);
+        checkArgument(matcher.matches(), "Invalid duration: %s", duration);
 
         final long count = Long.parseLong(matcher.group(1));
         final TimeUnit unit = SUFFIXES.get(matcher.group(2));
