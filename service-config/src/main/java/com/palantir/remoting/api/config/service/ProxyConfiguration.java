@@ -77,7 +77,7 @@ public abstract class ProxyConfiguration {
                         + "configured for an HTTP proxy");
                 HostAndPort host = HostAndPort.fromString(hostAndPort().get());
                 Preconditions.checkArgument(host.hasPort(),
-                        "Given hostname does not contain a port number: " + host);
+                        "Given hostname does not contain a port number: %s", host);
                 break;
             case DIRECT:
                 Preconditions.checkArgument(!hostAndPort().isPresent() && !credentials().isPresent(),
