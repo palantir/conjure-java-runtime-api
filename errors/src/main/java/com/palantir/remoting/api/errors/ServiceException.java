@@ -18,7 +18,7 @@ package com.palantir.remoting.api.errors;
 
 import com.palantir.logsafe.Arg;
 import com.palantir.logsafe.SafeLoggable;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -31,28 +31,29 @@ public final class ServiceException extends RuntimeException implements SafeLogg
     private final List<Arg<?>> args;  // unmodifiable
 
     private final String errorId = UUID.randomUUID().toString();
-    private final String fullMessage;
+    private final String safeMessage;
 
     /**
      * Creates a new exception for the given error. All {@link com.palantir.logsafe.SafeArg safe} parameters are
      * propagated to clients; they are serialized via {@link Object#toString}.
      */
     public ServiceException(ErrorType errorType, Arg<?>... parameters) {
-        this(errorType, null, Arrays.asList(parameters));
+        this(errorType, null, copyToList(parameters));
     }
 
     /** As above, but additionally records the cause of this exception. */
     public ServiceException(ErrorType errorType, @Nullable Throwable cause, Arg<?>... args) {
-        this(errorType, cause, Arrays.asList(args));
+        this(errorType, cause, copyToList(args));
     }
 
     private ServiceException(ErrorType errorType, @Nullable Throwable cause, List<Arg<?>> args) {
-        super(formatFullMessage(errorType, args), cause);
+        super(safeMessage(errorType, args), cause);
 
         // TODO(rfink): Memoize formatting?
         this.errorType = errorType;
+        // Note that instatiators cannot mutate List<> args since it comes through copyToList in all code paths.
         this.args = Collections.unmodifiableList(args);
-        this.fullMessage = formatFullMessage(errorType, args);
+        this.safeMessage = safeMessage(errorType, args);
     }
 
     /** The {@link ErrorType} that gave rise to this exception. */
@@ -67,22 +68,19 @@ public final class ServiceException extends RuntimeException implements SafeLogg
 
     @Override
     public String getMessage() {
-        return fullMessage;
+        return safeMessage;
     }
 
     @Override
     public String getLogMessage() {
-        return formatLogMessage(errorType);
+        return safeMessage;
     }
 
-    private static String formatLogMessage(ErrorType errorType) {
-        return errorType.code().name().equals(errorType.name())
+    private static String safeMessage(ErrorType errorType, List<Arg<?>> args) {
+        String message = errorType.code().name().equals(errorType.name())
                 ? String.format("ServiceException: %s", errorType.code())
                 : String.format("ServiceException: %s (%s)", errorType.code(), errorType.name());
-    }
 
-    private static String formatFullMessage(ErrorType errorType, List<Arg<?>> args) {
-        String message = formatLogMessage(errorType);
         if (args.isEmpty()) {
             return message;
         }
@@ -90,12 +88,14 @@ public final class ServiceException extends RuntimeException implements SafeLogg
         StringBuilder builder = new StringBuilder();
         builder.append(message).append(": {");
         for (int i = 0; i < args.size(); i++) {
-            if (i > 0) {
-                builder.append(", ");
-            }
-
             Arg<?> arg = args.get(i);
-            builder.append(arg.getName()).append("=").append(arg.getValue());
+            if (arg.isSafeForLogging()) {
+                if (i > 0) {
+                    builder.append(", ");
+                }
+
+                builder.append(arg.getName()).append("=").append(arg.getValue());
+            }
         }
         builder.append("}");
 
@@ -105,5 +105,11 @@ public final class ServiceException extends RuntimeException implements SafeLogg
     @Override
     public List<Arg<?>> getArgs() {
         return args;
+    }
+
+    private static <T> List<T> copyToList(T[] elements) {
+        ArrayList<T> list = new ArrayList<>(elements.length);
+        Collections.addAll(list, elements);
+        return list;
     }
 }

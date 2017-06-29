@@ -30,23 +30,16 @@ public final class ServiceExceptionTest {
     private static final String EXPECTED_ERROR_MSG = "ServiceException: CUSTOM (myDesc)";
 
     @Test
-    public void testExceptionMessageContainsSafeAndUnsafeArgs() {
+    public void testExceptionMessagesContainsSafeArgsOnly() {
         Arg<?>[] args = {
                 SafeArg.of("arg1", "foo"),
                 UnsafeArg.of("arg2", 2),
                 UnsafeArg.of("arg3", null)};
         ServiceException ex = new ServiceException(ERROR, args);
 
-        String expectedMessage = EXPECTED_ERROR_MSG + ": {arg1=foo, arg2=2, arg3=null}";
+        String expectedMessage = EXPECTED_ERROR_MSG + ": {arg1=foo}";
         assertThat(ex.getMessage()).isEqualTo(expectedMessage);
-    }
-
-    @Test
-    public void testExceptionLogMessageContainsNoArgs() {
-        Arg<?>[] args = {SafeArg.of("safeKey", "foo"), UnsafeArg.of("unsafeKey", 2)};
-        ServiceException ex = new ServiceException(ERROR, args);
-
-        assertThat(ex.getLogMessage()).isEqualTo(EXPECTED_ERROR_MSG);
+        assertThat(ex.getLogMessage()).isEqualTo(expectedMessage);
     }
 
     @Test
