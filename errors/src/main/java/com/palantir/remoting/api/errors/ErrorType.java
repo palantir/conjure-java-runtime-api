@@ -47,9 +47,9 @@ public abstract class ErrorType {
     public static final ErrorType UNKNOWN = createInternal(Code.UNKNOWN, "Unknown");
     public static final ErrorType PERMISSION_DENIED = createInternal(Code.PERMISSION_DENIED, "PermissionDenied");
     public static final ErrorType CLIENT_ERROR_INVALID_ARGUMENT =
-            createInternal(Code.CLIENT_ERROR_INVALID_ARGUMENT, "InvalidArgument");
+            createInternal(Code.CLIENT_ERROR_INVALID_ARGUMENT, "ClientErrorInvalidArgument");
     public static final ErrorType SERVER_ERROR_FAILED_PRECONDITION =
-            createInternal(Code.SERVER_ERROR_FAILED_PRECONDITION, "FailedPrecondition");
+            createInternal(Code.SERVER_ERROR_FAILED_PRECONDITION, "ServerErrorFailedPrecondition");
     public static final ErrorType INTERNAL = createInternal(Code.INTERNAL, "Internal");
 
     /** The {@link Code} of this error. */
