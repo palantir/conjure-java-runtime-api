@@ -25,7 +25,7 @@ public final class ErrorTypeTest {
 
     @Test
     public void testNameMustBeCamelCase() throws Exception {
-        assertThatThrownBy(() -> ErrorType.of(ErrorType.Code.FAILED_PRECONDITION, "foo"))
+        assertThatThrownBy(() -> ErrorType.of(ErrorType.Code.SERVER_ERROR_FAILED_PRECONDITION, "foo"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageStartingWith("ErrorType names must be UpperCamelCase: foo");
 
@@ -44,8 +44,8 @@ public final class ErrorTypeTest {
     public void testDefaultErrorTypeHttpErrorCodes() throws Exception {
         assertThat(ErrorType.UNKNOWN.httpErrorCode()).isEqualTo(500);
         assertThat(ErrorType.PERMISSION_DENIED.httpErrorCode()).isEqualTo(403);
-        assertThat(ErrorType.INVALID_ARGUMENT.httpErrorCode()).isEqualTo(400);
-        assertThat(ErrorType.FAILED_PRECONDITION.httpErrorCode()).isEqualTo(400);
+        assertThat(ErrorType.CLIENT_ERROR_INVALID_ARGUMENT.httpErrorCode()).isEqualTo(400);
+        assertThat(ErrorType.SERVER_ERROR_FAILED_PRECONDITION.httpErrorCode()).isEqualTo(500);
         assertThat(ErrorType.INTERNAL.httpErrorCode()).isEqualTo(500);
     }
 
@@ -68,9 +68,9 @@ public final class ErrorTypeTest {
 
     @Test
     public void testCanCreateNewErrorTypes() throws Exception {
-        ErrorType error = ErrorType.of(ErrorType.Code.FAILED_PRECONDITION, "MyDesc");
-        assertThat(error.code()).isEqualTo(ErrorType.Code.FAILED_PRECONDITION);
-        assertThat(error.httpErrorCode()).isEqualTo(400);
+        ErrorType error = ErrorType.of(ErrorType.Code.SERVER_ERROR_FAILED_PRECONDITION, "MyDesc");
+        assertThat(error.code()).isEqualTo(ErrorType.Code.SERVER_ERROR_FAILED_PRECONDITION);
+        assertThat(error.httpErrorCode()).isEqualTo(500);
         assertThat(error.name()).isEqualTo("MyDesc");
 
         assertThatThrownBy(() -> ErrorType.of(ErrorType.Code.CUSTOM, "MyDesc"))

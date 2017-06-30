@@ -32,8 +32,8 @@ public abstract class ErrorType {
     public enum Code {
         UNKNOWN(500),
         PERMISSION_DENIED(403),
-        INVALID_ARGUMENT(400),
-        FAILED_PRECONDITION(400),
+        CLIENT_ERROR_INVALID_ARGUMENT(400),
+        SERVER_ERROR_FAILED_PRECONDITION(500),
         INTERNAL(500),
         CUSTOM(null /* unused */);
 
@@ -46,8 +46,10 @@ public abstract class ErrorType {
 
     public static final ErrorType UNKNOWN = createInternal(Code.UNKNOWN, "Unknown");
     public static final ErrorType PERMISSION_DENIED = createInternal(Code.PERMISSION_DENIED, "PermissionDenied");
-    public static final ErrorType INVALID_ARGUMENT = createInternal(Code.INVALID_ARGUMENT, "InvalidArgument");
-    public static final ErrorType FAILED_PRECONDITION = createInternal(Code.FAILED_PRECONDITION, "FailedPrecondition");
+    public static final ErrorType CLIENT_ERROR_INVALID_ARGUMENT =
+            createInternal(Code.CLIENT_ERROR_INVALID_ARGUMENT, "InvalidArgument");
+    public static final ErrorType SERVER_ERROR_FAILED_PRECONDITION =
+            createInternal(Code.SERVER_ERROR_FAILED_PRECONDITION, "FailedPrecondition");
     public static final ErrorType INTERNAL = createInternal(Code.INTERNAL, "Internal");
 
     /** The {@link Code} of this error. */

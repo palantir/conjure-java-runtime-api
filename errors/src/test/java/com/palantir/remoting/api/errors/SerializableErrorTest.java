@@ -35,7 +35,7 @@ public final class SerializableErrorTest {
 
     @Test
     public void testExceptionToError() {
-        ErrorType error = ErrorType.FAILED_PRECONDITION;
+        ErrorType error = ErrorType.SERVER_ERROR_FAILED_PRECONDITION;
         ServiceException exception =
                 new ServiceException(error, SafeArg.of("safeKey", 42), UnsafeArg.of("foo", "bar"));
         SerializableError expected = new SerializableError.Builder()
