@@ -70,7 +70,7 @@ public final class ServiceException extends RuntimeException implements SafeLogg
 
     @Override
     public String getMessage() {
-        // Including safe args here since any logger not configured with safe-arg-logging will log this message.
+        // Including safe args here since any logger not configured with safe-logging will log this message.
         return safeMessage;
     }
 
