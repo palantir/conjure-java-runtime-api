@@ -32,6 +32,7 @@ public final class ServiceException extends RuntimeException implements SafeLogg
 
     private final String errorId = UUID.randomUUID().toString();
     private final String safeMessage;
+    private final String noArgsMessage;
 
     /**
      * Creates a new exception for the given error. All {@link com.palantir.logsafe.SafeArg safe} parameters are
@@ -48,12 +49,13 @@ public final class ServiceException extends RuntimeException implements SafeLogg
 
     private ServiceException(ErrorType errorType, @Nullable Throwable cause, List<Arg<?>> args) {
         // TODO(rfink): Memoize formatting?
-        super(safeMessage(errorType, args), cause);
+        super(renderSafeMessage(errorType, args), cause);
 
         this.errorType = errorType;
         // Note that instantiators cannot mutate List<> args since it comes through copyToList in all code paths.
         this.args = Collections.unmodifiableList(args);
-        this.safeMessage = safeMessage(errorType, args);
+        this.safeMessage = renderSafeMessage(errorType, args);
+        this.noArgsMessage = renderNoArgsMessage(errorType);
     }
 
     /** The {@link ErrorType} that gave rise to this exception. */
@@ -68,18 +70,18 @@ public final class ServiceException extends RuntimeException implements SafeLogg
 
     @Override
     public String getMessage() {
+        // Including safe args here since any logger not configured with safe-arg-logging will log this message.
         return safeMessage;
     }
 
     @Override
     public String getLogMessage() {
-        return safeMessage;
+        // Not returning safe args here since the safe-logging framework will log this message + args explicitly.
+        return noArgsMessage;
     }
 
-    private static String safeMessage(ErrorType errorType, List<Arg<?>> args) {
-        String message = errorType.code().name().equals(errorType.name())
-                ? String.format("ServiceException: %s", errorType.code())
-                : String.format("ServiceException: %s (%s)", errorType.code(), errorType.name());
+    private static String renderSafeMessage(ErrorType errorType, List<Arg<?>> args) {
+        String message = renderNoArgsMessage(errorType);
 
         if (args.isEmpty()) {
             return message;
@@ -100,6 +102,12 @@ public final class ServiceException extends RuntimeException implements SafeLogg
         builder.append("}");
 
         return builder.toString();
+    }
+
+    private static String renderNoArgsMessage(ErrorType errorType) {
+        return errorType.code().name().equals(errorType.name())
+                ? String.format("ServiceException: %s", errorType.code())
+                : String.format("ServiceException: %s (%s)", errorType.code(), errorType.name());
     }
 
     @Override
