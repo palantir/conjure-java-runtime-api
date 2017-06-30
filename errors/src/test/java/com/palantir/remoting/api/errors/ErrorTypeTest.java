@@ -28,9 +28,16 @@ public final class ErrorTypeTest {
         assertThatThrownBy(() -> ErrorType.of(ErrorType.Code.FAILED_PRECONDITION, "foo"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageStartingWith("ErrorType names must be UpperCamelCase: foo");
+
         assertThatThrownBy(() -> ErrorType.custom("foo", 400))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageStartingWith("ErrorType names must be UpperCamelCase: foo");
+        assertThatThrownBy(() -> ErrorType.custom("fooBar", 400))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageStartingWith("ErrorType names must be UpperCamelCase: fooBar");
+        assertThatThrownBy(() -> ErrorType.custom("", 400))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageStartingWith("ErrorType names must be UpperCamelCase: ");
     }
 
     @Test
