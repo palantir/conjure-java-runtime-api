@@ -24,6 +24,23 @@ import org.junit.Test;
 public final class ErrorTypeTest {
 
     @Test
+    public void testNameMustBeCamelCase() throws Exception {
+        assertThatThrownBy(() -> ErrorType.of(ErrorType.Code.FAILED_PRECONDITION, "foo"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageStartingWith("ErrorType names must be UpperCamelCase: foo");
+
+        assertThatThrownBy(() -> ErrorType.custom("foo", 400))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageStartingWith("ErrorType names must be UpperCamelCase: foo");
+        assertThatThrownBy(() -> ErrorType.custom("fooBar", 400))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageStartingWith("ErrorType names must be UpperCamelCase: fooBar");
+        assertThatThrownBy(() -> ErrorType.custom("", 400))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageStartingWith("ErrorType names must be UpperCamelCase: ");
+    }
+
+    @Test
     public void testDefaultErrorTypeHttpErrorCodes() throws Exception {
         assertThat(ErrorType.UNKNOWN.httpErrorCode()).isEqualTo(500);
         assertThat(ErrorType.PERMISSION_DENIED.httpErrorCode()).isEqualTo(403);
@@ -34,29 +51,29 @@ public final class ErrorTypeTest {
 
     @Test
     public void testCustomErrors() throws Exception {
-        ErrorType custom400 = ErrorType.custom("myDesc", 400);
+        ErrorType custom400 = ErrorType.custom("MyDesc", 400);
         assertThat(custom400.code()).isEqualTo(ErrorType.Code.CUSTOM);
         assertThat(custom400.httpErrorCode()).isEqualTo(400);
-        assertThat(custom400.name()).isEqualTo("myDesc");
+        assertThat(custom400.name()).isEqualTo("MyDesc");
 
-        ErrorType custom500 = ErrorType.custom("myDesc", 500);
+        ErrorType custom500 = ErrorType.custom("MyDesc", 500);
         assertThat(custom500.code()).isEqualTo(ErrorType.Code.CUSTOM);
         assertThat(custom500.httpErrorCode()).isEqualTo(500);
-        assertThat(custom500.name()).isEqualTo("myDesc");
+        assertThat(custom500.name()).isEqualTo("MyDesc");
 
-        assertThatThrownBy(() -> ErrorType.custom("myDesc", 403))
+        assertThatThrownBy(() -> ErrorType.custom("MyDesc", 403))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("CUSTOM ErrorTypes must have HTTP error code 400 or 500");
     }
 
     @Test
     public void testCanCreateNewErrorTypes() throws Exception {
-        ErrorType error = ErrorType.of(ErrorType.Code.FAILED_PRECONDITION, "myDesc");
+        ErrorType error = ErrorType.of(ErrorType.Code.FAILED_PRECONDITION, "MyDesc");
         assertThat(error.code()).isEqualTo(ErrorType.Code.FAILED_PRECONDITION);
         assertThat(error.httpErrorCode()).isEqualTo(400);
-        assertThat(error.name()).isEqualTo("myDesc");
+        assertThat(error.name()).isEqualTo("MyDesc");
 
-        assertThatThrownBy(() -> ErrorType.of(ErrorType.Code.CUSTOM, "myDesc"))
+        assertThatThrownBy(() -> ErrorType.of(ErrorType.Code.CUSTOM, "MyDesc"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Use the custom() method to construct ErrorTypes with code CUSTOM");
     }
