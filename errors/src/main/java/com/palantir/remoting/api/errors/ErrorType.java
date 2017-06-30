@@ -16,6 +16,7 @@
 
 package com.palantir.remoting.api.errors;
 
+import java.util.regex.Pattern;
 import org.immutables.value.Value;
 
 /**
@@ -25,6 +26,8 @@ import org.immutables.value.Value;
 @Value.Immutable
 @ImmutablesStyle
 public abstract class ErrorType {
+
+    private static final Pattern UPPER_CAMEL_CASE = Pattern.compile("([A-Z][a-z]+)+");
 
     public enum Code {
         UNKNOWN(500),
@@ -41,11 +44,11 @@ public abstract class ErrorType {
         }
     }
 
-    public static final ErrorType UNKNOWN = create(Code.UNKNOWN);
-    public static final ErrorType PERMISSION_DENIED = create(Code.PERMISSION_DENIED);
-    public static final ErrorType INVALID_ARGUMENT = create(Code.INVALID_ARGUMENT);
-    public static final ErrorType FAILED_PRECONDITION = create(Code.FAILED_PRECONDITION);
-    public static final ErrorType INTERNAL = create(Code.INTERNAL);
+    public static final ErrorType UNKNOWN = createInternal(Code.UNKNOWN, "Unknown");
+    public static final ErrorType PERMISSION_DENIED = createInternal(Code.PERMISSION_DENIED, "PermissionDenied");
+    public static final ErrorType INVALID_ARGUMENT = createInternal(Code.INVALID_ARGUMENT, "InvalidArgument");
+    public static final ErrorType FAILED_PRECONDITION = createInternal(Code.FAILED_PRECONDITION, "FailedPrecondition");
+    public static final ErrorType INTERNAL = createInternal(Code.INTERNAL, "Internal");
 
     /** The {@link Code} of this error. */
     public abstract Code code();
@@ -58,6 +61,13 @@ public abstract class ErrorType {
 
     /** The HTTP error code used to convey this error to HTTP clients. */
     public abstract int httpErrorCode();
+
+    @Value.Check
+    final void check() {
+        if (!UPPER_CAMEL_CASE.matcher(name()).matches()) {
+            throw new IllegalArgumentException("ErrorType names must be UpperCamelCase: " + name());
+        }
+    }
 
     /**
      * Creates a new error type with the given name and HTTP error code, and error type{@link Code#CUSTOM}.
@@ -82,17 +92,13 @@ public abstract class ErrorType {
         if (code == Code.CUSTOM) {
             throw new IllegalArgumentException("Use the custom() method to construct ErrorTypes with code CUSTOM");
         }
+        return createInternal(code, name);
+    }
+
+    private static ErrorType createInternal(Code code, String name) {
         return ImmutableErrorType.builder()
                 .code(code)
                 .name(name)
-                .httpErrorCode(code.httpErrorCode)
-                .build();
-    }
-
-    private static ErrorType create(Code code) {
-        return ImmutableErrorType.builder()
-                .code(code)
-                .name(code.name())
                 .httpErrorCode(code.httpErrorCode)
                 .build();
     }
