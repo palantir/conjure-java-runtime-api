@@ -25,56 +25,56 @@ public final class ErrorTypeTest {
 
     @Test
     public void testNameMustBeCamelCase() throws Exception {
-        assertThatThrownBy(() -> ErrorType.of(ErrorType.Code.SERVER_ERROR_FAILED_PRECONDITION, "foo"))
+        assertThatThrownBy(() -> ErrorType.create(ErrorType.Code.FAILED_PRECONDITION, "foo"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageStartingWith("ErrorType names must be UpperCamelCase: foo");
 
-        assertThatThrownBy(() -> ErrorType.custom("foo", 400))
+        assertThatThrownBy(() -> ErrorType.client("foo"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageStartingWith("ErrorType names must be UpperCamelCase: foo");
-        assertThatThrownBy(() -> ErrorType.custom("fooBar", 400))
+        assertThatThrownBy(() -> ErrorType.client("fooBar"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageStartingWith("ErrorType names must be UpperCamelCase: fooBar");
-        assertThatThrownBy(() -> ErrorType.custom("", 400))
+        assertThatThrownBy(() -> ErrorType.client(""))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageStartingWith("ErrorType names must be UpperCamelCase: ");
     }
 
     @Test
     public void testDefaultErrorTypeHttpErrorCodes() throws Exception {
-        assertThat(ErrorType.UNKNOWN.httpErrorCode()).isEqualTo(500);
         assertThat(ErrorType.PERMISSION_DENIED.httpErrorCode()).isEqualTo(403);
-        assertThat(ErrorType.CLIENT_ERROR_INVALID_ARGUMENT.httpErrorCode()).isEqualTo(400);
-        assertThat(ErrorType.SERVER_ERROR_FAILED_PRECONDITION.httpErrorCode()).isEqualTo(500);
+        assertThat(ErrorType.INVALID_ARGUMENT.httpErrorCode()).isEqualTo(400);
+        assertThat(ErrorType.FAILED_PRECONDITION.httpErrorCode()).isEqualTo(500);
         assertThat(ErrorType.INTERNAL.httpErrorCode()).isEqualTo(500);
     }
 
     @Test
     public void testCustomErrors() throws Exception {
-        ErrorType custom400 = ErrorType.custom("MyDesc", 400);
-        assertThat(custom400.code()).isEqualTo(ErrorType.Code.CUSTOM);
-        assertThat(custom400.httpErrorCode()).isEqualTo(400);
-        assertThat(custom400.name()).isEqualTo("MyDesc");
+        ErrorType customClient = ErrorType.client("MyDesc");
+        assertThat(customClient.code()).isEqualTo(ErrorType.Code.CUSTOM_CLIENT);
+        assertThat(customClient.httpErrorCode()).isEqualTo(400);
+        assertThat(customClient.name()).isEqualTo("MyDesc");
 
-        ErrorType custom500 = ErrorType.custom("MyDesc", 500);
-        assertThat(custom500.code()).isEqualTo(ErrorType.Code.CUSTOM);
-        assertThat(custom500.httpErrorCode()).isEqualTo(500);
-        assertThat(custom500.name()).isEqualTo("MyDesc");
-
-        assertThatThrownBy(() -> ErrorType.custom("MyDesc", 403))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("CUSTOM ErrorTypes must have HTTP error code 400 or 500");
+        ErrorType customServer = ErrorType.server("MyDesc");
+        assertThat(customServer.code()).isEqualTo(ErrorType.Code.CUSTOM_SERVER);
+        assertThat(customServer.httpErrorCode()).isEqualTo(500);
+        assertThat(customServer.name()).isEqualTo("MyDesc");
     }
 
     @Test
     public void testCanCreateNewErrorTypes() throws Exception {
-        ErrorType error = ErrorType.of(ErrorType.Code.SERVER_ERROR_FAILED_PRECONDITION, "MyDesc");
-        assertThat(error.code()).isEqualTo(ErrorType.Code.SERVER_ERROR_FAILED_PRECONDITION);
+        ErrorType error = ErrorType.create(ErrorType.Code.FAILED_PRECONDITION, "MyDesc");
+        assertThat(error.code()).isEqualTo(ErrorType.Code.FAILED_PRECONDITION);
         assertThat(error.httpErrorCode()).isEqualTo(500);
         assertThat(error.name()).isEqualTo("MyDesc");
 
-        assertThatThrownBy(() -> ErrorType.of(ErrorType.Code.CUSTOM, "MyDesc"))
+        assertThatThrownBy(() -> ErrorType.create(ErrorType.Code.CUSTOM_CLIENT, "MyDesc"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Use the custom() method to construct ErrorTypes with code CUSTOM");
+                .hasMessage("Use the client() or server() methods to construct ErrorTypes with code CUSTOM_CLIENT "
+                        + "or CUSTOM_SERVER");
+        assertThatThrownBy(() -> ErrorType.create(ErrorType.Code.CUSTOM_SERVER, "MyDesc"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Use the client() or server() methods to construct ErrorTypes with code CUSTOM_CLIENT "
+                        + "or CUSTOM_SERVER");
     }
 }
