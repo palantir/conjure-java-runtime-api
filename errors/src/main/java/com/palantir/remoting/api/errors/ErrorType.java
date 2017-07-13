@@ -20,8 +20,10 @@ import java.util.regex.Pattern;
 import org.immutables.value.Value;
 
 /**
- * Represents errors by code and name. {@link ErrorType} instance are meant to be compile-time constants in
- * the sense that the name should not contain information that is available at runtime only.
+ * Represents errors by code and name. {@link ErrorType} instance are meant to be compile-time constants in the sense
+ * that the name should not contain information that is available at runtime only. By convention, and in alignment with
+ * the HTTP specification, errors associated with a {@code 4xx} HTTP status code are client errors, and errors
+ * associated with a {@code 5xx} status are server errors.
  */
 @Value.Immutable
 @ImmutablesStyle
@@ -30,12 +32,12 @@ public abstract class ErrorType {
     private static final Pattern UPPER_CAMEL_CASE = Pattern.compile("([A-Z][a-z]+)+");
 
     public enum Code {
-        UNKNOWN(500),
         PERMISSION_DENIED(403),
         INVALID_ARGUMENT(400),
-        FAILED_PRECONDITION(400),
+        FAILED_PRECONDITION(500),
         INTERNAL(500),
-        CUSTOM(null /* unused */);
+        CUSTOM_CLIENT(400),
+        CUSTOM_SERVER(500);
 
         private final Integer httpErrorCode; // boxed so that we fail loudly if someone accesses CUSTOM.httpErrorCode
 
@@ -44,7 +46,6 @@ public abstract class ErrorType {
         }
     }
 
-    public static final ErrorType UNKNOWN = createInternal(Code.UNKNOWN, "Unknown");
     public static final ErrorType PERMISSION_DENIED = createInternal(Code.PERMISSION_DENIED, "PermissionDenied");
     public static final ErrorType INVALID_ARGUMENT = createInternal(Code.INVALID_ARGUMENT, "InvalidArgument");
     public static final ErrorType FAILED_PRECONDITION = createInternal(Code.FAILED_PRECONDITION, "FailedPrecondition");
@@ -70,27 +71,27 @@ public abstract class ErrorType {
     }
 
     /**
-     * Creates a new error type with the given name and HTTP error code, and error type{@link Code#CUSTOM}.
-     * Allowed error codes are {@code 400 BAD REQUEST} and {@code 500 INTERNAL SERVER ERROR}.
+     * Creates a new error type with code {@link Code#CUSTOM_CLIENT} and the given name.
      */
-    public static ErrorType custom(String name, int httpErrorCode) {
-        if (httpErrorCode != 400 && httpErrorCode != 500) {
-            throw new IllegalArgumentException("CUSTOM ErrorTypes must have HTTP error code 400 or 500");
-        }
-        return ImmutableErrorType.builder()
-                .code(Code.CUSTOM)
-                .name(name)
-                .httpErrorCode(httpErrorCode)
-                .build();
+    public static ErrorType client(String name) {
+        return createInternal(Code.CUSTOM_CLIENT, name);
+    }
+
+    /**
+     * Creates a new error type with code {@link Code#CUSTOM_SERVER} and the given name.
+     */
+    public static ErrorType server(String name) {
+        return createInternal(Code.CUSTOM_SERVER, name);
     }
 
     /**
      * Constructs an {@link ErrorType} with the given error {@link Code} and name. Cannot use the {@link
-     * Code#CUSTOM} error code, see {@link #custom} instead.
+     * Code#CUSTOM_CLIENT} or {@link Code#CUSTOM_SERVER} error codes, see {@link #client} and {@link #server} instead.
      */
-    public static ErrorType of(Code code, String name) {
-        if (code == Code.CUSTOM) {
-            throw new IllegalArgumentException("Use the custom() method to construct ErrorTypes with code CUSTOM");
+    public static ErrorType create(Code code, String name) {
+        if (code == Code.CUSTOM_CLIENT || code == Code.CUSTOM_SERVER) {
+            throw new IllegalArgumentException("Use the client() or server() methods to construct "
+                    + "ErrorTypes with code CUSTOM_CLIENT or CUSTOM_SERVER");
         }
         return createInternal(code, name);
     }

@@ -26,8 +26,8 @@ import org.junit.Test;
 
 public final class ServiceExceptionTest {
 
-    private static final ErrorType ERROR = ErrorType.custom("MyDesc", 400);
-    private static final String EXPECTED_ERROR_MSG = "ServiceException: CUSTOM (MyDesc)";
+    private static final ErrorType ERROR = ErrorType.client("MyDesc");
+    private static final String EXPECTED_ERROR_MSG = "ServiceException: CUSTOM_CLIENT (MyDesc)";
 
     @Test
     public void testExceptionMessageContainsNoArgs_safeLogMessageContainsSafeArgsOnly() {
