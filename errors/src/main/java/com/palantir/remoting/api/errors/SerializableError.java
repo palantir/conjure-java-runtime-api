@@ -86,7 +86,7 @@ public abstract class SerializableError implements Serializable {
      * @deprecated Used by the serialization-mechanism for back-compat only. Do not use.
      */
     @Deprecated
-    @Value.Derived
+    @Value.Default
     @JsonProperty("message")
     @SuppressWarnings("checkstyle:designforextension")
     // TODO(rfink): Remove once all error producers have switched to errorName.
@@ -115,12 +115,12 @@ public abstract class SerializableError implements Serializable {
     // TODO(rfink): Remove once all error producers have switched to errorCode/errorName.
     public static final class Builder extends ImmutableSerializableError.Builder {
         @JsonProperty("exceptionClass")
-        Builder exceptionClass(String exceptionClass) {
+        Builder doNotUseExceptionClass(String exceptionClass) {
             return errorCode(exceptionClass);
         }
 
         @JsonProperty("message")
-        Builder message(String message) {
+        Builder doNotUseMessage(String message) {
             return errorName(message);
         }
     }
