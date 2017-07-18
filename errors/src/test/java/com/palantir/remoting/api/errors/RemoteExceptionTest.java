@@ -28,6 +28,7 @@ public final class RemoteExceptionTest {
         SerializableError error = new SerializableError.Builder()
                 .errorCode("errorCode")
                 .errorName("errorName")
+                .errorId("errorId")
                 .build();
         RemoteException expected = new RemoteException(error, 500);
         RemoteException actual = SerializationUtils.deserialize(SerializationUtils.serialize(expected));
@@ -39,12 +40,14 @@ public final class RemoteExceptionTest {
         SerializableError error = new SerializableError.Builder()
                 .errorCode("errorCode")
                 .errorName("errorName")
+                .errorId("errorId")
                 .build();
         assertThat(new RemoteException(error, 500).getMessage()).isEqualTo("RemoteException: errorCode (errorName)");
 
         error = new SerializableError.Builder()
                 .errorCode("errorCode")
                 .errorName("errorCode")
+                .errorId("errorId")
                 .build();
         assertThat(new RemoteException(error, 500).getMessage()).isEqualTo("RemoteException: errorCode");
     }
