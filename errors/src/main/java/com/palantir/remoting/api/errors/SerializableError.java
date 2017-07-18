@@ -52,7 +52,8 @@ public abstract class SerializableError implements Serializable {
      * error name via {@link RemoteException#getError} and typically switch&dispatch on the error code and/or name.
      */
     @JsonProperty("errorName")
-    // TODO(rfink): errorName() and message() are mutual delagates. This is a bit of a hack.
+    // TODO(rfink): errorName and message are mutual delagates so that they can be either set independently or one
+    // inherits from the other. This is quite a hack and should be removed when we remove support for the message field.
     @Value.Default
     public String errorName() {
         return getMessage();
