@@ -41,7 +41,7 @@ public final class SerializableErrorTest {
         SerializableError expected = new SerializableError.Builder()
                 .errorCode(error.code().name())
                 .errorName(error.name())
-                .putParameters("errorId", exception.getErrorId())
+                .errorInstanceId(exception.getErrorInstanceId())
                 .putParameters("safeKey", "42")
                 .build();
         assertThat(SerializableError.forException(exception)).isEqualTo(expected);
@@ -50,15 +50,27 @@ public final class SerializableErrorTest {
     @Test
     public void testSerializationContainsRedundantParameters() throws Exception {
         assertThat(mapper.writeValueAsString(ERROR))
-                .isEqualTo("{\"errorCode\":\"code\",\"errorName\":\"name\",\"parameters\":{},"
+                .isEqualTo("{\"errorCode\":\"code\",\"errorName\":\"name\",\"errorId\":\"\",\"parameters\":{},"
+                        + "\"exceptionClass\":\"code\",\"message\":\"name\"}");
+
+        assertThat(mapper.writeValueAsString(
+                SerializableError.builder().from(ERROR).errorInstanceId("errorId").build()))
+                .isEqualTo("{\"errorCode\":\"code\",\"errorName\":\"name\",\"errorId\":\"errorId\",\"parameters\":{},"
                         + "\"exceptionClass\":\"code\",\"message\":\"name\"}");
     }
 
     @Test
-    public void testDeserializesWithWhenRedundantParamerersAreGiven() throws Exception {
+    public void testDeserializesWhenRedundantParamerersAreGiven() throws Exception {
         String serialized =
                 "{\"errorCode\":\"code\",\"errorName\":\"name\",\"exceptionClass\":\"code\",\"message\":\"name\"}";
         assertThat(deserialize(serialized)).isEqualTo(ERROR);
+    }
+
+    @Test
+    public void testDeserializesWhenExplicitErrorIdIsGiven() throws Exception {
+        String serialized = "{\"errorCode\":\"code\",\"errorName\":\"name\",\"errorId\":\"errorId\"}";
+        assertThat(deserialize(serialized))
+                .isEqualTo(SerializableError.builder().from(ERROR).errorInstanceId("errorId").build());
     }
 
     @Test

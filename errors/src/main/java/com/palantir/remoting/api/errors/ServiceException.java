@@ -30,7 +30,7 @@ public final class ServiceException extends RuntimeException implements SafeLogg
     private final ErrorType errorType;
     private final List<Arg<?>> args;  // unmodifiable
 
-    private final String errorId = UUID.randomUUID().toString();
+    private final String errorInstanceId = UUID.randomUUID().toString();
     private final String safeMessage;
     private final String noArgsMessage;
 
@@ -63,9 +63,9 @@ public final class ServiceException extends RuntimeException implements SafeLogg
         return errorType;
     }
 
-    /** A unique identifier for this error. */
-    public String getErrorId() {
-        return errorId;
+    /** A unique identifier for (this instance of) this error. */
+    public String getErrorInstanceId() {
+        return errorInstanceId;
     }
 
     @Override

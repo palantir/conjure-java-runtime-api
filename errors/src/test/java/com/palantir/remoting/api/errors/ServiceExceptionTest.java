@@ -69,8 +69,8 @@ public final class ServiceExceptionTest {
 
     @Test
     public void testErrorIdsAreUnique() {
-        UUID errorId1 = UUID.fromString(new ServiceException(ERROR).getErrorId());
-        UUID errorId2 = UUID.fromString(new ServiceException(ERROR).getErrorId());
+        UUID errorId1 = UUID.fromString(new ServiceException(ERROR).getErrorInstanceId());
+        UUID errorId2 = UUID.fromString(new ServiceException(ERROR).getErrorInstanceId());
 
         assertThat(errorId1).isNotEqualTo(errorId2);
     }
