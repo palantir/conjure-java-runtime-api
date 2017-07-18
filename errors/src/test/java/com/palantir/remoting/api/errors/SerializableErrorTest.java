@@ -51,13 +51,13 @@ public final class SerializableErrorTest {
     @Test
     public void testSerializationContainsRedundantParameters() throws Exception {
         assertThat(mapper.writeValueAsString(ERROR))
-                .isEqualTo("{\"errorCode\":\"code\",\"errorName\":\"name\",\"errorId\":\"\",\"parameters\":{},"
+                .isEqualTo("{\"errorCode\":\"code\",\"errorName\":\"name\",\"errorInstanceId\":\"\",\"parameters\":{},"
                         + "\"exceptionClass\":\"code\",\"message\":\"name\"}");
 
         assertThat(mapper.writeValueAsString(
                 SerializableError.builder().from(ERROR).errorInstanceId("errorId").build()))
-                .isEqualTo("{\"errorCode\":\"code\",\"errorName\":\"name\",\"errorId\":\"errorId\",\"parameters\":{},"
-                        + "\"exceptionClass\":\"code\",\"message\":\"name\"}");
+                .isEqualTo("{\"errorCode\":\"code\",\"errorName\":\"name\",\"errorInstanceId\":\"errorId\""
+                        + ",\"parameters\":{},\"exceptionClass\":\"code\",\"message\":\"name\"}");
     }
 
     @Test
@@ -69,7 +69,7 @@ public final class SerializableErrorTest {
 
     @Test
     public void testDeserializesWhenExplicitErrorIdIsGiven() throws Exception {
-        String serialized = "{\"errorCode\":\"code\",\"errorName\":\"name\",\"errorId\":\"errorId\"}";
+        String serialized = "{\"errorCode\":\"code\",\"errorName\":\"name\",\"errorInstanceId\":\"errorId\"}";
         assertThat(deserialize(serialized))
                 .isEqualTo(SerializableError.builder().from(ERROR).errorInstanceId("errorId").build());
     }

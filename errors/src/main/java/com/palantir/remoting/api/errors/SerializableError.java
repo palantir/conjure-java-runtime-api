@@ -65,7 +65,7 @@ public abstract class SerializableError implements Serializable {
      * #errorName}, the {@link #errorInstanceId} identifies a specific occurrence of an error, not a class of errors. By
      * convention, this field is a UUID.
      */
-    @JsonProperty("errorId")
+    @JsonProperty("errorInstanceId")
     @Value.Default
     @SuppressWarnings("checkstyle:designforextension")
     public String errorInstanceId() {
