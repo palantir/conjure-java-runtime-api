@@ -105,9 +105,7 @@ public final class ServiceException extends RuntimeException implements SafeLogg
     }
 
     private static String renderNoArgsMessage(ErrorType errorType) {
-        return errorType.code().name().equals(errorType.name())
-                ? String.format("ServiceException: %s", errorType.code())
-                : String.format("ServiceException: %s (%s)", errorType.code(), errorType.name());
+        return String.format("ServiceException: %s (%s)", errorType.code(), errorType.name());
     }
 
     @Override
