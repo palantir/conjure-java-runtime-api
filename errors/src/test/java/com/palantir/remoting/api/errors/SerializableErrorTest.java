@@ -17,6 +17,7 @@
 package com.palantir.remoting.api.errors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.palantir.logsafe.SafeArg;
@@ -77,6 +78,14 @@ public final class SerializableErrorTest {
     public void testDeserializesWithDefaultNamesOnly() throws Exception {
         String serialized = "{\"errorCode\":\"code\",\"errorName\":\"name\"}";
         assertThat(deserialize(serialized)).isEqualTo(ERROR);
+    }
+
+    @Test
+    public void testDeserializationFailsWhenNeitherErrorNameNorMessageIsSet() throws Exception {
+        String serialized = "{\"errorCode\":\"code\"}";
+        assertThatThrownBy(() -> deserialize(serialized))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("Cannot build SerializableError, attribute initializers form cycle[errorName, message]");
     }
 
     @Test

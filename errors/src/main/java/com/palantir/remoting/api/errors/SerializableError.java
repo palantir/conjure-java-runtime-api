@@ -52,7 +52,11 @@ public abstract class SerializableError implements Serializable {
      * error name via {@link RemoteException#getError} and typically switch&dispatch on the error code and/or name.
      */
     @JsonProperty("errorName")
-    public abstract String errorName();
+    // TODO(rfink): errorName() and message() are mutual delagates. This is a bit of a hack.
+    @Value.Default
+    public String errorName() {
+        return getMessage();
+    }
 
     /**
      * A unique identifier for this error instance, typically used to correlate errors displayed in user-facing
@@ -117,11 +121,6 @@ public abstract class SerializableError implements Serializable {
         @JsonProperty("exceptionClass")
         Builder doNotUseExceptionClass(String exceptionClass) {
             return errorCode(exceptionClass);
-        }
-
-        @JsonProperty("message")
-        Builder doNotUseMessage(String message) {
-            return errorName(message);
         }
     }
 
