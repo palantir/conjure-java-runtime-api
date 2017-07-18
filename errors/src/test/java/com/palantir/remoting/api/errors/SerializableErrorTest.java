@@ -85,6 +85,15 @@ public final class SerializableErrorTest {
         assertThat(deserialize(serialized)).isEqualTo(ERROR);
     }
 
+    @Test
+    public void testDeserializesWithWhenObsoleteMessageIsGiven() throws Exception {
+        String serialized = "{\"errorCode\":\"code\",\"errorName\":\"name\",\"message\":\"obsolete-message\"}";
+        assertThat(deserialize(serialized)).isEqualTo(SerializableError.builder()
+                .from(ERROR)
+                .message("obsolete-message")
+                .build());
+    }
+
     private static SerializableError deserialize(String serialized) throws IOException {
         return mapper.readValue(serialized, SerializableError.class);
     }
