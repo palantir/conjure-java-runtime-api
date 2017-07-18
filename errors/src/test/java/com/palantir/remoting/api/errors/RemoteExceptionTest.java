@@ -25,14 +25,24 @@ public final class RemoteExceptionTest {
 
     @Test
     public void testJavaSerialization() {
+        // With explicit error instance
         SerializableError error = new SerializableError.Builder()
                 .errorCode("errorCode")
                 .errorName("errorName")
-                .errorId("errorId")
+                .errorInstanceId("errorId")
                 .build();
         RemoteException expected = new RemoteException(error, 500);
         RemoteException actual = SerializationUtils.deserialize(SerializationUtils.serialize(expected));
-        assertThat(expected).isEqualToComparingFieldByField(actual);
+        assertThat(actual).isEqualToComparingFieldByField(expected);
+
+        // Without error instance
+        error = new SerializableError.Builder()
+                .errorCode("errorCode")
+                .errorName("errorName")
+                .build();
+        expected = new RemoteException(error, 500);
+        actual = SerializationUtils.deserialize(SerializationUtils.serialize(expected));
+        assertThat(actual).isEqualToComparingFieldByField(expected);
     }
 
     @Test
@@ -40,14 +50,14 @@ public final class RemoteExceptionTest {
         SerializableError error = new SerializableError.Builder()
                 .errorCode("errorCode")
                 .errorName("errorName")
-                .errorId("errorId")
+                .errorInstanceId("errorId")
                 .build();
         assertThat(new RemoteException(error, 500).getMessage()).isEqualTo("RemoteException: errorCode (errorName)");
 
         error = new SerializableError.Builder()
                 .errorCode("errorCode")
                 .errorName("errorCode")
-                .errorId("errorId")
+                .errorInstanceId("errorId")
                 .build();
         assertThat(new RemoteException(error, 500).getMessage()).isEqualTo("RemoteException: errorCode");
     }

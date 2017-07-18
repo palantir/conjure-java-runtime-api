@@ -55,14 +55,16 @@ public abstract class SerializableError implements Serializable {
     public abstract String errorName();
 
     /**
-     * A unique identifier for this error, typically used to correlate errors displayed in user-facing applications
-     * with richer backend-level error information. By convention, this field is a UUID.
+     * A unique identifier for this error instance, typically used to correlate errors displayed in user-facing
+     * applications with richer backend-level error information. In contrast to {@link #errorCode} and {@link
+     * #errorName}, the {@link #errorInstanceId} identifies a specific occurrence of an error, not a class of errors. By
+     * convention, this field is a UUID.
      */
     @JsonProperty("errorId")
     @Value.Default
     @SuppressWarnings("checkstyle:designforextension")
-    public String errorId() {
-        return "UNKNOWN";
+    public String errorInstanceId() {
+        return "";
     }
 
     /** A set of parameters that further explain the error. */
@@ -100,7 +102,7 @@ public abstract class SerializableError implements Serializable {
         Builder builder = new Builder()
                 .errorCode(exception.getErrorType().code().name())
                 .errorName(exception.getErrorType().name())
-                .errorId(exception.getErrorId());
+                .errorInstanceId(exception.getErrorInstanceId());
         for (Arg<?> arg : exception.getArgs()) {
             if (arg.isSafeForLogging()) {
                 builder.putParameters(arg.getName(), arg.getValue().toString());
