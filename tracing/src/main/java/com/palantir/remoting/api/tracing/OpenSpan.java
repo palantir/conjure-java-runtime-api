@@ -1,0 +1,67 @@
+/*
+ * Copyright 2017 Palantir Technologies, Inc. All rights reserved.
+ */
+
+package com.palantir.remoting.api.tracing;
+
+import java.util.Optional;
+import org.immutables.value.Value;
+
+/**
+ * A value object represented an open (i.e., non-completed) span. Once completed, the span is represented by a {@link
+ * Span} object.
+ */
+@Value.Immutable
+@Value.Style(visibility = Value.Style.ImplementationVisibility.PACKAGE)
+public abstract class OpenSpan {
+
+    /**
+     * Returns a description of the operation for this event.
+     */
+    public abstract String getOperation();
+
+    /**
+     * Returns the start time in microseconds since epoch start of the span represented by this state.
+     * <p>
+     * Users of this class should not set this value manually in the builder, it is configured automatically when using
+     * the {@link #builder()} static.
+     */
+    public abstract long getStartTimeMicroSeconds();
+
+    /**
+     * Returns the starting clock position in nanoseconds for use in computing span duration.
+     * <p>
+     * Users of this class should not set this value manually in the builder, it is configured automatically when using
+     * the {@link #builder()} static.
+     */
+    public abstract long getStartClockNanoSeconds();
+
+    /**
+     * Returns the identifier of the parent span for the current span, if one exists.
+     */
+    public abstract Optional<String> getParentSpanId();
+
+    /**
+     * Returns a globally unique identifier representing a single span within the call trace.
+     */
+    public abstract String getSpanId();
+
+    /** Indicates the {@link SpanType} of this span, e.g., a server-side vs. client-side vs local span. */
+    public abstract SpanType type();
+
+    /**
+     * Indicates if this trace state was sampled public abstract boolean isSampled();
+     * <p>
+     * /** Returns a builder for {@link OpenSpan} pre-initialized to use the current time.
+     * <p>
+     * Users should not set the {@code startTimeMs} value manually.
+     */
+    public static Builder builder() {
+        return new Builder()
+                // TODO(rfink): Use direct access to system microseconds when moving to Java8 / Java9
+                .startTimeMicroSeconds(System.currentTimeMillis() * 1000)
+                .startClockNanoSeconds(System.nanoTime());
+    }
+
+    public static class Builder extends ImmutableOpenSpan.Builder {}
+}
