@@ -29,7 +29,7 @@ import org.immutables.value.Value.Immutable;
 @JsonSerialize(as = ImmutablePartialServiceConfiguration.class)
 @JsonDeserialize(builder = PartialServiceConfiguration.Builder.class)
 @ImmutablesStyle
-interface PartialServiceConfiguration {
+public interface PartialServiceConfiguration {
 
     /** The API token to be used to interact with the service. */
     Optional<BearerToken> apiToken();
