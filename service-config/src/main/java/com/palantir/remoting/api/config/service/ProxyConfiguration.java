@@ -19,8 +19,6 @@ package com.palantir.remoting.api.config.service;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.google.common.base.Preconditions;
-import com.google.common.net.HostAndPort;
 import java.util.Optional;
 import org.immutables.value.Value;
 import org.immutables.value.Value.Immutable;
@@ -46,7 +44,7 @@ public abstract class ProxyConfiguration {
     }
 
     /**
-     * The hostname and port of the HTTP/HTTPS Proxy. Recognized formats include those recognized by {@link
+     * The hostname and port of the HTTP/HTTPS Proxy. Recognized formats include those recognized by {@code
      * com.google.common.net.HostAndPort}, for instance {@code foo.com:80}, {@code 192.168.3.100:8080}, etc.
      */
     @JsonProperty("hostAndPort")

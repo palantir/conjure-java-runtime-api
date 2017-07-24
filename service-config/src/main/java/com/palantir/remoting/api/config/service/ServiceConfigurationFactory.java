@@ -16,16 +16,13 @@
 
 package com.palantir.remoting.api.config.service;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 /** Given a {@link ServicesConfigBlock}, populates {@link ServiceConfiguration} instances for configured services. */
 public final class ServiceConfigurationFactory {
-
 
     private final ServicesConfigBlock services;
 
@@ -47,7 +44,10 @@ public final class ServiceConfigurationFactory {
 
     /** Returns all {@link ServiceConfiguration}s. */
     public Map<String, ServiceConfiguration> getAll() {
-        return ImmutableMap.copyOf(Maps.transformEntries(services.services(), this::propagateDefaults));
+        // Return a copy of the immutable data.
+        Map<String, ServiceConfiguration> config = new HashMap<>();
+        services.services().forEach((key, value) -> config.put(key, propagateDefaults(key, value)));
+        return config;
     }
 
     /**
