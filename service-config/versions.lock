@@ -27,9 +27,6 @@
                 "com.palantir.tokens2:auth-tokens"
             ]
         },
-        "com.google.guava:guava": {
-            "locked": "18.0"
-        },
         "com.palantir.remoting-api:ssl-config": {
             "project": true
         },
@@ -70,9 +67,6 @@
             "transitive": [
                 "com.palantir.tokens2:auth-tokens"
             ]
-        },
-        "com.google.guava:guava": {
-            "locked": "18.0"
         },
         "com.palantir.remoting-api:ssl-config": {
             "project": true
