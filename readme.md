@@ -2,3 +2,5 @@
 [![Download](https://api.bintray.com/packages/palantir/releases/http-remoting-api/images/download.svg) ](https://bintray.com/palantir/releases/http-remoting-api/_latestVersion)
 
 # APIs for http-remoting
+
+See https://github.com/palantir/http-remoting
