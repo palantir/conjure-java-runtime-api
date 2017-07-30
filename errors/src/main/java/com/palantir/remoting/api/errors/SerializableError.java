@@ -44,7 +44,13 @@ public abstract class SerializableError implements Serializable {
      * and/or name.
      */
     @JsonProperty("errorCode")
-    public abstract String errorCode();
+    // TODO(rfink): errorCode and exceptionClass are mutual delagates so that they can be either set independently or
+    // one inherits from the other. This is quite a hack and should be removed when we remove support for the
+    // exceptionClass field.
+    @Value.Default
+    public String errorCode() {
+        return getExceptionClass();
+    }
 
     /**
      * A fixed name identifying the error. For errors generated from {@link ServiceException}, this corresponding to the
@@ -79,7 +85,7 @@ public abstract class SerializableError implements Serializable {
      * @deprecated Used by the serialization-mechanism for back-compat only. Do not use.
      */
     @Deprecated
-    @Value.Derived
+    @Value.Default
     @JsonProperty("exceptionClass")
     @SuppressWarnings("checkstyle:designforextension")
     // TODO(rfink): Remove once all error producers have switched to errorCode.
@@ -118,12 +124,7 @@ public abstract class SerializableError implements Serializable {
     }
 
     // TODO(rfink): Remove once all error producers have switched to errorCode/errorName.
-    public static final class Builder extends ImmutableSerializableError.Builder {
-        @JsonProperty("exceptionClass")
-        Builder doNotUseExceptionClass(String exceptionClass) {
-            return errorCode(exceptionClass);
-        }
-    }
+    public static final class Builder extends ImmutableSerializableError.Builder {}
 
     public static Builder builder() {
         return new Builder();

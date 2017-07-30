@@ -95,10 +95,12 @@ public final class SerializableErrorTest {
     }
 
     @Test
-    public void testDeserializesWithWhenObsoleteMessageIsGiven() throws Exception {
-        String serialized = "{\"errorCode\":\"code\",\"errorName\":\"name\",\"message\":\"obsolete-message\"}";
+    public void testDeserializesWithWhenObsoleteExceptionClassAndMessageAreGiven() throws Exception {
+        String serialized = "{\"errorCode\":\"code\",\"errorName\":\"name\",\"exceptionClass\":\"obsolete-class\","
+                + "\"message\":\"obsolete-message\"}";
         assertThat(deserialize(serialized)).isEqualTo(SerializableError.builder()
                 .from(ERROR)
+                .exceptionClass("obsolete-class")
                 .message("obsolete-message")
                 .build());
     }
