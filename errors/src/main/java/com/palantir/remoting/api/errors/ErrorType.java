@@ -34,6 +34,7 @@ public abstract class ErrorType {
     public enum Code {
         PERMISSION_DENIED(403),
         INVALID_ARGUMENT(400),
+        NOT_FOUND(404),
         FAILED_PRECONDITION(500),
         INTERNAL(500),
         CUSTOM_CLIENT(400),
@@ -48,6 +49,7 @@ public abstract class ErrorType {
 
     public static final ErrorType PERMISSION_DENIED = createInternal(Code.PERMISSION_DENIED, "PermissionDenied");
     public static final ErrorType INVALID_ARGUMENT = createInternal(Code.INVALID_ARGUMENT, "InvalidArgument");
+    public static final ErrorType NOT_FOUND = createInternal(Code.NOT_FOUND, "NotFound");
     public static final ErrorType FAILED_PRECONDITION = createInternal(Code.FAILED_PRECONDITION, "FailedPrecondition");
     public static final ErrorType INTERNAL = createInternal(Code.INTERNAL, "Internal");
 
