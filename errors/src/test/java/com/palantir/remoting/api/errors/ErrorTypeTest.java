@@ -24,20 +24,39 @@ import org.junit.Test;
 public final class ErrorTypeTest {
 
     @Test
-    public void testNameMustBeCamelCase() throws Exception {
-        assertThatThrownBy(() -> ErrorType.create(ErrorType.Code.FAILED_PRECONDITION, "foo"))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageStartingWith("ErrorType names must be UpperCamelCase: foo");
+    public void testNameMustBeCamelCaseWithOptionalNameSpace() throws Exception {
+        String[] badNames = new String[] {":", "foo:Bar", ":Bar", "Bar:", "foo:bar", "Foo:bar"};
+        for (String name : badNames) {
+            assertThatThrownBy(() -> ErrorType.client(name))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("ErrorType names must be of the form 'UpperCamelNamespace:UpperCamelName': %s", name);
+            assertThatThrownBy(() -> ErrorType.server(name))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("ErrorType names must be of the form 'UpperCamelNamespace:UpperCamelName': %s", name);
+            assertThatThrownBy(() -> ErrorType.create(ErrorType.Code.FAILED_PRECONDITION, name))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("ErrorType names must be of the form 'UpperCamelNamespace:UpperCamelName': %s", name);
+        }
 
-        assertThatThrownBy(() -> ErrorType.client("foo"))
+        String[] goodNames = new String[] {"Foo:Bar", "FooBar:Baz", "FooBar:BoomBang"};
+        for (String name : goodNames) {
+            ErrorType.client(name);
+            ErrorType.server(name);
+            ErrorType.create(ErrorType.Code.INVALID_ARGUMENT, name);
+        }
+    }
+
+    @Test
+    public void testNamespaceMustNotBeDefault() throws Exception {
+        assertThatThrownBy(() -> ErrorType.client("Default:Foo"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageStartingWith("ErrorType names must be UpperCamelCase: foo");
-        assertThatThrownBy(() -> ErrorType.client("fooBar"))
+                .hasMessage("Namespace must not be 'Default' in ErrorType name: Default:Foo");
+        assertThatThrownBy(() -> ErrorType.server("Default:Foo"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageStartingWith("ErrorType names must be UpperCamelCase: fooBar");
-        assertThatThrownBy(() -> ErrorType.client(""))
+                .hasMessage("Namespace must not be 'Default' in ErrorType name: Default:Foo");
+        assertThatThrownBy(() -> ErrorType.create(ErrorType.Code.INVALID_ARGUMENT, "Default:Foo"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageStartingWith("ErrorType names must be UpperCamelCase: ");
+                .hasMessage("Namespace must not be 'Default' in ErrorType name: Default:Foo");
     }
 
     @Test
@@ -51,25 +70,25 @@ public final class ErrorTypeTest {
 
     @Test
     public void testCustomErrors() throws Exception {
-        ErrorType customClient = ErrorType.client("MyDesc");
+        ErrorType customClient = ErrorType.client("Namespace:MyDesc");
         assertThat(customClient.code()).isEqualTo(ErrorType.Code.CUSTOM_CLIENT);
         assertThat(customClient.httpErrorCode()).isEqualTo(400);
-        assertThat(customClient.name()).isEqualTo("MyDesc");
+        assertThat(customClient.name()).isEqualTo("Namespace:MyDesc");
 
-        ErrorType customServer = ErrorType.server("MyDesc");
+        ErrorType customServer = ErrorType.server("Namespace:MyDesc");
         assertThat(customServer.code()).isEqualTo(ErrorType.Code.CUSTOM_SERVER);
         assertThat(customServer.httpErrorCode()).isEqualTo(500);
-        assertThat(customServer.name()).isEqualTo("MyDesc");
+        assertThat(customServer.name()).isEqualTo("Namespace:MyDesc");
     }
 
     @Test
     public void testCanCreateNewErrorTypes() throws Exception {
-        ErrorType error = ErrorType.create(ErrorType.Code.FAILED_PRECONDITION, "MyDesc");
+        ErrorType error = ErrorType.create(ErrorType.Code.FAILED_PRECONDITION, "Namespace:MyDesc");
         assertThat(error.code()).isEqualTo(ErrorType.Code.FAILED_PRECONDITION);
         assertThat(error.httpErrorCode()).isEqualTo(500);
-        assertThat(error.name()).isEqualTo("MyDesc");
+        assertThat(error.name()).isEqualTo("Namespace:MyDesc");
 
-        assertThatThrownBy(() -> ErrorType.create(ErrorType.Code.CUSTOM_CLIENT, "MyDesc"))
+        assertThatThrownBy(() -> ErrorType.create(ErrorType.Code.CUSTOM_CLIENT, "Namespace:MyDesc"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Use the client() or server() methods to construct ErrorTypes with code CUSTOM_CLIENT "
                         + "or CUSTOM_SERVER");

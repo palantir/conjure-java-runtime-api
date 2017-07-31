@@ -16,6 +16,7 @@
 
 package com.palantir.remoting.api.errors;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.immutables.value.Value;
 
@@ -29,7 +30,10 @@ import org.immutables.value.Value;
 @ImmutablesStyle
 public abstract class ErrorType {
 
-    private static final Pattern UPPER_CAMEL_CASE = Pattern.compile("([A-Z][a-z]+)+");
+    private static final String UPPER_CAMEL_CASE = "(([A-Z][a-z]+)+)";
+    // UpperCamel with UpperCamel namespace prefix.
+    private static final Pattern ERROR_NAME_PATTERN =
+            Pattern.compile(String.format("%s:%s", UPPER_CAMEL_CASE, UPPER_CAMEL_CASE));
 
     public enum Code {
         PERMISSION_DENIED(403),
@@ -47,11 +51,14 @@ public abstract class ErrorType {
         }
     }
 
-    public static final ErrorType PERMISSION_DENIED = createInternal(Code.PERMISSION_DENIED, "PermissionDenied");
-    public static final ErrorType INVALID_ARGUMENT = createInternal(Code.INVALID_ARGUMENT, "InvalidArgument");
-    public static final ErrorType NOT_FOUND = createInternal(Code.NOT_FOUND, "NotFound");
-    public static final ErrorType FAILED_PRECONDITION = createInternal(Code.FAILED_PRECONDITION, "FailedPrecondition");
-    public static final ErrorType INTERNAL = createInternal(Code.INTERNAL, "Internal");
+    public static final ErrorType PERMISSION_DENIED =
+            createInternal(Code.PERMISSION_DENIED, "Default:PermissionDenied");
+    public static final ErrorType INVALID_ARGUMENT =
+            createInternal(Code.INVALID_ARGUMENT, "Default:InvalidArgument");
+    public static final ErrorType NOT_FOUND = createInternal(Code.NOT_FOUND, "Default:NotFound");
+    public static final ErrorType FAILED_PRECONDITION =
+            createInternal(Code.FAILED_PRECONDITION, "Default:FailedPrecondition");
+    public static final ErrorType INTERNAL = createInternal(Code.INTERNAL, "Default:Internal");
 
     /** The {@link Code} of this error. */
     public abstract Code code();
@@ -67,8 +74,9 @@ public abstract class ErrorType {
 
     @Value.Check
     final void check() {
-        if (!UPPER_CAMEL_CASE.matcher(name()).matches()) {
-            throw new IllegalArgumentException("ErrorType names must be UpperCamelCase: " + name());
+        if (!ERROR_NAME_PATTERN.matcher(name()).matches()) {
+            throw new IllegalArgumentException(
+                    "ErrorType names must be of the form 'UpperCamelNamespace:UpperCamelName': " + name());
         }
     }
 
@@ -76,14 +84,14 @@ public abstract class ErrorType {
      * Creates a new error type with code {@link Code#CUSTOM_CLIENT} and the given name.
      */
     public static ErrorType client(String name) {
-        return createInternal(Code.CUSTOM_CLIENT, name);
+        return createAndCheckNamespaceIsNotDefault(Code.CUSTOM_CLIENT, name);
     }
 
     /**
      * Creates a new error type with code {@link Code#CUSTOM_SERVER} and the given name.
      */
     public static ErrorType server(String name) {
-        return createInternal(Code.CUSTOM_SERVER, name);
+        return createAndCheckNamespaceIsNotDefault(Code.CUSTOM_SERVER, name);
     }
 
     /**
@@ -95,7 +103,22 @@ public abstract class ErrorType {
             throw new IllegalArgumentException("Use the client() or server() methods to construct "
                     + "ErrorTypes with code CUSTOM_CLIENT or CUSTOM_SERVER");
         }
-        return createInternal(code, name);
+        return createAndCheckNamespaceIsNotDefault(code, name);
+    }
+
+    private static ErrorType createAndCheckNamespaceIsNotDefault(Code code, String name) {
+        ErrorType error = createInternal(code, name);
+        Matcher matcher = ERROR_NAME_PATTERN.matcher(name);
+        if (!matcher.matches()) {
+            throw new IllegalStateException("Expected ERROR_NAME_PATTERN to match, this is a bug");
+        }
+
+        String namespace = matcher.group(1);
+        if (namespace.equals("Default")) {
+            throw new IllegalArgumentException("Namespace must not be 'Default' in ErrorType name: " + name);
+        }
+
+        return error;
     }
 
     private static ErrorType createInternal(Code code, String name) {
