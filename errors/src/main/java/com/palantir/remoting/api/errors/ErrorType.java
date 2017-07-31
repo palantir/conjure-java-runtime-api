@@ -16,6 +16,7 @@
 
 package com.palantir.remoting.api.errors;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.immutables.value.Value;
 
@@ -83,14 +84,14 @@ public abstract class ErrorType {
      * Creates a new error type with code {@link Code#CUSTOM_CLIENT} and the given name.
      */
     public static ErrorType client(String name) {
-        return createInternal(Code.CUSTOM_CLIENT, name);
+        return createAndCheckNamespaceIsNotDefault(Code.CUSTOM_CLIENT, name);
     }
 
     /**
      * Creates a new error type with code {@link Code#CUSTOM_SERVER} and the given name.
      */
     public static ErrorType server(String name) {
-        return createInternal(Code.CUSTOM_SERVER, name);
+        return createAndCheckNamespaceIsNotDefault(Code.CUSTOM_SERVER, name);
     }
 
     /**
@@ -102,7 +103,22 @@ public abstract class ErrorType {
             throw new IllegalArgumentException("Use the client() or server() methods to construct "
                     + "ErrorTypes with code CUSTOM_CLIENT or CUSTOM_SERVER");
         }
-        return createInternal(code, name);
+        return createAndCheckNamespaceIsNotDefault(code, name);
+    }
+
+    private static ErrorType createAndCheckNamespaceIsNotDefault(Code code, String name) {
+        ErrorType error = createInternal(code, name);
+        Matcher matcher = ERROR_NAME_PATTERN.matcher(name);
+        if (!matcher.matches()) {
+            throw new IllegalStateException("Expected ERROR_NAME_PATTERN to match, this is a bug");
+        }
+
+        String namespace = matcher.group(1);
+        if (namespace.equals("Default")) {
+            throw new IllegalArgumentException("Namespace must not be 'Default' in ErrorType name: " + name);
+        }
+
+        return error;
     }
 
     private static ErrorType createInternal(Code code, String name) {

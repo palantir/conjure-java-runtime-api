@@ -25,23 +25,38 @@ public final class ErrorTypeTest {
 
     @Test
     public void testNameMustBeCamelCaseWithOptionalNameSpace() throws Exception {
-        assertThatThrownBy(() -> ErrorType.create(ErrorType.Code.FAILED_PRECONDITION, "foo"))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageStartingWith(
-                        "ErrorType names must be of the form 'UpperCamelNamespace:UpperCamelName': foo");
-
         String[] badNames = new String[] {":", "foo:Bar", ":Bar", "Bar:", "foo:bar", "Foo:bar"};
         for (String name : badNames) {
             assertThatThrownBy(() -> ErrorType.client(name))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessageStartingWith(
-                            "ErrorType names must be of the form 'UpperCamelNamespace:UpperCamelName': " + name);
+                    .hasMessage("ErrorType names must be of the form 'UpperCamelNamespace:UpperCamelName': %s", name);
+            assertThatThrownBy(() -> ErrorType.server(name))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("ErrorType names must be of the form 'UpperCamelNamespace:UpperCamelName': %s", name);
+            assertThatThrownBy(() -> ErrorType.create(ErrorType.Code.FAILED_PRECONDITION, name))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("ErrorType names must be of the form 'UpperCamelNamespace:UpperCamelName': %s", name);
         }
 
         String[] goodNames = new String[] {"Foo:Bar", "FooBar:Baz", "FooBar:BoomBang"};
         for (String name : goodNames) {
             ErrorType.client(name);
+            ErrorType.server(name);
+            ErrorType.create(ErrorType.Code.INVALID_ARGUMENT, name);
         }
+    }
+
+    @Test
+    public void testNamespaceMustNotBeDefault() throws Exception {
+        assertThatThrownBy(() -> ErrorType.client("Default:Foo"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Namespace must not be 'Default' in ErrorType name: Default:Foo");
+        assertThatThrownBy(() -> ErrorType.server("Default:Foo"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Namespace must not be 'Default' in ErrorType name: Default:Foo");
+        assertThatThrownBy(() -> ErrorType.create(ErrorType.Code.INVALID_ARGUMENT, "Default:Foo"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Namespace must not be 'Default' in ErrorType name: Default:Foo");
     }
 
     @Test
