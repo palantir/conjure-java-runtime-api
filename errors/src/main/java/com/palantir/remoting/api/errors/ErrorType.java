@@ -29,7 +29,10 @@ import org.immutables.value.Value;
 @ImmutablesStyle
 public abstract class ErrorType {
 
-    private static final Pattern UPPER_CAMEL_CASE = Pattern.compile("([A-Z][a-z]+)+");
+    private static final String UPPER_CAMEL_CASE = "(([A-Z][a-z]+)+)";
+    // UpperCamel with UpperCamel namespace prefix.
+    private static final Pattern ERROR_NAME_PATTERN =
+            Pattern.compile(String.format("%s:%s", UPPER_CAMEL_CASE, UPPER_CAMEL_CASE));
 
     public enum Code {
         PERMISSION_DENIED(403),
@@ -47,11 +50,14 @@ public abstract class ErrorType {
         }
     }
 
-    public static final ErrorType PERMISSION_DENIED = createInternal(Code.PERMISSION_DENIED, "PermissionDenied");
-    public static final ErrorType INVALID_ARGUMENT = createInternal(Code.INVALID_ARGUMENT, "InvalidArgument");
-    public static final ErrorType NOT_FOUND = createInternal(Code.NOT_FOUND, "NotFound");
-    public static final ErrorType FAILED_PRECONDITION = createInternal(Code.FAILED_PRECONDITION, "FailedPrecondition");
-    public static final ErrorType INTERNAL = createInternal(Code.INTERNAL, "Internal");
+    public static final ErrorType PERMISSION_DENIED =
+            createInternal(Code.PERMISSION_DENIED, "Default:PermissionDenied");
+    public static final ErrorType INVALID_ARGUMENT =
+            createInternal(Code.INVALID_ARGUMENT, "Default:InvalidArgument");
+    public static final ErrorType NOT_FOUND = createInternal(Code.NOT_FOUND, "Default:NotFound");
+    public static final ErrorType FAILED_PRECONDITION =
+            createInternal(Code.FAILED_PRECONDITION, "Default:FailedPrecondition");
+    public static final ErrorType INTERNAL = createInternal(Code.INTERNAL, "Default:Internal");
 
     /** The {@link Code} of this error. */
     public abstract Code code();
@@ -67,7 +73,7 @@ public abstract class ErrorType {
 
     @Value.Check
     final void check() {
-        if (!UPPER_CAMEL_CASE.matcher(name()).matches()) {
+        if (!ERROR_NAME_PATTERN.matcher(name()).matches()) {
             throw new IllegalArgumentException("ErrorType names must be UpperCamelCase: " + name());
         }
     }
