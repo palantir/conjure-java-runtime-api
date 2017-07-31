@@ -74,7 +74,8 @@ public abstract class ErrorType {
     @Value.Check
     final void check() {
         if (!ERROR_NAME_PATTERN.matcher(name()).matches()) {
-            throw new IllegalArgumentException("ErrorType names must be UpperCamelCase: " + name());
+            throw new IllegalArgumentException(
+                    "ErrorType names must be of the form 'UpperCamelNamespace:UpperCamelName': " + name());
         }
     }
 

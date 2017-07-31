@@ -27,13 +27,15 @@ public final class ErrorTypeTest {
     public void testNameMustBeCamelCaseWithOptionalNameSpace() throws Exception {
         assertThatThrownBy(() -> ErrorType.create(ErrorType.Code.FAILED_PRECONDITION, "foo"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageStartingWith("ErrorType names must be UpperCamelCase: foo");
+                .hasMessageStartingWith(
+                        "ErrorType names must be of the form 'UpperCamelNamespace:UpperCamelName': foo");
 
         String[] badNames = new String[] {":", "foo:Bar", ":Bar", "Bar:", "foo:bar", "Foo:bar"};
         for (String name : badNames) {
             assertThatThrownBy(() -> ErrorType.client(name))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("ErrorType names must be UpperCamelCase: %s", name);
+                    .hasMessageStartingWith(
+                            "ErrorType names must be of the form 'UpperCamelNamespace:UpperCamelName': " + name);
         }
 
         String[] goodNames = new String[] {"Foo:Bar", "FooBar:Baz", "FooBar:BoomBang"};
