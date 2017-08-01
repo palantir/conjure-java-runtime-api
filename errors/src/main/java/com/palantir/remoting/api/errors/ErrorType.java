@@ -110,7 +110,7 @@ public abstract class ErrorType {
         ErrorType error = createInternal(code, name);
         Matcher matcher = ERROR_NAME_PATTERN.matcher(name);
         if (!matcher.matches()) {
-            throw new IllegalStateException("Expected ERROR_NAME_PATTERN to match, this is a bug");
+            throw new IllegalArgumentException("Expected ERROR_NAME_PATTERN to match, this is a bug: " + name);
         }
 
         String namespace = matcher.group(1);
