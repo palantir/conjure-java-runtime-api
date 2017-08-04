@@ -1,5 +1,6 @@
 include 'errors'
 include 'service-config'
 include 'ssl-config'
+include 'test-utils'
 include 'tracing'
 include 'extras:jackson-support'

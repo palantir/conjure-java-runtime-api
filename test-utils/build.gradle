@@ -1,0 +1,11 @@
+apply plugin: "org.inferred.processors"
+
+apply from: "$rootDir/gradle/publish.gradle"
+
+dependencies {
+    compile project(":errors")
+    compile "junit:junit"
+    compile "org.assertj:assertj-core"
+    compile "org.mockito:mockito-core"
+    compile "com.google.guava:guava"
+}
