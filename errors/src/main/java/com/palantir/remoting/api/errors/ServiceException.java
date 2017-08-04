@@ -24,7 +24,11 @@ import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
-/** A {@link ServiceException} thrown in server-side code to indicate server-side {@link ErrorType error states}. */
+/**
+ * A {@link ServiceException} thrown in server-side code to indicate server-side {@link ErrorType error states}. This
+ * class is designed to be extendable by applications that wish to design application-specific exceptions compatible
+ * with http-remoting error handling.
+ */
 public class ServiceException extends RuntimeException implements SafeLoggable {
 
     private final ErrorType errorType;
