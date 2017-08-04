@@ -25,7 +25,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 /** A {@link ServiceException} thrown in server-side code to indicate server-side {@link ErrorType error states}. */
-public final class ServiceException extends RuntimeException implements SafeLoggable {
+public class ServiceException extends RuntimeException implements SafeLoggable {
 
     private final ErrorType errorType;
     private final List<Arg<?>> args;  // unmodifiable
@@ -59,23 +59,23 @@ public final class ServiceException extends RuntimeException implements SafeLogg
     }
 
     /** The {@link ErrorType} that gave rise to this exception. */
-    public ErrorType getErrorType() {
+    public final ErrorType getErrorType() {
         return errorType;
     }
 
     /** A unique identifier for (this instance of) this error. */
-    public String getErrorInstanceId() {
+    public final String getErrorInstanceId() {
         return errorInstanceId;
     }
 
     @Override
-    public String getMessage() {
+    public final String getMessage() {
         // Including safe args here since any logger not configured with safe-logging will log this message.
         return safeMessage;
     }
 
     @Override
-    public String getLogMessage() {
+    public final String getLogMessage() {
         // Not returning safe args here since the safe-logging framework will log this message + args explicitly.
         return noArgsMessage;
     }
@@ -109,7 +109,7 @@ public final class ServiceException extends RuntimeException implements SafeLogg
     }
 
     @Override
-    public List<Arg<?>> getArgs() {
+    public final List<Arg<?>> getArgs() {
         return args;
     }
 
