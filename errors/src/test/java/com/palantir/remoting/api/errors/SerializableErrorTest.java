@@ -49,6 +49,24 @@ public final class SerializableErrorTest {
     }
 
     @Test
+    public void testExceptionToError_forSubClass() {
+        ServiceException exception = new CustomException(42);
+        SerializableError expected = new SerializableError.Builder()
+                .errorCode(exception.getErrorType().code().name())
+                .errorName(exception.getErrorType().name())
+                .errorInstanceId(exception.getErrorInstanceId())
+                .putParameters("mySafeParam", "42")
+                .build();
+        assertThat(SerializableError.forException(exception)).isEqualTo(expected);
+    }
+
+    private static class CustomException extends ServiceException {
+        CustomException(int safeParam) {
+            super(ErrorType.INVALID_ARGUMENT, SafeArg.of("mySafeParam", safeParam));
+        }
+    }
+
+    @Test
     public void testSerializationContainsRedundantParameters() throws Exception {
         assertThat(mapper.writeValueAsString(ERROR))
                 .isEqualTo("{\"errorCode\":\"code\",\"errorName\":\"name\",\"errorInstanceId\":\"\",\"parameters\":{},"
