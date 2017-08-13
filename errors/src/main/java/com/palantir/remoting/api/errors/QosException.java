@@ -16,8 +16,14 @@
 
 package com.palantir.remoting.api.errors;
 
+import com.palantir.logsafe.Arg;
+import com.palantir.logsafe.SafeArg;
+import com.palantir.logsafe.SafeLoggable;
 import java.net.URL;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -68,7 +74,7 @@ public class QosException extends RuntimeException {
      * An exception indicating that a request against this service may be retried, potentially against a different node
      * of this service and with a given delay.
      */
-    public static final class Retry extends QosException {
+    public static final class Retry extends QosException implements SafeLoggable {
         private final Optional<URL> redirectTo;
         private final Optional<Duration> backoff;
 
@@ -89,6 +95,19 @@ public class QosException extends RuntimeException {
         public Optional<Duration> getBackoff() {
             return backoff;
         }
+
+        @Override
+        public String getLogMessage() {
+            return this.getClass().getSimpleName() + ": Requesting retry";
+        }
+
+        @Override
+        public List<Arg<?>> getArgs() {
+            List<Arg<?>> args = new ArrayList<>();
+            redirectTo.ifPresent(r -> args.add(SafeArg.of("redirectTo", r)));
+            backoff.ifPresent(b -> args.add(SafeArg.of("backoff", b)));
+            return args;
+        }
     }
 
     /**
@@ -96,5 +115,16 @@ public class QosException extends RuntimeException {
      * to wait for it to become available again. Typically, human intervention may be required to bring this service
      * back up.
      */
-    public static final class Unavailable extends QosException {}
+    public static final class Unavailable extends QosException implements SafeLoggable {
+
+        @Override
+        public String getLogMessage() {
+            return this.getClass().getSimpleName() + ": Service unavailable";
+        }
+
+        @Override
+        public List<Arg<?>> getArgs() {
+            return Collections.emptyList();
+        }
+    }
 }
