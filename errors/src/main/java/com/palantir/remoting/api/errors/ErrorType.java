@@ -39,7 +39,7 @@ public abstract class ErrorType {
         PERMISSION_DENIED(403),
         INVALID_ARGUMENT(400),
         NOT_FOUND(404),
-        FAILED_PRECONDITION(500),
+        FAILED_PRECONDITION(412),
         INTERNAL(500),
         CUSTOM_CLIENT(400),
         CUSTOM_SERVER(500);
