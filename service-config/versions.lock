@@ -72,7 +72,7 @@
             "project": true
         },
         "com.palantir.tokens:auth-tokens": {
-            "locked": "2.0.1"
+            "locked": "3.0.0"
         },
         "org.slf4j:slf4j-api": {
             "locked": "1.7.25",
