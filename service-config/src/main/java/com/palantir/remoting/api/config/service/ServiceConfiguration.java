@@ -18,7 +18,7 @@ package com.palantir.remoting.api.config.service;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.palantir.remoting.api.config.ssl.SslConfiguration;
-import com.palantir.tokens2.auth.BearerToken;
+import com.palantir.tokens.auth.BearerToken;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
