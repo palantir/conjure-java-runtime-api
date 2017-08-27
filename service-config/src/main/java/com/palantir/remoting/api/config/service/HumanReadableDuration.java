@@ -19,9 +19,12 @@ package com.palantir.remoting.api.config.service;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -141,6 +144,42 @@ public final class HumanReadableDuration implements Comparable<HumanReadableDura
 
     public long toDays() {
         return TimeUnit.DAYS.convert(count, unit);
+    }
+
+    public Duration toJavaDuration() {
+        return Duration.of(count, chronoUnit(unit));
+    }
+
+    /**
+     * Converts a {@code TimeUnit} to a {@code ChronoUnit}.
+     * <p>
+     * This handles the seven units declared in {@code TimeUnit}.
+     *
+     * @implNote This method can be removed in JDK9
+     * @see <a href="https://bugs.openjdk.java.net/browse/JDK-8141452">JDK-8141452</a>
+     * @param unit the unit to convert, not null
+     * @return the converted unit, not null
+     */
+    private static ChronoUnit chronoUnit(TimeUnit unit) {
+        Objects.requireNonNull(unit, "unit");
+        switch (unit) {
+            case NANOSECONDS:
+                return ChronoUnit.NANOS;
+            case MICROSECONDS:
+                return ChronoUnit.MICROS;
+            case MILLISECONDS:
+                return ChronoUnit.MILLIS;
+            case SECONDS:
+                return ChronoUnit.SECONDS;
+            case MINUTES:
+                return ChronoUnit.MINUTES;
+            case HOURS:
+                return ChronoUnit.HOURS;
+            case DAYS:
+                return ChronoUnit.DAYS;
+            default:
+                throw new IllegalArgumentException("Unknown TimeUnit constant");
+        }
     }
 
     @Override
