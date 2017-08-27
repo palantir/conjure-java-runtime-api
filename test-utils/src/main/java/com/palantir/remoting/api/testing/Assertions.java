@@ -18,6 +18,9 @@ package com.palantir.remoting.api.testing;
 
 import com.palantir.remoting.api.errors.RemoteException;
 import com.palantir.remoting.api.errors.ServiceException;
+import org.assertj.core.api.AssertionsForClassTypes;
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
+import org.assertj.core.internal.Failures;
 
 public class Assertions extends org.assertj.core.api.Assertions {
 
@@ -29,5 +32,27 @@ public class Assertions extends org.assertj.core.api.Assertions {
 
     public static RemoteExceptionAssert assertThat(RemoteException actual) {
         return new RemoteExceptionAssert(actual);
+    }
+
+    public static ServiceExceptionAssert assertThatServiceExceptionThrownBy(ThrowingCallable shouldRaiseThrowable) {
+        Throwable throwable = AssertionsForClassTypes.catchThrowable(shouldRaiseThrowable);
+        checkThrowableIsOfType(throwable, ServiceException.class);
+        return new ServiceExceptionAssert((ServiceException) throwable);
+    }
+
+    public static RemoteExceptionAssert assertThatRemoteExceptionThrownBy(ThrowingCallable shouldRaiseThrowable) {
+        Throwable throwable = AssertionsForClassTypes.catchThrowable(shouldRaiseThrowable);
+        checkThrowableIsOfType(throwable, RemoteException.class);
+        return new RemoteExceptionAssert((RemoteException) throwable);
+    }
+
+    private static void checkThrowableIsOfType(Throwable throwable, Class<?> clazz) {
+        if (throwable == null) {
+            throw Failures.instance().failure("Expecting code to raise a throwable.");
+        }
+        if (!clazz.isInstance(throwable)) {
+            throw Failures.instance().failure(String.format("Expecting code to throw a %s, but caught a %s.",
+                    clazz.getCanonicalName(), throwable.getClass().getCanonicalName()));
+        }
     }
 }
