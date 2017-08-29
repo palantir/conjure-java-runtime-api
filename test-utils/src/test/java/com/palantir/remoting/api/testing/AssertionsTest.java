@@ -16,11 +16,9 @@
 
 package com.palantir.remoting.api.testing;
 
-//CHECKSTYLE:OFF
 import static com.palantir.remoting.api.testing.Assertions.assertThatRemoteExceptionThrownBy;
 import static com.palantir.remoting.api.testing.Assertions.assertThatServiceExceptionThrownBy;
 import static com.palantir.remoting.api.testing.Assertions.assertThatThrownBy;
-//CHECKSTYLE:ON
 
 import com.palantir.remoting.api.errors.ErrorType;
 import com.palantir.remoting.api.errors.RemoteException;
