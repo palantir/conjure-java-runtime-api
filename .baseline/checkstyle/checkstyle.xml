@@ -82,7 +82,8 @@
                 org.mockito.ArgumentMatchers.*,org.mockito.Mockito.*,org.mockito.Matchers.*,
                 org.assertj.core.api.Assertions.*,
                 com.google.common.base.Preconditions.*,com.google.common.truth.Truth.*,
-                org.apache.commons.lang3.Validate.*"/>
+                org.apache.commons.lang3.Validate.*,
+                com.palantir.remoting.api.testing.Assertions.*"/>
         </module>
         <module name="ClassTypeParameterName"> <!-- Java Style Guide: Type variable names -->
             <property name="format" value="(^[A-Z][0-9]?)$|([A-Z][a-zA-Z0-9]*[T]$)"/>
