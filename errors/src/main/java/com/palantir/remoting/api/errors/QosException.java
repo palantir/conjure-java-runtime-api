@@ -34,7 +34,9 @@ import java.util.Optional;
 public abstract class QosException extends RuntimeException {
 
     // Not meant for external subclassing.
-    private QosException() {}
+    private QosException(String message) {
+        super(message);
+    }
 
     abstract <T> T accept(Visitor<T> visitor);
 
@@ -81,6 +83,7 @@ public abstract class QosException extends RuntimeException {
         private final Optional<Duration> retryAfter;
 
         private Throttle(Optional<Duration> retryAfter) {
+            super("Suggesting request throttling with optional retryAfter duration: " + retryAfter);
             this.retryAfter = retryAfter;
         }
 
@@ -99,6 +102,7 @@ public abstract class QosException extends RuntimeException {
         private final URL redirectTo;
 
         private RetryOther(URL redirectTo) {
+            super("Suggesting request retry against: " + redirectTo.toString());
             this.redirectTo = redirectTo;
         }
 
@@ -127,7 +131,9 @@ public abstract class QosException extends RuntimeException {
 
     /** See {@link #unavailable}. */
     public static final class Unavailable extends QosException {
-        private Unavailable() {}
+        private Unavailable() {
+            super("Server unavailable");
+        }
 
         @Override
         <T> T accept(Visitor<T> visitor) {
