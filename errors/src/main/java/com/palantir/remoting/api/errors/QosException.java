@@ -35,11 +35,11 @@ public class QosException extends RuntimeException {
     private QosException() {}
 
     /**
-     * Returns a {@link Retry} exception indicating that the calling client should retry the request against an
-     * arbitrary node of this service.
+     * Returns a {@link Throttle} exception indicating that the calling client should throttle its requests. The client
+     * may retry against an arbitrary node of this service.
      */
-    public static Retry retry() {
-        return new Retry();
+    public static Throttle throttle() {
+        return new Throttle();
     }
 
     /**
@@ -51,17 +51,16 @@ public class QosException extends RuntimeException {
     }
 
     /**
-     * An exception indicating that all nodes of this service are currently unavailable and the client shall not attempt
-     * to wait for it to become available again. Typically, human intervention may be required to bring this service
-     * back up.
+     * An exception indicating that (this node of) this service are currently unavailable and the client may try again
+     * at a later time, possibly against a different node of this service.
      */
     public static Unavailable unavailable() {
         return new Unavailable();
     }
 
-    /** See {@link #retry}. */
-    public static final class Retry extends QosException {
-        private Retry() {}
+    /** See {@link #throttle}. */
+    public static final class Throttle extends QosException {
+        private Throttle() {}
     }
 
     /** See {@link #retryOther}. */
