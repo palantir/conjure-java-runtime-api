@@ -38,7 +38,7 @@ public abstract class QosException extends RuntimeException {
         super(message);
     }
 
-    abstract <T> T accept(Visitor<T> visitor);
+    public abstract <T> T accept(Visitor<T> visitor);
 
     public interface Visitor<T> {
         T visit(Throttle exception);
