@@ -29,10 +29,18 @@ import java.util.List;
  * service. Typically, this exception gets translated into appropriate error codes of the underlying transport layer,
  * e.g., HTTP status codes 429, 503, etc. in the case of HTTP transport.
  */
-public class QosException extends RuntimeException {
+public abstract class QosException extends RuntimeException {
 
     // Not meant for external subclassing.
     private QosException() {}
+
+    abstract <T> T accept(Visitor<T> visitor);
+
+    public interface Visitor<T> {
+        T visit(Throttle exception);
+        T visit(RetryOther exception);
+        T visit(Unavailable exception);
+    }
 
     /**
      * Returns a {@link Throttle} exception indicating that the calling client should throttle its requests. The client
@@ -61,6 +69,11 @@ public class QosException extends RuntimeException {
     /** See {@link #throttle}. */
     public static final class Throttle extends QosException {
         private Throttle() {}
+
+        @Override
+        <T> T accept(Visitor<T> visitor) {
+            return visitor.visit(this);
+        }
     }
 
     /** See {@link #retryOther}. */
@@ -74,6 +87,11 @@ public class QosException extends RuntimeException {
         /** Indicates an alternative URL of this service against which the request may be retried. */
         public URL getRedirectTo() {
             return redirectTo;
+        }
+
+        @Override
+        <T> T accept(Visitor<T> visitor) {
+            return visitor.visit(this);
         }
 
         @Override
@@ -92,5 +110,10 @@ public class QosException extends RuntimeException {
     /** See {@link #unavailable}. */
     public static final class Unavailable extends QosException {
         private Unavailable() {}
+
+        @Override
+        <T> T accept(Visitor<T> visitor) {
+            return visitor.visit(this);
+        }
     }
 }
