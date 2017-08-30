@@ -92,7 +92,7 @@ public abstract class QosException extends RuntimeException {
         }
 
         @Override
-        <T> T accept(Visitor<T> visitor) {
+        public <T> T accept(Visitor<T> visitor) {
             return visitor.visit(this);
         }
     }
@@ -112,7 +112,7 @@ public abstract class QosException extends RuntimeException {
         }
 
         @Override
-        <T> T accept(Visitor<T> visitor) {
+        public <T> T accept(Visitor<T> visitor) {
             return visitor.visit(this);
         }
 
@@ -136,7 +136,7 @@ public abstract class QosException extends RuntimeException {
         }
 
         @Override
-        <T> T accept(Visitor<T> visitor) {
+        public <T> T accept(Visitor<T> visitor) {
             return visitor.visit(this);
         }
     }
