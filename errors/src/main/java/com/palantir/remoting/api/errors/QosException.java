@@ -20,8 +20,10 @@ import com.palantir.logsafe.Arg;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.SafeLoggable;
 import java.net.URL;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * An exception raised by a service to indicate a potential Quality-of-Service problem, specifically requesting that the
@@ -32,7 +34,9 @@ import java.util.List;
 public abstract class QosException extends RuntimeException {
 
     // Not meant for external subclassing.
-    private QosException() {}
+    private QosException(String message) {
+        super(message);
+    }
 
     abstract <T> T accept(Visitor<T> visitor);
 
@@ -47,7 +51,15 @@ public abstract class QosException extends RuntimeException {
      * may retry against an arbitrary node of this service.
      */
     public static Throttle throttle() {
-        return new Throttle();
+        return new Throttle(Optional.empty());
+    }
+
+    /**
+     * Like {@link #throttle()}, but additionally requests that the client wait for at least the given duration before
+     * retrying the request.
+     */
+    public static Throttle throttle(Duration duration) {
+        return new Throttle(Optional.of(duration));
     }
 
     /**
@@ -59,8 +71,8 @@ public abstract class QosException extends RuntimeException {
     }
 
     /**
-     * An exception indicating that (this node of) this service are currently unavailable and the client may try again
-     * at a later time, possibly against a different node of this service.
+     * An exception indicating that (this node of) this service is currently unavailable and the client may try again at
+     * a later time, possibly against a different node of this service.
      */
     public static Unavailable unavailable() {
         return new Unavailable();
@@ -68,7 +80,16 @@ public abstract class QosException extends RuntimeException {
 
     /** See {@link #throttle}. */
     public static final class Throttle extends QosException {
-        private Throttle() {}
+        private final Optional<Duration> retryAfter;
+
+        private Throttle(Optional<Duration> retryAfter) {
+            super("Suggesting request throttling with optional retryAfter duration: " + retryAfter);
+            this.retryAfter = retryAfter;
+        }
+
+        public Optional<Duration> getRetryAfter() {
+            return retryAfter;
+        }
 
         @Override
         <T> T accept(Visitor<T> visitor) {
@@ -81,6 +102,7 @@ public abstract class QosException extends RuntimeException {
         private final URL redirectTo;
 
         private RetryOther(URL redirectTo) {
+            super("Suggesting request retry against: " + redirectTo.toString());
             this.redirectTo = redirectTo;
         }
 
@@ -109,7 +131,9 @@ public abstract class QosException extends RuntimeException {
 
     /** See {@link #unavailable}. */
     public static final class Unavailable extends QosException {
-        private Unavailable() {}
+        private Unavailable() {
+            super("Server unavailable");
+        }
 
         @Override
         <T> T accept(Visitor<T> visitor) {

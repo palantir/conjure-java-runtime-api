@@ -19,6 +19,7 @@ package com.palantir.remoting.api.errors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.net.URL;
 import org.junit.Test;
 
 public final class QosExceptionTest {
@@ -43,7 +44,8 @@ public final class QosExceptionTest {
         };
 
         assertThat(QosException.throttle().accept(visitor)).isEqualTo(QosException.Throttle.class);
-        assertThat(QosException.retryOther(null).accept(visitor)).isEqualTo(QosException.RetryOther.class);
+        assertThat(QosException.retryOther(new URL("http://foo")).accept(visitor))
+                .isEqualTo(QosException.RetryOther.class);
         assertThat(QosException.unavailable().accept(visitor)).isEqualTo(QosException.Unavailable.class);
     }
 }
