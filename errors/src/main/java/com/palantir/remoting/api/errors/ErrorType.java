@@ -39,6 +39,7 @@ public abstract class ErrorType {
         PERMISSION_DENIED(403),
         INVALID_ARGUMENT(400),
         NOT_FOUND(404),
+        CONFLICT(409),
         FAILED_PRECONDITION(500),
         INTERNAL(500),
         CUSTOM_CLIENT(400),
@@ -56,6 +57,7 @@ public abstract class ErrorType {
     public static final ErrorType INVALID_ARGUMENT =
             createInternal(Code.INVALID_ARGUMENT, "Default:InvalidArgument");
     public static final ErrorType NOT_FOUND = createInternal(Code.NOT_FOUND, "Default:NotFound");
+    public static final ErrorType CONFLICT = createInternal(Code.CONFLICT, "Default:Conflict");
     public static final ErrorType FAILED_PRECONDITION =
             createInternal(Code.FAILED_PRECONDITION, "Default:FailedPrecondition");
     public static final ErrorType INTERNAL = createInternal(Code.INTERNAL, "Default:Internal");

@@ -64,6 +64,7 @@ public final class ErrorTypeTest {
         assertThat(ErrorType.PERMISSION_DENIED.httpErrorCode()).isEqualTo(403);
         assertThat(ErrorType.INVALID_ARGUMENT.httpErrorCode()).isEqualTo(400);
         assertThat(ErrorType.NOT_FOUND.httpErrorCode()).isEqualTo(404);
+        assertThat(ErrorType.CONFLICT.httpErrorCode()).isEqualTo(409);
         assertThat(ErrorType.FAILED_PRECONDITION.httpErrorCode()).isEqualTo(500);
         assertThat(ErrorType.INTERNAL.httpErrorCode()).isEqualTo(500);
     }
