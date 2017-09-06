@@ -45,7 +45,7 @@ public class ServiceExceptionAssertTest {
                 () -> Assertions.assertThat(
                         new ServiceException(actualType, SafeArg.of("a", "b"))).hasArgs(SafeArg.of("c", "d")))
                 .isInstanceOf(AssertionError.class)
-                .hasMessage("Expected args to be [d], but found [b]");
+                .hasMessage("Expected arg names to be [c], but found [a]");
     }
 
     @Test
