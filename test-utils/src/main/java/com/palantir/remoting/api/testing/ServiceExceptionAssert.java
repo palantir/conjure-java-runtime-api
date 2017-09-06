@@ -45,6 +45,32 @@ public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExcep
     public final ServiceExceptionAssert hasArgs(Arg<?>... args) {
         isNotNull();
 
+        if (args.length != actual.getArgs().size()) {
+            failWithMessage("Expected args be size %s, but found %s", args.length, actual.getArgs().size());
+        }
+
+        for (int i = 0; i < args.length; i++) {
+            Arg<?> expected = args[i];
+            Arg<?> actual = this.actual.getArgs().get(i);
+
+            if (!expected.getClass().equals(actual.getClass())) {
+                failWithMessage("Expected arg %s to be %s, but found %s", i, expected.getClass(),
+                        actual.getClass());
+            }
+            if (!expected.getName().equals(actual.getName())) {
+                failWithMessage("Expected arg %s to be named %s, but found %s", i, expected.getName(),
+                        actual.getName());
+            }
+            Object expectedValue =
+                    expected.isSafeForLogging() ? expected.getValue().toString() : expected.getValue();
+            Object actualValue =
+                    actual.isSafeForLogging() ? actual.getValue().toString() : actual.getValue();
+            if (!expectedValue.equals(actualValue)) {
+                failWithMessage("Expected arg %s to have value %s, but found %s", i, expectedValue,
+                        actualValue);
+            }
+        }
+
         Collection<String> actualNames = actual.getArgs().stream().map(Arg::getName).collect(Collectors.toList());
         Collection<String> givenNames = Arrays.asList(args).stream().map(Arg::getName).collect(Collectors.toList());
         if (!(actualNames.equals(givenNames))) {

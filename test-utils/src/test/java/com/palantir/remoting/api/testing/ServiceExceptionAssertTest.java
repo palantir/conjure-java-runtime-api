@@ -43,9 +43,21 @@ public class ServiceExceptionAssertTest {
 
         assertThatThrownBy(
                 () -> Assertions.assertThat(
-                        new ServiceException(actualType, SafeArg.of("a", "b"))).hasArgs(SafeArg.of("c", "d")))
+                        new ServiceException(actualType, SafeArg.of("a", "b"))).hasArgs(UnsafeArg.of("a", "b")))
                 .isInstanceOf(AssertionError.class)
-                .hasMessage("Expected arg names to be [c], but found [a]");
+                .hasMessage("Expected arg 0 to be " + UnsafeArg.class + ", but found " + SafeArg.class);
+
+        assertThatThrownBy(
+                () -> Assertions.assertThat(
+                        new ServiceException(actualType, SafeArg.of("a", "b"))).hasArgs(SafeArg.of("c", "b")))
+                .isInstanceOf(AssertionError.class)
+                .hasMessage("Expected arg 0 to be named c, but found a");
+
+        assertThatThrownBy(
+                () -> Assertions.assertThat(
+                        new ServiceException(actualType, SafeArg.of("a", "b"))).hasArgs(SafeArg.of("a", "c")))
+                .isInstanceOf(AssertionError.class)
+                .hasMessage("Expected arg 0 to have value c, but found b");
     }
 
     @Test
