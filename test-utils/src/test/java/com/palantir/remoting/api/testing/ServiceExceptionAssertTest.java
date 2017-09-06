@@ -18,10 +18,12 @@ package com.palantir.remoting.api.testing;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.google.common.collect.Collections2;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.UnsafeArg;
 import com.palantir.remoting.api.errors.ErrorType;
 import com.palantir.remoting.api.errors.ServiceException;
+import org.assertj.core.util.Lists;
 import org.junit.Test;
 
 public class ServiceExceptionAssertTest {
@@ -44,5 +46,16 @@ public class ServiceExceptionAssertTest {
                         new ServiceException(actualType, SafeArg.of("a", "b"))).hasArgs(SafeArg.of("c", "d")))
                 .isInstanceOf(AssertionError.class)
                 .hasMessage("Expected args to be [d], but found [b]");
+    }
+
+    @Test
+    public void testSafeArgToStringComparison() throws Exception {
+        ErrorType actualType = ErrorType.FAILED_PRECONDITION;
+
+        // use TransformedCollection which doesn't .equals() a List object
+        Assertions.assertThat(new ServiceException(actualType,
+                SafeArg.of("a", Collections2.transform(Lists.newArrayList(1), i -> i + "str"))))
+                .hasType(actualType)
+                .hasArgs(SafeArg.of("a", Lists.newArrayList("1str")));
     }
 }

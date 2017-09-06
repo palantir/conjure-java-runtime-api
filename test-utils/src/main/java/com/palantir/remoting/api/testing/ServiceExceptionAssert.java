@@ -16,11 +16,14 @@
 
 package com.palantir.remoting.api.testing;
 
-import com.google.common.collect.ImmutableList;
 import com.palantir.logsafe.Arg;
+import com.palantir.logsafe.SafeArg;
 import com.palantir.remoting.api.errors.ErrorType;
 import com.palantir.remoting.api.errors.ServiceException;
+import java.io.Serializable;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.assertj.core.api.AbstractThrowableAssert;
 
 public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExceptionAssert, ServiceException> {
@@ -41,8 +44,15 @@ public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExcep
     public final ServiceExceptionAssert hasArgs(Arg<?>... args) {
         isNotNull();
 
-        if (!(actual.getArgs().equals(ImmutableList.copyOf(args)))) {
-            failWithMessage("Expected args to be %s, but found %s", Arrays.toString(args), actual.getArgs());
+        // toString is called on SafeArgs in SerializableError
+        List<Serializable> actualStrings = actual.getArgs().stream()
+                .map(arg -> arg instanceof SafeArg ? arg.toString() : arg)
+                .collect(Collectors.toList());
+        List<Serializable> givenStrings = Arrays.asList(args).stream()
+                .map(arg -> arg instanceof SafeArg ? arg.toString() : arg)
+                .collect(Collectors.toList());
+        if (!(actualStrings.equals(givenStrings))) {
+            failWithMessage("Expected args to be %s, but found %s", givenStrings, actualStrings);
         }
 
         return this;
