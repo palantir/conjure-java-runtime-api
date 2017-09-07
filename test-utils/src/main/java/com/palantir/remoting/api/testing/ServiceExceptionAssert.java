@@ -17,14 +17,8 @@
 package com.palantir.remoting.api.testing;
 
 import com.palantir.logsafe.Arg;
-import com.palantir.logsafe.SafeArg;
 import com.palantir.remoting.api.errors.ErrorType;
 import com.palantir.remoting.api.errors.ServiceException;
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.assertj.core.api.AbstractThrowableAssert;
 
 public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExceptionAssert, ServiceException> {
@@ -69,23 +63,6 @@ public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExcep
                 failWithMessage("Expected arg %s to have value %s, but found %s", i, expectedValue,
                         actualValue);
             }
-        }
-
-        Collection<String> actualNames = actual.getArgs().stream().map(Arg::getName).collect(Collectors.toList());
-        Collection<String> givenNames = Arrays.asList(args).stream().map(Arg::getName).collect(Collectors.toList());
-        if (!(actualNames.equals(givenNames))) {
-            failWithMessage("Expected arg names to be %s, but found %s", givenNames, actualNames);
-        }
-
-        // toString is called on SafeArgs in SerializableError
-        List<Serializable> actualStringValues = actual.getArgs().stream()
-                .map(arg -> arg instanceof SafeArg ? arg.toString() : arg)
-                .collect(Collectors.toList());
-        List<Serializable> givenStringValues = Arrays.asList(args).stream()
-                .map(arg -> arg instanceof SafeArg ? arg.toString() : arg)
-                .collect(Collectors.toList());
-        if (!(actualStringValues.equals(givenStringValues))) {
-            failWithMessage("Expected arg string values to be %s, but found %s", givenStringValues, actualStringValues);
         }
 
         return this;
