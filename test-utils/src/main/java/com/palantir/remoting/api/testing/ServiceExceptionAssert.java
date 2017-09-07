@@ -19,6 +19,7 @@ package com.palantir.remoting.api.testing;
 import com.palantir.logsafe.Arg;
 import com.palantir.remoting.api.errors.ErrorType;
 import com.palantir.remoting.api.errors.ServiceException;
+import java.util.Objects;
 import org.assertj.core.api.AbstractThrowableAssert;
 
 public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExceptionAssert, ServiceException> {
@@ -56,9 +57,9 @@ public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExcep
                         actual.getName());
             }
             Object expectedValue =
-                    expected.isSafeForLogging() ? expected.getValue().toString() : expected.getValue();
+                    expected.isSafeForLogging() ? Objects.toString(expected.getValue()) : expected.getValue();
             Object actualValue =
-                    actual.isSafeForLogging() ? actual.getValue().toString() : actual.getValue();
+                    actual.isSafeForLogging() ? Objects.toString(actual.getValue()) : actual.getValue();
             if (!expectedValue.equals(actualValue)) {
                 failWithMessage("Expected arg %s to have value %s, but found %s", i, expectedValue,
                         actualValue);

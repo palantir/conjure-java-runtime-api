@@ -70,4 +70,14 @@ public class ServiceExceptionAssertTest {
                 .hasType(actualType)
                 .hasArgs(SafeArg.of("a", Lists.newArrayList("1str")));
     }
+
+    @Test
+    public void testNullableArgValues() throws Exception {
+        ErrorType actualType = ErrorType.FAILED_PRECONDITION;
+
+        Assertions.assertThat(new ServiceException(actualType,
+                SafeArg.of("a", null)))
+                .hasType(actualType)
+                .hasArgs(SafeArg.of("a", null));
+    }
 }
