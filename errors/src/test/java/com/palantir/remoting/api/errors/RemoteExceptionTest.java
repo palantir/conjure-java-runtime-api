@@ -52,13 +52,15 @@ public final class RemoteExceptionTest {
                 .errorName("errorName")
                 .errorInstanceId("errorId")
                 .build();
-        assertThat(new RemoteException(error, 500).getMessage()).isEqualTo("RemoteException: errorCode (errorName)");
+        assertThat(new RemoteException(error, 500).getMessage())
+                .isEqualTo("RemoteException: errorCode (errorName) with instance ID errorId");
 
         error = new SerializableError.Builder()
                 .errorCode("errorCode")
                 .errorName("errorCode")
                 .errorInstanceId("errorId")
                 .build();
-        assertThat(new RemoteException(error, 500).getMessage()).isEqualTo("RemoteException: errorCode");
+        assertThat(new RemoteException(error, 500).getMessage())
+                .isEqualTo("RemoteException: errorCode with instance ID errorId");
     }
 }
