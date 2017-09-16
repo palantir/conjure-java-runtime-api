@@ -88,14 +88,5 @@ public final class ErrorTypeTest {
         assertThat(error.code()).isEqualTo(ErrorType.Code.FAILED_PRECONDITION);
         assertThat(error.httpErrorCode()).isEqualTo(500);
         assertThat(error.name()).isEqualTo("Namespace:MyDesc");
-
-        assertThatThrownBy(() -> ErrorType.create(ErrorType.Code.CUSTOM_CLIENT, "Namespace:MyDesc"))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Use the client() or server() methods to construct ErrorTypes with code CUSTOM_CLIENT "
-                        + "or CUSTOM_SERVER");
-        assertThatThrownBy(() -> ErrorType.create(ErrorType.Code.CUSTOM_SERVER, "MyDesc"))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Use the client() or server() methods to construct ErrorTypes with code CUSTOM_CLIENT "
-                        + "or CUSTOM_SERVER");
     }
 }
