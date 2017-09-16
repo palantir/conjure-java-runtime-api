@@ -42,6 +42,10 @@ public interface ServiceConfiguration {
 
     Optional<Duration> writeTimeout();
 
+    Optional<Integer> maxNumRetries();
+
+    Optional<Duration> backoffSlotSize();
+
     Optional<Boolean> enableGcmCipherSuites();
 
     Optional<ProxyConfiguration> proxy();

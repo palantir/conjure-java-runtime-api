@@ -98,4 +98,5 @@ public final class ErrorTypeTest {
                 .hasMessage("Use the client() or server() methods to construct ErrorTypes with code CUSTOM_CLIENT "
                         + "or CUSTOM_SERVER");
     }
+
 }

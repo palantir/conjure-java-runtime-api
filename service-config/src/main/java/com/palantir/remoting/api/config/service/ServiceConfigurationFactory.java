@@ -77,6 +77,9 @@ public final class ServiceConfigurationFactory {
                         .map(t -> Duration.ofSeconds(t.toSeconds())))
                 .writeTimeout(orElse(partial.writeTimeout(), services.defaultWriteTimeout())
                         .map(t -> Duration.ofSeconds(t.toSeconds())))
+                .maxNumRetries(partial.maxNumRetries())
+                .backoffSlotSize(orElse(partial.backoffSlotSize(), services.defaultBackoffSlotSize())
+                        .map(t -> Duration.ofSeconds(t.toSeconds())))
                 .proxy(orElse(partial.proxyConfiguration(), services.defaultProxyConfiguration()))
                 .enableGcmCipherSuites(
                         orElse(partial.enableGcmCipherSuites(), services.defaultEnableGcmCipherSuites()))

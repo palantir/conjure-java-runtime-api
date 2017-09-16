@@ -79,6 +79,12 @@ public abstract class ServicesConfigBlock {
     public abstract Optional<HumanReadableDuration> defaultWriteTimeout();
 
     /**
+     * Default global write timeout.
+     */
+    @JsonProperty("backoffSlotSize")
+    public abstract Optional<HumanReadableDuration> defaultBackoffSlotSize();
+
+    /**
      * Default enablement of gcm cipher suites, defaults to false.
      */
     @JsonProperty("enableGcmCipherSuites")
@@ -114,6 +120,11 @@ public abstract class ServicesConfigBlock {
         @JsonProperty("write-timeout")
         Builder defaultWriteTimeoutKebabCase(Optional<HumanReadableDuration> defaultWriteTimeout) {
             return defaultWriteTimeout(defaultWriteTimeout);
+        }
+
+        @JsonProperty("backoff-slot-size")
+        Builder defaultBackoffSlotSizeKebabCase(Optional<HumanReadableDuration> defaultBackoffSlotSize) {
+            return defaultBackoffSlotSize(defaultBackoffSlotSize);
         }
 
         @JsonProperty("enable-gcm-cipher-suites")
