@@ -54,7 +54,7 @@ public interface PartialServiceConfiguration {
 
     /**
      * The size of one backoff time slot for call retries. For example, an exponential backoff retry algorithm may
-     * choose a backoff time in {@code [0, backoffSlotSize^c]} for the c-th retry.
+     * choose a backoff time in {@code [0, backoffSlotSize * 2^c]} for the c-th retry.
      */
     Optional<HumanReadableDuration> backoffSlotSize();
 
