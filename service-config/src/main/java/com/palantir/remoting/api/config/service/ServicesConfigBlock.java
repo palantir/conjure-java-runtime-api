@@ -38,15 +38,15 @@ import org.immutables.value.Value.Immutable;
 public abstract class ServicesConfigBlock {
 
     /**
-     * Fallback API token to be used if the service specific API token is not defined in the
-     * {@link PartialServiceConfiguration}.
+     * Fallback API token to be used if the service specific API token is not defined in the {@link
+     * PartialServiceConfiguration}.
      */
     @JsonProperty("apiToken")
     public abstract Optional<BearerToken> defaultApiToken();
 
     /**
-     * Fallback SSL Configuration to be used if the service specific SSL configuration is not defined in the
-     * {@link PartialServiceConfiguration}.
+     * Fallback SSL Configuration to be used if the service specific SSL configuration is not defined in the {@link
+     * PartialServiceConfiguration}.
      */
     @JsonProperty("security")
     public abstract Optional<SslConfiguration> defaultSecurity();
@@ -77,6 +77,12 @@ public abstract class ServicesConfigBlock {
      */
     @JsonProperty("writeTimeout")
     public abstract Optional<HumanReadableDuration> defaultWriteTimeout();
+
+    /**
+     * Default global backoff slot size, see {@link PartialServiceConfiguration#backoffSlotSize()}.
+     */
+    @JsonProperty("backoffSlotSize")
+    public abstract Optional<HumanReadableDuration> defaultBackoffSlotSize();
 
     /**
      * Default enablement of gcm cipher suites, defaults to false.
@@ -114,6 +120,11 @@ public abstract class ServicesConfigBlock {
         @JsonProperty("write-timeout")
         Builder defaultWriteTimeoutKebabCase(Optional<HumanReadableDuration> defaultWriteTimeout) {
             return defaultWriteTimeout(defaultWriteTimeout);
+        }
+
+        @JsonProperty("backoff-slot-size")
+        Builder defaultBackoffSlotSizeKebabCase(Optional<HumanReadableDuration> defaultBackoffSlotSize) {
+            return defaultBackoffSlotSize(defaultBackoffSlotSize);
         }
 
         @JsonProperty("enable-gcm-cipher-suites")

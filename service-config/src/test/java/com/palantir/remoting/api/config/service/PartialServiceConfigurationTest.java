@@ -23,6 +23,7 @@ import com.palantir.remoting.api.config.ssl.SslConfiguration;
 import com.palantir.remoting.api.ext.jackson.ObjectMappers;
 import com.palantir.tokens.auth.BearerToken;
 import java.nio.file.Paths;
+import java.util.Optional;
 import org.junit.Test;
 
 public final class PartialServiceConfigurationTest {
@@ -37,6 +38,8 @@ public final class PartialServiceConfigurationTest {
                 .connectTimeout(HumanReadableDuration.days(1))
                 .readTimeout(HumanReadableDuration.days(1))
                 .writeTimeout(HumanReadableDuration.days(1))
+                .maxNumRetries(Optional.of(5))
+                .backoffSlotSize(HumanReadableDuration.days(1))
                 .addUris("uri1")
                 .proxyConfiguration(ProxyConfiguration.of("host:80"))
                 .build();
@@ -44,6 +47,7 @@ public final class PartialServiceConfigurationTest {
                 + "{\"trustStorePath\":\"truststore.jks\",\"trustStoreType\":\"JKS\",\"keyStorePath\":null,"
                 + "\"keyStorePassword\":null,\"keyStoreType\":\"JKS\",\"keyStoreKeyAlias\":null},\"uris\":[\"uri1\"],"
                 + "\"connectTimeout\":\"1 day\",\"readTimeout\":\"1 day\",\"writeTimeout\":\"1 day\","
+                + "\"maxNumRetries\":5,\"backoffSlotSize\":\"1 day\","
                 + "\"enableGcmCipherSuites\":null,"
                 + "\"proxyConfiguration\":{\"hostAndPort\":\"host:80\",\"credentials\":null,"
                 + "\"type\":\"HTTP\"}}";
@@ -51,6 +55,7 @@ public final class PartialServiceConfigurationTest {
                 + "{\"trust-store-path\":\"truststore.jks\",\"trust-store-type\":\"JKS\",\"key-store-path\":null,"
                 + "\"key-store-password\":null,\"key-store-type\":\"JKS\",\"key-store-key-alias\":null},"
                 + "\"connect-timeout\":\"1 day\",\"read-timeout\":\"1 day\",\"write-timeout\":\"1 day\","
+                + "\"max-num-retries\":5,\"backoff-slot-size\":\"1 day\","
                 + "\"uris\":[\"uri1\"],\"proxy-configuration\":{\"host-and-port\":\"host:80\",\"credentials\":null},"
                 + "\"enable-gcm-cipher-suites\":null}";
 
@@ -63,10 +68,12 @@ public final class PartialServiceConfigurationTest {
     public void serDe_optional() throws Exception {
         PartialServiceConfiguration serialized = PartialServiceConfiguration.builder().build();
         String camelCase = "{\"apiToken\":null,\"security\":null,\"uris\":[],\"connectTimeout\":null,"
-                + "\"readTimeout\":null,\"writeTimeout\":null,\"enableGcmCipherSuites\":null,"
+                + "\"readTimeout\":null,\"writeTimeout\":null,\"maxNumRetries\":null,\"backoffSlotSize\":null,"
+                + "\"enableGcmCipherSuites\":null,"
                 + "\"proxyConfiguration\":null}";
         String kebabCase = "{\"api-token\":null,\"security\":null,\"connect-timeout\":null,"
-                + "\"read-timeout\":null,\"write-timeout\":null,\"enable-gcm-cipher-suites\":null,"
+                + "\"read-timeout\":null,\"write-timeout\":null,\"max-num-retries\":null,\"backoff-slot-size\":null,"
+                + "\"enable-gcm-cipher-suites\":null,"
                 + "\"uris\":[],\"proxy-configuration\":null}";
 
         assertThat(ObjectMappers.newClientObjectMapper().writeValueAsString(serialized)).isEqualTo(camelCase);

@@ -49,6 +49,15 @@ public interface PartialServiceConfiguration {
     /** Write timeout for requests. */
     Optional<HumanReadableDuration> writeTimeout();
 
+    /** The maximum number of times a failed RPC call should be retried. */
+    Optional<Integer> maxNumRetries();
+
+    /**
+     * The size of one backoff time slot for call retries. For example, an exponential backoff retry algorithm may
+     * choose a backoff time in {@code [0, backoffSlotSize^c]} for the c-th retry.
+     */
+    Optional<HumanReadableDuration> backoffSlotSize();
+
     /** Enables slower, but more standard cipher suite support, defaults to false. */
     Optional<Boolean> enableGcmCipherSuites();
 
@@ -87,6 +96,16 @@ public interface PartialServiceConfiguration {
         @JsonProperty("write-timeout")
         Builder writeTimeoutKebabCase(Optional<HumanReadableDuration> writeTimeout) {
             return writeTimeout(writeTimeout);
+        }
+
+        @JsonProperty("max-num-retries")
+        Builder maxNumRetriesKebabCase(Optional<Integer> maxNumRetries) {
+            return maxNumRetries(maxNumRetries);
+        }
+
+        @JsonProperty("backoff-slot-size")
+        Builder backoffSlotSizeKebabCase(Optional<HumanReadableDuration> backoffSlotSize) {
+            return backoffSlotSize(backoffSlotSize);
         }
 
         @JsonProperty("proxy-configuration")
