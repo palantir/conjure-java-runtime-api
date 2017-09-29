@@ -30,7 +30,7 @@ import org.immutables.value.Value;
 @ImmutablesStyle
 public abstract class ErrorType {
 
-    private static final String UPPER_CAMEL_CASE = "(([A-Z][a-z][0-9]+)+)";
+    private static final String UPPER_CAMEL_CASE = "(([A-Z][a-z0-9]+)+)";
     // UpperCamel with UpperCamel namespace prefix.
     private static final Pattern ERROR_NAME_PATTERN =
             Pattern.compile(String.format("%s:%s", UPPER_CAMEL_CASE, UPPER_CAMEL_CASE));
