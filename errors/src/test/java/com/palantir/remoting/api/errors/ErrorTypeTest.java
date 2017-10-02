@@ -25,7 +25,7 @@ public final class ErrorTypeTest {
 
     @Test
     public void testNameMustBeCamelCaseWithOptionalNameSpace() throws Exception {
-        String[] badNames = new String[] {":", "foo:Bar", ":Bar", "Bar:", "foo:bar", "Foo:bar"};
+        String[] badNames = new String[] {":", "foo:Bar", ":Bar", "Bar:", "foo:bar", "Foo:bar", "Foo:2Bar"};
         for (String name : badNames) {
             assertThatThrownBy(() -> ErrorType.client(name))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -38,7 +38,7 @@ public final class ErrorTypeTest {
                     .hasMessage("ErrorType names must be of the form 'UpperCamelNamespace:UpperCamelName': %s", name);
         }
 
-        String[] goodNames = new String[] {"Foo:Bar", "FooBar:Baz", "FooBar:BoomBang"};
+        String[] goodNames = new String[] {"Foo:Bar", "FooBar:Baz", "FooBar:BoomBang", "Foo:Bar2Baz3"};
         for (String name : goodNames) {
             ErrorType.client(name);
             ErrorType.server(name);
