@@ -162,6 +162,45 @@ public final class ServiceConfigurationFactoryTests {
     }
 
     @Test
+    public void testFactoryCreateFromPatialConfig() {
+        PartialServiceConfiguration partial = PartialServiceConfiguration.builder()
+                .apiToken(apiToken)
+                .uris(uris)
+                .security(security)
+                .connectTimeout(connectTimeout)
+                .readTimeout(readTimeout)
+                .writeTimeout(writeTimeout)
+                .maxNumRetries(maxNumRetries)
+                .backoffSlotSize(backoffSlotSize)
+                .enableGcmCipherSuites(enableGcm)
+                .proxyConfiguration(proxy)
+                .build();
+
+        ServiceConfiguration expected = ServiceConfiguration.builder()
+                .apiToken(apiToken)
+                .security(security)
+                .uris(uris)
+                .connectTimeout(Duration.ofSeconds(connectTimeout.toSeconds()))
+                .readTimeout(Duration.ofMinutes(readTimeout.toMinutes()))
+                .writeTimeout(Duration.ofHours(writeTimeout.toHours()))
+                .maxNumRetries(maxNumRetries)
+                .backoffSlotSize(Duration.ofHours(backoffSlotSize.toHours()))
+                .enableGcmCipherSuites(enableGcm)
+                .proxy(proxy)
+                .build();
+
+        assertThat(ServiceConfigurationFactory.create(partial)).isEqualTo(expected);
+    }
+
+    @Test
+    public void testIllegalArgumentExceptionForPartialEmptySecurity() {
+        PartialServiceConfiguration partial = PartialServiceConfiguration.of(Lists.newArrayList(), Optional.empty());
+        assertThatThrownBy(() -> ServiceConfigurationFactory.create(partial))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Must provide security block for this service");
+    }
+
+    @Test
     public void testIllegalArgumentExceptionForEmptySecurity() {
         PartialServiceConfiguration partial = PartialServiceConfiguration.of(Lists.newArrayList(), Optional.empty());
         ServicesConfigBlock services = ServicesConfigBlock.builder().putServices("service1", partial).build();

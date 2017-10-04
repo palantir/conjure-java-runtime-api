@@ -35,6 +35,23 @@ public final class ServiceConfigurationFactory {
         return new ServiceConfigurationFactory(services);
     }
 
+    public static ServiceConfiguration create(PartialServiceConfiguration partial) {
+        return ServiceConfiguration.builder()
+                .apiToken(partial.apiToken())
+                .security(partial.security()
+                        .orElseThrow(() -> new IllegalArgumentException(
+                                "Must provide security block for this service")))
+                .uris(partial.uris())
+                .connectTimeout(partial.connectTimeout().map(t -> Duration.ofSeconds(t.toSeconds())))
+                .readTimeout(partial.readTimeout().map(t -> Duration.ofSeconds(t.toSeconds())))
+                .writeTimeout(partial.writeTimeout().map(t -> Duration.ofSeconds(t.toSeconds())))
+                .maxNumRetries(partial.maxNumRetries())
+                .backoffSlotSize(partial.backoffSlotSize().map(t -> Duration.ofSeconds(t.toSeconds())))
+                .proxy(partial.proxyConfiguration())
+                .enableGcmCipherSuites(partial.enableGcmCipherSuites())
+                .build();
+    }
+
     /** Returns the {@link ServiceConfiguration} for the given name. */
     public ServiceConfiguration get(String serviceName) {
         PartialServiceConfiguration partial = services.services().get(serviceName);
