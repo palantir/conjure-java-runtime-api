@@ -35,7 +35,11 @@ public final class ServiceConfigurationFactory {
         return new ServiceConfigurationFactory(services);
     }
 
-    /** returns a complete {@link ServiceConfiguration} for the given partial one. */
+    /**
+     * returns a complete {@link ServiceConfiguration} for the given partial one.
+     *
+     * @throws IllegalArgumentException when the given partial's security configuration is absent
+     */
     public static ServiceConfiguration complete(PartialServiceConfiguration partial) {
         return ServiceConfiguration.builder()
                 .apiToken(partial.apiToken())
