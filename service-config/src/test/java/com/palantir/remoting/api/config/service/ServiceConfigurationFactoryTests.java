@@ -189,13 +189,13 @@ public final class ServiceConfigurationFactoryTests {
                 .proxy(proxy)
                 .build();
 
-        assertThat(ServiceConfigurationFactory.create(partial)).isEqualTo(expected);
+        assertThat(ServiceConfigurationFactory.complete(partial)).isEqualTo(expected);
     }
 
     @Test
     public void testIllegalArgumentExceptionForPartialEmptySecurity() {
         PartialServiceConfiguration partial = PartialServiceConfiguration.of(Lists.newArrayList(), Optional.empty());
-        assertThatThrownBy(() -> ServiceConfigurationFactory.create(partial))
+        assertThatThrownBy(() -> ServiceConfigurationFactory.complete(partial))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Must provide security block for this service");
     }

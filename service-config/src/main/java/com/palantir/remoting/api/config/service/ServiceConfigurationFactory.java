@@ -35,7 +35,8 @@ public final class ServiceConfigurationFactory {
         return new ServiceConfigurationFactory(services);
     }
 
-    public static ServiceConfiguration create(PartialServiceConfiguration partial) {
+    /** returns a complete {@link ServiceConfiguration} for the given partial one. */
+    public static ServiceConfiguration complete(PartialServiceConfiguration partial) {
         return ServiceConfiguration.builder()
                 .apiToken(partial.apiToken())
                 .security(partial.security()
