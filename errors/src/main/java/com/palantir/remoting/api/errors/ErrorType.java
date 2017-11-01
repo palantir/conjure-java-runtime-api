@@ -84,14 +84,20 @@ public abstract class ErrorType {
 
     /**
      * Creates a new error type with code {@link Code#CUSTOM_CLIENT} and the given name.
+     *
+     * @deprecated Use {@link #create}. This method will be removed in version 2.0.0.
      */
+    @Deprecated
     public static ErrorType client(String name) {
         return createAndCheckNamespaceIsNotDefault(Code.CUSTOM_CLIENT, name);
     }
 
     /**
      * Creates a new error type with code {@link Code#CUSTOM_SERVER} and the given name.
+     *
+     * @deprecated Use {@link #create}. This method will be removed in version 2.0.0.
      */
+    @Deprecated
     public static ErrorType server(String name) {
         return createAndCheckNamespaceIsNotDefault(Code.CUSTOM_SERVER, name);
     }
