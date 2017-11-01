@@ -84,27 +84,28 @@ public abstract class ErrorType {
 
     /**
      * Creates a new error type with code {@link Code#CUSTOM_CLIENT} and the given name.
+     *
+     * @deprecated Use {@link #create}. This method will be removed in version 2.0.0.
      */
+    @Deprecated
     public static ErrorType client(String name) {
         return createAndCheckNamespaceIsNotDefault(Code.CUSTOM_CLIENT, name);
     }
 
     /**
      * Creates a new error type with code {@link Code#CUSTOM_SERVER} and the given name.
+     *
+     * @deprecated Use {@link #create}. This method will be removed in version 2.0.0.
      */
+    @Deprecated
     public static ErrorType server(String name) {
         return createAndCheckNamespaceIsNotDefault(Code.CUSTOM_SERVER, name);
     }
 
     /**
-     * Constructs an {@link ErrorType} with the given error {@link Code} and name. Cannot use the {@link
-     * Code#CUSTOM_CLIENT} or {@link Code#CUSTOM_SERVER} error codes, see {@link #client} and {@link #server} instead.
+     * Constructs an {@link ErrorType} with the given error {@link Code} and name.
      */
     public static ErrorType create(Code code, String name) {
-        if (code == Code.CUSTOM_CLIENT || code == Code.CUSTOM_SERVER) {
-            throw new IllegalArgumentException("Use the client() or server() methods to construct "
-                    + "ErrorTypes with code CUSTOM_CLIENT or CUSTOM_SERVER");
-        }
         return createAndCheckNamespaceIsNotDefault(code, name);
     }
 
