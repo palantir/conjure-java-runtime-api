@@ -26,7 +26,7 @@ import org.junit.Test;
 
 public final class ServiceExceptionTest {
 
-    private static final ErrorType ERROR = ErrorType.client("Namespace:MyDesc");
+    private static final ErrorType ERROR = ErrorType.create(ErrorType.Code.CUSTOM_CLIENT, "Namespace:MyDesc");
     private static final String EXPECTED_ERROR_MSG = "ServiceException: CUSTOM_CLIENT (Namespace:MyDesc)";
 
     @Test

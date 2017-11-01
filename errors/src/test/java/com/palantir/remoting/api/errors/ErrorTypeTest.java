@@ -27,10 +27,10 @@ public final class ErrorTypeTest {
     public void testNameMustBeCamelCaseWithOptionalNameSpace() throws Exception {
         String[] badNames = new String[] {":", "foo:Bar", ":Bar", "Bar:", "foo:bar", "Foo:bar", "Foo:2Bar"};
         for (String name : badNames) {
-            assertThatThrownBy(() -> ErrorType.client(name))
+            assertThatThrownBy(() -> ErrorType.create(ErrorType.Code.CUSTOM_CLIENT, name))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("ErrorType names must be of the form 'UpperCamelNamespace:UpperCamelName': %s", name);
-            assertThatThrownBy(() -> ErrorType.server(name))
+            assertThatThrownBy(() -> ErrorType.create(ErrorType.Code.CUSTOM_SERVER, name))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("ErrorType names must be of the form 'UpperCamelNamespace:UpperCamelName': %s", name);
             assertThatThrownBy(() -> ErrorType.create(ErrorType.Code.FAILED_PRECONDITION, name))
@@ -40,18 +40,18 @@ public final class ErrorTypeTest {
 
         String[] goodNames = new String[] {"Foo:Bar", "FooBar:Baz", "FooBar:BoomBang", "Foo:Bar2Baz3"};
         for (String name : goodNames) {
-            ErrorType.client(name);
-            ErrorType.server(name);
+            ErrorType.create(ErrorType.Code.CUSTOM_CLIENT, name);
+            ErrorType.create(ErrorType.Code.CUSTOM_SERVER, name);
             ErrorType.create(ErrorType.Code.INVALID_ARGUMENT, name);
         }
     }
 
     @Test
     public void testNamespaceMustNotBeDefault() throws Exception {
-        assertThatThrownBy(() -> ErrorType.client("Default:Foo"))
+        assertThatThrownBy(() -> ErrorType.create(ErrorType.Code.CUSTOM_SERVER, "Default:Foo"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Namespace must not be 'Default' in ErrorType name: Default:Foo");
-        assertThatThrownBy(() -> ErrorType.server("Default:Foo"))
+        assertThatThrownBy(() -> ErrorType.create(ErrorType.Code.CUSTOM_SERVER, "Default:Foo"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Namespace must not be 'Default' in ErrorType name: Default:Foo");
         assertThatThrownBy(() -> ErrorType.create(ErrorType.Code.INVALID_ARGUMENT, "Default:Foo"))
@@ -70,13 +70,13 @@ public final class ErrorTypeTest {
     }
 
     @Test
-    public void testCustomErrors() throws Exception {
-        ErrorType customClient = ErrorType.client("Namespace:MyDesc");
+    public void testCanCreateCustomClientAndServerErrors() throws Exception {
+        ErrorType customClient = ErrorType.create(ErrorType.Code.CUSTOM_CLIENT, "Namespace:MyDesc");
         assertThat(customClient.code()).isEqualTo(ErrorType.Code.CUSTOM_CLIENT);
         assertThat(customClient.httpErrorCode()).isEqualTo(400);
         assertThat(customClient.name()).isEqualTo("Namespace:MyDesc");
 
-        ErrorType customServer = ErrorType.server("Namespace:MyDesc");
+        ErrorType customServer = ErrorType.create(ErrorType.Code.CUSTOM_SERVER, "Namespace:MyDesc");
         assertThat(customServer.code()).isEqualTo(ErrorType.Code.CUSTOM_SERVER);
         assertThat(customServer.httpErrorCode()).isEqualTo(500);
         assertThat(customServer.name()).isEqualTo("Namespace:MyDesc");
@@ -89,5 +89,4 @@ public final class ErrorTypeTest {
         assertThat(error.httpErrorCode()).isEqualTo(500);
         assertThat(error.name()).isEqualTo("Namespace:MyDesc");
     }
-
 }
