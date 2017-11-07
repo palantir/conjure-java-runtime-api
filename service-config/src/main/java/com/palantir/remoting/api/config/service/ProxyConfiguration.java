@@ -76,6 +76,7 @@ public abstract class ProxyConfiguration {
     @Value.Check
     protected final void check() {
         switch (type()) {
+            case MESH:
             case HTTP:
                 Preconditions.checkArgument(hostAndPort().isPresent(), "host-and-port must be "
                         + "configured for an HTTP proxy");
@@ -97,11 +98,19 @@ public abstract class ProxyConfiguration {
     }
 
     public static ProxyConfiguration of(String hostAndPort) {
-        return new ProxyConfiguration.Builder().hostAndPort(hostAndPort).build();
+        return builder().hostAndPort(hostAndPort).build();
     }
 
     public static ProxyConfiguration of(String hostAndPort, BasicCredentials credentials) {
-        return new ProxyConfiguration.Builder().hostAndPort(hostAndPort).credentials(credentials).build();
+        return builder().hostAndPort(hostAndPort).credentials(credentials).build();
+    }
+
+    public static ProxyConfiguration mesh(String hostAndPort) {
+        return builder().type(Type.MESH).hostAndPort(hostAndPort).build();
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     // TODO(jnewman): #317 - remove kebab-case methods when Jackson 2.7 is picked up
