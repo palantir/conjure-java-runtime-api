@@ -43,7 +43,7 @@ public abstract class ProxyConfiguration {
         HTTP,
 
         /**
-         * Redirect requests to the {@link #hostAndPort} and sets the HTTP Host header to the original request's
+         * Redirects requests to the {@link #hostAndPort} and sets the HTTP Host header to the original request's
          * authority.
          */
         MESH
