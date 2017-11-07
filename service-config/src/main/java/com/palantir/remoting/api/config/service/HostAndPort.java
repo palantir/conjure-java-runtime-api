@@ -45,8 +45,7 @@ public final class HostAndPort {
         return port >= 0;
     }
 
-
-    static HostAndPort fromString(String hostPortString) {
+    public static HostAndPort fromString(String hostPortString) {
         checkNotNull(hostPortString, "hostPortString");
         String host;
         String portString = null;

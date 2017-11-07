@@ -37,10 +37,16 @@ public abstract class ProxyConfiguration {
         DIRECT,
 
         /**
-         * Use an http-proxy specified by {@link ProxyConfiguration#hostAndPort()}  and (optionally)
-         * {@link ProxyConfiguration#credentials()}.
+         * Use an http-proxy specified by {@link ProxyConfiguration#hostAndPort()}  and (optionally) {@link
+         * ProxyConfiguration#credentials()}.
          */
         HTTP,
+
+        /**
+         * Redirects requests to the {@link #hostAndPort} and sets the HTTP Host header to the original request's
+         * authority.
+         */
+        MESH
     }
 
     /**
