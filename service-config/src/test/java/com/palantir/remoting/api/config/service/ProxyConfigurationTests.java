@@ -91,7 +91,7 @@ public final class ProxyConfigurationTests {
                 .hostAndPort("localhost:1234")
                 .build())
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("credentials only valid for http proxies");
+                .hasMessage("credentials only valid for HTTP proxies");
     }
 
     @Test

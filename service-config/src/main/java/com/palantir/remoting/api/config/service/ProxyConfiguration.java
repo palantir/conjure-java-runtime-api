@@ -93,7 +93,7 @@ public abstract class ProxyConfiguration {
         }
 
         if (credentials().isPresent()) {
-            Preconditions.checkArgument(type() == Type.HTTP, "credentials only valid for http proxies");
+            Preconditions.checkArgument(type() == Type.HTTP, "credentials only valid for HTTP proxies");
         }
     }
 
