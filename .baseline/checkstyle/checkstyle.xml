@@ -19,7 +19,7 @@
         <property name="lineSeparator" value="lf"/>
     </module>
     <module name="RegexpHeader">
-        <property name="header" value="^/\*$\n^ \* Copyright \d{4} Palantir Technologies, Inc\. All rights reserved\.$"/>
+        <property name="header" value="^/\*$\n^ \* \(c\) Copyright \d{4} Palantir Technologies Inc\. All rights reserved\.$"/>
         <property name="fileExtensions" value=".java,.ts"/>
     </module>
     <module name="RegexpMultiline"> <!-- Development Practices: Writing good unit tests -->
@@ -82,8 +82,7 @@
                 org.mockito.ArgumentMatchers.*,org.mockito.Mockito.*,org.mockito.Matchers.*,
                 org.assertj.core.api.Assertions.*,
                 com.google.common.base.Preconditions.*,com.google.common.truth.Truth.*,
-                org.apache.commons.lang3.Validate.*,
-                com.palantir.remoting.api.testing.Assertions.*"/>
+                org.apache.commons.lang3.Validate.*"/>
         </module>
         <module name="ClassTypeParameterName"> <!-- Java Style Guide: Type variable names -->
             <property name="format" value="(^[A-Z][0-9]?)$|([A-Z][a-zA-Z0-9]*[T]$)"/>
