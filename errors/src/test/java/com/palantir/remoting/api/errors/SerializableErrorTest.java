@@ -35,17 +35,32 @@ public final class SerializableErrorTest {
     private static final ObjectMapper mapper = ObjectMappers.newServerObjectMapper();
 
     @Test
-    public void testExceptionToError() {
+    public void forException_should_keep_both_safe_and_unsafe_args() {
         ErrorType error = ErrorType.FAILED_PRECONDITION;
-        ServiceException exception =
-                new ServiceException(error, SafeArg.of("safeKey", 42), UnsafeArg.of("foo", "bar"));
+        ServiceException exception = new ServiceException(error,
+                SafeArg.of("safeKey", 42),
+                UnsafeArg.of("sensitiveInfo", "some user-entered content"));
+
         SerializableError expected = new SerializableError.Builder()
                 .errorCode(error.code().name())
                 .errorName(error.name())
                 .errorInstanceId(exception.getErrorInstanceId())
                 .putParameters("safeKey", "42")
+                .putParameters("sensitiveInfo", "some user-entered content")
                 .build();
         assertThat(SerializableError.forException(exception)).isEqualTo(expected);
+    }
+
+    @Test
+    public void forException_should_fail_if_safearg_and_unsafe_arg_keys_collide() {
+        ServiceException exception = new ServiceException(
+                ErrorType.INTERNAL,
+                SafeArg.of("collision", 42),
+                UnsafeArg.of("collision", "bar"));
+
+        assertThatThrownBy(() -> SerializableError.forException(exception))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("Duplicate key 42");
     }
 
     @Test

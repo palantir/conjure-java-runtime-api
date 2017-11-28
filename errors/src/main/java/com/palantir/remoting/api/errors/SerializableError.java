@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.palantir.logsafe.Arg;
 import java.io.Serializable;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.immutables.value.Value;
 
 /**
@@ -107,20 +108,19 @@ public abstract class SerializableError implements Serializable {
 
     /**
      * Creates a {@link SerializableError} representation of this exception that derives from the error code and
-     * message, as well as the {@link Arg#isSafeForLogging safe} {@link ServiceException#args parameters}.
+     * message, as well as the {@link Arg#isSafeForLogging safe} and unsafe {@link ServiceException#args parameters}.
      */
     public static SerializableError forException(ServiceException exception) {
-        Builder builder = new Builder()
+        Map<String, String> safeAndUnsafeArgs = exception.getArgs()
+                .stream()
+                .collect(Collectors.toMap(Arg::getName, arg -> arg.getValue().toString()));
+
+        return new Builder()
                 .errorCode(exception.getErrorType().code().name())
                 .errorName(exception.getErrorType().name())
-                .errorInstanceId(exception.getErrorInstanceId());
-        for (Arg<?> arg : exception.getArgs()) {
-            if (arg.isSafeForLogging()) {
-                builder.putParameters(arg.getName(), arg.getValue().toString());
-            }
-        }
-
-        return builder.build();
+                .errorInstanceId(exception.getErrorInstanceId())
+                .putAllParameters(safeAndUnsafeArgs)
+                .build();
     }
 
     // TODO(rfink): Remove once all error producers have switched to errorCode/errorName.
