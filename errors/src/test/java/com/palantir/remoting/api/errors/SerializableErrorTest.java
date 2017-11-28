@@ -52,15 +52,20 @@ public final class SerializableErrorTest {
     }
 
     @Test
-    public void forException_should_fail_if_safearg_and_unsafe_arg_keys_collide() {
+    public void forException_arg_key_collisions_just_use_the_last_one() {
+        ErrorType error = ErrorType.INTERNAL;
         ServiceException exception = new ServiceException(
-                ErrorType.INTERNAL,
-                SafeArg.of("collision", 42),
-                UnsafeArg.of("collision", "bar"));
+                error,
+                SafeArg.of("collision", "first"),
+                UnsafeArg.of("collision", "second"));
 
-        assertThatThrownBy(() -> SerializableError.forException(exception))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Duplicate key 42");
+        SerializableError expected = new SerializableError.Builder()
+                .errorCode(error.code().name())
+                .errorName(error.name())
+                .errorInstanceId(exception.getErrorInstanceId())
+                .putParameters("collision", "second")
+                .build();
+        assertThat(SerializableError.forException(exception)).isEqualTo(expected);
     }
 
     @Test
