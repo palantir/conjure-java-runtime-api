@@ -42,6 +42,7 @@ public abstract class ErrorType {
         CONFLICT(409),
         FAILED_PRECONDITION(500),
         INTERNAL(500),
+        TIMEOUT(500),
         CUSTOM_CLIENT(400),
         CUSTOM_SERVER(500);
 
@@ -61,6 +62,7 @@ public abstract class ErrorType {
     public static final ErrorType FAILED_PRECONDITION =
             createInternal(Code.FAILED_PRECONDITION, "Default:FailedPrecondition");
     public static final ErrorType INTERNAL = createInternal(Code.INTERNAL, "Default:Internal");
+    public static final ErrorType TIMEOUT = createInternal(Code.TIMEOUT, "Default:Timeout");
 
     /** The {@link Code} of this error. */
     public abstract Code code();
