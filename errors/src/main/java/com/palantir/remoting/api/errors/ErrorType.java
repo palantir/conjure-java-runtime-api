@@ -40,6 +40,7 @@ public abstract class ErrorType {
         INVALID_ARGUMENT(400),
         NOT_FOUND(404),
         CONFLICT(409),
+        REQUEST_ENTITY_TOO_LARGE(413),
         FAILED_PRECONDITION(500),
         INTERNAL(500),
         TIMEOUT(500),
@@ -57,6 +58,8 @@ public abstract class ErrorType {
             createInternal(Code.PERMISSION_DENIED, "Default:PermissionDenied");
     public static final ErrorType INVALID_ARGUMENT =
             createInternal(Code.INVALID_ARGUMENT, "Default:InvalidArgument");
+    public static final ErrorType REQUEST_ENTITY_TOO_LARGE =
+            createInternal(Code.REQUEST_ENTITY_TOO_LARGE, "Default:RequestEntityTooLarge");
     public static final ErrorType NOT_FOUND = createInternal(Code.NOT_FOUND, "Default:NotFound");
     public static final ErrorType CONFLICT = createInternal(Code.CONFLICT, "Default:Conflict");
     public static final ErrorType FAILED_PRECONDITION =
