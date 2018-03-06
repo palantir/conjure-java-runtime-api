@@ -56,22 +56,34 @@ public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExcep
         }
     }
 
-    private static class AssertableArgs {
+    private static final class AssertableArgs {
         private final Map<String, Object> safeArgs = new HashMap<>();
         private final Map<String, Object> unsafeArgs = new HashMap<>();
 
         private AssertableArgs(List<Arg<?>> args) {
             args.forEach(arg -> {
                 if (arg.isSafeForLogging()) {
-                    if (safeArgs.put(arg.getName(), arg.getValue()) != null) {
-                        throw new AssertionError(String.format("Duplicate safe arg name '%s'", arg.getName()));
-                    }
+                    assertPutSafe(arg);
                 } else {
-                    if (unsafeArgs.put(arg.getName(), arg.getValue()) != null) {
-                        throw new AssertionError(String.format("Duplicate unsafe arg name '%s'", arg.getName()));
-                    }
+                    assertPutUnsafe(arg);
                 }
             });
+        }
+
+        private void assertPutSafe(Arg<?> arg) {
+            assertPut(safeArgs, arg.getName(), arg.getValue(), "safe");
+        }
+
+        private void assertPutUnsafe(Arg<?> arg) {
+            assertPut(unsafeArgs, arg.getName(), arg.getValue(), "unsafe");
+        }
+
+        private static void assertPut(Map<String, Object> map, String key, Object value, String name) {
+            Object previous = map.put(key, value);
+            if (previous != null) {
+                throw new AssertionError(String.format("Duplicate %s arg name '%s', first value: %s, second value: %s",
+                        name, key, previous, value));
+            }
         }
     }
 }
