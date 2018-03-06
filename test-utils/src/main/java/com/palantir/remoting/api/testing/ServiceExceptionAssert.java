@@ -20,7 +20,10 @@ import com.google.common.collect.ImmutableList;
 import com.palantir.logsafe.Arg;
 import com.palantir.remoting.api.errors.ErrorType;
 import com.palantir.remoting.api.errors.ServiceException;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import org.assertj.core.api.AbstractThrowableAssert;
 
 public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExceptionAssert, ServiceException> {
@@ -31,20 +34,44 @@ public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExcep
 
     public final ServiceExceptionAssert hasType(ErrorType type) {
         isNotNull();
-        if (!(actual.getErrorType().equals(type))) {
-            failWithMessage("Expected ErrorType to be %s, but found %s", type, actual.getErrorType());
-        }
-
+        failIfNotEqual("Expected ErrorType to be %s, but found %s", type, actual.getErrorType());
         return this;
     }
 
     public final ServiceExceptionAssert hasArgs(Arg<?>... args) {
         isNotNull();
 
-        if (!(actual.getArgs().equals(ImmutableList.copyOf(args)))) {
-            failWithMessage("Expected args to be %s, but found %s", Arrays.toString(args), actual.getArgs());
-        }
+        AssertableArgs actualArgs = new AssertableArgs(actual.getArgs());
+        AssertableArgs expectedArgs = new AssertableArgs(ImmutableList.copyOf(args));
+
+        failIfNotEqual("Expected safe args to be %s, but found %s", expectedArgs.safeArgs, actualArgs.safeArgs);
+        failIfNotEqual("Expected unsafe args to be %s, but found %s", expectedArgs.unsafeArgs, actualArgs.unsafeArgs);
 
         return this;
+    }
+
+    private void failIfNotEqual(String message, Object expected, Object actual) {
+        if (!Objects.equals(expected, actual)) {
+            failWithMessage(message, expected, actual);
+        }
+    }
+
+    private static class AssertableArgs {
+        private final Map<String, Object> safeArgs = new HashMap<>();
+        private final Map<String, Object> unsafeArgs = new HashMap<>();
+
+        private AssertableArgs(List<Arg<?>> args) {
+            args.forEach(arg -> {
+                if (arg.isSafeForLogging()) {
+                    if (safeArgs.put(arg.getName(), arg.getValue()) != null) {
+                        throw new AssertionError(String.format("Duplicate safe arg name '%s'", arg.getName()));
+                    }
+                } else {
+                    if (unsafeArgs.put(arg.getName(), arg.getValue()) != null) {
+                        throw new AssertionError(String.format("Duplicate unsafe arg name '%s'", arg.getName()));
+                    }
+                }
+            });
+        }
     }
 }
