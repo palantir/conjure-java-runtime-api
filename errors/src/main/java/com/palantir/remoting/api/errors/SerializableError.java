@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.palantir.logsafe.Arg;
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Objects;
 import org.immutables.value.Value;
 
 /**
@@ -116,7 +117,7 @@ public abstract class SerializableError implements Serializable {
                 .errorInstanceId(exception.getErrorInstanceId());
 
         for (Arg<?> arg : exception.getArgs()) {
-            builder.putParameters(arg.getName(), arg.getValue().toString());
+            builder.putParameters(arg.getName(), Objects.toString(arg.getValue()));
         }
 
         return builder.build();
