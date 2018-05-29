@@ -188,16 +188,18 @@ public final class ServiceConfigurationFactoryTests {
                 + "{\"service\":{\"apiToken\":null,\"security\":null,\"uris\":[\"uri\"],\"connectTimeout\":null,"
                 + "\"readTimeout\":null,\"writeTimeout\":null,\"maxNumRetries\":null,\"backoffSlotSize\":null,"
                 + "\"enableGcmCipherSuites\":null,"
-                + "\"proxyConfiguration\":null}},\"proxyConfiguration\":"
+                + "\"proxyConfiguration\":null,\"roundRobinRequests\":null}},\"proxyConfiguration\":"
                 + "{\"hostAndPort\":\"host:80\",\"credentials\":null,\"type\":\"HTTP\"},\"connectTimeout\":\"1 day\","
                 + "\"readTimeout\":\"1 day\",\"writeTimeout\":\"1 day\",\"backoffSlotSize\":\"1 day\","
-                + "\"enableGcmCipherSuites\":null}";
+                + "\"enableGcmCipherSuites\":null,"
+                + "\"roundRobinRequests\":null}";
         String kebabCase = "{\"api-token\":\"bearerToken\",\"security\":"
                 + "{\"trust-store-path\":\"truststore.jks\",\"trust-store-type\":\"JKS\",\"key-store-path\":null,"
                 + "\"key-store-password\":null,\"key-store-type\":\"JKS\",\"key-store-key-alias\":null},\"services\":"
                 + "{\"service\":{\"apiToken\":null,\"security\":null,\"connect-timeout\":null,\"read-timeout\":null,"
                 + "\"write-timeout\":null,\"max-num-retries\":null,\"backoffSlotSize\":null,\"uris\":[\"uri\"],"
                 + "\"enable-gcm-cipher-suites\":null,"
+                + "\"round-robin-requests\":null,"
                 + "\"proxy-configuration\":null}},\"proxy-configuration\":"
                 + "{\"host-and-port\":\"host:80\",\"credentials\":null},\"connect-timeout\":\"1 day\","
                 + "\"read-timeout\":\"1 day\",\"write-timeout\":\"1 day\",\"backoff-slot-size\":\"1 day\"}";
@@ -216,10 +218,10 @@ public final class ServiceConfigurationFactoryTests {
         ServicesConfigBlock deserialized = ServicesConfigBlock.builder().build();
         String serializedCamelCase = "{\"apiToken\":null,\"security\":null,\"services\":{},"
                 + "\"proxyConfiguration\":null,\"connectTimeout\":null,\"readTimeout\":null,\"writeTimeout\":null,"
-                + "\"backoffSlotSize\":null,\"enableGcmCipherSuites\":null}";
+                + "\"backoffSlotSize\":null,\"enableGcmCipherSuites\":null,\"roundRobinRequests\":null}";
         String serializedKebabCase = "{\"api-token\":null,\"security\":null,\"services\":{},"
                 + "\"proxy-configuration\":null,\"connect-timeout\":null,\"read-timeout\":null,\"write-timeout\":null,"
-                + "\"backoff-slot-size\":null,\"enable-gcm-cipher-suites\":null}";
+                + "\"backoff-slot-size\":null,\"enable-gcm-cipher-suites\":null,\"round-robin-requests\":null}";
 
         assertThat(ObjectMappers.newClientObjectMapper().writeValueAsString(deserialized))
                 .isEqualTo(serializedCamelCase);

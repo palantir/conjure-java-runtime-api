@@ -64,6 +64,11 @@ public interface PartialServiceConfiguration {
     /** Proxy configuration for connecting to the service. If absent, uses system proxy configuration. */
     Optional<ProxyConfiguration> proxyConfiguration();
 
+    /** Enables round robin functionality across the supplied URIs. Defaults to false (where requests are pinned
+     * to a single URI until an error is received).
+     */
+    Optional<Boolean> roundRobinRequests();
+
     static PartialServiceConfiguration of(List<String> uris, Optional<SslConfiguration> sslConfig) {
         return PartialServiceConfiguration.builder()
                 .uris(uris)
@@ -116,6 +121,11 @@ public interface PartialServiceConfiguration {
         @JsonProperty("enable-gcm-cipher-suites")
         Builder enableGcmCipherSuitesKebabCase(Optional<Boolean> enableGcmCipherSuites) {
             return enableGcmCipherSuites(enableGcmCipherSuites);
+        }
+
+        @JsonProperty("round-robin-requests")
+        Builder roundRobinRequestsKebabCase(Optional<Boolean> roundRobinRequests) {
+            return roundRobinRequests(roundRobinRequests);
         }
     }
 }
