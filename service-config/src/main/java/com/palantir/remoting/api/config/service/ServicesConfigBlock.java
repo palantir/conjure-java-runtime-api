@@ -90,6 +90,11 @@ public abstract class ServicesConfigBlock {
     @JsonProperty("enableGcmCipherSuites")
     public abstract Optional<Boolean> defaultEnableGcmCipherSuites();
 
+    /** Default enablement of round robin functionality across the supplied URIs. Defaults to false.
+     */
+    @JsonProperty("roundRobinRequests")
+    public abstract Optional<Boolean> defaultRoundRobinRequests();
+
     public static Builder builder() {
         return new Builder();
     }
@@ -130,6 +135,11 @@ public abstract class ServicesConfigBlock {
         @JsonProperty("enable-gcm-cipher-suites")
         Builder defaultEnableGcmCipherSuitesKebabCase(Optional<Boolean> defaultEnableGcmCipherSuites) {
             return defaultEnableGcmCipherSuites(defaultEnableGcmCipherSuites);
+        }
+
+        @JsonProperty("round-robin-requests")
+        Builder defaultRoundRobinRequestsKebabCase(Optional<Boolean> defaultRoundRobinRequests) {
+            return defaultRoundRobinRequests(defaultRoundRobinRequests);
         }
     }
 }

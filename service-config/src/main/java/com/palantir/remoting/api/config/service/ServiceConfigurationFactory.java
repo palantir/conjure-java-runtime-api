@@ -83,6 +83,8 @@ public final class ServiceConfigurationFactory {
                 .proxy(orElse(partial.proxyConfiguration(), services.defaultProxyConfiguration()))
                 .enableGcmCipherSuites(
                         orElse(partial.enableGcmCipherSuites(), services.defaultEnableGcmCipherSuites()))
+                .roundRobinRequests(
+                        orElse(partial.roundRobinRequests(), services.defaultRoundRobinRequests()))
                 .build();
     }
 

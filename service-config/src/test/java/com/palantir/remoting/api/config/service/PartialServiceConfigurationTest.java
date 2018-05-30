@@ -50,14 +50,16 @@ public final class PartialServiceConfigurationTest {
                 + "\"maxNumRetries\":5,\"backoffSlotSize\":\"1 day\","
                 + "\"enableGcmCipherSuites\":null,"
                 + "\"proxyConfiguration\":{\"hostAndPort\":\"host:80\",\"credentials\":null,"
-                + "\"type\":\"HTTP\"}}";
+                + "\"type\":\"HTTP\"},"
+                + "\"roundRobinRequests\":null}";
         String kebabCase = "{\"api-token\":\"bearerToken\",\"security\":"
                 + "{\"trust-store-path\":\"truststore.jks\",\"trust-store-type\":\"JKS\",\"key-store-path\":null,"
                 + "\"key-store-password\":null,\"key-store-type\":\"JKS\",\"key-store-key-alias\":null},"
                 + "\"connect-timeout\":\"1 day\",\"read-timeout\":\"1 day\",\"write-timeout\":\"1 day\","
                 + "\"max-num-retries\":5,\"backoff-slot-size\":\"1 day\","
                 + "\"uris\":[\"uri1\"],\"proxy-configuration\":{\"host-and-port\":\"host:80\",\"credentials\":null},"
-                + "\"enable-gcm-cipher-suites\":null}";
+                + "\"enable-gcm-cipher-suites\":null,"
+                + "\"round-robin-requests\":null}";
 
         assertThat(mapper.writeValueAsString(serialized)).isEqualTo(camelCase);
         assertThat(mapper.readValue(camelCase, PartialServiceConfiguration.class)).isEqualTo(serialized);
@@ -70,10 +72,12 @@ public final class PartialServiceConfigurationTest {
         String camelCase = "{\"apiToken\":null,\"security\":null,\"uris\":[],\"connectTimeout\":null,"
                 + "\"readTimeout\":null,\"writeTimeout\":null,\"maxNumRetries\":null,\"backoffSlotSize\":null,"
                 + "\"enableGcmCipherSuites\":null,"
-                + "\"proxyConfiguration\":null}";
+                + "\"proxyConfiguration\":null,"
+                + "\"roundRobinRequests\":null}";
         String kebabCase = "{\"api-token\":null,\"security\":null,\"connect-timeout\":null,"
                 + "\"read-timeout\":null,\"write-timeout\":null,\"max-num-retries\":null,\"backoff-slot-size\":null,"
                 + "\"enable-gcm-cipher-suites\":null,"
+                + "\"round-robin-requests\":null,"
                 + "\"uris\":[],\"proxy-configuration\":null}";
 
         assertThat(ObjectMappers.newClientObjectMapper().writeValueAsString(serialized)).isEqualTo(camelCase);

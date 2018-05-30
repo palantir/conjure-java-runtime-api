@@ -50,6 +50,8 @@ public interface ServiceConfiguration {
 
     Optional<ProxyConfiguration> proxy();
 
+    Optional<Boolean> roundRobinRequests();
+
     static ImmutableServiceConfiguration.Builder builder() {
         return new Builder();
     }
