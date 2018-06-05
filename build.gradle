@@ -6,17 +6,16 @@ buildscript {
 
     dependencies {
         classpath 'gradle.plugin.com.palantir:gradle-circle-style:1.1.2'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
-        classpath 'com.netflix.nebula:gradle-dependency-lock-plugin:4.2.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
         classpath 'com.netflix.nebula:nebula-dependency-recommender:5.2.0'
-        classpath 'com.netflix.nebula:nebula-publishing-plugin:5.1.4'
+        classpath 'com.netflix.nebula:nebula-publishing-plugin:7.0.12'
         classpath 'com.palantir.baseline:gradle-baseline-java:0.20.1'
         classpath 'com.palantir.configurationresolver:gradle-configuration-resolver-plugin:0.3.0'
     }
 }
 
 plugins {
-    id 'com.palantir.git-version' version '0.5.3'
+    id 'com.palantir.git-version' version '0.10.0'
     id 'org.inferred.processors' version '1.2.2'
 }
 
@@ -61,24 +60,6 @@ subprojects {
     }
 
     sourceCompatibility = 1.8
-
-    apply plugin: 'nebula.dependency-lock'
-    dependencyLock {
-        includeTransitives = true
-        lockFile = 'versions.lock'
-        configurationNames = ['runtime', 'compileClasspath']
-    }
-    task verifyDependencyLocksAreCurrent << {
-        def expectedDependencies = tasks.saveLock.getOutputLock()
-        def actualDependencies = tasks.saveLock.getGeneratedLock()
-        def digester = java.security.MessageDigest.getInstance('SHA')
-        logger.info("Verifying integrity of dependency locks: {} vs {}", expectedDependencies, actualDependencies)
-        if (digester.digest(expectedDependencies.bytes) != digester.digest(actualDependencies.bytes)) {
-            throw new GradleException("The dependencies of project " + project.name + " do not match the expected "
-                + "dependencies recorded in " + expectedDependencies + ". "
-                + "Run `./gradlew generateLock saveLock` and commit the updated version.lock files")
-        }
-    }
 
     tasks.check.dependsOn(javadoc)
 
