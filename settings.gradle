@@ -1,3 +1,5 @@
+rootProject.name = 'http-remoting-api'
+
 include 'errors'
 include 'service-config'
 include 'ssl-config'

@@ -6,8 +6,8 @@ buildscript {
 
     dependencies {
         classpath 'gradle.plugin.com.palantir:gradle-circle-style:1.1.2'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
-        classpath 'com.netflix.nebula:gradle-dependency-lock-plugin:4.2.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
+        classpath 'com.netflix.nebula:gradle-dependency-lock-plugin:5.0.6'
         classpath 'com.netflix.nebula:nebula-dependency-recommender:5.2.0'
         classpath 'com.netflix.nebula:nebula-publishing-plugin:5.1.4'
         classpath 'com.palantir.baseline:gradle-baseline-java:0.20.1'
@@ -16,8 +16,8 @@ buildscript {
 }
 
 plugins {
-    id 'com.palantir.git-version' version '0.5.3'
-    id 'org.inferred.processors' version '1.2.2'
+    id 'com.palantir.git-version' version '0.11.0'
+    id 'org.inferred.processors' version '1.2.15'
 }
 
 apply plugin: 'com.palantir.baseline-config' // provides baselineUpdateConfig task
@@ -33,7 +33,7 @@ dependencies {
 }
 
 allprojects {
-    version System.env.CIRCLE_TAG ?: gitVersion()
+    version gitVersion()
     group 'com.palantir.remoting-api'
 
     apply plugin: 'com.palantir.configuration-resolver'
@@ -68,6 +68,7 @@ subprojects {
         lockFile = 'versions.lock'
         configurationNames = ['runtime', 'compileClasspath']
     }
+
     task verifyDependencyLocksAreCurrent << {
         def expectedDependencies = tasks.saveLock.getOutputLock()
         def actualDependencies = tasks.saveLock.getGeneratedLock()
@@ -79,6 +80,8 @@ subprojects {
                 + "Run `./gradlew generateLock saveLock` and commit the updated version.lock files")
         }
     }
+    verifyDependencyLocksAreCurrent.dependsOn(generateLock)
+    build.dependsOn(verifyDependencyLocksAreCurrent)
 
     tasks.check.dependsOn(javadoc)
 
