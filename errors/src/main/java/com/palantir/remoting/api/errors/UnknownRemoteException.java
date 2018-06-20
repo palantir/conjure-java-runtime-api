@@ -36,8 +36,9 @@ public final class UnknownRemoteException extends RuntimeException {
     }
 
     public UnknownRemoteException(int status, String body) {
-        super(String.format("UnknownRemoteException with status %s", status));
+        super(String.format("Error %s. (Failed to parse response body as SerializableError.)", status));
         this.status = status;
         this.body = body;
     }
+
 }
