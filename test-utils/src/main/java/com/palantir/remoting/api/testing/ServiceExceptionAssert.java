@@ -63,7 +63,10 @@ public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExcep
         private AssertableArgs(List<Arg<?>> args) {
             args.forEach(arg -> {
                 if (arg.isSafeForLogging()) {
-                    assertPutSafe(arg);
+                    // exclude the injected arg from testing; it's verified in #hasType
+                    if (!arg.getName().equals(ServiceException.ERROR_TYPE_ARG_NAME)) {
+                        assertPutSafe(arg);
+                    }
                 } else {
                     assertPutUnsafe(arg);
                 }
