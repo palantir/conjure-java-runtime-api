@@ -43,7 +43,26 @@ public final class ServiceExceptionTest {
         assertThat(ex.getMessage()).isEqualTo(EXPECTED_ERROR_MSG + ": {arg1=foo}");
 
         List<Arg<?>> expectedArgs = ImmutableList.<Arg<?>>builder()
-                .add(SafeArg.of("errorType", ERROR))
+                .add(SafeArg.of(ServiceException.ERROR_TYPE_ARG_NAME, ERROR))
+                .add(args)
+                .build();
+
+        assertThat(ex.getArgs()).isEqualTo(expectedArgs);
+    }
+
+    @Test
+    public void testExceptionMessageWithNameCollisionWithInjectedArgs() {
+        Arg<?>[] args = {
+                SafeArg.of(ServiceException.ERROR_TYPE_ARG_NAME, "foo"),
+                UnsafeArg.of("arg2", 2),
+                UnsafeArg.of("arg3", null)};
+        ServiceException ex = new ServiceException(ERROR, args);
+
+        assertThat(ex.getLogMessage()).isEqualTo(EXPECTED_ERROR_MSG);
+        assertThat(ex.getMessage()).isEqualTo(EXPECTED_ERROR_MSG + ": {errorType=foo}");
+
+        List<Arg<?>> expectedArgs = ImmutableList.<Arg<?>>builder()
+                .add(SafeArg.of(ServiceException.ERROR_TYPE_ARG_NAME, ERROR))
                 .add(args)
                 .build();
 

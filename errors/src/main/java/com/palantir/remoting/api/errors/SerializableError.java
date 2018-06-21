@@ -116,7 +116,7 @@ public abstract class SerializableError implements Serializable {
                 .errorName(exception.getErrorType().name())
                 .errorInstanceId(exception.getErrorInstanceId());
 
-        for (Arg<?> arg : exception.getArgs()) {
+        for (Arg<?> arg : exception.getParameters()) {
             builder.putParameters(arg.getName(), Objects.toString(arg.getValue()));
         }
 

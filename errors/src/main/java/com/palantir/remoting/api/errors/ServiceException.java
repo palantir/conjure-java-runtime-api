@@ -78,6 +78,20 @@ public final class ServiceException extends RuntimeException implements SafeLogg
         return noArgsMessage;
     }
 
+    @Override
+    public List<Arg<?>> getArgs() {
+        return args;
+    }
+
+    /**
+     * Get Args of this service exception excluding injected/generated Args like errorType.
+     * @return parameters passed to this ServiceException at construction time
+     */
+    public List<Arg<?>> getParameters() {
+        // errorType is always the first argument, so just slice it out
+        return args.subList(1, args.size());
+    }
+
     private static String renderSafeMessage(ErrorType errorType, Arg<?>... args) {
         String message = renderNoArgsMessage(errorType);
 
@@ -111,10 +125,5 @@ public final class ServiceException extends RuntimeException implements SafeLogg
         argList.add(SafeArg.of(ERROR_TYPE_ARG_NAME, errorType));
         Collections.addAll(argList, args);
         return Collections.unmodifiableList(argList);
-    }
-
-    @Override
-    public List<Arg<?>> getArgs() {
-        return args;
     }
 }
