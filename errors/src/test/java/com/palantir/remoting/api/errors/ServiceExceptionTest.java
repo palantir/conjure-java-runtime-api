@@ -18,9 +18,11 @@ package com.palantir.remoting.api.errors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.google.common.collect.ImmutableList;
 import com.palantir.logsafe.Arg;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.UnsafeArg;
+import java.util.List;
 import java.util.UUID;
 import org.junit.Test;
 
@@ -39,6 +41,32 @@ public final class ServiceExceptionTest {
 
         assertThat(ex.getLogMessage()).isEqualTo(EXPECTED_ERROR_MSG);
         assertThat(ex.getMessage()).isEqualTo(EXPECTED_ERROR_MSG + ": {arg1=foo}");
+
+        List<Arg<?>> expectedArgs = ImmutableList.<Arg<?>>builder()
+                .add(SafeArg.of(ServiceException.ERROR_TYPE_ARG_NAME, ERROR))
+                .add(args)
+                .build();
+
+        assertThat(ex.getArgs()).isEqualTo(expectedArgs);
+    }
+
+    @Test
+    public void testExceptionMessageWithNameCollisionWithInjectedArgs() {
+        Arg<?>[] args = {
+                SafeArg.of(ServiceException.ERROR_TYPE_ARG_NAME, "foo"),
+                UnsafeArg.of("arg2", 2),
+                UnsafeArg.of("arg3", null)};
+        ServiceException ex = new ServiceException(ERROR, args);
+
+        assertThat(ex.getLogMessage()).isEqualTo(EXPECTED_ERROR_MSG);
+        assertThat(ex.getMessage()).isEqualTo(EXPECTED_ERROR_MSG + ": {errorType=foo}");
+
+        List<Arg<?>> expectedArgs = ImmutableList.<Arg<?>>builder()
+                .add(SafeArg.of(ServiceException.ERROR_TYPE_ARG_NAME, ERROR))
+                .add(args)
+                .build();
+
+        assertThat(ex.getArgs()).isEqualTo(expectedArgs);
     }
 
     @Test

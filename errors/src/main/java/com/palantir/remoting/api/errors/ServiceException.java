@@ -17,6 +17,7 @@
 package com.palantir.remoting.api.errors;
 
 import com.palantir.logsafe.Arg;
+import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.SafeLoggable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +27,7 @@ import javax.annotation.Nullable;
 
 /** A {@link ServiceException} thrown in server-side code to indicate server-side {@link ErrorType error states}. */
 public final class ServiceException extends RuntimeException implements SafeLoggable {
+    public static final String ERROR_TYPE_ARG_NAME = "errorType";
 
     private final ErrorType errorType;
     private final List<Arg<?>> args;  // unmodifiable
@@ -39,21 +41,17 @@ public final class ServiceException extends RuntimeException implements SafeLogg
      * propagated to clients; they are serialized via {@link Object#toString}.
      */
     public ServiceException(ErrorType errorType, Arg<?>... parameters) {
-        this(errorType, null, copyToList(parameters));
+        this(errorType, null, parameters);
     }
 
     /** As above, but additionally records the cause of this exception. */
     public ServiceException(ErrorType errorType, @Nullable Throwable cause, Arg<?>... args) {
-        this(errorType, cause, copyToList(args));
-    }
-
-    private ServiceException(ErrorType errorType, @Nullable Throwable cause, List<Arg<?>> args) {
         // TODO(rfink): Memoize formatting?
         super(renderSafeMessage(errorType, args), cause);
 
         this.errorType = errorType;
         // Note that instantiators cannot mutate List<> args since it comes through copyToList in all code paths.
-        this.args = Collections.unmodifiableList(args);
+        this.args = collectArgs(errorType, args);
         this.safeMessage = renderSafeMessage(errorType, args);
         this.noArgsMessage = renderNoArgsMessage(errorType);
     }
@@ -80,17 +78,31 @@ public final class ServiceException extends RuntimeException implements SafeLogg
         return noArgsMessage;
     }
 
-    private static String renderSafeMessage(ErrorType errorType, List<Arg<?>> args) {
+    @Override
+    public List<Arg<?>> getArgs() {
+        return args;
+    }
+
+    /**
+     * Get Args of this service exception excluding injected/generated Args like errorType.
+     * @return parameters passed to this ServiceException at construction time
+     */
+    public List<Arg<?>> getParameters() {
+        // errorType is always the first argument, so just slice it out
+        return args.subList(1, args.size());
+    }
+
+    private static String renderSafeMessage(ErrorType errorType, Arg<?>... args) {
         String message = renderNoArgsMessage(errorType);
 
-        if (args.isEmpty()) {
+        if (args.length == 0) {
             return message;
         }
 
         StringBuilder builder = new StringBuilder();
         builder.append(message).append(": {");
-        for (int i = 0; i < args.size(); i++) {
-            Arg<?> arg = args.get(i);
+        for (int i = 0; i < args.length; i++) {
+            Arg<?> arg = args[i];
             if (arg.isSafeForLogging()) {
                 if (i > 0) {
                     builder.append(", ");
@@ -108,14 +120,10 @@ public final class ServiceException extends RuntimeException implements SafeLogg
         return String.format("ServiceException: %s (%s)", errorType.code(), errorType.name());
     }
 
-    @Override
-    public List<Arg<?>> getArgs() {
-        return args;
-    }
-
-    private static <T> List<T> copyToList(T[] elements) {
-        ArrayList<T> list = new ArrayList<>(elements.length);
-        Collections.addAll(list, elements);
-        return list;
+    private static List<Arg<?>> collectArgs(ErrorType errorType, Arg<?>... args) {
+        ArrayList<Arg<?>> argList = new ArrayList<>(args.length + 1);
+        argList.add(SafeArg.of(ERROR_TYPE_ARG_NAME, errorType));
+        Collections.addAll(argList, args);
+        return Collections.unmodifiableList(argList);
     }
 }
