@@ -41,7 +41,8 @@ public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExcep
     public final ServiceExceptionAssert hasArgs(Arg<?>... args) {
         isNotNull();
 
-        AssertableArgs actualArgs = new AssertableArgs(actual.getArgs());
+        // fetch getParameters here to exclude any generated/injected args like 'errorType'
+        AssertableArgs actualArgs = new AssertableArgs(actual.getParameters());
         AssertableArgs expectedArgs = new AssertableArgs(ImmutableList.copyOf(args));
 
         failIfNotEqual("Expected safe args to be %s, but found %s", expectedArgs.safeArgs, actualArgs.safeArgs);
@@ -63,10 +64,7 @@ public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExcep
         private AssertableArgs(List<Arg<?>> args) {
             args.forEach(arg -> {
                 if (arg.isSafeForLogging()) {
-                    // exclude the injected arg from testing; it's verified in #hasType
-                    if (!arg.getName().equals(ServiceException.ERROR_TYPE_ARG_NAME)) {
-                        assertPutSafe(arg);
-                    }
+                    assertPutSafe(arg);
                 } else {
                     assertPutUnsafe(arg);
                 }
