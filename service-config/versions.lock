@@ -27,9 +27,6 @@
                 "com.palantir.tokens:auth-tokens"
             ]
         },
-        "com.google.guava:guava": {
-            "locked": "20.0"
-        },
         "com.palantir.conjure.java.api:ssl-config": {
             "project": true
         },
@@ -73,9 +70,6 @@
             "transitive": [
                 "com.palantir.tokens:auth-tokens"
             ]
-        },
-        "com.google.guava:guava": {
-            "locked": "20.0"
         },
         "com.palantir.conjure.java.api:ssl-config": {
             "project": true

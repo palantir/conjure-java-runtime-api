@@ -16,10 +16,10 @@
 
 package com.palantir.conjure.java.api.testing;
 
-import com.google.common.collect.ImmutableList;
 import com.palantir.logsafe.Arg;
 import com.palantir.remoting.api.errors.ErrorType;
 import com.palantir.remoting.api.errors.ServiceException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +43,7 @@ public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExcep
 
         // fetch getParameters here to exclude any generated/injected args like 'errorType'
         AssertableArgs actualArgs = new AssertableArgs(actual.getParameters());
-        AssertableArgs expectedArgs = new AssertableArgs(ImmutableList.copyOf(args));
+        AssertableArgs expectedArgs = new AssertableArgs(Arrays.asList(args));
 
         failIfNotEqual("Expected safe args to be %s, but found %s", expectedArgs.safeArgs, actualArgs.safeArgs);
         failIfNotEqual("Expected unsafe args to be %s, but found %s", expectedArgs.unsafeArgs, actualArgs.unsafeArgs);

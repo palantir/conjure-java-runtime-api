@@ -24,9 +24,6 @@
                 "com.palantir.conjure.java.api:errors"
             ]
         },
-        "com.google.guava:guava": {
-            "locked": "20.0"
-        },
         "com.palantir.conjure.java.api:errors": {
             "project": true
         },
@@ -89,9 +86,6 @@
             "transitive": [
                 "com.palantir.conjure.java.api:errors"
             ]
-        },
-        "com.google.guava:guava": {
-            "locked": "20.0"
         },
         "com.palantir.conjure.java.api:errors": {
             "project": true
