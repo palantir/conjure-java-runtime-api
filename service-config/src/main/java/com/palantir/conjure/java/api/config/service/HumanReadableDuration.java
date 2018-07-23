@@ -19,6 +19,8 @@ package com.palantir.conjure.java.api.config.service;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.palantir.logsafe.Preconditions;
+import com.palantir.logsafe.SafeArg;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
@@ -91,7 +93,7 @@ public final class HumanReadableDuration implements Comparable<HumanReadableDura
     @JsonCreator
     public static HumanReadableDuration valueOf(String duration) {
         final Matcher matcher = DURATION_PATTERN.matcher(duration);
-        Preconditions.checkArgument(matcher.matches(), "Invalid duration: %s", duration);
+        Preconditions.checkArgument(matcher.matches(), "Invalid duration", SafeArg.of("duration", duration));
 
         final long count = Long.parseLong(matcher.group(1));
         final TimeUnit unit = SUFFIXES.get(matcher.group(2));
@@ -155,10 +157,10 @@ public final class HumanReadableDuration implements Comparable<HumanReadableDura
      * <p>
      * This handles the seven units declared in {@code TimeUnit}.
      *
-     * @implNote This method can be removed in JDK9
-     * @see <a href="https://bugs.openjdk.java.net/browse/JDK-8141452">JDK-8141452</a>
      * @param unit the unit to convert, not null
      * @return the converted unit, not null
+     * @implNote This method can be removed in JDK9
+     * @see <a href="https://bugs.openjdk.java.net/browse/JDK-8141452">JDK-8141452</a>
      */
     private static ChronoUnit chronoUnit(TimeUnit unit) {
         Objects.requireNonNull(unit, "unit");

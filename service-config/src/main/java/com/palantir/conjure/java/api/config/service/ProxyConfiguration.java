@@ -19,6 +19,8 @@ package com.palantir.conjure.java.api.config.service;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.palantir.logsafe.Preconditions;
+import com.palantir.logsafe.SafeArg;
 import java.util.Optional;
 import org.immutables.value.Value;
 import org.immutables.value.Value.Immutable;
@@ -82,7 +84,7 @@ public abstract class ProxyConfiguration {
                         + "configured for an HTTP proxy");
                 HostAndPort host = HostAndPort.fromString(hostAndPort().get());
                 Preconditions.checkArgument(host.hasPort(),
-                        "Given hostname does not contain a port number: %s", host);
+                        "Given hostname does not contain a port number", SafeArg.of("hostname", host));
                 break;
             case DIRECT:
                 Preconditions.checkArgument(!hostAndPort().isPresent() && !credentials().isPresent(),

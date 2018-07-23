@@ -16,6 +16,8 @@
 
 package com.palantir.conjure.java.api.config.service;
 
+import com.palantir.logsafe.Preconditions;
+import com.palantir.logsafe.SafeArg;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +40,8 @@ public final class ServiceConfigurationFactory {
     /** Returns the {@link ServiceConfiguration} for the given name. */
     public ServiceConfiguration get(String serviceName) {
         PartialServiceConfiguration partial = services.services().get(serviceName);
-        Preconditions.checkNotNull(partial, "No configuration found for service: %s", serviceName);
+        Preconditions.checkNotNull(partial, "No configuration found for service",
+                SafeArg.of("serviceName", serviceName));
         return propagateDefaults(serviceName, partial);
     }
 

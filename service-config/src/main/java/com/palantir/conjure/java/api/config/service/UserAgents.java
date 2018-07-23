@@ -16,6 +16,7 @@
 
 package com.palantir.conjure.java.api.config.service;
 
+import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.SafeArg;
 import java.util.Collections;
 import java.util.HashMap;
