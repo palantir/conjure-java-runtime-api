@@ -16,8 +16,8 @@
 
 package com.palantir.conjure.java.api.testing;
 
-import com.palantir.remoting.api.errors.RemoteException;
-import com.palantir.remoting.api.errors.ServiceException;
+import com.palantir.conjure.java.api.errors.RemoteException;
+import com.palantir.conjure.java.api.errors.ServiceException;
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.assertj.core.internal.Failures;
