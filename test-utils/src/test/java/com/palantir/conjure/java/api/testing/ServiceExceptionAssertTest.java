@@ -18,10 +18,10 @@ package com.palantir.conjure.java.api.testing;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.palantir.conjure.java.api.errors.ErrorType;
+import com.palantir.conjure.java.api.errors.ServiceException;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.UnsafeArg;
-import com.palantir.remoting.api.errors.ErrorType;
-import com.palantir.remoting.api.errors.ServiceException;
 import org.junit.Test;
 
 public class ServiceExceptionAssertTest {

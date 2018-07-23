@@ -19,10 +19,10 @@ package com.palantir.conjure.java.api.testing;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.palantir.remoting.api.errors.ErrorType;
-import com.palantir.remoting.api.errors.RemoteException;
-import com.palantir.remoting.api.errors.SerializableError;
-import com.palantir.remoting.api.errors.ServiceException;
+import com.palantir.conjure.java.api.errors.ErrorType;
+import com.palantir.conjure.java.api.errors.RemoteException;
+import com.palantir.conjure.java.api.errors.SerializableError;
+import com.palantir.conjure.java.api.errors.ServiceException;
 import org.junit.Test;
 
 public final class RemoteExceptionAssertTest {
