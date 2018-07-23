@@ -37,8 +37,7 @@ import org.slf4j.LoggerFactory;
 public final class UserAgents {
 
     /**
-     * The {@link UserAgent.Agent#name agent name} identifying the http-remoting library
-     * in a {@link UserAgent}.
+     * The {@link UserAgent.Agent#name agent name} identifying the http-remoting library in a {@link UserAgent}.
      */
     public static final String REMOTING_AGENT_NAME = "http-remoting";
 
