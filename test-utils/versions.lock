@@ -15,31 +15,28 @@
         "com.fasterxml.jackson.core:jackson-databind": {
             "locked": "2.6.7",
             "transitive": [
-                "com.palantir.remoting-api:errors"
+                "com.palantir.conjure.java.api:errors"
             ]
         },
         "com.google.code.findbugs:jsr305": {
             "locked": "3.0.1",
             "transitive": [
-                "com.palantir.remoting-api:errors"
+                "com.palantir.conjure.java.api:errors"
             ]
         },
-        "com.google.guava:guava": {
-            "locked": "18.0"
-        },
-        "com.palantir.remoting-api:errors": {
+        "com.palantir.conjure.java.api:errors": {
             "project": true
         },
         "com.palantir.safe-logging:safe-logging": {
-            "locked": "0.1.3",
+            "locked": "1.3.0",
             "transitive": [
-                "com.palantir.remoting-api:errors"
+                "com.palantir.conjure.java.api:errors"
             ]
         },
         "javax.ws.rs:javax.ws.rs-api": {
             "locked": "2.0.1",
             "transitive": [
-                "com.palantir.remoting-api:errors"
+                "com.palantir.conjure.java.api:errors"
             ]
         },
         "junit:junit": {
@@ -81,31 +78,28 @@
         "com.fasterxml.jackson.core:jackson-databind": {
             "locked": "2.6.7",
             "transitive": [
-                "com.palantir.remoting-api:errors"
+                "com.palantir.conjure.java.api:errors"
             ]
         },
         "com.google.code.findbugs:jsr305": {
             "locked": "3.0.1",
             "transitive": [
-                "com.palantir.remoting-api:errors"
+                "com.palantir.conjure.java.api:errors"
             ]
         },
-        "com.google.guava:guava": {
-            "locked": "18.0"
-        },
-        "com.palantir.remoting-api:errors": {
+        "com.palantir.conjure.java.api:errors": {
             "project": true
         },
         "com.palantir.safe-logging:safe-logging": {
-            "locked": "0.1.3",
+            "locked": "1.3.0",
             "transitive": [
-                "com.palantir.remoting-api:errors"
+                "com.palantir.conjure.java.api:errors"
             ]
         },
         "javax.ws.rs:javax.ws.rs-api": {
             "locked": "2.0.1",
             "transitive": [
-                "com.palantir.remoting-api:errors"
+                "com.palantir.conjure.java.api:errors"
             ]
         },
         "junit:junit": {

@@ -34,7 +34,7 @@ dependencies {
 
 allprojects {
     version gitVersion()
-    group 'com.palantir.remoting-api'
+    group 'com.palantir.conjure.java.api'
 
     apply plugin: 'com.palantir.configuration-resolver'
     apply plugin: 'nebula.dependency-recommender'
