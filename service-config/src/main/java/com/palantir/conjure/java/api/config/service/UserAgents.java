@@ -16,38 +16,29 @@
 
 package com.palantir.conjure.java.api.config.service;
 
-import com.google.common.base.CharMatcher;
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.palantir.logsafe.SafeArg;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class UserAgents {
 
     /**
-     * The {@link UserAgent.Agent#name agent name} identifying the http-remoting library in a {@link UserAgent}.
+     * The {@link UserAgent.Agent#name agent name} identifying the conjure-java library in a {@link UserAgent}.
      */
-    public static final String REMOTING_AGENT_NAME = "http-remoting";
-
+    public static final String REMOTING_AGENT_NAME = "conjure-java";
 
     private static final Logger log = LoggerFactory.getLogger(UserAgents.class);
 
-    private static final Joiner SPACE_JOINER = Joiner.on(" ");
-    private static final Joiner.MapJoiner COLON_SEMICOLON_JOINER = Joiner.on(';').withKeyValueSeparator(":");
-    private static final Splitter COMMENT_SPLITTER = Splitter.on(CharMatcher.anyOf(",;"));
-    private static final Splitter COLON_SPLITTER = Splitter.on(':');
     private static final Pattern NAME_REGEX = Pattern.compile("[a-zA-Z][a-zA-Z0-9\\-]*");
     private static final Pattern LENIENT_VERSION_REGEX = Pattern.compile("[0-9a-z.-]+");
     private static final Pattern NODE_REGEX = Pattern.compile("[a-zA-Z0-9][a-zA-Z0-9.\\-]*");
@@ -58,12 +49,18 @@ public final class UserAgents {
 
     /** Returns the canonical string format for the given {@link UserAgent}. */
     public static String format(UserAgent userAgent) {
-        Map<String, String> primaryComments = userAgent.nodeId().isPresent()
-                ? ImmutableMap.of("nodeId", userAgent.nodeId().get())
-                : ImmutableMap.of();
-        return SPACE_JOINER.join(Iterables.concat(
-                ImmutableList.of(formatSingleAgent(userAgent.primary(), primaryComments)),
-                Lists.transform(userAgent.informational(), a -> formatSingleAgent(a, ImmutableMap.of()))));
+        Map<String, String> primaryComments = new HashMap<>();
+        if (userAgent.nodeId().isPresent()) {
+            primaryComments.put("nodeId", userAgent.nodeId().get());
+        }
+
+        List<String> agents = new LinkedList<>();
+        agents.add(formatSingleAgent(userAgent.primary(), primaryComments));
+
+        return Stream.concat(agents.stream(),
+                userAgent.informational().stream().map(a -> formatSingleAgent(a, Collections.emptyMap())))
+                .map(Object::toString)
+                .collect(Collectors.joining(" "));
     }
 
     /**
@@ -77,7 +74,10 @@ public final class UserAgents {
                 .append("/")
                 .append(agent.version());
 
-        String formattedComments = COLON_SEMICOLON_JOINER.join(comments);
+        String formattedComments = comments.entrySet()
+                .stream()
+                .map(e -> e.getKey() + ":" + e.getValue())
+                .collect(Collectors.joining(";"));
         if (!formattedComments.isEmpty()) {
             formatted.append(" (")
                     .append(formattedComments)
@@ -102,7 +102,8 @@ public final class UserAgents {
      * agent can be parsed.
      */
     public static UserAgent tryParse(String userAgent) {
-        return parseInternal(Strings.nullToEmpty(userAgent), true /* lenient */);
+
+        return parseInternal(userAgent == null ? "" : userAgent, true /* lenient */);
     }
 
     private static UserAgent parseInternal(String userAgent, boolean lenient) {
@@ -148,13 +149,13 @@ public final class UserAgents {
     }
 
     private static Map<String, String> parseComments(String commentsString) {
-        Map<String, String> comments = Maps.newHashMap();
-        for (String comment : COMMENT_SPLITTER.split(commentsString)) {
-            List<String> fields = COLON_SPLITTER.splitToList(comment);
-            if (fields.isEmpty()) {
+        Map<String, String> comments = new HashMap<>();
+        for (String comment : commentsString.split(",;")) {
+            String[] fields = comment.split(":");
+            if (fields.length == 0) {
                 // continue
-            } else if (fields.size() == 2) {
-                comments.put(fields.get(0), fields.get(1));
+            } else if (fields.length == 2) {
+                comments.put(fields[0], fields[1]);
             } else {
                 comments.put(comment, comment);
             }

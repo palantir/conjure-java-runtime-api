@@ -16,9 +16,6 @@
 
 package com.palantir.conjure.java.api.config.service;
 
-
-import static com.palantir.conjure.java.api.config.service.Preconditions.checkArgument;
-
 import java.util.List;
 import java.util.Optional;
 import org.immutables.value.Value;
@@ -74,7 +71,7 @@ public interface UserAgent {
     @Value.Check
     default void check() {
         if (nodeId().isPresent()) {
-            checkArgument(UserAgents.isValidNodeId(nodeId().get()),
+            Preconditions.checkArgument(UserAgents.isValidNodeId(nodeId().get()),
                     "Illegal node id format: %s", nodeId().get());
         }
     }
@@ -90,9 +87,10 @@ public interface UserAgent {
 
         @Value.Check
         default void check() {
-            checkArgument(UserAgents.isValidName(name()), "Illegal agent name format: %s", name());
+            Preconditions.checkArgument(UserAgents.isValidName(name()), "Illegal agent name format: %s", name());
             // Should never hit the following.
-            checkArgument(UserAgents.isValidVersion(version()), "Illegal version format: %s. This is a bug", version());
+            Preconditions.checkArgument(UserAgents.isValidVersion(version()),
+                    "Illegal version format: %s. This is a bug", version());
         }
 
         static Agent of(String name, String version) {
