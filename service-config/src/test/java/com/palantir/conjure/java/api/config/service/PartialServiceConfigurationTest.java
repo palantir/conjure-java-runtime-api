@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.palantir.conjure.java.api.config.ssl.SslConfiguration;
-import com.palantir.remoting.api.ext.jackson.ObjectMappers;
+import com.palantir.conjure.java.api.ext.jackson.ObjectMappers;
 import com.palantir.tokens.auth.BearerToken;
 import java.nio.file.Paths;
 import java.util.Optional;

@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.google.common.io.Resources;
-import com.palantir.remoting.api.ext.jackson.ObjectMappers;
+import com.palantir.conjure.java.api.ext.jackson.ObjectMappers;
 import java.io.IOException;
 import java.net.URL;
 import org.junit.Test;
