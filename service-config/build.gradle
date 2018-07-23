@@ -4,7 +4,9 @@ apply from: "$rootDir/gradle/publish-jar.gradle"
 
 dependencies {
     compile project(":ssl-config")
+    compile "com.google.guava:guava"
     compile "com.palantir.tokens:auth-tokens"
+    compile "com.palantir.safe-logging:safe-logging"
 
     testCompile project(":extras:jackson-support")
     testCompile "junit:junit"

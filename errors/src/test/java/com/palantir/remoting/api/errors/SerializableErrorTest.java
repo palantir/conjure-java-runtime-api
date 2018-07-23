@@ -71,13 +71,13 @@ public final class SerializableErrorTest {
     @Test
     public void testSerializationContainsRedundantParameters() throws Exception {
         assertThat(mapper.writeValueAsString(ERROR))
-                .isEqualTo("{\"errorCode\":\"code\",\"errorName\":\"name\",\"errorInstanceId\":\"\",\"parameters\":{},"
-                        + "\"exceptionClass\":\"code\",\"message\":\"name\"}");
+                .isEqualTo(
+                        "{\"errorCode\":\"code\",\"errorName\":\"name\",\"errorInstanceId\":\"\",\"parameters\":{}}");
 
         assertThat(mapper.writeValueAsString(
                 SerializableError.builder().from(ERROR).errorInstanceId("errorId").build()))
                 .isEqualTo("{\"errorCode\":\"code\",\"errorName\":\"name\",\"errorInstanceId\":\"errorId\""
-                        + ",\"parameters\":{},\"exceptionClass\":\"code\",\"message\":\"name\"}");
+                        + ",\"parameters\":{}}");
     }
 
     @Test
@@ -105,24 +105,7 @@ public final class SerializableErrorTest {
         String serialized = "{\"errorCode\":\"code\"}";
         assertThatThrownBy(() -> deserialize(serialized))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Cannot build SerializableError, attribute initializers form cycle[errorName, message]");
-    }
-
-    @Test
-    public void testDeserializesWithBackupNamesOnly() throws Exception {
-        String serialized = "{\"message\":\"name\",\"exceptionClass\":\"code\"}";
-        assertThat(deserialize(serialized)).isEqualTo(ERROR);
-    }
-
-    @Test
-    public void testDeserializesWithWhenObsoleteExceptionClassAndMessageAreGiven() throws Exception {
-        String serialized = "{\"errorCode\":\"code\",\"errorName\":\"name\",\"exceptionClass\":\"obsolete-class\","
-                + "\"message\":\"obsolete-message\"}";
-        assertThat(deserialize(serialized)).isEqualTo(SerializableError.builder()
-                .from(ERROR)
-                .exceptionClass("obsolete-class")
-                .message("obsolete-message")
-                .build());
+                .hasMessage("Cannot build SerializableError, some of required attributes are not set [errorName]");
     }
 
     private static SerializableError deserialize(String serialized) throws IOException {
