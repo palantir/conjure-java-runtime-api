@@ -151,11 +151,9 @@ public final class UserAgents {
 
     private static Map<String, String> parseComments(String commentsString) {
         Map<String, String> comments = new HashMap<>();
-        for (String comment : commentsString.split(",;")) {
+        for (String comment : commentsString.split("[,;]")) {
             String[] fields = comment.split(":");
-            if (fields.length == 0) {
-                // continue
-            } else if (fields.length == 2) {
+            if (fields.length == 2) {
                 comments.put(fields[0], fields[1]);
             } else {
                 comments.put(comment, comment);

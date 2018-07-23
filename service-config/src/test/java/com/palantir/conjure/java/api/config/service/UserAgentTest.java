@@ -16,16 +16,17 @@
 
 package com.palantir.conjure.java.api.config.service;
 
+import static com.palantir.logsafe.testing.Assertions.assertThatLoggableExceptionThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.palantir.logsafe.SafeArg;
 import org.junit.Test;
 
 public class UserAgentTest {
 
     @Test
-    public void validAndInvalidNodeSyntax() throws Exception {
+    public void validAndInvalidNodeSyntax() {
         // Valid nodeId
         for (String nodeId : new String[] {
                 "nodeId",
@@ -45,7 +46,8 @@ public class UserAgentTest {
                 "node$",
                 "node_id"
         }) {
-            assertThatThrownBy(() -> UserAgent.of(UserAgent.Agent.of("valid-service", "1.0.0"), nodeId))
+            assertThatLoggableExceptionThrownBy(
+                    () -> UserAgent.of(UserAgent.Agent.of("valid-service", "1.0.0"), nodeId))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -70,16 +72,19 @@ public class UserAgentTest {
 
     @Test
     public void testInvalidServiceName() {
-        assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> UserAgent.Agent.of("invalid service name", "1.0.0"))
-                .withMessage("Illegal agent name format: invalid service name");
+        assertThatLoggableExceptionThrownBy(() -> UserAgent.Agent.of("invalid service name", "1.0.0"))
+                .hasMessage("Illegal agent name format")
+                .hasExactlyArgs(SafeArg.of("name", "invalid service name"))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     public void testInvalidNodeId() {
-        assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> UserAgent.of(UserAgent.Agent.of("serviceName", "1.0.0"), "invalid node id"))
-                .withMessage("Illegal node id format: invalid node id");
+        assertThatLoggableExceptionThrownBy(
+                () -> UserAgent.of(UserAgent.Agent.of("serviceName", "1.0.0"), "invalid node id"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasExactlyArgs(SafeArg.of("nodeId", "invalid node id"))
+                .hasMessage("Illegal node id format");
     }
 
     @Test
@@ -89,7 +94,7 @@ public class UserAgentTest {
     }
 
     @Test
-    public void parse_handlesPrimaryAgent() throws Exception {
+    public void parse_handlesPrimaryAgent() {
         // Valid strings
         for (String agent : new String[] {
                 "service/1.2",
@@ -123,7 +128,7 @@ public class UserAgentTest {
     }
 
     @Test
-    public void parse_handlesInformationalAgents() throws Exception {
+    public void parse_handlesInformationalAgents() {
         // Valid strings
         for (String agent : new String[] {
                 "serviceA/1.2.3 serviceB/4.5.6",
@@ -141,7 +146,7 @@ public class UserAgentTest {
     }
 
     @Test
-    public void parse_canParseBrowserAgent() throws Exception {
+    public void parse_canParseBrowserAgent() {
         String chrome = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) "
                 + "Chrome/61.0.3163.100 Safari/537.36";
         String expected = "Mozilla/5.0 AppleWebKit/537.36 Chrome/61.0.3163.100 Safari/537.36";
@@ -150,7 +155,16 @@ public class UserAgentTest {
     }
 
     @Test
-    public void tryParse_parsesWithBestEffort() throws Exception {
+    public void parse_canParseBrowserAgentWithEmptyComment() {
+        String chrome = "Mozilla/5.0 ( ) AppleWebKit/537.36 (KHTML, like Gecko) "
+                + "Chrome/61.0.3163.100 Safari/537.36";
+        String expected = "Mozilla/5.0 AppleWebKit/537.36 Chrome/61.0.3163.100 Safari/537.36";
+        assertThat(UserAgents.format(UserAgents.tryParse(chrome))).isEqualTo(expected);
+        assertThat(UserAgents.format(UserAgents.parse(chrome))).isEqualTo(expected);
+    }
+
+    @Test
+    public void tryParse_parsesWithBestEffort() {
         // Fixes up the primary agent
         assertThat(UserAgents.format(UserAgents.tryParse(null))).isEqualTo("unknown/0.0.0");
         assertThat(UserAgents.format(UserAgents.tryParse(""))).isEqualTo("unknown/0.0.0");
@@ -161,4 +175,5 @@ public class UserAgentTest {
         assertThat(UserAgents.format(UserAgents.tryParse("serviceA/1.2.3 bogus|1.2.3 foo bar (boom)")))
                 .isEqualTo("serviceA/1.2.3");
     }
+
 }
