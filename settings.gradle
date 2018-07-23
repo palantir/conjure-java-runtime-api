@@ -1,4 +1,4 @@
-rootProject.name = 'conjure-java-api'
+rootProject.name = 'http-remoting-api'
 
 include 'errors'
 include 'service-config'
