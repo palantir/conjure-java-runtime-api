@@ -16,9 +16,9 @@
 
 package com.palantir.conjure.java.api.testing;
 
+import com.palantir.conjure.java.api.errors.ErrorType;
+import com.palantir.conjure.java.api.errors.ServiceException;
 import com.palantir.logsafe.Arg;
-import com.palantir.remoting.api.errors.ErrorType;
-import com.palantir.remoting.api.errors.ServiceException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;

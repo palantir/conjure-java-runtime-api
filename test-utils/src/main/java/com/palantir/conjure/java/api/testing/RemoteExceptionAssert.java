@@ -16,8 +16,8 @@
 
 package com.palantir.conjure.java.api.testing;
 
-import com.palantir.remoting.api.errors.ErrorType;
-import com.palantir.remoting.api.errors.RemoteException;
+import com.palantir.conjure.java.api.errors.ErrorType;
+import com.palantir.conjure.java.api.errors.RemoteException;
 import org.assertj.core.api.AbstractThrowableAssert;
 
 public class RemoteExceptionAssert extends AbstractThrowableAssert<RemoteExceptionAssert, RemoteException> {

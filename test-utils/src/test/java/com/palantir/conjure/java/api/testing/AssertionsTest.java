@@ -20,10 +20,10 @@ import static com.palantir.conjure.java.api.testing.Assertions.assertThatRemoteE
 import static com.palantir.conjure.java.api.testing.Assertions.assertThatServiceExceptionThrownBy;
 import static com.palantir.conjure.java.api.testing.Assertions.assertThatThrownBy;
 
-import com.palantir.remoting.api.errors.ErrorType;
-import com.palantir.remoting.api.errors.RemoteException;
-import com.palantir.remoting.api.errors.SerializableError;
-import com.palantir.remoting.api.errors.ServiceException;
+import com.palantir.conjure.java.api.errors.ErrorType;
+import com.palantir.conjure.java.api.errors.RemoteException;
+import com.palantir.conjure.java.api.errors.SerializableError;
+import com.palantir.conjure.java.api.errors.ServiceException;
 import org.junit.Test;
 
 public final class AssertionsTest {
@@ -43,7 +43,7 @@ public final class AssertionsTest {
                 assertThatServiceExceptionThrownBy(() -> {
                     throw new RuntimeException();
                 }))
-                .hasMessage("Expecting code to throw a com.palantir.remoting.api.errors.ServiceException,"
+                .hasMessage("Expecting code to throw a com.palantir.conjure.java.api.errors.ServiceException,"
                         + " but caught a java.lang.RuntimeException.");
     }
 
@@ -69,7 +69,7 @@ public final class AssertionsTest {
                 assertThatRemoteExceptionThrownBy(() -> {
                     throw new RuntimeException();
                 }))
-                .hasMessage("Expecting code to throw a com.palantir.remoting.api.errors.RemoteException, "
+                .hasMessage("Expecting code to throw a com.palantir.conjure.java.api.errors.RemoteException, "
                         + "but caught a java.lang.RuntimeException.");
     }
 
