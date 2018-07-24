@@ -17,7 +17,6 @@
 package com.palantir.remoting.api.config.service;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.palantir.remoting.api.config.ssl.SslConfiguration;
