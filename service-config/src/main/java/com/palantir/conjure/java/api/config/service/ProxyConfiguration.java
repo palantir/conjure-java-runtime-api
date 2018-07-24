@@ -117,5 +117,5 @@ public abstract class ProxyConfiguration {
         return new Builder();
     }
 
-    static final class Builder extends ImmutableProxyConfiguration.Builder {}
+    public static final class Builder extends ImmutableProxyConfiguration.Builder {}
 }
