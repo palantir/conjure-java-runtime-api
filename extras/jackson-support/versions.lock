@@ -43,7 +43,7 @@
             "locked": "2.9.5"
         },
         "com.google.guava:guava": {
-            "locked": "15.0",
+            "locked": "18.0",
             "transitive": [
                 "com.fasterxml.jackson.datatype:jackson-datatype-guava"
             ]
@@ -93,7 +93,7 @@
             "locked": "2.9.5"
         },
         "com.google.guava:guava": {
-            "locked": "15.0",
+            "locked": "18.0",
             "transitive": [
                 "com.fasterxml.jackson.datatype:jackson-datatype-guava"
             ]

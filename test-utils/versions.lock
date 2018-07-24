@@ -28,7 +28,7 @@
             "project": true
         },
         "com.palantir.safe-logging:safe-logging": {
-            "locked": "1.3.0",
+            "locked": "1.5.0",
             "transitive": [
                 "com.palantir.conjure.java.api:errors"
             ]
@@ -91,7 +91,7 @@
             "project": true
         },
         "com.palantir.safe-logging:safe-logging": {
-            "locked": "1.3.0",
+            "locked": "1.5.0",
             "transitive": [
                 "com.palantir.conjure.java.api:errors"
             ]
