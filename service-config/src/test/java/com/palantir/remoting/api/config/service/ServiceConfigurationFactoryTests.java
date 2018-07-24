@@ -18,6 +18,7 @@ package com.palantir.remoting.api.config.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -229,6 +230,24 @@ public final class ServiceConfigurationFactoryTests {
         assertThat(ObjectMappers.newClientObjectMapper()
                 .readValue(serializedKebabCase, ServicesConfigBlock.class))
                 .isEqualTo(deserialized);
+    }
+
+    @Test
+    public void serDe_remoting_and_conjure_types_are_equivalent() throws IOException {
+        ServicesConfigBlock remotingConfig = ServicesConfigBlock.builder()
+                .defaultApiToken(BearerToken.valueOf("bearerToken"))
+                .defaultSecurity(SslConfiguration.of(Paths.get("truststore.jks")))
+                .putServices("service", PartialServiceConfiguration.of(uris, Optional.empty()))
+                .defaultProxyConfiguration(ProxyConfiguration.of("host:80"))
+                .defaultConnectTimeout(HumanReadableDuration.days(1))
+                .defaultReadTimeout(HumanReadableDuration.days(1))
+                .defaultWriteTimeout(HumanReadableDuration.days(1))
+                .defaultBackoffSlotSize(HumanReadableDuration.days(1))
+                .build();
+        com.palantir.conjure.java.api.config.service.ServicesConfigBlock conjureConfig = remotingConfig.asConjure();
+        String serializedConjureConfig = mapper.writeValueAsString(conjureConfig);
+        assertEquals(mapper.writeValueAsString(remotingConfig), serializedConjureConfig);
+        assertThat(mapper.readValue(serializedConjureConfig, ServicesConfigBlock.class)).isEqualTo(remotingConfig);
     }
 
     private ServicesConfigBlock deserialize(String file) {

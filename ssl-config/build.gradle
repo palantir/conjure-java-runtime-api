@@ -4,6 +4,7 @@ apply from: "${rootDir}/gradle/publish-jar.gradle"
 
 dependencies {
     compile "com.fasterxml.jackson.core:jackson-databind"
+    compile "com.palantir.conjure.java.api:ssl-config"
 
     testCompile project(':extras:jackson-support')
     testCompile "org.assertj:assertj-core"

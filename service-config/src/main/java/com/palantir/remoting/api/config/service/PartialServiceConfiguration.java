@@ -23,6 +23,7 @@ import com.palantir.remoting.api.config.ssl.SslConfiguration;
 import com.palantir.tokens.auth.BearerToken;
 import java.util.List;
 import java.util.Optional;
+import org.immutables.value.Value;
 import org.immutables.value.Value.Immutable;
 
 @Immutable
@@ -71,6 +72,21 @@ public interface PartialServiceConfiguration {
     /** Proxy configuration for connecting to the service. If absent, uses system proxy configuration. */
     @JsonAlias("proxy-configuration")
     Optional<ProxyConfiguration> proxyConfiguration();
+
+    @Value.Lazy
+    default com.palantir.conjure.java.api.config.service.PartialServiceConfiguration asConjure() {
+        return com.palantir.conjure.java.api.config.service.PartialServiceConfiguration.builder()
+                .apiToken(apiToken())
+                .security(security().map(SslConfiguration::asConjure))
+                .addAllUris(uris())
+                .connectTimeout(connectTimeout().map(HumanReadableDuration::asConjure))
+                .readTimeout(readTimeout().map(HumanReadableDuration::asConjure))
+                .maxNumRetries(maxNumRetries())
+                .backoffSlotSize(backoffSlotSize().map(HumanReadableDuration::asConjure))
+                .enableGcmCipherSuites(enableGcmCipherSuites())
+                .proxyConfiguration(proxyConfiguration().map(ProxyConfiguration::asConjure))
+                .build();
+    }
 
     static PartialServiceConfiguration of(List<String> uris, Optional<SslConfiguration> sslConfig) {
         return PartialServiceConfiguration.builder()

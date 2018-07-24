@@ -17,11 +17,14 @@
 package com.palantir.remoting.api.config.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.palantir.remoting.api.config.ssl.SslConfiguration;
 import com.palantir.remoting.api.ext.jackson.ObjectMappers;
 import com.palantir.tokens.auth.BearerToken;
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
 import org.junit.Test;
@@ -76,8 +79,18 @@ public final class PartialServiceConfigurationTest {
                 + "\"enable-gcm-cipher-suites\":null,"
                 + "\"uris\":[],\"proxy-configuration\":null}";
 
-        assertThat(ObjectMappers.newClientObjectMapper().writeValueAsString(serialized)).isEqualTo(camelCase);
+        assertThat(mapper.writeValueAsString(serialized)).isEqualTo(camelCase);
         assertThat(mapper.readValue(camelCase, PartialServiceConfiguration.class)).isEqualTo(serialized);
         assertThat(mapper.readValue(kebabCase, PartialServiceConfiguration.class)).isEqualTo(serialized);
+    }
+
+    @Test
+    public void serDe_remoting_and_conjure_types_are_equivalent() throws IOException {
+        PartialServiceConfiguration remotingConfig = PartialServiceConfiguration.builder().build();
+        com.palantir.conjure.java.api.config.service.PartialServiceConfiguration conjureConfig = remotingConfig.asConjure();
+        String serializedConjureConfig = mapper.writeValueAsString(conjureConfig);
+        assertEquals(mapper.writeValueAsString(remotingConfig), serializedConjureConfig);
+        assertThat(mapper.readValue(serializedConjureConfig, PartialServiceConfiguration.class)).isEqualTo(
+                remotingConfig);
     }
 }

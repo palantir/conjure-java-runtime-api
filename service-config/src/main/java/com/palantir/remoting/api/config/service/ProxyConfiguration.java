@@ -99,6 +99,14 @@ public abstract class ProxyConfiguration {
         }
     }
 
+    @Value.Lazy
+    public com.palantir.conjure.java.api.config.service.ProxyConfiguration asConjure() {
+        return com.palantir.conjure.java.api.config.service.ProxyConfiguration.builder()
+                .hostAndPort(hostAndPort())
+                .credentials(credentials().map(BasicCredentials::asConjure))
+                .build();
+    }
+
     public static ProxyConfiguration of(String hostAndPort) {
         return builder().hostAndPort(hostAndPort).build();
     }

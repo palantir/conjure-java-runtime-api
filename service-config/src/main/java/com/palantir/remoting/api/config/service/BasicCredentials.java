@@ -34,6 +34,11 @@ public abstract class BasicCredentials {
     @Value.Parameter
     public abstract String password();
 
+    @Value.Lazy
+    public com.palantir.conjure.java.api.config.service.BasicCredentials asConjure() {
+        return com.palantir.conjure.java.api.config.service.BasicCredentials.of(username(), password());
+    }
+
     public static BasicCredentials of(String username, String password) {
         return ImmutableBasicCredentials.of(username, password);
     }
