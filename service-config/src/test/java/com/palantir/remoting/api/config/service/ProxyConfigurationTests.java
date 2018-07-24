@@ -114,9 +114,7 @@ public final class ProxyConfigurationTests {
         ProxyConfiguration remotingConfig = ProxyConfiguration.of("host:80",
                 BasicCredentials.of("username", "password"));
         com.palantir.conjure.java.api.config.service.ProxyConfiguration conjureConfig = remotingConfig.asConjure();
-        String serializedConjureConfig = mapper.writeValueAsString(conjureConfig);
-        assertEquals(mapper.writeValueAsString(remotingConfig), serializedConjureConfig);
-        assertThat(mapper.readValue(serializedConjureConfig, ProxyConfiguration.class)).isEqualTo(remotingConfig);
+        assertEquals(mapper.writeValueAsString(remotingConfig), mapper.writeValueAsString(conjureConfig));
     }
 
 }

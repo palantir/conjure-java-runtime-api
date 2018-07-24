@@ -24,6 +24,7 @@ import static org.mockito.Mockito.mock;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
@@ -63,7 +64,8 @@ public final class ServiceConfigurationFactoryTests {
 
     private final ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
             .registerModule(new ShimJdk7Module())
-            .registerModule(new Jdk8Module());
+            .registerModule(new Jdk8Module())
+            .registerModule(new JavaTimeModule());
 
     @Test
     public void testIsServiceEnabled_noEnabledIfNoUrisOrServiceDoesNotExist() throws IOException {
@@ -234,20 +236,41 @@ public final class ServiceConfigurationFactoryTests {
 
     @Test
     public void serDe_remoting_and_conjure_types_are_equivalent() throws IOException {
-        ServicesConfigBlock remotingConfig = ServicesConfigBlock.builder()
-                .defaultApiToken(BearerToken.valueOf("bearerToken"))
-                .defaultSecurity(SslConfiguration.of(Paths.get("truststore.jks")))
-                .putServices("service", PartialServiceConfiguration.of(uris, Optional.empty()))
-                .defaultProxyConfiguration(ProxyConfiguration.of("host:80"))
-                .defaultConnectTimeout(HumanReadableDuration.days(1))
-                .defaultReadTimeout(HumanReadableDuration.days(1))
-                .defaultWriteTimeout(HumanReadableDuration.days(1))
-                .defaultBackoffSlotSize(HumanReadableDuration.days(1))
+        PartialServiceConfiguration partial = PartialServiceConfiguration.builder()
+                .apiToken(apiToken)
+                .uris(uris)
+                .security(security)
+                .connectTimeout(connectTimeout)
+                .readTimeout(readTimeout)
+                .writeTimeout(writeTimeout)
+                .maxNumRetries(maxNumRetries)
+                .backoffSlotSize(backoffSlotSize)
+                .enableGcmCipherSuites(enableGcm)
+                .proxyConfiguration(proxy)
                 .build();
-        com.palantir.conjure.java.api.config.service.ServicesConfigBlock conjureConfig = remotingConfig.asConjure();
-        String serializedConjureConfig = mapper.writeValueAsString(conjureConfig);
-        assertEquals(mapper.writeValueAsString(remotingConfig), serializedConjureConfig);
-        assertThat(mapper.readValue(serializedConjureConfig, ServicesConfigBlock.class)).isEqualTo(remotingConfig);
+
+        ServicesConfigBlock services = ServicesConfigBlock.builder()
+                .putAllServices(ImmutableMap.of("service1", partial))
+                .defaultSecurity(defaultSecurity)
+                .defaultApiToken(defaultApiToken)
+                .defaultProxyConfiguration(defaultProxyConfiguration)
+                .defaultConnectTimeout(defaultConnectTimeout)
+                .defaultReadTimeout(defaultReadTimeout)
+                .defaultWriteTimeout(defaultWriteTimeout)
+                .defaultBackoffSlotSize(defaultBackoffSlotSize)
+                .defaultEnableGcmCipherSuites(defaultEnableGcm)
+                .build();
+
+        ServiceConfiguration service = ServiceConfigurationFactory.of(services).get("service1");
+
+        com.palantir.conjure.java.api.config.service.PartialServiceConfiguration conjurePartial = partial.asConjure();
+        assertEquals(mapper.writeValueAsString(partial), mapper.writeValueAsString(conjurePartial));
+
+        com.palantir.conjure.java.api.config.service.ServicesConfigBlock conjureServices = services.asConjure();
+        assertEquals(mapper.writeValueAsString(services), mapper.writeValueAsString(conjureServices));
+
+        com.palantir.conjure.java.api.config.service.ServiceConfiguration conjureService = service.asConjure();
+        assertEquals(mapper.writeValueAsString(service), mapper.writeValueAsString(conjureService));
     }
 
     private ServicesConfigBlock deserialize(String file) {

@@ -68,10 +68,7 @@ public final class SerializationTests {
                 SERVER_KEY_STORE_JKS_PASSWORD);
 
         com.palantir.conjure.java.api.config.ssl.SslConfiguration conjureConfig = remotingConfig.asConjure();
-        String serializedConjureConfig = MAPPER.writeValueAsString(conjureConfig);
-        assertEquals(MAPPER.writeValueAsString(remotingConfig), serializedConjureConfig);
-        assertThat(MAPPER.readValue(serializedConjureConfig, SslConfiguration.class)).isEqualTo(
-                remotingConfig);
+        assertEquals(MAPPER.writeValueAsString(remotingConfig), MAPPER.writeValueAsString(conjureConfig));
     }
 
     private static final String JSON_STRING =

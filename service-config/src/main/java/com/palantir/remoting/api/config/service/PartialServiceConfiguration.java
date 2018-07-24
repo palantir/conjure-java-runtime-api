@@ -81,6 +81,7 @@ public interface PartialServiceConfiguration {
                 .addAllUris(uris())
                 .connectTimeout(connectTimeout().map(HumanReadableDuration::asConjure))
                 .readTimeout(readTimeout().map(HumanReadableDuration::asConjure))
+                .writeTimeout(writeTimeout().map(HumanReadableDuration::asConjure))
                 .maxNumRetries(maxNumRetries())
                 .backoffSlotSize(backoffSlotSize().map(HumanReadableDuration::asConjure))
                 .enableGcmCipherSuites(enableGcmCipherSuites())

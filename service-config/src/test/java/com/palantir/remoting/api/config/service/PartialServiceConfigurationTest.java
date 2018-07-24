@@ -88,9 +88,6 @@ public final class PartialServiceConfigurationTest {
     public void serDe_remoting_and_conjure_types_are_equivalent() throws IOException {
         PartialServiceConfiguration remotingConfig = PartialServiceConfiguration.builder().build();
         com.palantir.conjure.java.api.config.service.PartialServiceConfiguration conjureConfig = remotingConfig.asConjure();
-        String serializedConjureConfig = mapper.writeValueAsString(conjureConfig);
-        assertEquals(mapper.writeValueAsString(remotingConfig), serializedConjureConfig);
-        assertThat(mapper.readValue(serializedConjureConfig, PartialServiceConfiguration.class)).isEqualTo(
-                remotingConfig);
+        assertEquals(mapper.writeValueAsString(remotingConfig), mapper.writeValueAsString(conjureConfig));
     }
 }

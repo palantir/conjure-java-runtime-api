@@ -64,6 +64,7 @@ public interface ServiceConfiguration {
                 .readTimeout(readTimeout())
                 .writeTimeout(writeTimeout())
                 .maxNumRetries(maxNumRetries())
+                .backoffSlotSize(backoffSlotSize())
                 .enableGcmCipherSuites(enableGcmCipherSuites())
                 .proxy(proxy().map(ProxyConfiguration::asConjure))
                 .build();

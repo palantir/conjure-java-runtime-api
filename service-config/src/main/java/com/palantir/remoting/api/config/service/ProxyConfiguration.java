@@ -103,6 +103,7 @@ public abstract class ProxyConfiguration {
     public com.palantir.conjure.java.api.config.service.ProxyConfiguration asConjure() {
         return com.palantir.conjure.java.api.config.service.ProxyConfiguration.builder()
                 .hostAndPort(hostAndPort())
+                .type(com.palantir.conjure.java.api.config.service.ProxyConfiguration.Type.valueOf(type().toString()))
                 .credentials(credentials().map(BasicCredentials::asConjure))
                 .build();
     }
