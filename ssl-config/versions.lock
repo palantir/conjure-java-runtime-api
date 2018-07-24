@@ -13,7 +13,13 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-databind": {
-            "locked": "2.9.5"
+            "locked": "2.9.5",
+            "transitive": [
+                "com.palantir.conjure.java.api:ssl-config"
+            ]
+        },
+        "com.palantir.conjure.java.api:ssl-config": {
+            "locked": "2.0.0-rc4"
         }
     },
     "runtime": {
@@ -30,7 +36,13 @@
             ]
         },
         "com.fasterxml.jackson.core:jackson-databind": {
-            "locked": "2.9.5"
+            "locked": "2.9.5",
+            "transitive": [
+                "com.palantir.conjure.java.api:ssl-config"
+            ]
+        },
+        "com.palantir.conjure.java.api:ssl-config": {
+            "locked": "2.0.0-rc4"
         }
     }
 }
