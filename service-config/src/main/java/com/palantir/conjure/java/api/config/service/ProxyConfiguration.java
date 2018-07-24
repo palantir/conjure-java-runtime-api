@@ -16,6 +16,7 @@
 
 package com.palantir.conjure.java.api.config.service;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -56,6 +57,7 @@ public abstract class ProxyConfiguration {
      * com.google.common.net.HostAndPort}, for instance {@code foo.com:80}, {@code 192.168.3.100:8080}, etc.
      */
     @JsonProperty("hostAndPort")
+    @JsonAlias("host-and-port")
     public abstract Optional<String> hostAndPort();
 
     /**
@@ -115,12 +117,5 @@ public abstract class ProxyConfiguration {
         return new Builder();
     }
 
-    // TODO(jnewman): #317 - remove kebab-case methods when Jackson 2.7 is picked up
-    static final class Builder extends ImmutableProxyConfiguration.Builder {
-
-        @JsonProperty("host-and-port")
-        Builder hostAndPortKebabCase(String hostAndPort) {
-            return hostAndPort(hostAndPort);
-        }
-    }
+    static final class Builder extends ImmutableProxyConfiguration.Builder {}
 }
