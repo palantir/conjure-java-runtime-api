@@ -62,10 +62,14 @@ public final class SerializationTests {
 
     @Test
     public void serDe_remoting_and_conjure_types_are_equivalent() throws IOException {
-        SslConfiguration remotingConfig = SslConfiguration.of(
-                CA_TRUST_STORE_PATH,
-                SERVER_KEY_STORE_JKS_PATH,
-                SERVER_KEY_STORE_JKS_PASSWORD);
+        SslConfiguration remotingConfig = SslConfiguration.builder()
+                .trustStorePath(CA_TRUST_STORE_PATH)
+                .keyStorePath(SERVER_KEY_STORE_JKS_PATH)
+                .keyStorePassword(SERVER_KEY_STORE_JKS_PASSWORD)
+                .keyStoreKeyAlias("private")
+                .keyStoreType(SslConfiguration.StoreType.JKS)
+                .trustStoreType(SslConfiguration.StoreType.JKS)
+                .build();
 
         com.palantir.conjure.java.api.config.ssl.SslConfiguration conjureConfig = remotingConfig.asConjure();
         assertEquals(MAPPER.writeValueAsString(remotingConfig), MAPPER.writeValueAsString(conjureConfig));
