@@ -73,6 +73,10 @@ public interface PartialServiceConfiguration {
     @JsonAlias("proxy-configuration")
     Optional<ProxyConfiguration> proxyConfiguration();
 
+    /**
+     * Returns Conjure's {@link com.palantir.conjure.java.api.config.service.PartialServiceConfiguration} type for
+     * forward compatibility.
+     */
     @Value.Lazy
     default com.palantir.conjure.java.api.config.service.PartialServiceConfiguration asConjure() {
         return com.palantir.conjure.java.api.config.service.PartialServiceConfiguration.builder()
@@ -100,5 +104,5 @@ public interface PartialServiceConfiguration {
         return new Builder();
     }
 
-    class Builder extends ImmutablePartialServiceConfiguration.Builder { }
+    class Builder extends ImmutablePartialServiceConfiguration.Builder {}
 }

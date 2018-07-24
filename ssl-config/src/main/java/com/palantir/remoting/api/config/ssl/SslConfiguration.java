@@ -75,6 +75,10 @@ public abstract class SslConfiguration {
         }
     }
 
+    /**
+     * Returns Conjure's {@link com.palantir.conjure.java.api.config.ssl.SslConfiguration} type for forward
+     * compatibility.
+     */
     @Value.Lazy
     public com.palantir.conjure.java.api.config.ssl.SslConfiguration asConjure() {
         return com.palantir.conjure.java.api.config.ssl.SslConfiguration.builder()

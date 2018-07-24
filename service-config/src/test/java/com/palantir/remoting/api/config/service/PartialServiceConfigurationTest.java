@@ -19,7 +19,6 @@ package com.palantir.remoting.api.config.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.palantir.remoting.api.config.ssl.SslConfiguration;
 import com.palantir.remoting.api.ext.jackson.ObjectMappers;
@@ -87,7 +86,8 @@ public final class PartialServiceConfigurationTest {
     @Test
     public void serDe_remoting_and_conjure_types_are_equivalent() throws IOException {
         PartialServiceConfiguration remotingConfig = PartialServiceConfiguration.builder().build();
-        com.palantir.conjure.java.api.config.service.PartialServiceConfiguration conjureConfig = remotingConfig.asConjure();
+        com.palantir.conjure.java.api.config.service.PartialServiceConfiguration conjureConfig =
+                remotingConfig.asConjure();
         assertEquals(mapper.writeValueAsString(remotingConfig), mapper.writeValueAsString(conjureConfig));
     }
 }

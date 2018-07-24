@@ -99,6 +99,10 @@ public abstract class ProxyConfiguration {
         }
     }
 
+    /**
+     * Returns Conjure's {@link com.palantir.conjure.java.api.config.service.ProxyConfiguration} type for forward
+     * compatibility.
+     */
     @Value.Lazy
     public com.palantir.conjure.java.api.config.service.ProxyConfiguration asConjure() {
         return com.palantir.conjure.java.api.config.service.ProxyConfiguration.builder()

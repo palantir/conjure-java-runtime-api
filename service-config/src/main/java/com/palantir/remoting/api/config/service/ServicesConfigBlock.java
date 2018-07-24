@@ -100,13 +100,17 @@ public abstract class ServicesConfigBlock {
     @JsonAlias("enable-gcm-cipher-suites")
     public abstract Optional<Boolean> defaultEnableGcmCipherSuites();
 
+    /**
+     * Returns Conjure's {@link com.palantir.conjure.java.api.config.service.ServicesConfigBlock} type for forward
+     * compatibility.
+     */
     @Value.Lazy
     public com.palantir.conjure.java.api.config.service.ServicesConfigBlock asConjure() {
         return com.palantir.conjure.java.api.config.service.ServicesConfigBlock.builder()
                 .defaultApiToken(defaultApiToken())
                 .defaultSecurity(defaultSecurity().map(SslConfiguration::asConjure))
-                .services(services().entrySet().stream().collect(Collectors.toMap(e -> e.getKey(),
-                        e -> e.getValue().asConjure())))
+                .services(services().entrySet().stream().collect(Collectors.toMap(
+                        e -> e.getKey(), e -> e.getValue().asConjure())))
                 .defaultProxyConfiguration(
                         defaultProxyConfiguration().map(ProxyConfiguration::asConjure))
                 .defaultConnectTimeout(
