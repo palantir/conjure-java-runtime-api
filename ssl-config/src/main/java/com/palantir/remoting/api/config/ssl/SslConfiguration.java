@@ -75,6 +75,26 @@ public abstract class SslConfiguration {
         }
     }
 
+    /**
+     * Returns Conjure's {@link com.palantir.conjure.java.api.config.ssl.SslConfiguration} type for forward
+     * compatibility.
+     */
+    @Value.Lazy
+    public com.palantir.conjure.java.api.config.ssl.SslConfiguration asConjure() {
+        return com.palantir.conjure.java.api.config.ssl.SslConfiguration.builder()
+                .trustStorePath(trustStorePath())
+                .trustStoreType(
+                        com.palantir.conjure.java.api.config.ssl.SslConfiguration.StoreType.valueOf(
+                                trustStoreType().name()))
+                .keyStorePath(keyStorePath())
+                .keyStorePassword(keyStorePassword())
+                .keyStoreType(
+                        com.palantir.conjure.java.api.config.ssl.SslConfiguration.StoreType.valueOf(
+                                keyStoreType().name()))
+                .keyStoreKeyAlias(keyStoreKeyAlias())
+                .build();
+    }
+
     public static SslConfiguration of(Path trustStorePath) {
         return SslConfiguration.builder().trustStorePath(trustStorePath).build();
     }

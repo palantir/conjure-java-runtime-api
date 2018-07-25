@@ -4,6 +4,7 @@ apply from: "$rootDir/gradle/publish-jar.gradle"
 
 dependencies {
     compile project(":ssl-config")
+    compile "com.palantir.conjure.java.api:service-config"
     compile "com.palantir.tokens:auth-tokens"
 
     testCompile project(":extras:jackson-support")

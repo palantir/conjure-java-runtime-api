@@ -109,4 +109,12 @@ public final class ProxyConfigurationTests {
                 .isEqualTo(config);
     }
 
+    @Test
+    public void serDe_remoting_and_conjure_types_are_equivalent() throws IOException {
+        ProxyConfiguration remotingConfig = ProxyConfiguration.of("host:80",
+                BasicCredentials.of("username", "password"));
+        com.palantir.conjure.java.api.config.service.ProxyConfiguration conjureConfig = remotingConfig.asConjure();
+        assertEquals(mapper.writeValueAsString(remotingConfig), mapper.writeValueAsString(conjureConfig));
+    }
+
 }

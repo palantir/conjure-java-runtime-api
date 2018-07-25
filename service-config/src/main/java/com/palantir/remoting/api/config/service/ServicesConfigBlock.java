@@ -24,6 +24,8 @@ import com.palantir.remoting.api.config.ssl.SslConfiguration;
 import com.palantir.tokens.auth.BearerToken;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import org.immutables.value.Value;
 import org.immutables.value.Value.Immutable;
 
 /**
@@ -97,6 +99,29 @@ public abstract class ServicesConfigBlock {
     @JsonProperty("enableGcmCipherSuites")
     @JsonAlias("enable-gcm-cipher-suites")
     public abstract Optional<Boolean> defaultEnableGcmCipherSuites();
+
+    /**
+     * Returns Conjure's {@link com.palantir.conjure.java.api.config.service.ServicesConfigBlock} type for forward
+     * compatibility.
+     */
+    @Value.Lazy
+    public com.palantir.conjure.java.api.config.service.ServicesConfigBlock asConjure() {
+        return com.palantir.conjure.java.api.config.service.ServicesConfigBlock.builder()
+                .defaultApiToken(defaultApiToken())
+                .defaultSecurity(defaultSecurity().map(SslConfiguration::asConjure))
+                .services(services().entrySet().stream().collect(Collectors.toMap(
+                        e -> e.getKey(), e -> e.getValue().asConjure())))
+                .defaultProxyConfiguration(
+                        defaultProxyConfiguration().map(ProxyConfiguration::asConjure))
+                .defaultConnectTimeout(
+                        defaultConnectTimeout().map(HumanReadableDuration::asConjure))
+                .defaultReadTimeout(defaultReadTimeout().map(HumanReadableDuration::asConjure))
+                .defaultWriteTimeout(defaultWriteTimeout().map(HumanReadableDuration::asConjure))
+                .defaultBackoffSlotSize(
+                        defaultBackoffSlotSize().map(HumanReadableDuration::asConjure))
+                .defaultEnableGcmCipherSuites(defaultEnableGcmCipherSuites())
+                .build();
+    }
 
     public static Builder builder() {
         return new Builder();

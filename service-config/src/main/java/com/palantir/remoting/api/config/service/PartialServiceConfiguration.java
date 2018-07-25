@@ -23,6 +23,7 @@ import com.palantir.remoting.api.config.ssl.SslConfiguration;
 import com.palantir.tokens.auth.BearerToken;
 import java.util.List;
 import java.util.Optional;
+import org.immutables.value.Value;
 import org.immutables.value.Value.Immutable;
 
 @Immutable
@@ -72,6 +73,26 @@ public interface PartialServiceConfiguration {
     @JsonAlias("proxy-configuration")
     Optional<ProxyConfiguration> proxyConfiguration();
 
+    /**
+     * Returns Conjure's {@link com.palantir.conjure.java.api.config.service.PartialServiceConfiguration} type for
+     * forward compatibility.
+     */
+    @Value.Lazy
+    default com.palantir.conjure.java.api.config.service.PartialServiceConfiguration asConjure() {
+        return com.palantir.conjure.java.api.config.service.PartialServiceConfiguration.builder()
+                .apiToken(apiToken())
+                .security(security().map(SslConfiguration::asConjure))
+                .addAllUris(uris())
+                .connectTimeout(connectTimeout().map(HumanReadableDuration::asConjure))
+                .readTimeout(readTimeout().map(HumanReadableDuration::asConjure))
+                .writeTimeout(writeTimeout().map(HumanReadableDuration::asConjure))
+                .maxNumRetries(maxNumRetries())
+                .backoffSlotSize(backoffSlotSize().map(HumanReadableDuration::asConjure))
+                .enableGcmCipherSuites(enableGcmCipherSuites())
+                .proxyConfiguration(proxyConfiguration().map(ProxyConfiguration::asConjure))
+                .build();
+    }
+
     static PartialServiceConfiguration of(List<String> uris, Optional<SslConfiguration> sslConfig) {
         return PartialServiceConfiguration.builder()
                 .uris(uris)
@@ -83,5 +104,5 @@ public interface PartialServiceConfiguration {
         return new Builder();
     }
 
-    class Builder extends ImmutablePartialServiceConfiguration.Builder { }
+    class Builder extends ImmutablePartialServiceConfiguration.Builder {}
 }

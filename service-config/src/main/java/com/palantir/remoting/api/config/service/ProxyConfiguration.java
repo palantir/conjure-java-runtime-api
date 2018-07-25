@@ -99,6 +99,19 @@ public abstract class ProxyConfiguration {
         }
     }
 
+    /**
+     * Returns Conjure's {@link com.palantir.conjure.java.api.config.service.ProxyConfiguration} type for forward
+     * compatibility.
+     */
+    @Value.Lazy
+    public com.palantir.conjure.java.api.config.service.ProxyConfiguration asConjure() {
+        return com.palantir.conjure.java.api.config.service.ProxyConfiguration.builder()
+                .hostAndPort(hostAndPort())
+                .type(com.palantir.conjure.java.api.config.service.ProxyConfiguration.Type.valueOf(type().toString()))
+                .credentials(credentials().map(BasicCredentials::asConjure))
+                .build();
+    }
+
     public static ProxyConfiguration of(String hostAndPort) {
         return builder().hostAndPort(hostAndPort).build();
     }
