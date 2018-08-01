@@ -36,7 +36,7 @@ public final class UserAgents {
     /**
      * The {@link UserAgent.Agent#name agent name} identifying the conjure-java library in a {@link UserAgent}.
      */
-    public static final String REMOTING_AGENT_NAME = "conjure-java";
+    public static final String CONJURE_AGENT_NAME = "conjure-java-runtime";
 
     private static final Logger log = LoggerFactory.getLogger(UserAgents.class);
 

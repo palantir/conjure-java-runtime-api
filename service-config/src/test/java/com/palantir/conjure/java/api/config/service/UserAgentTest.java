@@ -57,8 +57,8 @@ public class UserAgentTest {
         UserAgent baseUserAgent = UserAgent.of(UserAgent.Agent.of("service", "1.0.0"), "myNode");
         assertThat(UserAgents.format(baseUserAgent)).isEqualTo("service/1.0.0 (nodeId:myNode)");
 
-        UserAgent derivedAgent = baseUserAgent.addAgent(UserAgent.Agent.of("remoting", "2.0.0"));
-        assertThat(UserAgents.format(derivedAgent)).isEqualTo("service/1.0.0 (nodeId:myNode) remoting/2.0.0");
+        UserAgent derivedAgent = baseUserAgent.addAgent(UserAgent.Agent.of("conjure", "2.0.0"));
+        assertThat(UserAgents.format(derivedAgent)).isEqualTo("service/1.0.0 (nodeId:myNode) conjure/2.0.0");
     }
 
     @Test
@@ -66,8 +66,8 @@ public class UserAgentTest {
         UserAgent baseUserAgent = UserAgent.of(UserAgent.Agent.of("service", "1.0.0"));
         assertThat(UserAgents.format(baseUserAgent)).isEqualTo("service/1.0.0");
 
-        UserAgent derivedAgent = baseUserAgent.addAgent(UserAgent.Agent.of("remoting", "2.0.0"));
-        assertThat(UserAgents.format(derivedAgent)).isEqualTo("service/1.0.0 remoting/2.0.0");
+        UserAgent derivedAgent = baseUserAgent.addAgent(UserAgent.Agent.of("conjure", "2.0.0"));
+        assertThat(UserAgents.format(derivedAgent)).isEqualTo("service/1.0.0 conjure/2.0.0");
     }
 
     @Test
