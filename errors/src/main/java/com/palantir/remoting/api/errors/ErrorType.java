@@ -41,7 +41,7 @@ public abstract class ErrorType {
         NOT_FOUND(404),
         CONFLICT(409),
         REQUEST_ENTITY_TOO_LARGE(413),
-        FAILED_PRECONDITION(500),
+        FAILED_PRECONDITION(412),
         INTERNAL(500),
         TIMEOUT(500),
         CUSTOM_CLIENT(400),
