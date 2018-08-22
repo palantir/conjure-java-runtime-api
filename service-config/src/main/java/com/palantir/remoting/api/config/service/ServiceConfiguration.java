@@ -54,5 +54,25 @@ public interface ServiceConfiguration {
         return new Builder();
     }
 
+    /**
+     * Returns Conjure's {@link com.palantir.conjure.java.api.config.service.ServiceConfiguration} type for forward
+     * compatibility.
+     */
+    @Value.Lazy
+    default com.palantir.conjure.java.api.config.service.ServiceConfiguration asConjure() {
+        return com.palantir.conjure.java.api.config.service.ServiceConfiguration.builder()
+                .apiToken(apiToken())
+                .security(security().asConjure())
+                .addAllUris(uris())
+                .connectTimeout(connectTimeout())
+                .readTimeout(readTimeout())
+                .writeTimeout(writeTimeout())
+                .maxNumRetries(maxNumRetries())
+                .backoffSlotSize(backoffSlotSize())
+                .enableGcmCipherSuites(enableGcmCipherSuites())
+                .proxy(proxy().map(ProxyConfiguration::asConjure))
+                .build();
+    }
+
     class Builder extends ImmutableServiceConfiguration.Builder {}
 }

@@ -16,6 +16,7 @@
 
 package com.palantir.remoting.api.config.service;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -23,6 +24,8 @@ import com.palantir.remoting.api.config.ssl.SslConfiguration;
 import com.palantir.tokens.auth.BearerToken;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import org.immutables.value.Value;
 import org.immutables.value.Value.Immutable;
 
 /**
@@ -42,6 +45,7 @@ public abstract class ServicesConfigBlock {
      * PartialServiceConfiguration}.
      */
     @JsonProperty("apiToken")
+    @JsonAlias("api-token")
     public abstract Optional<BearerToken> defaultApiToken();
 
     /**
@@ -58,78 +62,70 @@ public abstract class ServicesConfigBlock {
      * Default global proxy configuration for connecting to the services.
      */
     @JsonProperty("proxyConfiguration")
+    @JsonAlias("proxy-configuration")
     public abstract Optional<ProxyConfiguration> defaultProxyConfiguration();
 
     /**
      * Default global connect timeout.
      */
     @JsonProperty("connectTimeout")
+    @JsonAlias("connect-timeout")
     public abstract Optional<HumanReadableDuration> defaultConnectTimeout();
 
     /**
      * Default global read timeout.
      */
     @JsonProperty("readTimeout")
+    @JsonAlias("read-timeout")
     public abstract Optional<HumanReadableDuration> defaultReadTimeout();
 
     /**
      * Default global write timeout.
      */
     @JsonProperty("writeTimeout")
+    @JsonAlias("write-timeout")
     public abstract Optional<HumanReadableDuration> defaultWriteTimeout();
 
     /**
      * Default global backoff slot size, see {@link PartialServiceConfiguration#backoffSlotSize()}.
      */
     @JsonProperty("backoffSlotSize")
+    @JsonAlias("backoff-slot-size")
     public abstract Optional<HumanReadableDuration> defaultBackoffSlotSize();
 
     /**
      * Default enablement of gcm cipher suites, defaults to false.
      */
     @JsonProperty("enableGcmCipherSuites")
+    @JsonAlias("enable-gcm-cipher-suites")
     public abstract Optional<Boolean> defaultEnableGcmCipherSuites();
+
+    /**
+     * Returns Conjure's {@link com.palantir.conjure.java.api.config.service.ServicesConfigBlock} type for forward
+     * compatibility.
+     */
+    @Value.Lazy
+    public com.palantir.conjure.java.api.config.service.ServicesConfigBlock asConjure() {
+        return com.palantir.conjure.java.api.config.service.ServicesConfigBlock.builder()
+                .defaultApiToken(defaultApiToken())
+                .defaultSecurity(defaultSecurity().map(SslConfiguration::asConjure))
+                .services(services().entrySet().stream().collect(Collectors.toMap(
+                        e -> e.getKey(), e -> e.getValue().asConjure())))
+                .defaultProxyConfiguration(
+                        defaultProxyConfiguration().map(ProxyConfiguration::asConjure))
+                .defaultConnectTimeout(
+                        defaultConnectTimeout().map(HumanReadableDuration::asConjure))
+                .defaultReadTimeout(defaultReadTimeout().map(HumanReadableDuration::asConjure))
+                .defaultWriteTimeout(defaultWriteTimeout().map(HumanReadableDuration::asConjure))
+                .defaultBackoffSlotSize(
+                        defaultBackoffSlotSize().map(HumanReadableDuration::asConjure))
+                .defaultEnableGcmCipherSuites(defaultEnableGcmCipherSuites())
+                .build();
+    }
 
     public static Builder builder() {
         return new Builder();
     }
 
-    // TODO(jnewman): #317 - remove kebab-case methods when Jackson 2.7 is picked up
-    public static final class Builder extends ImmutableServicesConfigBlock.Builder {
-
-        @JsonProperty("api-token")
-        Builder defaultApiTokenKebabCase(Optional<BearerToken> defaultApiToken) {
-            return defaultApiToken(defaultApiToken);
-        }
-
-        @JsonProperty("proxy-configuration")
-        Builder defaultProxyConfigurationKebabCase(Optional<ProxyConfiguration> defaultProxyConfiguration) {
-            return defaultProxyConfiguration(defaultProxyConfiguration);
-        }
-
-        @JsonProperty("connect-timeout")
-        Builder defaultConnectTimeoutKebabCase(Optional<HumanReadableDuration> defaultConnectTimeout) {
-            return defaultConnectTimeout(defaultConnectTimeout);
-        }
-
-        @JsonProperty("read-timeout")
-        Builder defaultReadTimeoutKebabCase(Optional<HumanReadableDuration> defaultReadTimeout) {
-            return defaultReadTimeout(defaultReadTimeout);
-        }
-
-        @JsonProperty("write-timeout")
-        Builder defaultWriteTimeoutKebabCase(Optional<HumanReadableDuration> defaultWriteTimeout) {
-            return defaultWriteTimeout(defaultWriteTimeout);
-        }
-
-        @JsonProperty("backoff-slot-size")
-        Builder defaultBackoffSlotSizeKebabCase(Optional<HumanReadableDuration> defaultBackoffSlotSize) {
-            return defaultBackoffSlotSize(defaultBackoffSlotSize);
-        }
-
-        @JsonProperty("enable-gcm-cipher-suites")
-        Builder defaultEnableGcmCipherSuitesKebabCase(Optional<Boolean> defaultEnableGcmCipherSuites) {
-            return defaultEnableGcmCipherSuites(defaultEnableGcmCipherSuites);
-        }
-    }
+    public static final class Builder extends ImmutableServicesConfigBlock.Builder {}
 }

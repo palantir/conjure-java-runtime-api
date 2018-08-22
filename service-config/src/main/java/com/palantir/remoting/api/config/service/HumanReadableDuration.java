@@ -218,4 +218,12 @@ public final class HumanReadableDuration implements Comparable<HumanReadableDura
 
         return Long.compare(toNanoseconds(), other.toNanoseconds());
     }
+
+    /**
+     * Returns Conjure's {@link com.palantir.conjure.java.api.config.service.HumanReadableDuration} type for forward
+     * compatibility.
+     */
+    public com.palantir.conjure.java.api.config.service.HumanReadableDuration asConjure() {
+        return com.palantir.conjure.java.api.config.service.HumanReadableDuration.valueOf(toString());
+    }
 }
