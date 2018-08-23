@@ -21,9 +21,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.palantir.logsafe.Arg;
+import com.palantir.logsafe.exceptions.SafeIllegalStateException;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import org.immutables.value.Value;
 
 /**
@@ -45,7 +47,11 @@ public abstract class SerializableError implements Serializable {
      * and/or name.
      */
     @JsonProperty("errorCode")
-    public abstract String errorCode();
+    @Value.Default
+    public String errorCode() {
+        return getExceptionClass().orElseThrow(() -> new SafeIllegalStateException(
+                "Expected either 'errorCode' or 'exceptionClass' to be set"));
+    }
 
     /**
      * A fixed name identifying the error. For errors generated from {@link ServiceException}, this corresponding to the
@@ -53,7 +59,11 @@ public abstract class SerializableError implements Serializable {
      * error name via {@link RemoteException#getError} and typically switch&dispatch on the error code and/or name.
      */
     @JsonProperty("errorName")
-    public abstract String errorName();
+    @Value.Default
+    public String errorName() {
+        return getMessage().orElseThrow(() -> new SafeIllegalStateException(
+                "Expected either 'errorName' or 'message' to be set"));
+    }
 
     /**
      * A unique identifier for this error instance, typically used to correlate errors displayed in user-facing
@@ -70,6 +80,24 @@ public abstract class SerializableError implements Serializable {
 
     /** A set of parameters that further explain the error. */
     public abstract Map<String, String> parameters();
+
+    /**
+     * @deprecated Used by the serialization-mechanism for back-compat only. Do not use.
+     */
+    @Deprecated
+    @JsonProperty(value = "exceptionClass", access = JsonProperty.Access.WRITE_ONLY)
+    @Value.Auxiliary
+    @SuppressWarnings("checkstyle:designforextension")
+    abstract Optional<String> getExceptionClass();
+
+    /**
+     * @deprecated Used by the serialization-mechanism for back-compat only. Do not use.
+     */
+    @Deprecated
+    @JsonProperty(value = "message", access = JsonProperty.Access.WRITE_ONLY)
+    @Value.Auxiliary
+    @SuppressWarnings("checkstyle:designforextension")
+    abstract Optional<String> getMessage();
 
     /**
      * Creates a {@link SerializableError} representation of this exception that derives from the error code and

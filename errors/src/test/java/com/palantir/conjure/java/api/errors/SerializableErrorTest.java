@@ -105,7 +105,7 @@ public final class SerializableErrorTest {
         String serialized = "{\"errorCode\":\"code\"}";
         assertThatThrownBy(() -> deserialize(serialized))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Cannot build SerializableError, some of required attributes are not set [errorName]");
+                .hasMessage("Expected either 'errorName' or 'message' to be set");
     }
 
     private static SerializableError deserialize(String serialized) throws IOException {
