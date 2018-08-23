@@ -21,9 +21,6 @@
 
 package com.palantir.remoting.api.config.service;
 
-import static com.palantir.remoting.api.config.service.Preconditions.checkArgument;
-import static com.palantir.remoting.api.config.service.Preconditions.checkNotNull;
-
 /** See Guava's {@code HostAndPort}. */
 public final class HostAndPort {
     /** Magic value indicating the absence of a port number. */
@@ -32,7 +29,7 @@ public final class HostAndPort {
     /** Hostname, IPv4/IPv6 literal, or unvalidated nonsense. */
     private final String host;
 
-    /** Validated port number in the range [0..65535], or NO_PORT */
+    /** Validated port number in the range [0..65535], or NO_PORT. */
     private final int port;
 
     private HostAndPort(String host, int port) {
@@ -46,7 +43,7 @@ public final class HostAndPort {
     }
 
     public static HostAndPort fromString(String hostPortString) {
-        checkNotNull(hostPortString, "hostPortString");
+        Preconditions.checkNotNull(hostPortString, "hostPortString");
         String host;
         String portString = null;
 
@@ -70,13 +67,13 @@ public final class HostAndPort {
         if (portString != null && portString.length() > 0) {
             // Try to parse the whole port string as a number.
             // JDK7 accepts leading plus signs. We don't want to.
-            checkArgument(!portString.startsWith("+"), "Unparseable port number: %s", hostPortString);
+            Preconditions.checkArgument(!portString.startsWith("+"), "Unparseable port number: %s", hostPortString);
             try {
                 port = Integer.parseInt(portString);
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException("Unparseable port number: " + hostPortString);
             }
-            checkArgument(isValidPort(port), "Port number out of range: %s", hostPortString);
+            Preconditions.checkArgument(isValidPort(port), "Port number out of range: %s", hostPortString);
         }
 
         return new HostAndPort(host, port);
@@ -85,21 +82,21 @@ public final class HostAndPort {
     private static String[] getHostAndPortFromBracketedHost(String hostPortString) {
         int colonIndex = 0;
         int closeBracketIndex = 0;
-        checkArgument(hostPortString.charAt(0) == '[',
+        Preconditions.checkArgument(hostPortString.charAt(0) == '[',
                 "Bracketed host-port string must start with a bracket: %s", hostPortString);
         colonIndex = hostPortString.indexOf(':');
         closeBracketIndex = hostPortString.lastIndexOf(']');
-        checkArgument(colonIndex > -1 && closeBracketIndex > colonIndex,
+        Preconditions.checkArgument(colonIndex > -1 && closeBracketIndex > colonIndex,
                 "Invalid bracketed host/port: %s", hostPortString);
 
         String host = hostPortString.substring(1, closeBracketIndex);
         if (closeBracketIndex + 1 == hostPortString.length()) {
             return new String[] {host, ""};
         } else {
-            checkArgument(hostPortString.charAt(closeBracketIndex + 1) == ':',
+            Preconditions.checkArgument(hostPortString.charAt(closeBracketIndex + 1) == ':',
                     "Only a colon may follow a close bracket: %s", hostPortString);
             for (int i = closeBracketIndex + 2; i < hostPortString.length(); ++i) {
-                checkArgument(Character.isDigit(hostPortString.charAt(i)),
+                Preconditions.checkArgument(Character.isDigit(hostPortString.charAt(i)),
                         "Port must be numeric: %s", hostPortString);
             }
             return new String[] {host, hostPortString.substring(closeBracketIndex + 2)};
