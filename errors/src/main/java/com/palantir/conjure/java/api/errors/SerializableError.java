@@ -45,7 +45,13 @@ public abstract class SerializableError implements Serializable {
      * and/or name.
      */
     @JsonProperty("errorCode")
-    public abstract String errorCode();
+    // TODO(rfink): errorCode and exceptionClass are mutual delagates so that they can be either set independently or
+    // one inherits from the other. This is quite a hack and should be removed when we remove support for the
+    // exceptionClass field.
+    @Value.Default
+    public String errorCode() {
+        return getExceptionClass();
+    }
 
     /**
      * A fixed name identifying the error. For errors generated from {@link ServiceException}, this corresponding to the
@@ -53,7 +59,12 @@ public abstract class SerializableError implements Serializable {
      * error name via {@link RemoteException#getError} and typically switch&dispatch on the error code and/or name.
      */
     @JsonProperty("errorName")
-    public abstract String errorName();
+    // TODO(rfink): errorName and message are mutual delagates so that they can be either set independently or one
+    // inherits from the other. This is quite a hack and should be removed when we remove support for the message field.
+    @Value.Default
+    public String errorName() {
+        return getMessage();
+    }
 
     /**
      * A unique identifier for this error instance, typically used to correlate errors displayed in user-facing
@@ -70,6 +81,30 @@ public abstract class SerializableError implements Serializable {
 
     /** A set of parameters that further explain the error. */
     public abstract Map<String, String> parameters();
+
+    /**
+     * @deprecated Used by the serialization-mechanism for back-compat only. Do not use.
+     */
+    @Deprecated
+    @Value.Default
+    @JsonProperty(value = "exceptionClass", access = JsonProperty.Access.WRITE_ONLY)
+    @SuppressWarnings("checkstyle:designforextension")
+    // TODO(rfink): Remove once all error producers have switched to errorCode.
+    String getExceptionClass() {
+        return errorCode();
+    }
+
+    /**
+     * @deprecated Used by the serialization-mechanism for back-compat only. Do not use.
+     */
+    @Deprecated
+    @Value.Default
+    @JsonProperty(value = "message", access = JsonProperty.Access.WRITE_ONLY)
+    @SuppressWarnings("checkstyle:designforextension")
+    // TODO(rfink): Remove once all error producers have switched to errorName.
+    String getMessage() {
+        return errorName();
+    }
 
     /**
      * Creates a {@link SerializableError} representation of this exception that derives from the error code and
