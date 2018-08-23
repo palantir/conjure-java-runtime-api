@@ -47,8 +47,6 @@ public abstract class SerializableError implements Serializable {
      * and/or name.
      */
     @JsonProperty("errorCode")
-    // TODO(rfink): errorCode delegates to exceptionClass if it's not set. This is quite a hack and should be removed
-    // when we remove support for the exceptionClass field.
     @Value.Default
     public String errorCode() {
         return getExceptionClass().orElseThrow(() -> new SafeIllegalStateException(
@@ -61,8 +59,6 @@ public abstract class SerializableError implements Serializable {
      * error name via {@link RemoteException#getError} and typically switch&dispatch on the error code and/or name.
      */
     @JsonProperty("errorName")
-    // TODO(rfink): errorName delegates to message if it's not set. This is quite a hack and should be removed when we
-    // remove support for the message field.
     @Value.Default
     public String errorName() {
         return getMessage().orElseThrow(() -> new SafeIllegalStateException(
@@ -92,7 +88,6 @@ public abstract class SerializableError implements Serializable {
     @JsonProperty(value = "exceptionClass", access = JsonProperty.Access.WRITE_ONLY)
     @Value.Auxiliary
     @SuppressWarnings("checkstyle:designforextension")
-    // TODO(rfink): Remove once all error producers have switched to errorCode.
     abstract Optional<String> getExceptionClass();
 
     /**
@@ -102,7 +97,6 @@ public abstract class SerializableError implements Serializable {
     @JsonProperty(value = "message", access = JsonProperty.Access.WRITE_ONLY)
     @Value.Auxiliary
     @SuppressWarnings("checkstyle:designforextension")
-    // TODO(rfink): Remove once all error producers have switched to errorName.
     abstract Optional<String> getMessage();
 
     /**
