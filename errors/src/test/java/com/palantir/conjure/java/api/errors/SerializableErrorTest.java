@@ -84,9 +84,7 @@ public final class SerializableErrorTest {
     public void testDeserializesWhenRedundantParamerersAreGiven() throws Exception {
         String serialized =
                 "{\"errorCode\":\"code\",\"errorName\":\"name\",\"exceptionClass\":\"code\",\"message\":\"name\"}";
-        assertThat(deserialize(serialized))
-                .isEqualTo(SerializableError.builder()
-                        .from(ERROR).exceptionClass("code").message("name").build());
+        assertThat(deserialize(serialized)).isEqualTo(ERROR);
     }
 
     @Test

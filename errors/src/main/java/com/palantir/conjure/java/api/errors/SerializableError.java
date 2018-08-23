@@ -91,6 +91,7 @@ public abstract class SerializableError implements Serializable {
      */
     @Deprecated
     @JsonProperty(value = "exceptionClass", access = JsonProperty.Access.WRITE_ONLY)
+    @Value.Auxiliary
     @SuppressWarnings("checkstyle:designforextension")
     // TODO(rfink): Remove once all error producers have switched to errorCode.
     abstract Optional<String> getExceptionClass();
@@ -100,6 +101,7 @@ public abstract class SerializableError implements Serializable {
      */
     @Deprecated
     @JsonProperty(value = "message", access = JsonProperty.Access.WRITE_ONLY)
+    @Value.Auxiliary
     @SuppressWarnings("checkstyle:designforextension")
     // TODO(rfink): Remove once all error producers have switched to errorName.
     abstract Optional<String> getMessage();
