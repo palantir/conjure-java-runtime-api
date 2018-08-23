@@ -21,9 +21,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.palantir.logsafe.Arg;
+import com.palantir.logsafe.exceptions.SafeIllegalStateException;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import org.immutables.value.Value;
 
 /**
@@ -50,7 +52,8 @@ public abstract class SerializableError implements Serializable {
     // exceptionClass field.
     @Value.Default
     public String errorCode() {
-        return getExceptionClass();
+        return getExceptionClass().orElseThrow(() -> new SafeIllegalStateException(
+                "Expected either 'errorCode' or 'exceptionClass' to be set"));
     }
 
     /**
@@ -63,7 +66,8 @@ public abstract class SerializableError implements Serializable {
     // inherits from the other. This is quite a hack and should be removed when we remove support for the message field.
     @Value.Default
     public String errorName() {
-        return getMessage();
+        return getMessage().orElseThrow(() -> new SafeIllegalStateException(
+                "Expected either 'errorName' or 'message' to be set"));
     }
 
     /**
@@ -86,25 +90,19 @@ public abstract class SerializableError implements Serializable {
      * @deprecated Used by the serialization-mechanism for back-compat only. Do not use.
      */
     @Deprecated
-    @Value.Default
     @JsonProperty(value = "exceptionClass", access = JsonProperty.Access.WRITE_ONLY)
     @SuppressWarnings("checkstyle:designforextension")
     // TODO(rfink): Remove once all error producers have switched to errorCode.
-    String getExceptionClass() {
-        return errorCode();
-    }
+    abstract Optional<String> getExceptionClass();
 
     /**
      * @deprecated Used by the serialization-mechanism for back-compat only. Do not use.
      */
     @Deprecated
-    @Value.Default
     @JsonProperty(value = "message", access = JsonProperty.Access.WRITE_ONLY)
     @SuppressWarnings("checkstyle:designforextension")
     // TODO(rfink): Remove once all error producers have switched to errorName.
-    String getMessage() {
-        return errorName();
-    }
+    abstract Optional<String> getMessage();
 
     /**
      * Creates a {@link SerializableError} representation of this exception that derives from the error code and
