@@ -84,7 +84,9 @@ public final class SerializableErrorTest {
     public void testDeserializesWhenRedundantParamerersAreGiven() throws Exception {
         String serialized =
                 "{\"errorCode\":\"code\",\"errorName\":\"name\",\"exceptionClass\":\"code\",\"message\":\"name\"}";
-        assertThat(deserialize(serialized)).isEqualTo(ERROR);
+        assertThat(deserialize(serialized))
+                .isEqualTo(SerializableError.builder()
+                        .from(ERROR).exceptionClass("code").message("name").build());
     }
 
     @Test
@@ -105,7 +107,7 @@ public final class SerializableErrorTest {
         String serialized = "{\"errorCode\":\"code\"}";
         assertThatThrownBy(() -> deserialize(serialized))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Cannot build SerializableError, some of required attributes are not set [errorName]");
+                .hasMessage("Expected either 'errorName' or 'message' to be set");
     }
 
     private static SerializableError deserialize(String serialized) throws IOException {
