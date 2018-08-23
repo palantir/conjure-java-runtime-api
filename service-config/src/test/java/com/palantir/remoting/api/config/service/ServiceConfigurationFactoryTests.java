@@ -18,11 +18,13 @@ package com.palantir.remoting.api.config.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
@@ -62,7 +64,8 @@ public final class ServiceConfigurationFactoryTests {
 
     private final ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
             .registerModule(new ShimJdk7Module())
-            .registerModule(new Jdk8Module());
+            .registerModule(new Jdk8Module())
+            .registerModule(new JavaTimeModule());
 
     @Test
     public void testIsServiceEnabled_noEnabledIfNoUrisOrServiceDoesNotExist() throws IOException {
@@ -229,6 +232,45 @@ public final class ServiceConfigurationFactoryTests {
         assertThat(ObjectMappers.newClientObjectMapper()
                 .readValue(serializedKebabCase, ServicesConfigBlock.class))
                 .isEqualTo(deserialized);
+    }
+
+    @Test
+    public void serDe_remoting_and_conjure_types_are_equivalent() throws IOException {
+        PartialServiceConfiguration partial = PartialServiceConfiguration.builder()
+                .apiToken(apiToken)
+                .uris(uris)
+                .security(security)
+                .connectTimeout(connectTimeout)
+                .readTimeout(readTimeout)
+                .writeTimeout(writeTimeout)
+                .maxNumRetries(maxNumRetries)
+                .backoffSlotSize(backoffSlotSize)
+                .enableGcmCipherSuites(enableGcm)
+                .proxyConfiguration(proxy)
+                .build();
+
+        ServicesConfigBlock services = ServicesConfigBlock.builder()
+                .putAllServices(ImmutableMap.of("service1", partial))
+                .defaultSecurity(defaultSecurity)
+                .defaultApiToken(defaultApiToken)
+                .defaultProxyConfiguration(defaultProxyConfiguration)
+                .defaultConnectTimeout(defaultConnectTimeout)
+                .defaultReadTimeout(defaultReadTimeout)
+                .defaultWriteTimeout(defaultWriteTimeout)
+                .defaultBackoffSlotSize(defaultBackoffSlotSize)
+                .defaultEnableGcmCipherSuites(defaultEnableGcm)
+                .build();
+
+        ServiceConfiguration service = ServiceConfigurationFactory.of(services).get("service1");
+
+        com.palantir.conjure.java.api.config.service.PartialServiceConfiguration conjurePartial = partial.asConjure();
+        assertEquals(mapper.writeValueAsString(partial), mapper.writeValueAsString(conjurePartial));
+
+        com.palantir.conjure.java.api.config.service.ServicesConfigBlock conjureServices = services.asConjure();
+        assertEquals(mapper.writeValueAsString(services), mapper.writeValueAsString(conjureServices));
+
+        com.palantir.conjure.java.api.config.service.ServiceConfiguration conjureService = service.asConjure();
+        assertEquals(mapper.writeValueAsString(service), mapper.writeValueAsString(conjureService));
     }
 
     private ServicesConfigBlock deserialize(String file) {

@@ -17,6 +17,7 @@
 package com.palantir.remoting.api.config.ssl;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.palantir.remoting.api.ext.jackson.ObjectMappers;
@@ -57,6 +58,21 @@ public final class SerializationTests {
                 SERVER_KEY_STORE_JKS_PASSWORD);
 
         assertThat(MAPPER.readValue(JSON_STRING, SslConfiguration.class)).isEqualTo(sslConfig);
+    }
+
+    @Test
+    public void serDe_remoting_and_conjure_types_are_equivalent() throws IOException {
+        SslConfiguration remotingConfig = SslConfiguration.builder()
+                .trustStorePath(CA_TRUST_STORE_PATH)
+                .keyStorePath(SERVER_KEY_STORE_JKS_PATH)
+                .keyStorePassword(SERVER_KEY_STORE_JKS_PASSWORD)
+                .keyStoreKeyAlias("private")
+                .keyStoreType(SslConfiguration.StoreType.JKS)
+                .trustStoreType(SslConfiguration.StoreType.JKS)
+                .build();
+
+        com.palantir.conjure.java.api.config.ssl.SslConfiguration conjureConfig = remotingConfig.asConjure();
+        assertEquals(MAPPER.writeValueAsString(remotingConfig), MAPPER.writeValueAsString(conjureConfig));
     }
 
     private static final String JSON_STRING =

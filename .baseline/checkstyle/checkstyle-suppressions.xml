@@ -16,16 +16,10 @@
     <!-- JavadocStyle enforces existence of package-info.java package-level Javadoc; we consider this a bug. -->
     <suppress files="package-info.java" checks="JavadocStyle" />
 
-    <!-- Copied Guava classes. -->
-    <suppress files="[/\\]src[/\\].*(Preconditions.java)" checks="." />
-    <suppress files="[/\\]src[/\\].*(HostAndPort.java)" checks="." />
-
     <!-- non-code classes -->
     <suppress files="\.(bdr|eot|gif|gzip|jar|json|otf|png|svg|ttf|woff|zip)$" checks="FileTabCharacter" />
     <suppress files="\.(bdr|eot|gif|gzip|jar|json|otf|png|svg|ttf|woff|zip)$" checks="NewlineAtEndOfFile" />
 
     <!-- Generated code should not be subjected to checkstyle. -->
-    <suppress files="[/\\].*[/\\]generated_src[/\\]" checks="." />
-    <suppress files="[/\\].*[/\\]generated_testSrc[/\\]" checks="." />
-    <suppress files="[/\\].*[/\\]generated[/\\]" checks="." />
+    <suppress files="[/\\].*[/\\]generated.*[/\\]" checks="." />
 </suppressions>

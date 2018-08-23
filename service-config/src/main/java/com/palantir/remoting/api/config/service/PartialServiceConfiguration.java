@@ -16,13 +16,14 @@
 
 package com.palantir.remoting.api.config.service;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.palantir.remoting.api.config.ssl.SslConfiguration;
 import com.palantir.tokens.auth.BearerToken;
 import java.util.List;
 import java.util.Optional;
+import org.immutables.value.Value;
 import org.immutables.value.Value.Immutable;
 
 @Immutable
@@ -32,6 +33,7 @@ import org.immutables.value.Value.Immutable;
 public interface PartialServiceConfiguration {
 
     /** The API token to be used to interact with the service. */
+    @JsonAlias("api-token")
     Optional<BearerToken> apiToken();
 
     /** The SSL configuration needed to interact with the service. */
@@ -41,28 +43,55 @@ public interface PartialServiceConfiguration {
     List<String> uris();
 
     /** Connect timeout for requests. */
+    @JsonAlias("connect-timeout")
     Optional<HumanReadableDuration> connectTimeout();
 
     /** Read timeout for requests. */
+    @JsonAlias("read-timeout")
     Optional<HumanReadableDuration> readTimeout();
 
     /** Write timeout for requests. */
+    @JsonAlias("write-timeout")
     Optional<HumanReadableDuration> writeTimeout();
 
     /** The maximum number of times a failed RPC call should be retried. */
+    @JsonAlias("max-num-retries")
     Optional<Integer> maxNumRetries();
 
     /**
      * The size of one backoff time slot for call retries. For example, an exponential backoff retry algorithm may
      * choose a backoff time in {@code [0, backoffSlotSize * 2^c]} for the c-th retry.
      */
+    @JsonAlias("backoff-slot-size")
     Optional<HumanReadableDuration> backoffSlotSize();
 
     /** Enables slower, but more standard cipher suite support, defaults to false. */
+    @JsonAlias("enable-gcm-cipher-suites")
     Optional<Boolean> enableGcmCipherSuites();
 
     /** Proxy configuration for connecting to the service. If absent, uses system proxy configuration. */
+    @JsonAlias("proxy-configuration")
     Optional<ProxyConfiguration> proxyConfiguration();
+
+    /**
+     * Returns Conjure's {@link com.palantir.conjure.java.api.config.service.PartialServiceConfiguration} type for
+     * forward compatibility.
+     */
+    @Value.Lazy
+    default com.palantir.conjure.java.api.config.service.PartialServiceConfiguration asConjure() {
+        return com.palantir.conjure.java.api.config.service.PartialServiceConfiguration.builder()
+                .apiToken(apiToken())
+                .security(security().map(SslConfiguration::asConjure))
+                .addAllUris(uris())
+                .connectTimeout(connectTimeout().map(HumanReadableDuration::asConjure))
+                .readTimeout(readTimeout().map(HumanReadableDuration::asConjure))
+                .writeTimeout(writeTimeout().map(HumanReadableDuration::asConjure))
+                .maxNumRetries(maxNumRetries())
+                .backoffSlotSize(backoffSlotSize().map(HumanReadableDuration::asConjure))
+                .enableGcmCipherSuites(enableGcmCipherSuites())
+                .proxyConfiguration(proxyConfiguration().map(ProxyConfiguration::asConjure))
+                .build();
+    }
 
     static PartialServiceConfiguration of(List<String> uris, Optional<SslConfiguration> sslConfig) {
         return PartialServiceConfiguration.builder()
@@ -75,47 +104,5 @@ public interface PartialServiceConfiguration {
         return new Builder();
     }
 
-    // TODO(jnewman): #317 - remove kebab-case methods when Jackson 2.7 is picked up
-    class Builder extends ImmutablePartialServiceConfiguration.Builder {
-
-        @JsonProperty("api-token")
-        Builder apiTokenKebabCase(Optional<BearerToken> apiToken) {
-            return apiToken(apiToken);
-        }
-
-        @JsonProperty("connect-timeout")
-        Builder connectTimeoutKebabCase(Optional<HumanReadableDuration> connectTimeout) {
-            return connectTimeout(connectTimeout);
-        }
-
-        @JsonProperty("read-timeout")
-        Builder readTimeoutKebabCase(Optional<HumanReadableDuration> readTimeout) {
-            return readTimeout(readTimeout);
-        }
-
-        @JsonProperty("write-timeout")
-        Builder writeTimeoutKebabCase(Optional<HumanReadableDuration> writeTimeout) {
-            return writeTimeout(writeTimeout);
-        }
-
-        @JsonProperty("max-num-retries")
-        Builder maxNumRetriesKebabCase(Optional<Integer> maxNumRetries) {
-            return maxNumRetries(maxNumRetries);
-        }
-
-        @JsonProperty("backoff-slot-size")
-        Builder backoffSlotSizeKebabCase(Optional<HumanReadableDuration> backoffSlotSize) {
-            return backoffSlotSize(backoffSlotSize);
-        }
-
-        @JsonProperty("proxy-configuration")
-        Builder proxyConfigurationKebabCase(Optional<ProxyConfiguration> proxyConfiguration) {
-            return proxyConfiguration(proxyConfiguration);
-        }
-
-        @JsonProperty("enable-gcm-cipher-suites")
-        Builder enableGcmCipherSuitesKebabCase(Optional<Boolean> enableGcmCipherSuites) {
-            return enableGcmCipherSuites(enableGcmCipherSuites);
-        }
-    }
+    class Builder extends ImmutablePartialServiceConfiguration.Builder {}
 }

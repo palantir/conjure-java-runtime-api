@@ -16,7 +16,7 @@
 
 package com.palantir.remoting.api.config.ssl;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.nio.file.Path;
 import java.util.Optional;
@@ -36,24 +36,30 @@ public abstract class SslConfiguration {
 
     private static final StoreType DEFAULT_STORE_TYPE = StoreType.JKS;
 
+    @JsonAlias("trust-store-path")
     public abstract Path trustStorePath();
 
     @SuppressWarnings("checkstyle:designforextension")
     @Value.Default
+    @JsonAlias("trust-store-type")
     public StoreType trustStoreType() {
         return DEFAULT_STORE_TYPE;
     }
 
+    @JsonAlias("key-store-path")
     public abstract Optional<Path> keyStorePath();
 
+    @JsonAlias("key-store-password")
     public abstract Optional<String> keyStorePassword();
 
     @SuppressWarnings("checkstyle:designforextension")
     @Value.Default
+    @JsonAlias("key-store-type")
     public StoreType keyStoreType() {
         return DEFAULT_STORE_TYPE;
     }
 
+    @JsonAlias("key-store-key-alias")
     /** Alias of the key that should be used in the key store. If absent, first entry returned by key store is used. */
     public abstract Optional<String> keyStoreKeyAlias();
 
@@ -67,6 +73,26 @@ public abstract class SslConfiguration {
             throw new IllegalArgumentException(
                     "keyStorePath must be present if keyStoreKeyAlias is present");
         }
+    }
+
+    /**
+     * Returns Conjure's {@link com.palantir.conjure.java.api.config.ssl.SslConfiguration} type for forward
+     * compatibility.
+     */
+    @Value.Lazy
+    public com.palantir.conjure.java.api.config.ssl.SslConfiguration asConjure() {
+        return com.palantir.conjure.java.api.config.ssl.SslConfiguration.builder()
+                .trustStorePath(trustStorePath())
+                .trustStoreType(
+                        com.palantir.conjure.java.api.config.ssl.SslConfiguration.StoreType.valueOf(
+                                trustStoreType().name()))
+                .keyStorePath(keyStorePath())
+                .keyStorePassword(keyStorePassword())
+                .keyStoreType(
+                        com.palantir.conjure.java.api.config.ssl.SslConfiguration.StoreType.valueOf(
+                                keyStoreType().name()))
+                .keyStoreKeyAlias(keyStoreKeyAlias())
+                .build();
     }
 
     public static SslConfiguration of(Path trustStorePath) {
@@ -85,38 +111,5 @@ public abstract class SslConfiguration {
         return new Builder();
     }
 
-    // TODO(jnewman): #317 - remove kebab-case methods when Jackson 2.7 is picked up
-    public static final class Builder extends ImmutableSslConfiguration.Builder {
-
-        @JsonProperty("trust-store-path")
-        Builder trustStorePathKebabCase(Path trustStorePath) {
-            return trustStorePath(trustStorePath);
-        }
-
-        @JsonProperty("trust-store-type")
-        Builder trustStoreTypeKebabCase(StoreType storeType) {
-            return trustStoreType(storeType);
-        }
-
-        @JsonProperty("key-store-path")
-        Builder keyStorePathKebabCase(Optional<Path> keyStorePath) {
-            return keyStorePath(keyStorePath);
-        }
-
-        @JsonProperty("key-store-password")
-        Builder keyStorePasswordKebabCase(Optional<String> keyStorePassword) {
-            return keyStorePassword(keyStorePassword);
-        }
-
-        @JsonProperty("key-store-type")
-        Builder keyStoretypeKebabCase(StoreType keyStoreType) {
-            return keyStoreType(keyStoreType);
-        }
-
-        @JsonProperty("key-store-key-alias")
-        Builder keyStoreKeyAliasKebabCase(Optional<String> keyStoreKeyAlias) {
-            return keyStoreKeyAlias(keyStoreKeyAlias);
-        }
-
-    }
+    public static final class Builder extends ImmutableSslConfiguration.Builder {}
 }
