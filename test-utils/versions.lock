@@ -24,13 +24,26 @@
                 "com.palantir.conjure.java.api:errors"
             ]
         },
+        "com.google.errorprone:error_prone_annotations": {
+            "locked": "2.1.3",
+            "transitive": [
+                "com.palantir.safe-logging:preconditions"
+            ]
+        },
         "com.palantir.conjure.java.api:errors": {
             "project": true
+        },
+        "com.palantir.safe-logging:preconditions": {
+            "locked": "1.5.0",
+            "transitive": [
+                "com.palantir.conjure.java.api:errors"
+            ]
         },
         "com.palantir.safe-logging:safe-logging": {
             "locked": "1.5.0",
             "transitive": [
-                "com.palantir.conjure.java.api:errors"
+                "com.palantir.conjure.java.api:errors",
+                "com.palantir.safe-logging:preconditions"
             ]
         },
         "javax.ws.rs:javax.ws.rs-api": {
@@ -87,13 +100,26 @@
                 "com.palantir.conjure.java.api:errors"
             ]
         },
+        "com.google.errorprone:error_prone_annotations": {
+            "locked": "2.1.3",
+            "transitive": [
+                "com.palantir.safe-logging:preconditions"
+            ]
+        },
         "com.palantir.conjure.java.api:errors": {
             "project": true
+        },
+        "com.palantir.safe-logging:preconditions": {
+            "locked": "1.5.0",
+            "transitive": [
+                "com.palantir.conjure.java.api:errors"
+            ]
         },
         "com.palantir.safe-logging:safe-logging": {
             "locked": "1.5.0",
             "transitive": [
-                "com.palantir.conjure.java.api:errors"
+                "com.palantir.conjure.java.api:errors",
+                "com.palantir.safe-logging:preconditions"
             ]
         },
         "javax.ws.rs:javax.ws.rs-api": {
