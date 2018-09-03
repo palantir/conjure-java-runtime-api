@@ -27,7 +27,7 @@ public final class HostAndPort {
     /** Hostname, IPv4/IPv6 literal, or unvalidated nonsense. */
     private final String host;
 
-    /** Validated port number in the range [0..65535], or NO_PORT */
+    /** Validated port number in the range [0..65535], or NO_PORT. */
     private final int port;
 
     private HostAndPort(String host, int port) {

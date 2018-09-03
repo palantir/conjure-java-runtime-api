@@ -121,7 +121,7 @@ public final class ServiceException extends RuntimeException implements SafeLogg
     }
 
     private static List<Arg<?>> collectArgs(ErrorType errorType, Arg<?>... args) {
-        ArrayList<Arg<?>> argList = new ArrayList<>(args.length + 1);
+        List<Arg<?>> argList = new ArrayList<>(args.length + 1);
         argList.add(SafeArg.of(ERROR_TYPE_ARG_NAME, errorType));
         Collections.addAll(argList, args);
         return Collections.unmodifiableList(argList);
