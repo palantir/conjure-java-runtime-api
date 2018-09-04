@@ -115,6 +115,24 @@ public abstract class SerializableError implements Serializable {
         return builder.build();
     }
 
+    public com.palantir.conjure.java.api.errors.SerializableError asConjure() {
+        com.palantir.conjure.java.api.errors.SerializableError.Builder builder =
+                com.palantir.conjure.java.api.errors.SerializableError.builder();
+
+        if (!getExceptionClass().isPresent()) {
+            builder.errorCode(errorCode());
+            builder.errorName(errorName());
+        } else {
+            // this is for back-compat, old remoting2 exceptions have 'exceptionClass' and 'message' fields.
+            builder.exceptionClass(getExceptionClass().get());
+            builder.message(getMessage().get());
+        }
+
+        builder.errorInstanceId(errorInstanceId());
+
+        return builder.build();
+    }
+
     // TODO(rfink): Remove once all error producers have switched to errorCode/errorName.
     public static final class Builder extends ImmutableSerializableError.Builder {}
 

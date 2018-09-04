@@ -108,6 +108,15 @@ public final class SerializableErrorTest {
                 .hasMessage("Expected either 'errorName' or 'message' to be set");
     }
 
+    @Test
+    public void asConjure_converts_json_nicely() throws IOException {
+        assertThat(deserialize("{\"errorCode\":\"code\",\"errorName\":\"name\"}").asConjure())
+                .isEqualTo(com.palantir.conjure.java.api.errors.SerializableError.builder()
+                        .errorCode("code")
+                        .errorName("name")
+                        .build());
+    }
+
     private static SerializableError deserialize(String serialized) throws IOException {
         return mapper.readValue(serialized, SerializableError.class);
     }

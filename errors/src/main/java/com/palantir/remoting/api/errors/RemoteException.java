@@ -44,4 +44,9 @@ public final class RemoteException extends RuntimeException {
         this.error = error;
         this.status = status;
     }
+
+    /** Converts this exception to an equivalent conjure-java-api RemoteException. */
+    public com.palantir.conjure.java.api.errors.RemoteException asConjure() {
+        return new com.palantir.conjure.java.api.errors.RemoteException(error.asConjure(), status);
+    }
 }
