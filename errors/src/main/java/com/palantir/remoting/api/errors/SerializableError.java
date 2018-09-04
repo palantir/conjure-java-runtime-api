@@ -24,6 +24,7 @@ import com.palantir.logsafe.Arg;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import org.immutables.value.Value;
 
 /**
@@ -45,12 +46,10 @@ public abstract class SerializableError implements Serializable {
      * and/or name.
      */
     @JsonProperty("errorCode")
-    // TODO(rfink): errorCode and exceptionClass are mutual delagates so that they can be either set independently or
-    // one inherits from the other. This is quite a hack and should be removed when we remove support for the
-    // exceptionClass field.
     @Value.Default
     public String errorCode() {
-        return getExceptionClass();
+        return getExceptionClass().orElseThrow(() -> new IllegalStateException(
+                "Expected either 'errorCode' or 'exceptionClass' to be set"));
     }
 
     /**
@@ -59,11 +58,10 @@ public abstract class SerializableError implements Serializable {
      * error name via {@link RemoteException#getError} and typically switch&dispatch on the error code and/or name.
      */
     @JsonProperty("errorName")
-    // TODO(rfink): errorName and message are mutual delagates so that they can be either set independently or one
-    // inherits from the other. This is quite a hack and should be removed when we remove support for the message field.
     @Value.Default
     public String errorName() {
-        return getMessage();
+        return getMessage().orElseThrow(() -> new IllegalStateException(
+                "Expected either 'errorName' or 'message' to be set"));
     }
 
     /**
@@ -86,25 +84,19 @@ public abstract class SerializableError implements Serializable {
      * @deprecated Used by the serialization-mechanism for back-compat only. Do not use.
      */
     @Deprecated
-    @Value.Default
-    @JsonProperty("exceptionClass")
+    @JsonProperty(value = "exceptionClass", access = JsonProperty.Access.WRITE_ONLY)
+    @Value.Auxiliary
     @SuppressWarnings("checkstyle:designforextension")
-    // TODO(rfink): Remove once all error producers have switched to errorCode.
-    String getExceptionClass() {
-        return errorCode();
-    }
+    abstract Optional<String> getExceptionClass();
 
     /**
      * @deprecated Used by the serialization-mechanism for back-compat only. Do not use.
      */
     @Deprecated
-    @Value.Default
-    @JsonProperty("message")
+    @JsonProperty(value = "message", access = JsonProperty.Access.WRITE_ONLY)
+    @Value.Auxiliary
     @SuppressWarnings("checkstyle:designforextension")
-    // TODO(rfink): Remove once all error producers have switched to errorName.
-    String getMessage() {
-        return errorName();
-    }
+    abstract Optional<String> getMessage();
 
     /**
      * Creates a {@link SerializableError} representation of this exception that derives from the error code and
