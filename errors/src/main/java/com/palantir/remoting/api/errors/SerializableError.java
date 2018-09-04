@@ -115,7 +115,7 @@ public abstract class SerializableError implements Serializable {
         return builder.build();
     }
 
-    public com.palantir.conjure.java.api.errors.SerializableError asConjure() {
+    public final com.palantir.conjure.java.api.errors.SerializableError asConjure() {
         com.palantir.conjure.java.api.errors.SerializableError.Builder builder =
                 com.palantir.conjure.java.api.errors.SerializableError.builder();
 

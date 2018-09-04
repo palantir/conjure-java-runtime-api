@@ -53,6 +53,7 @@ public abstract class ErrorType {
             this.httpErrorCode = httpErrorCode;
         }
 
+        @SuppressWarnings("checkstyle:CyclomaticComplexity")
         public com.palantir.conjure.java.api.errors.ErrorType.Code asConjure() {
             switch (this) {
                 case PERMISSION_DENIED:
@@ -105,7 +106,7 @@ public abstract class ErrorType {
     /** The HTTP error code used to convey this error to HTTP clients. */
     public abstract int httpErrorCode();
 
-    public com.palantir.conjure.java.api.errors.ErrorType asConjure() {
+    public final com.palantir.conjure.java.api.errors.ErrorType asConjure() {
         return com.palantir.conjure.java.api.errors.ErrorType.create(code().asConjure(), name());
     }
 
