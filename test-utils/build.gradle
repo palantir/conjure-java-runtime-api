@@ -7,5 +7,4 @@ dependencies {
     compile "junit:junit"
     compile "org.assertj:assertj-core"
     compile "org.mockito:mockito-core"
-    compile "com.google.guava:guava"
 }

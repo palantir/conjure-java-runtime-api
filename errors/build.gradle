@@ -7,7 +7,7 @@ dependencies {
     compile "com.google.code.findbugs:jsr305"
     compile "com.palantir.safe-logging:safe-logging"
     compile "javax.ws.rs:javax.ws.rs-api"
-    compile "com.palantir.conjure.java.api:errors"
+    implementation "com.palantir.safe-logging:preconditions"
 
     testCompile project(":extras:jackson-support")
     testCompile "org.assertj:assertj-core"

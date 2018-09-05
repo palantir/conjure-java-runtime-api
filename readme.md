@@ -1,6 +1,6 @@
-[![CircleCI Build Status](https://circleci.com/gh/palantir/http-remoting-api/tree/develop.svg?style=shield)](https://circleci.com/gh/palantir/http-remoting-api)
-[![Download](https://api.bintray.com/packages/palantir/releases/http-remoting-api/images/download.svg) ](https://bintray.com/palantir/releases/http-remoting-api/_latestVersion)
+[![CircleCI Build Status](https://circleci.com/gh/palantir/conjure-java-api/tree/develop.svg?style=shield)](https://circleci.com/gh/palantir/conjure-java-api)
+[![Download](https://api.bintray.com/packages/palantir/releases/conjure-java-api/images/download.svg) ](https://bintray.com/palantir/releases/conjure-java-api/_latestVersion)
 
-# APIs for http-remoting
+# APIs for conjure-java-runtime
 
-See https://github.com/palantir/http-remoting
+See https://github.com/palantir/conjure-java-runtime
