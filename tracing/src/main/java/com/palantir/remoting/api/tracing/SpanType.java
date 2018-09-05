@@ -30,5 +30,19 @@ public enum SpanType {
     CLIENT_OUTGOING,
 
     /** Indicates a local method call or computation that does not involve RPC. */
-    LOCAL
+    LOCAL;
+
+    public com.palantir.tracing.api.SpanType asConjure() {
+        switch (this) {
+            case SERVER_INCOMING:
+                return com.palantir.tracing.api.SpanType.SERVER_INCOMING;
+            case CLIENT_OUTGOING:
+                return com.palantir.tracing.api.SpanType.CLIENT_OUTGOING;
+            case LOCAL:
+                return com.palantir.tracing.api.SpanType.LOCAL;
+        }
+
+        throw new UnsupportedOperationException("Unable to convert to Conjure SpanType");
+    }
+
 }

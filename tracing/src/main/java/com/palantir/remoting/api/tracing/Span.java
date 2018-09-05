@@ -44,6 +44,20 @@ public abstract class Span {
      */
     public abstract Map<String, String> getMetadata();
 
+    @Value.Lazy
+    public com.palantir.tracing.api.Span asConjure() {
+        return com.palantir.tracing.api.Span.builder()
+                .traceId(getTraceId())
+                .parentSpanId(getParentSpanId())
+                .spanId(getSpanId())
+                .type(type().asConjure())
+                .operation(getOperation())
+                .startTimeMicroSeconds(getStartTimeMicroSeconds())
+                .durationNanoSeconds(getDurationNanoSeconds())
+                .metadata(getMetadata())
+                .build();
+    }
+
     public static Builder builder() {
         return new Builder();
     }
