@@ -52,6 +52,33 @@ public abstract class ErrorType {
         Code(Integer httpErrorCode) {
             this.httpErrorCode = httpErrorCode;
         }
+
+        @SuppressWarnings("checkstyle:CyclomaticComplexity")
+        public com.palantir.conjure.java.api.errors.ErrorType.Code asConjure() {
+            switch (this) {
+                case PERMISSION_DENIED:
+                    return com.palantir.conjure.java.api.errors.ErrorType.Code.PERMISSION_DENIED;
+                case INVALID_ARGUMENT:
+                    return com.palantir.conjure.java.api.errors.ErrorType.Code.INVALID_ARGUMENT;
+                case NOT_FOUND:
+                    return com.palantir.conjure.java.api.errors.ErrorType.Code.NOT_FOUND;
+                case CONFLICT:
+                    return com.palantir.conjure.java.api.errors.ErrorType.Code.CONFLICT;
+                case REQUEST_ENTITY_TOO_LARGE:
+                    return com.palantir.conjure.java.api.errors.ErrorType.Code.REQUEST_ENTITY_TOO_LARGE;
+                case FAILED_PRECONDITION:
+                    return com.palantir.conjure.java.api.errors.ErrorType.Code.FAILED_PRECONDITION;
+                case INTERNAL:
+                    return com.palantir.conjure.java.api.errors.ErrorType.Code.INTERNAL;
+                case TIMEOUT:
+                    return com.palantir.conjure.java.api.errors.ErrorType.Code.TIMEOUT;
+                case CUSTOM_CLIENT:
+                    return com.palantir.conjure.java.api.errors.ErrorType.Code.CUSTOM_CLIENT;
+                case CUSTOM_SERVER:
+                    return com.palantir.conjure.java.api.errors.ErrorType.Code.CUSTOM_SERVER;
+            }
+            throw new UnsupportedOperationException("Unable to convert to Conjure ErrorType.Code");
+        }
     }
 
     public static final ErrorType PERMISSION_DENIED =
@@ -78,6 +105,10 @@ public abstract class ErrorType {
 
     /** The HTTP error code used to convey this error to HTTP clients. */
     public abstract int httpErrorCode();
+
+    public final com.palantir.conjure.java.api.errors.ErrorType asConjure() {
+        return com.palantir.conjure.java.api.errors.ErrorType.create(code().asConjure(), name());
+    }
 
     @Value.Check
     final void check() {

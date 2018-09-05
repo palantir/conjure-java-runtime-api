@@ -35,10 +35,10 @@
             ]
         },
         "com.palantir.conjure.java.api:service-config": {
-            "locked": "2.0.0-rc4"
+            "locked": "2.0.0-rc7"
         },
         "com.palantir.conjure.java.api:ssl-config": {
-            "locked": "2.0.0-rc4",
+            "locked": "2.0.0-rc7",
             "transitive": [
                 "com.palantir.conjure.java.api:service-config",
                 "com.palantir.remoting-api:ssl-config"
@@ -109,10 +109,10 @@
             ]
         },
         "com.palantir.conjure.java.api:service-config": {
-            "locked": "2.0.0-rc4"
+            "locked": "2.0.0-rc7"
         },
         "com.palantir.conjure.java.api:ssl-config": {
-            "locked": "2.0.0-rc4",
+            "locked": "2.0.0-rc7",
             "transitive": [
                 "com.palantir.conjure.java.api:service-config",
                 "com.palantir.remoting-api:ssl-config"
