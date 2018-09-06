@@ -22,4 +22,6 @@ package com.palantir.remoting.api.tracing;
  */
 public interface SpanObserver {
     void consume(Span span);
+
+    com.palantir.tracing.api.SpanObserver asConjure();
 }

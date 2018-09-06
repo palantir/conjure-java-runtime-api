@@ -4,6 +4,7 @@ apply from: "$rootDir/gradle/publish-jar.gradle"
 
 dependencies {
     compile "com.fasterxml.jackson.core:jackson-databind"
+    compile "com.palantir.tracing:tracing-api"
 
     testCompile "junit:junit"
     testCompile "org.assertj:assertj-core"

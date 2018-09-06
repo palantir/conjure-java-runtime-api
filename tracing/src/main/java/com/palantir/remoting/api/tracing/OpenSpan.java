@@ -61,6 +61,18 @@ public abstract class OpenSpan {
     /** Indicates the {@link SpanType} of this span, e.g., a server-side vs. client-side vs local span. */
     public abstract SpanType type();
 
+    @Value.Lazy
+    public com.palantir.tracing.api.OpenSpan asConjure() {
+        return com.palantir.tracing.api.OpenSpan.builder()
+                .operation(getOperation())
+                .spanId(getSpanId())
+                .parentSpanId(getParentSpanId())
+                .type(type().asConjure())
+                .startClockNanoSeconds(getStartClockNanoSeconds())
+                .startTimeMicroSeconds(getStartTimeMicroSeconds())
+                .build();
+    }
+
     /**
      * Indicates if this trace state was sampled public abstract boolean isSampled();
      * <p>
@@ -76,4 +88,5 @@ public abstract class OpenSpan {
     }
 
     public static class Builder extends ImmutableOpenSpan.Builder {}
+
 }
