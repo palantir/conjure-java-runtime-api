@@ -29,8 +29,8 @@ import org.junit.Test;
 public final class SerializableErrorTest {
 
     private static final SerializableError ERROR = new SerializableError.Builder()
-            .errorCode("code")
-            .errorName("name")
+            .errorCode("PERMISSION_DENIED")
+            .errorName("Product:SomethingBroke")
             .build();
     private static final ObjectMapper mapper = ObjectMappers.newServerObjectMapper();
 
@@ -71,38 +71,40 @@ public final class SerializableErrorTest {
     @Test
     public void testSerializationContainsRedundantParameters() throws Exception {
         assertThat(mapper.writeValueAsString(ERROR))
-                .isEqualTo(
-                        "{\"errorCode\":\"code\",\"errorName\":\"name\",\"errorInstanceId\":\"\",\"parameters\":{}}");
+                .isEqualTo("{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
+                        + "\"errorInstanceId\":\"\",\"parameters\":{}}");
 
         assertThat(mapper.writeValueAsString(
                 SerializableError.builder().from(ERROR).errorInstanceId("errorId").build()))
-                .isEqualTo("{\"errorCode\":\"code\",\"errorName\":\"name\",\"errorInstanceId\":\"errorId\""
-                        + ",\"parameters\":{}}");
+                .isEqualTo("{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
+                        + "\"errorInstanceId\":\"errorId\",\"parameters\":{}}");
     }
 
     @Test
     public void testDeserializesWhenRedundantParamerersAreGiven() throws Exception {
         String serialized =
-                "{\"errorCode\":\"code\",\"errorName\":\"name\",\"exceptionClass\":\"code\",\"message\":\"name\"}";
+                "{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\",\"exceptionClass\":"
+                        + "\"java.lang.IllegalStateException\",\"message\":\"Human readable message\"}";
         assertThat(deserialize(serialized)).isEqualTo(ERROR);
     }
 
     @Test
     public void testDeserializesWhenExplicitErrorIdIsGiven() throws Exception {
-        String serialized = "{\"errorCode\":\"code\",\"errorName\":\"name\",\"errorInstanceId\":\"errorId\"}";
+        String serialized = "{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
+                + "\"errorInstanceId\":\"errorId\"}";
         assertThat(deserialize(serialized))
                 .isEqualTo(SerializableError.builder().from(ERROR).errorInstanceId("errorId").build());
     }
 
     @Test
     public void testDeserializesWithDefaultNamesOnly() throws Exception {
-        String serialized = "{\"errorCode\":\"code\",\"errorName\":\"name\"}";
+        String serialized = "{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\"}";
         assertThat(deserialize(serialized)).isEqualTo(ERROR);
     }
 
     @Test
     public void testDeserializationFailsWhenNeitherErrorNameNorMessageIsSet() throws Exception {
-        String serialized = "{\"errorCode\":\"code\"}";
+        String serialized = "{\"errorCode\":\"PERMISSION_DENIED\"}";
         assertThatThrownBy(() -> deserialize(serialized))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Expected either 'errorName' or 'message' to be set");
