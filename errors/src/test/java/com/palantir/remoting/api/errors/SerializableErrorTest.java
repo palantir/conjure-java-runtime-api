@@ -117,6 +117,17 @@ public final class SerializableErrorTest {
                         .build());
     }
 
+    @Test
+    public void asConjure_converts_json_with_both_remoting2_and_remoting3_fields() throws IOException {
+        assertThat(deserialize("{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
+                + "\"exceptionClass\":\"java.lang.IllegalStateException\",\"message\":\"Human readable message\"}")
+                .asConjure())
+                .isEqualTo(com.palantir.conjure.java.api.errors.SerializableError.builder()
+                        .errorCode("PERMISSION_DENIED")
+                        .errorName("Product:SomethingBroke")
+                        .build());
+    }
+
     private static SerializableError deserialize(String serialized) throws IOException {
         return mapper.readValue(serialized, SerializableError.class);
     }
