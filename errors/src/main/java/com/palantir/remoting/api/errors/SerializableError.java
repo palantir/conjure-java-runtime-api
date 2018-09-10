@@ -128,6 +128,7 @@ public abstract class SerializableError implements Serializable {
         builder.errorName(errorName());
         builder.errorCode(errorCode());
         builder.errorInstanceId(errorInstanceId());
+        builder.parameters(parameters());
 
         return builder.build();
     }
