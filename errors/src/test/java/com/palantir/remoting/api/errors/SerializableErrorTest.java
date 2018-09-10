@@ -34,6 +34,10 @@ public final class SerializableErrorTest {
             .build();
     private static final ObjectMapper mapper = ObjectMappers.newServerObjectMapper();
 
+    private static SerializableError deserialize(String serialized) throws IOException {
+        return mapper.readValue(serialized, SerializableError.class);
+    }
+
     @Test
     public void forException_should_keep_both_safe_and_unsafe_args() {
         ErrorType error = ErrorType.FAILED_PRECONDITION;
@@ -109,11 +113,21 @@ public final class SerializableErrorTest {
     }
 
     @Test
-    public void asConjure_converts_json_nicely() throws IOException {
+    public void asConjure_converts_remoting3_json() throws IOException {
         assertThat(deserialize("{\"errorCode\":\"code\",\"errorName\":\"name\"}").asConjure())
                 .isEqualTo(com.palantir.conjure.java.api.errors.SerializableError.builder()
                         .errorCode("code")
                         .errorName("name")
+                        .build());
+    }
+
+    @Test
+    public void asConjure_converts_remoting2_json() throws IOException {
+        assertThat(deserialize("{\"exceptionClass\":\"java.lang.IllegalStateException\","
+                + "\"message\":\"Human readable message\"}").asConjure())
+                .isEqualTo(com.palantir.conjure.java.api.errors.SerializableError.builder()
+                        .exceptionClass("java.lang.IllegalStateException")
+                        .message("Human readable message")
                         .build());
     }
 
@@ -128,7 +142,27 @@ public final class SerializableErrorTest {
                         .build());
     }
 
-    private static SerializableError deserialize(String serialized) throws IOException {
-        return mapper.readValue(serialized, SerializableError.class);
+    @Test
+    public void all_fields_are_preserved_when_present() throws IOException {
+        String string = "{\n"
+                + "    \"errorCode\":\"CONFLICT\",\n"
+                + "    \"errorName\":\"Product:TransactionConflict\",\n"
+                + "    \"errorInstanceId\":\"7d345390-e41d-49dd-8dcb-38dd716c0347\",\n"
+                + "    \"parameters\":{},\n"
+                + "    \"exceptionClass\":\"CONFLICT\",\n"
+                + "    \"message\":\"Refer to the server logs with this errorInstanceId: "
+                + "7d345390-e41d-49dd-8dcb-38dd716c0347\"\n"
+                + "}";
+
+        com.palantir.conjure.java.api.errors.SerializableError expected =
+                com.palantir.conjure.java.api.errors.SerializableError.builder()
+                .errorCode("CONFLICT")
+                .errorName("Product:TransactionConflict")
+                .errorInstanceId("7d345390-e41d-49dd-8dcb-38dd716c0347")
+                .message("Refer to the server logs with this errorInstanceId: 7d345390-e41d-49dd-8dcb-38dd716c0347")
+                .exceptionClass("CONFLICT")
+                .build();
+
+        assertThat(deserialize(string).asConjure()).isEqualTo(expected);
     }
 }
