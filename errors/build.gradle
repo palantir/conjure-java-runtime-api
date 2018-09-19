@@ -6,7 +6,6 @@ dependencies {
     compile "com.fasterxml.jackson.core:jackson-databind"
     compile "com.google.code.findbugs:jsr305"
     compile "com.palantir.safe-logging:safe-logging"
-    compile "javax.ws.rs:javax.ws.rs-api"
     implementation "com.palantir.safe-logging:preconditions"
 
     testCompile project(":extras:jackson-support")

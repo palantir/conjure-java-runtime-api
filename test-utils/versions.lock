@@ -33,12 +33,6 @@
                 "com.palantir.conjure.java.api:errors"
             ]
         },
-        "javax.ws.rs:javax.ws.rs-api": {
-            "locked": "2.0.1",
-            "transitive": [
-                "com.palantir.conjure.java.api:errors"
-            ]
-        },
         "junit:junit": {
             "locked": "4.12"
         },
@@ -107,12 +101,6 @@
             "transitive": [
                 "com.palantir.conjure.java.api:errors",
                 "com.palantir.safe-logging:preconditions"
-            ]
-        },
-        "javax.ws.rs:javax.ws.rs-api": {
-            "locked": "2.0.1",
-            "transitive": [
-                "com.palantir.conjure.java.api:errors"
             ]
         },
         "junit:junit": {
