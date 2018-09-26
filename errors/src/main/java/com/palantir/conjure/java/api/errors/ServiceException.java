@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
 
 /** A {@link ServiceException} thrown in server-side code to indicate server-side {@link ErrorType error states}. */
 public final class ServiceException extends RuntimeException implements SafeLoggable {
-    public static final String ERROR_TYPE_ARG_NAME = "errorType";
+    public static final String ERROR_NAME_ARG_NAME = "errorName";
 
     private final ErrorType errorType;
     private final List<Arg<?>> args;  // unmodifiable
@@ -84,11 +84,11 @@ public final class ServiceException extends RuntimeException implements SafeLogg
     }
 
     /**
-     * Get Args of this service exception excluding injected/generated Args like errorType.
+     * Get Args of this service exception excluding injected/generated Args like errorName.
      * @return parameters passed to this ServiceException at construction time
      */
     public List<Arg<?>> getParameters() {
-        // errorType is always the first argument, so just slice it out
+        // errorName is always the first argument, so just slice it out
         return args.subList(1, args.size());
     }
 
@@ -122,7 +122,7 @@ public final class ServiceException extends RuntimeException implements SafeLogg
 
     private static List<Arg<?>> collectArgs(ErrorType errorType, Arg<?>... args) {
         List<Arg<?>> argList = new ArrayList<>(args.length + 1);
-        argList.add(SafeArg.of(ERROR_TYPE_ARG_NAME, errorType));
+        argList.add(SafeArg.of(ERROR_NAME_ARG_NAME, errorType.name()));
         Collections.addAll(argList, args);
         return Collections.unmodifiableList(argList);
     }
