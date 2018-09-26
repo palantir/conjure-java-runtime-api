@@ -16,6 +16,9 @@
 
 package com.palantir.conjure.java.api.errors;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.immutables.value.Value;
@@ -28,6 +31,9 @@ import org.immutables.value.Value;
  */
 @Value.Immutable
 @ImmutablesStyle
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonSerialize(as = ImmutableErrorType.class)
+@JsonDeserialize(as = ImmutableErrorType.class)
 public abstract class ErrorType {
 
     private static final String UPPER_CAMEL_CASE = "(([A-Z][a-z0-9]+)+)";
