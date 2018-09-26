@@ -13,5 +13,5 @@ dependencies {
     testCompile "junit:junit"
     testCompile "org.apache.commons:commons-lang3"
 
-    processor "org.immutables:value"
+    annotationProcessor "org.immutables:value"
 }
