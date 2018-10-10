@@ -211,27 +211,13 @@
         "com.google.code.findbugs:jsr305": {
             "locked": "3.0.2",
             "transitive": [
-                "com.google.guava:guava",
                 "com.palantir.conjure.java.api:errors"
             ]
         },
         "com.google.errorprone:error_prone_annotations": {
             "locked": "2.3.1",
             "transitive": [
-                "com.google.guava:guava",
                 "com.palantir.safe-logging:preconditions"
-            ]
-        },
-        "com.google.guava:guava": {
-            "locked": "23.6-jre",
-            "transitive": [
-                "com.palantir.conjure.java.api:errors"
-            ]
-        },
-        "com.google.j2objc:j2objc-annotations": {
-            "locked": "1.1",
-            "transitive": [
-                "com.google.guava:guava"
             ]
         },
         "com.palantir.conjure.java.api:errors": {
@@ -267,18 +253,6 @@
         },
         "org.assertj:assertj-core": {
             "locked": "3.6.1"
-        },
-        "org.checkerframework:checker-compat-qual": {
-            "locked": "2.0.0",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
-        },
-        "org.codehaus.mojo:animal-sniffer-annotations": {
-            "locked": "1.14",
-            "transitive": [
-                "com.google.guava:guava"
-            ]
         },
         "org.hamcrest:hamcrest-core": {
             "locked": "1.3",
