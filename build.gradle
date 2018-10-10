@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         jcenter()
-        maven { url  "https://palantir.bintray.com/releases" }
+        maven { url  'https://palantir.bintray.com/releases' }
     }
 
     dependencies {
@@ -21,12 +21,18 @@ apply plugin: 'com.palantir.baseline'
 
 allprojects {
     repositories {
-        maven { url  "https://palantir.bintray.com/releases" }
+        maven { url  'https://palantir.bintray.com/releases' }
         jcenter()
     }
 
-    version gitVersion()
     group 'com.palantir.conjure.java.api'
+    version gitVersion()
+
+    configurations.all {
+        resolutionStrategy {
+            failOnVersionConflict()
+        }
+    }
 }
 
 subprojects {
