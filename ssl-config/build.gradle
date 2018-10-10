@@ -9,5 +9,5 @@ dependencies {
     testCompile "org.assertj:assertj-core"
     testCompile "junit:junit"
 
-    processor "org.immutables:value"
+    annotationProcessor "org.immutables:value"
 }
