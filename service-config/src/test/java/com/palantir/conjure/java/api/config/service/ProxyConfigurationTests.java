@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.net.URL;
 import org.junit.Test;
 
+@SuppressWarnings("CheckReturnValue") // .build() is used to throw validation exceptions
 public final class ProxyConfigurationTests {
     private final ObjectMapper mapper = new ObjectMapper(new YAMLFactory()).registerModule(new Jdk8Module());
 

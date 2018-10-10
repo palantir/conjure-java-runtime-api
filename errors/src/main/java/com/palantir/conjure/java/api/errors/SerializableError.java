@@ -36,7 +36,7 @@ import org.immutables.value.Value;
 @JsonDeserialize(builder = SerializableError.Builder.class)
 @JsonSerialize(as = ImmutableSerializableError.class)
 @Value.Immutable
-@Value.Style(visibility = Value.Style.ImplementationVisibility.PACKAGE)
+@Value.Style(visibility = Value.Style.ImplementationVisibility.PACKAGE, jdkOnly = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class SerializableError implements Serializable {
 
@@ -82,6 +82,7 @@ public abstract class SerializableError implements Serializable {
     public abstract Map<String, String> parameters();
 
     /**
+     * Returns the deprecated "exceptionClass" field returned by remoting2 servers.
      * @deprecated Used by the serialization-mechanism for back-compat only. Do not use.
      */
     @Deprecated
@@ -91,6 +92,7 @@ public abstract class SerializableError implements Serializable {
     abstract Optional<String> getExceptionClass();
 
     /**
+     * Returns the deprecated "message" field returned by remoting2 servers.
      * @deprecated Used by the serialization-mechanism for back-compat only. Do not use.
      */
     @Deprecated
