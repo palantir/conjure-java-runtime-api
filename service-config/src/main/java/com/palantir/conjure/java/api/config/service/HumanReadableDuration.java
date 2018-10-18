@@ -23,7 +23,11 @@ import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.SafeArg;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalAmount;
+import java.time.temporal.TemporalUnit;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -31,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class HumanReadableDuration implements Comparable<HumanReadableDuration> {
+public final class HumanReadableDuration implements Comparable<HumanReadableDuration>, TemporalAmount {
     private static final Pattern DURATION_PATTERN = Pattern.compile("(\\d+)\\s*(\\S+)");
 
     private static final Map<String, TimeUnit> SUFFIXES = createSuffixes();
@@ -219,5 +223,25 @@ public final class HumanReadableDuration implements Comparable<HumanReadableDura
         }
 
         return Long.compare(toNanoseconds(), other.toNanoseconds());
+    }
+
+    @Override
+    public long get(TemporalUnit temporalUnit) {
+        return toJavaDuration().get(temporalUnit);
+    }
+
+    @Override
+    public List<TemporalUnit> getUnits() {
+        return toJavaDuration().getUnits();
+    }
+
+    @Override
+    public Temporal addTo(Temporal temporal) {
+        return toJavaDuration().addTo(temporal);
+    }
+
+    @Override
+    public Temporal subtractFrom(Temporal temporal) {
+        return toJavaDuration().subtractFrom(temporal);
     }
 }
