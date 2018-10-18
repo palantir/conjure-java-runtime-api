@@ -226,8 +226,8 @@ public final class HumanReadableDuration implements Comparable<HumanReadableDura
     }
 
     @Override
-    public long get(TemporalUnit unit) {
-        return toJavaDuration().get(unit);
+    public long get(TemporalUnit temporalUnit) {
+        return toJavaDuration().get(temporalUnit);
     }
 
     @Override
