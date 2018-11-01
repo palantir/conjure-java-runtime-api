@@ -16,11 +16,12 @@
 
 package com.palantir.conjure.java.api.config.service;
 
+import com.google.common.base.Splitter;
 import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.SafeArg;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -55,7 +56,7 @@ public final class UserAgents {
             primaryComments.put("nodeId", userAgent.nodeId().get());
         }
 
-        List<String> agents = new LinkedList<>();
+        List<String> agents = new ArrayList<>();
         agents.add(formatSingleAgent(userAgent.primary(), primaryComments));
 
         return Stream.concat(agents.stream(),
@@ -151,10 +152,10 @@ public final class UserAgents {
 
     private static Map<String, String> parseComments(String commentsString) {
         Map<String, String> comments = new HashMap<>();
-        for (String comment : commentsString.split("[,;]")) {
-            String[] fields = comment.split(":");
-            if (fields.length == 2) {
-                comments.put(fields[0], fields[1]);
+        for (String comment : Splitter.onPattern("[,;]").split(commentsString)) {
+            List<String> fields = Splitter.on(':').splitToList(comment);
+            if (fields.size() == 2) {
+                comments.put(fields.get(0), fields.get(1));
             } else {
                 comments.put(comment, comment);
             }
