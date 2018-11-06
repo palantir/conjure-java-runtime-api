@@ -101,10 +101,10 @@ public final class ServiceException extends RuntimeException implements SafeLogg
 
         StringBuilder builder = new StringBuilder();
         builder.append(message).append(": {");
-        for (int i = 0; i < args.length; i++) {
-            Arg<?> arg = args[i];
+        int consumedArgs = 0;
+        for (Arg<?> arg : args) {
             if (arg.isSafeForLogging()) {
-                if (i > 0) {
+                if (consumedArgs++ > 0) {
                     builder.append(", ");
                 }
 
