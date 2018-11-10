@@ -48,7 +48,7 @@
             ]
         },
         "com.google.errorprone:error_prone_annotation": {
-            "locked": "2.3.1",
+            "locked": "2.3.2",
             "transitive": [
                 "com.google.errorprone:error_prone_check_api",
                 "com.google.errorprone:error_prone_core"
@@ -64,19 +64,19 @@
             ]
         },
         "com.google.errorprone:error_prone_check_api": {
-            "locked": "2.3.1",
+            "locked": "2.3.2",
             "transitive": [
                 "com.google.errorprone:error_prone_core"
             ]
         },
         "com.google.errorprone:error_prone_core": {
-            "locked": "2.3.1",
+            "locked": "2.3.2",
             "transitive": [
                 "com.palantir.baseline:baseline-error-prone"
             ]
         },
         "com.google.errorprone:error_prone_type_annotations": {
-            "locked": "2.3.1",
+            "locked": "2.3.2",
             "transitive": [
                 "com.google.errorprone:error_prone_core"
             ]
@@ -95,6 +95,12 @@
                 "com.google.guava:guava"
             ]
         },
+        "com.google.protobuf:protobuf-java": {
+            "locked": "3.4.0",
+            "transitive": [
+                "com.google.errorprone:error_prone_core"
+            ]
+        },
         "com.googlecode.java-diff-utils:diffutils": {
             "locked": "1.3.0",
             "transitive": [
@@ -102,8 +108,8 @@
             ]
         },
         "com.palantir.baseline:baseline-error-prone": {
-            "locked": "0.34.0",
-            "requested": "0.34.0"
+            "locked": "0.38.0",
+            "requested": "0.38.0"
         },
         "com.palantir.safe-logging:preconditions": {
             "locked": "1.5.1"
@@ -121,21 +127,21 @@
             ]
         },
         "org.checkerframework:checker-qual": {
-            "locked": "2.5.0",
+            "locked": "2.5.3",
             "transitive": [
                 "org.checkerframework:dataflow",
                 "org.checkerframework:javacutil"
             ]
         },
         "org.checkerframework:dataflow": {
-            "locked": "2.5.0",
+            "locked": "2.5.3",
             "transitive": [
                 "com.google.errorprone:error_prone_check_api",
                 "com.google.errorprone:error_prone_core"
             ]
         },
         "org.checkerframework:javacutil": {
-            "locked": "2.5.0",
+            "locked": "2.5.3",
             "transitive": [
                 "org.checkerframework:dataflow"
             ]
