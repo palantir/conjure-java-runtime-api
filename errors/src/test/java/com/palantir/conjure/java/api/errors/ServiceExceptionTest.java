@@ -76,6 +76,12 @@ public final class ServiceExceptionTest {
     }
 
     @Test
+    public void testExceptionMessageWithUnsafeArgs() {
+        ServiceException ex = new ServiceException(ERROR, UnsafeArg.of("arg1", 1), SafeArg.of("arg2", 2));
+        assertThat(ex.getMessage()).isEqualTo(EXPECTED_ERROR_MSG + ": {arg2=2}");
+    }
+
+    @Test
     public void testExceptionMessageWithNoArgs() {
         ServiceException ex = new ServiceException(ERROR);
         assertThat(ex.getMessage()).isEqualTo(EXPECTED_ERROR_MSG);
