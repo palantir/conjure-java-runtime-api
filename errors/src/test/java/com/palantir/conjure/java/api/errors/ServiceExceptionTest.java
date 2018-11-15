@@ -39,7 +39,7 @@ public final class ServiceExceptionTest {
         ServiceException ex = new ServiceException(ERROR, args);
 
         assertThat(ex.getLogMessage()).isEqualTo(EXPECTED_ERROR_MSG);
-        assertThat(ex.getMessage()).isEqualTo(EXPECTED_ERROR_MSG + ": {arg1=foo}");
+        assertThat(ex.getMessage()).isEqualTo(EXPECTED_ERROR_MSG + ": {arg1=foo, arg2=2, arg3=null}");
     }
 
     @Test
@@ -51,7 +51,7 @@ public final class ServiceExceptionTest {
     @Test
     public void testExceptionMessageWithUnsafeArgs() {
         ServiceException ex = new ServiceException(ERROR, UnsafeArg.of("arg1", 1), SafeArg.of("arg2", 2));
-        assertThat(ex.getMessage()).isEqualTo(EXPECTED_ERROR_MSG + ": {arg2=2}");
+        assertThat(ex.getMessage()).isEqualTo(EXPECTED_ERROR_MSG + ": {arg1=1, arg2=2}");
     }
 
     @Test

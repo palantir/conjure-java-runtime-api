@@ -31,7 +31,7 @@ public final class ServiceException extends RuntimeException implements SafeLogg
     private final List<Arg<?>> args;  // unmodifiable
 
     private final String errorInstanceId = UUID.randomUUID().toString();
-    private final String safeMessage;
+    private final String unsafeMessage;
     private final String noArgsMessage;
 
     /**
@@ -45,12 +45,12 @@ public final class ServiceException extends RuntimeException implements SafeLogg
     /** As above, but additionally records the cause of this exception. */
     public ServiceException(ErrorType errorType, @Nullable Throwable cause, Arg<?>... args) {
         // TODO(rfink): Memoize formatting?
-        super(renderSafeMessage(errorType, args), cause);
+        super(renderUnsafeMessage(errorType, args), cause);
 
         this.errorType = errorType;
         // Note that instantiators cannot mutate List<> args since it comes through copyToList in all code paths.
         this.args = copyToUnmodifiableList(args);
-        this.safeMessage = renderSafeMessage(errorType, args);
+        this.unsafeMessage = renderUnsafeMessage(errorType, args);
         this.noArgsMessage = renderNoArgsMessage(errorType);
     }
 
@@ -66,8 +66,8 @@ public final class ServiceException extends RuntimeException implements SafeLogg
 
     @Override
     public String getMessage() {
-        // Including safe args here since any logger not configured with safe-logging will log this message.
-        return safeMessage;
+        // Including all args here since any logger not configured with safe-logging will log this message.
+        return unsafeMessage;
     }
 
     @Override
@@ -97,7 +97,7 @@ public final class ServiceException extends RuntimeException implements SafeLogg
         return Collections.unmodifiableList(list);
     }
 
-    private static String renderSafeMessage(ErrorType errorType, Arg<?>... args) {
+    private static String renderUnsafeMessage(ErrorType errorType, Arg<?>... args) {
         String message = renderNoArgsMessage(errorType);
 
         if (args.length == 0) {
@@ -106,15 +106,13 @@ public final class ServiceException extends RuntimeException implements SafeLogg
 
         StringBuilder builder = new StringBuilder();
         builder.append(message).append(": {");
-        int consumedArgs = 0;
-        for (Arg<?> arg : args) {
-            if (arg.isSafeForLogging()) {
-                if (consumedArgs++ > 0) {
-                    builder.append(", ");
-                }
-
-                builder.append(arg.getName()).append("=").append(arg.getValue());
+        for (int i = 0; i < args.length; i++) {
+            Arg<?> arg = args[i];
+            if (i > 0) {
+                builder.append(", ");
             }
+
+            builder.append(arg.getName()).append("=").append(arg.getValue());
         }
         builder.append("}");
 
