@@ -37,6 +37,7 @@ allprojects {
 
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'com.palantir.baseline-class-uniqueness'
 
     sourceCompatibility = 1.8
 
