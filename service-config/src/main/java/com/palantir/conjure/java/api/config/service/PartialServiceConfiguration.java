@@ -68,6 +68,10 @@ public interface PartialServiceConfiguration {
     @JsonAlias("enable-gcm-cipher-suites")
     Optional<Boolean> enableGcmCipherSuites();
 
+    /** Enables fallback to common name verification, defaults to false. */
+    @JsonAlias("fallback-to-common-name-verification")
+    Optional<Boolean> fallbackToCommonNameVerification();
+
     /** Proxy configuration for connecting to the service. If absent, uses system proxy configuration. */
     @JsonAlias("proxy-configuration")
     Optional<ProxyConfiguration> proxyConfiguration();

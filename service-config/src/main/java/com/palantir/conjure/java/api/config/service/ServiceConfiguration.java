@@ -48,6 +48,8 @@ public interface ServiceConfiguration {
 
     Optional<Boolean> enableGcmCipherSuites();
 
+    Optional<Boolean> fallbackToCommonNameVerification();
+
     Optional<ProxyConfiguration> proxy();
 
     static ImmutableServiceConfiguration.Builder builder() {

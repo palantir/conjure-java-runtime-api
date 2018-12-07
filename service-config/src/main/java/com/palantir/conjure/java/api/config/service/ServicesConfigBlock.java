@@ -98,6 +98,13 @@ public abstract class ServicesConfigBlock {
     @JsonAlias("enable-gcm-cipher-suites")
     public abstract Optional<Boolean> defaultEnableGcmCipherSuites();
 
+    /**
+     * Default fallback to common name verification, defaults to false.
+     */
+    @JsonProperty("fallbackToCommonNameVerification")
+    @JsonAlias("fallback-to-common-name-verification")
+    public abstract Optional<Boolean> defaultFallbackToCommonNameVerification();
+
     public static Builder builder() {
         return new Builder();
     }
