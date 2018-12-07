@@ -81,6 +81,16 @@ public final class ServiceException extends RuntimeException implements SafeLogg
         return args;
     }
 
+    /**
+     * Deprecated.
+     *
+     * @deprecated use {@link #getArgs}.
+     */
+    @Deprecated
+    public List<Arg<?>> getParameters() {
+        return getArgs();
+    }
+
     private static <T> List<T> copyToUnmodifiableList(T[] elements) {
         List<T> list = new ArrayList<>(elements.length);
         Collections.addAll(list, elements);
