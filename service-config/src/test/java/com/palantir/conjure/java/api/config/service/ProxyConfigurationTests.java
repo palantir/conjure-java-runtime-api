@@ -95,7 +95,7 @@ public final class ProxyConfigurationTests {
                 .type(ProxyConfiguration.Type.DIRECT)
                 .build())
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Neither credential nor host-and-port may be configured for DIRECT proxies");
+                .hasMessage("Neither credential nor host-and-port may be configured for DIRECT or SYSTEM proxies");
         assertThatThrownBy(() -> ProxyConfiguration.builder()
                 .type(ProxyConfiguration.Type.MESH)
                 .credentials(BasicCredentials.of("foo", "bar"))
