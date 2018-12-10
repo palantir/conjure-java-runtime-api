@@ -48,7 +48,7 @@ public final class PartialServiceConfigurationTest {
                 + "\"keyStorePassword\":null,\"keyStoreType\":\"JKS\",\"keyStoreKeyAlias\":null},\"uris\":[\"uri1\"],"
                 + "\"connectTimeout\":\"1 day\",\"readTimeout\":\"1 day\",\"writeTimeout\":\"1 day\","
                 + "\"maxNumRetries\":5,\"backoffSlotSize\":\"1 day\","
-                + "\"enableGcmCipherSuites\":null,"
+                + "\"enableGcmCipherSuites\":null,\"fallbackToCommonNameVerification\":null,"
                 + "\"proxyConfiguration\":{\"hostAndPort\":\"host:80\",\"credentials\":null,"
                 + "\"type\":\"HTTP\"}}";
         String kebabCase = "{\"api-token\":\"bearerToken\",\"security\":"
@@ -57,7 +57,7 @@ public final class PartialServiceConfigurationTest {
                 + "\"connect-timeout\":\"1 day\",\"read-timeout\":\"1 day\",\"write-timeout\":\"1 day\","
                 + "\"max-num-retries\":5,\"backoff-slot-size\":\"1 day\","
                 + "\"uris\":[\"uri1\"],\"proxy-configuration\":{\"host-and-port\":\"host:80\",\"credentials\":null},"
-                + "\"enable-gcm-cipher-suites\":null}";
+                + "\"enable-gcm-cipher-suites\":null,\"fallback-to-common-name-verification\":null}";
 
         assertThat(mapper.writeValueAsString(serialized)).isEqualTo(camelCase);
         assertThat(mapper.readValue(camelCase, PartialServiceConfiguration.class)).isEqualTo(serialized);
@@ -69,11 +69,11 @@ public final class PartialServiceConfigurationTest {
         PartialServiceConfiguration serialized = PartialServiceConfiguration.builder().build();
         String camelCase = "{\"apiToken\":null,\"security\":null,\"uris\":[],\"connectTimeout\":null,"
                 + "\"readTimeout\":null,\"writeTimeout\":null,\"maxNumRetries\":null,\"backoffSlotSize\":null,"
-                + "\"enableGcmCipherSuites\":null,"
+                + "\"enableGcmCipherSuites\":null,\"fallbackToCommonNameVerification\":null,"
                 + "\"proxyConfiguration\":null}";
         String kebabCase = "{\"api-token\":null,\"security\":null,\"connect-timeout\":null,"
                 + "\"read-timeout\":null,\"write-timeout\":null,\"max-num-retries\":null,\"backoff-slot-size\":null,"
-                + "\"enable-gcm-cipher-suites\":null,"
+                + "\"enable-gcm-cipher-suites\":null,\"fallback-to-common-name-verification\":null,"
                 + "\"uris\":[],\"proxy-configuration\":null}";
 
         assertThat(ObjectMappers.newClientObjectMapper().writeValueAsString(serialized)).isEqualTo(camelCase);
