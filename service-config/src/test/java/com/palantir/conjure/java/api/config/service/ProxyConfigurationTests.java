@@ -69,13 +69,23 @@ public final class ProxyConfigurationTests {
     }
 
     @Test
-    public void testNonHttpProxyWithHostAndPort() {
+    public void testDirectProxyWithHostAndPort() {
         assertThatThrownBy(() -> new ProxyConfiguration.Builder()
                 .hostAndPort("squid:3128")
                 .type(ProxyConfiguration.Type.DIRECT)
                 .build())
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Neither credential nor host-and-port may be configured for DIRECT proxies");
+                .hasMessage("Neither credential nor host-and-port may be configured for DIRECT or SYSTEM proxies");
+    }
+
+    @Test
+    public void testSystemProxyWithHostAndPort() {
+        assertThatThrownBy(() -> new ProxyConfiguration.Builder()
+                .hostAndPort("squid:3128")
+                .type(ProxyConfiguration.Type.SYSTEM)
+                .build())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Neither credential nor host-and-port may be configured for DIRECT or SYSTEM proxies");
     }
 
     @Test

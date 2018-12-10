@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.SafeArg;
+import java.net.ProxySelector;
 import java.util.Optional;
 import org.immutables.value.Value;
 import org.immutables.value.Value.Immutable;
@@ -35,6 +36,11 @@ public abstract class ProxyConfiguration {
     public static final ProxyConfiguration DIRECT = new ProxyConfiguration.Builder().type(Type.DIRECT).build();
 
     public enum Type {
+
+        /**
+         * Use the JVM's default proxy selector {@link ProxySelector#getDefault()}.
+         */
+        SYSTEM,
 
         /** Use a direct connection. This option will bypass any JVM-level configured proxy settings. */
         DIRECT,
@@ -88,9 +94,10 @@ public abstract class ProxyConfiguration {
                 Preconditions.checkArgument(host.hasPort(),
                         "Given hostname does not contain a port number", SafeArg.of("hostname", host));
                 break;
+            case SYSTEM:
             case DIRECT:
                 Preconditions.checkArgument(!hostAndPort().isPresent() && !credentials().isPresent(),
-                        "Neither credential nor host-and-port may be configured for DIRECT proxies");
+                        "Neither credential nor host-and-port may be configured for DIRECT or SYSTEM proxies");
                 break;
             default:
                 throw new IllegalStateException("Unrecognized case; this is a library bug");
