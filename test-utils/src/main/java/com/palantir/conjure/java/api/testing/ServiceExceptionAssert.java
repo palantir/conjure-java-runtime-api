@@ -41,7 +41,6 @@ public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExcep
     public final ServiceExceptionAssert hasArgs(Arg<?>... args) {
         isNotNull();
 
-        // fetch getParameters here to exclude any generated/injected args like 'errorType'
         AssertableArgs actualArgs = new AssertableArgs(actual.getParameters());
         AssertableArgs expectedArgs = new AssertableArgs(Arrays.asList(args));
 
