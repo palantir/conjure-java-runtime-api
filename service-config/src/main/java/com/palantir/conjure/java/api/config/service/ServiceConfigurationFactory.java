@@ -86,6 +86,9 @@ public final class ServiceConfigurationFactory {
                 .proxy(orElse(partial.proxyConfiguration(), services.defaultProxyConfiguration()))
                 .enableGcmCipherSuites(
                         orElse(partial.enableGcmCipherSuites(), services.defaultEnableGcmCipherSuites()))
+                .fallbackToCommonNameVerification(orElse(
+                        partial.fallbackToCommonNameVerification(),
+                        services.defaultFallbackToCommonNameVerification()))
                 .build();
     }
 

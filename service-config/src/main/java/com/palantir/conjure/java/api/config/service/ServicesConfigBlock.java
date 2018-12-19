@@ -98,6 +98,15 @@ public abstract class ServicesConfigBlock {
     @JsonAlias("enable-gcm-cipher-suites")
     public abstract Optional<Boolean> defaultEnableGcmCipherSuites();
 
+    /**
+     * Default fallback to common name verification, defaults to false.
+     * @deprecated This option will be removed by the end of 2019. Certificates are expected to provide valid SANs.
+     */
+    @Deprecated
+    @JsonProperty("fallbackToCommonNameVerification")
+    @JsonAlias("fallback-to-common-name-verification")
+    public abstract Optional<Boolean> defaultFallbackToCommonNameVerification();
+
     public static Builder builder() {
         return new Builder();
     }

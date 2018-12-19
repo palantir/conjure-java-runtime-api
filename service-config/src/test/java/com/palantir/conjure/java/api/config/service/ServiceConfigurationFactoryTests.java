@@ -59,6 +59,8 @@ public final class ServiceConfigurationFactoryTests {
     private static final ImmutableList<String> uris = ImmutableList.of("uri");
     private static final boolean defaultEnableGcm = true;
     private static final boolean enableGcm = false;
+    private static final boolean defaultFallbackToCn = true;
+    private static final boolean fallbackToCn = false;
 
     private final ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
             .registerModule(new ShimJdk7Module())
@@ -100,6 +102,7 @@ public final class ServiceConfigurationFactoryTests {
                 .defaultWriteTimeout(defaultWriteTimeout)
                 .defaultBackoffSlotSize(defaultBackoffSlotSize)
                 .defaultEnableGcmCipherSuites(defaultEnableGcm)
+                .defaultFallbackToCommonNameVerification(defaultFallbackToCn)
                 .build();
         ServiceConfiguration service = ServiceConfigurationFactory.of(services).get("service1");
 
@@ -112,6 +115,7 @@ public final class ServiceConfigurationFactoryTests {
                 .writeTimeout(Duration.ofHours(defaultWriteTimeout.toHours()))
                 .backoffSlotSize(Duration.ofHours(defaultBackoffSlotSize.toHours()))
                 .enableGcmCipherSuites(defaultEnableGcm)
+                .fallbackToCommonNameVerification(defaultFallbackToCn)
                 .proxy(defaultProxyConfiguration)
                 .build();
 
@@ -130,6 +134,7 @@ public final class ServiceConfigurationFactoryTests {
                 .maxNumRetries(maxNumRetries)
                 .backoffSlotSize(backoffSlotSize)
                 .enableGcmCipherSuites(enableGcm)
+                .fallbackToCommonNameVerification(fallbackToCn)
                 .proxyConfiguration(proxy)
                 .build();
         ServicesConfigBlock services = ServicesConfigBlock.builder()
@@ -142,6 +147,7 @@ public final class ServiceConfigurationFactoryTests {
                 .defaultWriteTimeout(defaultWriteTimeout)
                 .defaultBackoffSlotSize(defaultBackoffSlotSize)
                 .defaultEnableGcmCipherSuites(defaultEnableGcm)
+                .defaultFallbackToCommonNameVerification(defaultFallbackToCn)
                 .build();
         ServiceConfiguration service = ServiceConfigurationFactory.of(services).get("service1");
 
@@ -155,6 +161,7 @@ public final class ServiceConfigurationFactoryTests {
                 .maxNumRetries(maxNumRetries)
                 .backoffSlotSize(Duration.ofHours(backoffSlotSize.toHours()))
                 .enableGcmCipherSuites(enableGcm)
+                .fallbackToCommonNameVerification(fallbackToCn)
                 .proxy(proxy)
                 .build();
 
@@ -187,17 +194,17 @@ public final class ServiceConfigurationFactoryTests {
                 + "\"keyStorePassword\":null,\"keyStoreType\":\"JKS\",\"keyStoreKeyAlias\":null},\"services\":"
                 + "{\"service\":{\"apiToken\":null,\"security\":null,\"uris\":[\"uri\"],\"connectTimeout\":null,"
                 + "\"readTimeout\":null,\"writeTimeout\":null,\"maxNumRetries\":null,\"backoffSlotSize\":null,"
-                + "\"enableGcmCipherSuites\":null,"
+                + "\"enableGcmCipherSuites\":null,\"fallbackToCommonNameVerification\":null,"
                 + "\"proxyConfiguration\":null}},\"proxyConfiguration\":"
                 + "{\"hostAndPort\":\"host:80\",\"credentials\":null,\"type\":\"HTTP\"},\"connectTimeout\":\"1 day\","
                 + "\"readTimeout\":\"1 day\",\"writeTimeout\":\"1 day\",\"backoffSlotSize\":\"1 day\","
-                + "\"enableGcmCipherSuites\":null}";
+                + "\"enableGcmCipherSuites\":null,\"fallbackToCommonNameVerification\":null}";
         String kebabCase = "{\"api-token\":\"bearerToken\",\"security\":"
                 + "{\"trust-store-path\":\"truststore.jks\",\"trust-store-type\":\"JKS\",\"key-store-path\":null,"
                 + "\"key-store-password\":null,\"key-store-type\":\"JKS\",\"key-store-key-alias\":null},\"services\":"
                 + "{\"service\":{\"apiToken\":null,\"security\":null,\"connect-timeout\":null,\"read-timeout\":null,"
                 + "\"write-timeout\":null,\"max-num-retries\":null,\"backoffSlotSize\":null,\"uris\":[\"uri\"],"
-                + "\"enable-gcm-cipher-suites\":null,"
+                + "\"enable-gcm-cipher-suites\":null,\"fallback-to-common-name-verification\":null,"
                 + "\"proxy-configuration\":null}},\"proxy-configuration\":"
                 + "{\"host-and-port\":\"host:80\",\"credentials\":null},\"connect-timeout\":\"1 day\","
                 + "\"read-timeout\":\"1 day\",\"write-timeout\":\"1 day\",\"backoff-slot-size\":\"1 day\"}";
@@ -216,10 +223,11 @@ public final class ServiceConfigurationFactoryTests {
         ServicesConfigBlock deserialized = ServicesConfigBlock.builder().build();
         String serializedCamelCase = "{\"apiToken\":null,\"security\":null,\"services\":{},"
                 + "\"proxyConfiguration\":null,\"connectTimeout\":null,\"readTimeout\":null,\"writeTimeout\":null,"
-                + "\"backoffSlotSize\":null,\"enableGcmCipherSuites\":null}";
+                + "\"backoffSlotSize\":null,\"enableGcmCipherSuites\":null,\"fallbackToCommonNameVerification\":null}";
         String serializedKebabCase = "{\"api-token\":null,\"security\":null,\"services\":{},"
                 + "\"proxy-configuration\":null,\"connect-timeout\":null,\"read-timeout\":null,\"write-timeout\":null,"
-                + "\"backoff-slot-size\":null,\"enable-gcm-cipher-suites\":null}";
+                + "\"backoff-slot-size\":null,\"enable-gcm-cipher-suites\":null,"
+                + "\"fallback-to-common-name-verification\":null}";
 
         assertThat(ObjectMappers.newClientObjectMapper().writeValueAsString(deserialized))
                 .isEqualTo(serializedCamelCase);
