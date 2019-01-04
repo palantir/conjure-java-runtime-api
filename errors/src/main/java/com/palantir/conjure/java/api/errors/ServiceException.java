@@ -45,7 +45,7 @@ public final class ServiceException extends RuntimeException implements SafeLogg
     /** As above, but additionally records the cause of this exception. */
     public ServiceException(ErrorType errorType, @Nullable Throwable cause, Arg<?>... args) {
         // TODO(rfink): Memoize formatting?
-        super(renderUnsafeMessage(errorType, args), cause);
+        super(cause);
 
         this.errorType = errorType;
         // Note that instantiators cannot mutate List<> args since it comes through copyToList in all code paths.
