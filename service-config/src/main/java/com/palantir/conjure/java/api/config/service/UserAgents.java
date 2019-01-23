@@ -45,6 +45,8 @@ public final class UserAgents {
     private static final Pattern NODE_REGEX = Pattern.compile("[a-zA-Z0-9][a-zA-Z0-9.\\-]*");
     private static final Pattern VERSION_REGEX =
             Pattern.compile("^[0-9]+(\\.[0-9]+)*(-rc[0-9]+)?(-[0-9]+-g[a-f0-9]+)?$");
+    private static final Pattern SEGMENT_PATTERN = Pattern.compile(
+            String.format("(%s)/(%s)( \\((.+?)\\))?", NAME_REGEX, LENIENT_VERSION_REGEX));
 
     private UserAgents() {}
 
@@ -110,9 +112,8 @@ public final class UserAgents {
     private static UserAgent parseInternal(String userAgent, boolean lenient) {
         ImmutableUserAgent.Builder builder = ImmutableUserAgent.builder();
 
-        Pattern segmentPattern = Pattern.compile(
-                String.format("(%s)/(%s)( \\((.+?)\\))?", NAME_REGEX, LENIENT_VERSION_REGEX));
-        Matcher matcher = segmentPattern.matcher(userAgent);
+
+        Matcher matcher = SEGMENT_PATTERN.matcher(userAgent);
         boolean foundFirst = false;
         while (matcher.find()) {
             String name = matcher.group(1);
