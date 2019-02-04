@@ -1,6 +1,5 @@
 com.fasterxml.jackson.*:jackson-* = 2.9.7
 com.google.code.findbugs:jsr305 = 3.0.2
-com.google.guava:guava = 23.6-jre
 com.palantir.safe-logging:* = 1.5.1
 com.palantir.tokens:auth-tokens = 3.3.0
 junit:junit = 4.12
@@ -8,6 +7,3 @@ org.apache.commons:commons-lang3 = 3.8.1
 org.assertj:assertj-core = 3.6.1
 org.immutables:value = 2.7.1
 org.mockito:mockito-core = 2.22.0
-
-# conflict resolution
-com.google.errorprone:error_prone_annotations = 2.3.1
