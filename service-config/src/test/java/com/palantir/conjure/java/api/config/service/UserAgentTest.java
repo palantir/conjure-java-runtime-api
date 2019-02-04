@@ -103,7 +103,7 @@ public class UserAgentTest {
                 "service/10.20.30",
                 "service/10.20.30 (nodeId:myNode)",
                 }) {
-            assertThat(UserAgents.format(UserAgents.parse(agent))).isEqualTo(agent).withFailMessage(agent);
+            assertThat(UserAgents.format(UserAgents.parse(agent))).withFailMessage(agent).isEqualTo(agent);
         }
 
         // Formatting ignores non-nodeId comments
@@ -134,7 +134,7 @@ public class UserAgentTest {
                 "serviceA/1.2.3 serviceB/4.5.6",
                 "serviceB/1.2.3 (nodeId:myNode) serviceB/4.5.6"
         }) {
-            assertThat(UserAgents.format(UserAgents.parse(agent))).isEqualTo(agent).withFailMessage(agent);
+            assertThat(UserAgents.format(UserAgents.parse(agent))).withFailMessage(agent).isEqualTo(agent);
         }
 
         // nodeId on informational agents is omitted
