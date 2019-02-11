@@ -35,7 +35,7 @@ public final class ServiceException extends RuntimeException implements SafeLogg
     private final String noArgsMessage;
 
     /**
-     * Creates a new exception for the given error. All {@link com.palantir.logsafe.SafeArg safe} parameters are
+     * Creates a new exception for the given error. All {@link com.palantir.logsafe.Arg parameters} are
      * propagated to clients; they are serialized via {@link Object#toString}.
      */
     public ServiceException(ErrorType errorType, Arg<?>... parameters) {
