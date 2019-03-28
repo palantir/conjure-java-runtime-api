@@ -45,6 +45,13 @@ public final class ServiceConfigurationFactory {
         return propagateDefaults(serviceName, partial);
     }
 
+    /** Returns the {@link ServiceConfiguration} for the given name if {@link #isEnabled(String)}. */
+    public Optional<ServiceConfiguration> tryGet(String serviceName) {
+        return isEnabled(serviceName)
+                ? Optional.of(get(serviceName))
+                : Optional.empty();
+    }
+
     /** Returns all {@link ServiceConfiguration}s. */
     public Map<String, ServiceConfiguration> getAll() {
         // Return a copy of the immutable data.

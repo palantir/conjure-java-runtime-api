@@ -107,6 +107,13 @@ public abstract class ServicesConfigBlock {
     @JsonAlias("fallback-to-common-name-verification")
     public abstract Optional<Boolean> defaultFallbackToCommonNameVerification();
 
+    /**
+     * Returns the resolved {@link ServiceConfiguration} for the given service.
+     */
+    public final Optional<ServiceConfiguration> getServiceConfiguration(String serviceName) {
+        return ServiceConfigurationFactory.of(this).tryGet(serviceName);
+    }
+
     public static Builder builder() {
         return new Builder();
     }
