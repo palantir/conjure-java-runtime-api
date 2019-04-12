@@ -16,14 +16,21 @@
 
 package com.palantir.conjure.java.api.errors;
 
+import com.palantir.logsafe.Arg;
+import com.palantir.logsafe.SafeLoggable;
+import com.palantir.logsafe.UnsafeArg;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * An exception thrown by an RPC client to indicate remote/server-side failure.
  */
-public final class RemoteException extends RuntimeException {
+public final class RemoteException extends RuntimeException implements SafeLoggable {
     private static final long serialVersionUID = 1L;
 
     private final SerializableError error;
     private final int status;
+    private final List<Arg<?>> args;
 
     /** Returns the error thrown by a remote process which caused an RPC call to fail. */
     public SerializableError getError() {
@@ -43,5 +50,18 @@ public final class RemoteException extends RuntimeException {
 
         this.error = error;
         this.status = status;
+        this.args = error.parameters().entrySet().stream()
+                .map(entry -> UnsafeArg.of(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public String getLogMessage() {
+        return getMessage();
+    }
+
+    @Override
+    public List<Arg<?>> getArgs() {
+        return args;
     }
 }
