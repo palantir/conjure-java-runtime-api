@@ -6,4 +6,4 @@ junit:junit = 4.12
 org.apache.commons:commons-lang3 = 3.8.1
 org.assertj:assertj-core = 3.12.2
 org.immutables:value = 2.7.1
-org.mockito:mockito-core = 2.22.0
+org.mockito:mockito-core = 2.27.0
