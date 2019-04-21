@@ -18,6 +18,7 @@ package com.palantir.conjure.java.api.config.service;
 
 import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.SafeArg;
+import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -139,11 +140,14 @@ public final class UserAgents {
 
         if (!foundFirst) {
             if (lenient) {
-                log.debug("Invalid user agent, falling back to default/unknown agent",
-                        SafeArg.of("userAgent", userAgent));
+                if (log.isDebugEnabled()) {
+                    log.debug("Invalid user agent '{}', falling back to default/unknown agent",
+                            SafeArg.of("userAgent", userAgent));
+                }
                 return builder.primary(UserAgent.Agent.of("unknown", UserAgent.Agent.DEFAULT_VERSION)).build();
             } else {
-                throw new IllegalArgumentException("Failed to parse user agent string: " + userAgent);
+                throw new SafeIllegalArgumentException("Failed to parse user agent string",
+                        SafeArg.of("userAgent", userAgent));
             }
         }
 
@@ -176,7 +180,7 @@ public final class UserAgents {
             return true;
         }
 
-        log.warn("Encountered invalid user agent version", SafeArg.of("version", version));
+        log.warn("Encountered invalid user agent version '{}'", SafeArg.of("version", version));
         return false;
     }
 }

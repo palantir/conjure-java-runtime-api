@@ -16,11 +16,11 @@
 
 package com.palantir.conjure.java.api.config.service;
 
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.SafeArg;
+import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -167,8 +166,7 @@ public final class HumanReadableDuration implements Comparable<HumanReadableDura
      * @see <a href="https://bugs.openjdk.java.net/browse/JDK-8141452">JDK-8141452</a>
      */
     private static ChronoUnit chronoUnit(TimeUnit unit) {
-        Objects.requireNonNull(unit, "unit");
-        switch (unit) {
+        switch (Preconditions.checkNotNull(unit, "unit")) {
             case NANOSECONDS:
                 return ChronoUnit.NANOS;
             case MICROSECONDS:
@@ -184,7 +182,7 @@ public final class HumanReadableDuration implements Comparable<HumanReadableDura
             case DAYS:
                 return ChronoUnit.DAYS;
             default:
-                throw new IllegalArgumentException("Unknown TimeUnit constant");
+                throw new SafeIllegalArgumentException("Unknown TimeUnit constant", SafeArg.of("unit", unit));
         }
     }
 

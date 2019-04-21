@@ -85,8 +85,8 @@ public final class HostAndPort {
     }
 
     private static String[] getHostAndPortFromBracketedHost(String hostPortString) {
-        int colonIndex = 0;
-        int closeBracketIndex = 0;
+        int colonIndex;
+        int closeBracketIndex;
         Preconditions.checkArgument(hostPortString.charAt(0) == '[',
                 "Bracketed host-port string must start with a bracket",  SafeArg.of("port", hostPortString));
         colonIndex = hostPortString.indexOf(':');

@@ -18,7 +18,6 @@ package com.palantir.conjure.java.api.config.service;
 
 import static com.palantir.logsafe.testing.Assertions.assertThatLoggableExceptionThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.palantir.logsafe.SafeArg;
 import org.junit.Test;
@@ -121,9 +120,10 @@ public class UserAgentTest {
                 "s",
                 "foo|1.2.3",
                 }) {
-            assertThatThrownBy(() -> UserAgents.format(UserAgents.parse(agent)))
+            assertThatLoggableExceptionThrownBy(() -> UserAgents.format(UserAgents.parse(agent)))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("Failed to parse user agent string: " + agent);
+                    .hasLogMessage("Failed to parse user agent string")
+                    .hasExactlyArgs(SafeArg.of("userAgent", agent));
         }
     }
 
