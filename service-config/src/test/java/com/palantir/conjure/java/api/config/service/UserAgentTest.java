@@ -73,7 +73,7 @@ public class UserAgentTest {
     @Test
     public void testInvalidServiceName() {
         assertThatLoggableExceptionThrownBy(() -> UserAgent.Agent.of("invalid service name", "1.0.0"))
-                .hasMessage("Illegal agent name format")
+                .hasLogMessage("Illegal agent name format")
                 .hasExactlyArgs(SafeArg.of("name", "invalid service name"))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -84,7 +84,7 @@ public class UserAgentTest {
                 () -> UserAgent.of(UserAgent.Agent.of("serviceName", "1.0.0"), "invalid node id"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasExactlyArgs(SafeArg.of("nodeId", "invalid node id"))
-                .hasMessage("Illegal node id format");
+                .hasLogMessage("Illegal node id format");
     }
 
     @Test

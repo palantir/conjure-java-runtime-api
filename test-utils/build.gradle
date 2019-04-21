@@ -6,5 +6,7 @@ dependencies {
     compile project(":errors")
     compile "junit:junit"
     compile "org.assertj:assertj-core"
-    compile "org.mockito:mockito-core"
+    compile "org.mockito:mockito-core", {
+        exclude module: 'byte-buddy-agent'
+    }
 }
