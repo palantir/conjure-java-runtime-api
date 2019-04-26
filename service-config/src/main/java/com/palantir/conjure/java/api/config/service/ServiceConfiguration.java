@@ -59,7 +59,7 @@ public interface ServiceConfiguration {
      *
      * See GitHub issue for more details: https://github.com/palantir/conjure-java-runtime/issues/1084
      */
-    Optional<Boolean> enableRetryOnTimeout();
+    Optional<Boolean> retryOnTimeout();
 
     static ImmutableServiceConfiguration.Builder builder() {
         return new Builder();
