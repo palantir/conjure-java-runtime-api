@@ -52,6 +52,15 @@ public interface ServiceConfiguration {
 
     Optional<ProxyConfiguration> proxy();
 
+    /**
+     * Enables old behavior of retrying on timeout.
+     *
+     * This is a dangerous flag to enable! Retrying timed out requests can easily lead to retry storms.
+     *
+     * See GitHub issue for more details: https://github.com/palantir/conjure-java-runtime/issues/1084
+     */
+    Optional<Boolean> enableRetryOnTimeout();
+
     static ImmutableServiceConfiguration.Builder builder() {
         return new Builder();
     }
