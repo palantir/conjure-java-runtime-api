@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.SafeArg;
+import com.palantir.logsafe.exceptions.SafeIllegalStateException;
 import java.util.Optional;
 import org.immutables.value.Value;
 import org.immutables.value.Value.Immutable;
@@ -93,7 +94,7 @@ public abstract class ProxyConfiguration {
                         "Neither credential nor host-and-port may be configured for DIRECT proxies");
                 break;
             default:
-                throw new IllegalStateException("Unrecognized case; this is a library bug");
+                throw new SafeIllegalStateException("Unrecognized case; this is a library bug");
         }
 
         if (credentials().isPresent()) {
