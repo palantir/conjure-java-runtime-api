@@ -85,6 +85,20 @@ public abstract class ServicesConfigBlock {
     public abstract Optional<HumanReadableDuration> defaultWriteTimeout();
 
     /**
+     * Default node selection strategy.
+     */
+    @JsonProperty("defaultNodeSelectionStrategy")
+    @JsonAlias("node-selection-strategy")
+    public abstract Optional<NodeSelectionStrategy> defaultNodeSelectionStrategy();
+
+    /**
+     * Default failed url cooldown.
+     */
+    @JsonProperty("defaultFailedUrlCooldown")
+    @JsonAlias("failed-url-cooldown")
+    public abstract Optional<HumanReadableDuration> defaultFailedUrlCooldown();
+
+    /**
      * Default global backoff slot size, see {@link PartialServiceConfiguration#backoffSlotSize()}.
      */
     @JsonProperty("backoffSlotSize")

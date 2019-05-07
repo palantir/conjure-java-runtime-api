@@ -58,6 +58,19 @@ public interface PartialServiceConfiguration {
     Optional<Integer> maxNumRetries();
 
     /**
+     * Indicates how the target node is selected for a given request.
+     */
+    @JsonAlias("node-selection-strategy")
+    Optional<NodeSelectionStrategy> nodeSelectionStrategy();
+
+    /**
+     * The amount of time a URL marked as failed should be avoided for subsequent calls. If the
+     * {@link #nodeSelectionStrategy} is ROUND_ROBIN, this must be a positive period of time.
+     */
+    @JsonAlias("failed-url-cooldown")
+    Optional<HumanReadableDuration> failedUrlCooldown();
+
+    /**
      * The size of one backoff time slot for call retries. For example, an exponential backoff retry algorithm may
      * choose a backoff time in {@code [0, backoffSlotSize * 2^c]} for the c-th retry.
      */

@@ -44,6 +44,10 @@ public interface ServiceConfiguration {
 
     Optional<Integer> maxNumRetries();
 
+    Optional<NodeSelectionStrategy> nodeSelectionStrategy();
+
+    Optional<Duration> failedUrlCooldown();
+
     Optional<Duration> backoffSlotSize();
 
     Optional<Boolean> enableGcmCipherSuites();
