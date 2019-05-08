@@ -1,0 +1,6 @@
+type: improvement
+improvement:
+  description: RemoteException now implements SafeLoggable with behavior identical
+    to ServiceException.
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/337
