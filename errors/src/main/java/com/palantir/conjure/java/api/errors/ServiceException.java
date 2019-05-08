@@ -28,11 +28,10 @@ import javax.annotation.Nullable;
 public final class ServiceException extends RuntimeException implements SafeLoggable {
 
     private final ErrorType errorType;
-    private final List<Arg<?>> args;  // unmodifiable
-
     private final String errorInstanceId = UUID.randomUUID().toString();
-    private final String unsafeMessage;
+
     private final String noArgsMessage;
+    private final List<Arg<?>> args; // unmodifiable
 
     /**
      * Creates a new exception for the given error. All {@link com.palantir.logsafe.Arg parameters} are
@@ -45,12 +44,11 @@ public final class ServiceException extends RuntimeException implements SafeLogg
     /** As above, but additionally records the cause of this exception. */
     public ServiceException(ErrorType errorType, @Nullable Throwable cause, Arg<?>... args) {
         // TODO(rfink): Memoize formatting?
-        super(cause);
+        super(renderUnsafeMessage(errorType, args), cause);
 
         this.errorType = errorType;
         // Note that instantiators cannot mutate List<> args since it comes through copyToList in all code paths.
-        this.args = copyToUnmodifiableList(args);
-        this.unsafeMessage = renderUnsafeMessage(errorType, args);
+        this.args = copyArgsToUnmodifiableList(args);
         this.noArgsMessage = renderNoArgsMessage(errorType);
     }
 
@@ -62,12 +60,6 @@ public final class ServiceException extends RuntimeException implements SafeLogg
     /** A unique identifier for (this instance of) this error. */
     public String getErrorInstanceId() {
         return errorInstanceId;
-    }
-
-    @Override
-    public String getMessage() {
-        // Including all args here since any logger not configured with safe-logging will log this message.
-        return unsafeMessage;
     }
 
     @Override
@@ -91,10 +83,10 @@ public final class ServiceException extends RuntimeException implements SafeLogg
         return getArgs();
     }
 
-    private static <T> List<T> copyToUnmodifiableList(T[] elements) {
-        List<T> list = new ArrayList<>(elements.length);
-        Collections.addAll(list, elements);
-        return Collections.unmodifiableList(list);
+    private static List<Arg<?>> copyArgsToUnmodifiableList(Arg<?>[] args) {
+        List<Arg<?>> argsList = new ArrayList<>(args.length);
+        Collections.addAll(argsList, args);
+        return Collections.unmodifiableList(argsList);
     }
 
     private static String renderUnsafeMessage(ErrorType errorType, Arg<?>... args) {
@@ -111,7 +103,6 @@ public final class ServiceException extends RuntimeException implements SafeLogg
             if (i > 0) {
                 builder.append(", ");
             }
-
             builder.append(arg.getName()).append("=").append(arg.getValue());
         }
         builder.append("}");
