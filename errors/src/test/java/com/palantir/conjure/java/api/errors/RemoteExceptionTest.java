@@ -18,6 +18,7 @@ package com.palantir.conjure.java.api.errors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.palantir.logsafe.UnsafeArg;
 import org.apache.commons.lang3.SerializationUtils;
 import org.junit.jupiter.api.Test;
 
@@ -46,22 +47,41 @@ public final class RemoteExceptionTest {
     }
 
     @Test
-    public void testSuperMessage() {
+    public void testExceptionMessage() {
         SerializableError error = new SerializableError.Builder()
                 .errorCode("errorCode")
                 .errorName("errorName")
                 .errorInstanceId("errorId")
+                .putParameters("parameter1", "foo")
+                .putParameters("parameter2", "bar")
                 .build();
-        assertThat(new RemoteException(error, 500).getMessage())
-                .isEqualTo("RemoteException: errorCode (errorName) with instance ID errorId");
+        RemoteException ex = new RemoteException(error, 500);
 
-        error = new SerializableError.Builder()
+        String expectedMessage = "RemoteException: errorCode (errorName) with instance ID errorId";
+        assertThat(ex.getMessage()).isEqualTo(expectedMessage + ": {parameter1=foo, parameter2=bar}");
+        assertThat(ex.getLogMessage()).isEqualTo(expectedMessage);
+        assertThat(ex.getArgs()).containsExactly(
+                UnsafeArg.of("parameter1", "foo"),
+                UnsafeArg.of("parameter2", "bar"));
+    }
+
+    @Test
+    public void testExceptionMessageWithIdenticalErrorName() {
+        SerializableError error = new SerializableError.Builder()
                 .errorCode("errorCode")
                 .errorName("errorCode")
                 .errorInstanceId("errorId")
+                .putParameters("parameter1", "foo")
+                .putParameters("parameter2", "bar")
                 .build();
-        assertThat(new RemoteException(error, 500).getMessage())
-                .isEqualTo("RemoteException: errorCode with instance ID errorId");
+        RemoteException ex = new RemoteException(error, 500);
+
+        String expectedMessage = "RemoteException: errorCode with instance ID errorId";
+        assertThat(ex.getMessage()).isEqualTo(expectedMessage + ": {parameter1=foo, parameter2=bar}");
+        assertThat(ex.getLogMessage()).isEqualTo(expectedMessage);
+        assertThat(ex.getArgs()).containsExactly(
+                UnsafeArg.of("parameter1", "foo"),
+                UnsafeArg.of("parameter2", "bar"));
     }
 
     @Test
@@ -75,18 +95,5 @@ public final class RemoteExceptionTest {
         assertThat(remoteException.getLogMessage())
                 .isEqualTo(remoteException.getMessage())
                 .isEqualTo("RemoteException: errorCode (errorName) with instance ID errorId");
-    }
-
-    @Test
-    public void testArgsIsEmpty() {
-        RemoteException remoteException = new RemoteException(new SerializableError.Builder()
-                .errorCode("errorCode")
-                .errorName("errorName")
-                .errorInstanceId("errorId")
-                .putParameters("param", "value")
-                .build(), 500);
-        assertThat(remoteException.getArgs())
-                .describedAs("RemoteException does not support parameters by design")
-                .isEmpty();
     }
 }

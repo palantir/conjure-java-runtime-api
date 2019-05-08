@@ -39,26 +39,42 @@ public final class ServiceExceptionTest {
                 UnsafeArg.of("arg3", null)};
         ServiceException ex = new ServiceException(ERROR, args);
 
-        assertThat(ex.getLogMessage()).isEqualTo(EXPECTED_ERROR_MSG);
         assertThat(ex.getMessage()).isEqualTo(EXPECTED_ERROR_MSG + ": {arg1=foo, arg2=2, arg3=null}");
+        assertThat(ex.getLogMessage()).isEqualTo(EXPECTED_ERROR_MSG);
+        assertThat(ex.getArgs()).containsExactly(args);
     }
 
     @Test
     public void testExceptionMessageWithDuplicateKeys() {
-        ServiceException ex = new ServiceException(ERROR, SafeArg.of("arg1", "foo"), SafeArg.of("arg1", 2));
+        Arg<?>[] args = {
+                SafeArg.of("arg1", "foo"),
+                SafeArg.of("arg1", 2)};
+        ServiceException ex = new ServiceException(ERROR, args);
+
         assertThat(ex.getMessage()).isEqualTo(EXPECTED_ERROR_MSG + ": {arg1=foo, arg1=2}");
+        assertThat(ex.getLogMessage()).isEqualTo(EXPECTED_ERROR_MSG);
+        assertThat(ex.getArgs()).containsExactly(args);
     }
 
     @Test
     public void testExceptionMessageWithUnsafeArgs() {
-        ServiceException ex = new ServiceException(ERROR, UnsafeArg.of("arg1", 1), SafeArg.of("arg2", 2));
+        Arg<?>[] args = {
+                UnsafeArg.of("arg1", 1),
+                SafeArg.of("arg2", 2)};
+        ServiceException ex = new ServiceException(ERROR, args);
+
         assertThat(ex.getMessage()).isEqualTo(EXPECTED_ERROR_MSG + ": {arg1=1, arg2=2}");
+        assertThat(ex.getLogMessage()).isEqualTo(EXPECTED_ERROR_MSG);
+        assertThat(ex.getArgs()).containsExactly(args);
     }
 
     @Test
     public void testExceptionMessageWithNoArgs() {
         ServiceException ex = new ServiceException(ERROR);
+
         assertThat(ex.getMessage()).isEqualTo(EXPECTED_ERROR_MSG);
+        assertThat(ex.getLogMessage()).isEqualTo(EXPECTED_ERROR_MSG);
+        assertThat(ex.getArgs()).isEmpty();
     }
 
     @Test
@@ -72,6 +88,7 @@ public final class ServiceExceptionTest {
     @Test
     public void testStatus() {
         ServiceException ex = new ServiceException(ERROR);
+
         assertThat(ex.getErrorType().httpErrorCode()).isEqualTo(400);
     }
 
