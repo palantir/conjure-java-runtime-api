@@ -106,7 +106,6 @@ public final class UserAgents {
      * agent can be parsed.
      */
     public static UserAgent tryParse(String userAgent) {
-
         return parseInternal(userAgent == null ? "" : userAgent, true /* lenient */);
     }
 
