@@ -10,8 +10,8 @@ com.fasterxml.jackson.module:jackson-module-afterburner:2.9.9 (1 constraints: 16
 com.google.code.findbugs:jsr305:3.0.2 (1 constraints: 0705fc35)
 com.google.errorprone:error_prone_annotations:2.3.3 (1 constraints: 041129c0)
 com.google.guava:guava:18.0 (1 constraints: 441633de)
-com.palantir.safe-logging:preconditions:1.9.0 (3 constraints: 122746de)
-com.palantir.safe-logging:safe-logging:1.9.0 (3 constraints: 3f2a4e21)
+com.palantir.safe-logging:preconditions:1.10.0 (3 constraints: 62272712)
+com.palantir.safe-logging:safe-logging:1.10.0 (3 constraints: b72a5880)
 com.palantir.tokens:auth-tokens:3.6.1 (1 constraints: 0c050d36)
 junit:junit:4.12 (1 constraints: db04ff30)
 net.bytebuddy:byte-buddy:1.9.10 (1 constraints: 450b52de)
@@ -25,6 +25,6 @@ org.slf4j:slf4j-api:1.7.25 (1 constraints: 0e0e9345)
 
 [Test dependencies]
 com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.9 (1 constraints: 16051936)
-com.palantir.safe-logging:preconditions-assertj:1.9.0 (1 constraints: 0c050b36)
+com.palantir.safe-logging:preconditions-assertj:1.10.0 (1 constraints: 3405293b)
 org.apache.commons:commons-lang3:3.9 (1 constraints: b004292c)
 org.yaml:snakeyaml:1.23 (1 constraints: 6e17f627)
