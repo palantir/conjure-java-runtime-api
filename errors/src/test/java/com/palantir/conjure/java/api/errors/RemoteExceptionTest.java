@@ -18,6 +18,8 @@ package com.palantir.conjure.java.api.errors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.palantir.logsafe.SafeArg;
+import com.palantir.logsafe.UnsafeArg;
 import org.apache.commons.lang3.SerializationUtils;
 import org.junit.Test;
 
@@ -62,5 +64,23 @@ public final class RemoteExceptionTest {
                 .build();
         assertThat(new RemoteException(error, 500).getMessage())
                 .isEqualTo("RemoteException: errorCode with instance ID errorId");
+    }
+
+    @Test
+    public void testSafeLogging() {
+        SerializableError error = new SerializableError.Builder()
+                .errorCode("errorCode")
+                .errorName("errorName")
+                .errorInstanceId("errorId")
+                .putParameters("parameter", "value")
+                .build();
+
+        assertThat(new RemoteException(error, 500).getLogMessage())
+                .isEqualTo("RemoteException");
+        assertThat(new RemoteException(error, 500).getArgs()).containsExactly(
+                SafeArg.of("errorName", "errorName"),
+                SafeArg.of("errorCode", "errorCode"),
+                SafeArg.of("errorInstanceId", "errorId"),
+                UnsafeArg.of("parameter", "value"));
     }
 }
