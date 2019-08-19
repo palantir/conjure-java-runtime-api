@@ -16,7 +16,9 @@
 
 package com.palantir.conjure.java.api.errors;
 
+import com.google.common.collect.ImmutableList;
 import com.palantir.logsafe.Arg;
+import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.SafeLoggable;
 import com.palantir.logsafe.UnsafeArg;
 import java.util.List;
@@ -50,14 +52,19 @@ public final class RemoteException extends RuntimeException implements SafeLogga
 
         this.error = error;
         this.status = status;
-        this.args = error.parameters().entrySet().stream()
-                .map(entry -> UnsafeArg.of(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
+        this.args = ImmutableList.<Arg<?>>builder()
+                .add(SafeArg.of("errorName", error.errorName()))
+                .add(SafeArg.of("errorCode", error.errorCode()))
+                .add(SafeArg.of("errorInstanceId", error.errorInstanceId()))
+                .addAll(error.parameters().entrySet().stream()
+                        .map(entry -> UnsafeArg.of(entry.getKey(), entry.getValue()))
+                        .collect(Collectors.toList()))
+                .build();
     }
 
     @Override
     public String getLogMessage() {
-        return getMessage();
+        return "RemoteException";
     }
 
     @Override
