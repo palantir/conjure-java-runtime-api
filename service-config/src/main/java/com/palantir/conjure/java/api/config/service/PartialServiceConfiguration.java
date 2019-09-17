@@ -91,5 +91,5 @@ public interface PartialServiceConfiguration {
         return new Builder();
     }
 
-    class Builder extends ImmutablePartialServiceConfiguration.Builder { }
+    class Builder extends ImmutablePartialServiceConfiguration.Builder {}
 }

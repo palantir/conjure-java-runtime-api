@@ -83,11 +83,13 @@ public abstract class ProxyConfiguration {
         switch (type()) {
             case MESH:
             case HTTP:
-                Preconditions.checkArgument(hostAndPort().isPresent(), "host-and-port must be "
-                        + "configured for an HTTP proxy");
+                Preconditions.checkArgument(hostAndPort().isPresent(),
+                        "host-and-port must be "
+                                + "configured for an HTTP proxy");
                 HostAndPort host = HostAndPort.fromString(hostAndPort().get());
                 Preconditions.checkArgument(host.hasPort(),
-                        "Given hostname does not contain a port number", SafeArg.of("hostname", host));
+                        "Given hostname does not contain a port number",
+                        SafeArg.of("hostname", host));
                 break;
             case DIRECT:
                 Preconditions.checkArgument(!hostAndPort().isPresent() && !credentials().isPresent(),

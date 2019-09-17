@@ -16,7 +16,6 @@
 
 package com.palantir.conjure.java.api.errors;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.URL;

@@ -16,7 +16,6 @@
 
 package com.palantir.conjure.java.api.testing;
 
-
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.palantir.conjure.java.api.errors.ErrorType;
@@ -38,9 +37,9 @@ public final class RemoteExceptionAssertTest {
         assertThatThrownBy(
                 () -> Assertions.assertThat(new RemoteException(error, actualType.httpErrorCode() + 1))
                         .isGeneratedFromErrorType(actualType))
-                .isInstanceOf(AssertionError.class)
-                .hasMessage("Expected error status to be %s, but found %s",
-                        actualType.httpErrorCode(),
-                        actualType.httpErrorCode() + 1);
+                                .isInstanceOf(AssertionError.class)
+                                .hasMessage("Expected error status to be %s, but found %s",
+                                        actualType.httpErrorCode(),
+                                        actualType.httpErrorCode() + 1);
     }
 }

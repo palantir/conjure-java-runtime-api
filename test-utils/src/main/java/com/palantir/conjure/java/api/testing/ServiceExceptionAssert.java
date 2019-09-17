@@ -82,7 +82,10 @@ public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExcep
             Object previous = map.put(key, value);
             if (previous != null) {
                 throw new AssertionError(String.format("Duplicate %s arg name '%s', first value: %s, second value: %s",
-                        name, key, previous, value));
+                        name,
+                        key,
+                        previous,
+                        value));
             }
         }
     }
