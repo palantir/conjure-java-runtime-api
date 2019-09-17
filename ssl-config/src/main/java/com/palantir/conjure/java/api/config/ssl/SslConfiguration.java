@@ -18,6 +18,7 @@ package com.palantir.conjure.java.api.config.ssl;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import java.nio.file.Path;
 import java.util.Optional;
 import org.immutables.value.Value;
@@ -66,11 +67,11 @@ public abstract class SslConfiguration {
     @Value.Check
     protected final void check() {
         if (keyStorePath().isPresent() != keyStorePassword().isPresent()) {
-            throw new IllegalArgumentException(
+            throw new SafeIllegalArgumentException(
                     "keyStorePath and keyStorePassword must both be present or both be absent");
         }
         if (keyStoreKeyAlias().isPresent() && !keyStorePath().isPresent()) {
-            throw new IllegalArgumentException(
+            throw new SafeIllegalArgumentException(
                     "keyStorePath must be present if keyStoreKeyAlias is present");
         }
     }
