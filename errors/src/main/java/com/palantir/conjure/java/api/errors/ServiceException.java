@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 public final class ServiceException extends RuntimeException implements SafeLoggable {
 
     private final ErrorType errorType;
-    private final List<Arg<?>> args;  // unmodifiable
+    private final List<Arg<?>> args; // unmodifiable
 
     private final String errorInstanceId = UUID.randomUUID().toString();
     private final String unsafeMessage;

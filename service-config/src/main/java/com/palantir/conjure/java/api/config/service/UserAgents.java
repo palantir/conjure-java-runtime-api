@@ -113,7 +113,6 @@ public final class UserAgents {
     private static UserAgent parseInternal(String userAgent, boolean lenient) {
         ImmutableUserAgent.Builder builder = ImmutableUserAgent.builder();
 
-
         Matcher matcher = SEGMENT_PATTERN.matcher(userAgent);
         boolean foundFirst = false;
         while (matcher.find()) {

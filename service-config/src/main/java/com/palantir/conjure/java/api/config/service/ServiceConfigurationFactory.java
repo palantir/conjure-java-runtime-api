@@ -40,7 +40,8 @@ public final class ServiceConfigurationFactory {
     /** Returns the {@link ServiceConfiguration} for the given name. */
     public ServiceConfiguration get(String serviceName) {
         PartialServiceConfiguration partial = services.services().get(serviceName);
-        Preconditions.checkNotNull(partial, "No configuration found for service",
+        Preconditions.checkNotNull(partial,
+                "No configuration found for service",
                 SafeArg.of("serviceName", serviceName));
         return propagateDefaults(serviceName, partial);
     }
@@ -72,7 +73,8 @@ public final class ServiceConfigurationFactory {
                 .apiToken(orElse(partial.apiToken(), services.defaultApiToken()))
                 .security(orElse(partial.security(), services.defaultSecurity()).orElseThrow(
                         () -> new IllegalArgumentException("Must provide default security or "
-                                + "service-specific security block for service: " + serviceName)))
+                                + "service-specific security block for service: "
+                                + serviceName)))
                 .uris(partial.uris())
                 .connectTimeout(orElse(partial.connectTimeout(), services.defaultConnectTimeout())
                         .map(t -> Duration.ofMillis(t.toMilliseconds())))

@@ -42,7 +42,9 @@ public abstract class QosException extends RuntimeException {
 
     public interface Visitor<T> {
         T visit(Throttle exception);
+
         T visit(RetryOther exception);
+
         T visit(Unavailable exception);
     }
 

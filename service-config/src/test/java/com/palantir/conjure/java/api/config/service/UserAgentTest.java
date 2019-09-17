@@ -47,7 +47,7 @@ public class UserAgentTest {
         }) {
             assertThatLoggableExceptionThrownBy(
                     () -> UserAgent.of(UserAgent.Agent.of("valid-service", "1.0.0"), nodeId))
-                    .isInstanceOf(IllegalArgumentException.class);
+                            .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -81,9 +81,9 @@ public class UserAgentTest {
     public void testInvalidNodeId() {
         assertThatLoggableExceptionThrownBy(
                 () -> UserAgent.of(UserAgent.Agent.of("serviceName", "1.0.0"), "invalid node id"))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasExactlyArgs(SafeArg.of("nodeId", "invalid node id"))
-                .hasLogMessage("Illegal node id format");
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasExactlyArgs(SafeArg.of("nodeId", "invalid node id"))
+                        .hasLogMessage("Illegal node id format");
     }
 
     @Test
@@ -101,7 +101,7 @@ public class UserAgentTest {
                 "service/1.2.3-rc1-2-g4658d8a",
                 "service/10.20.30",
                 "service/10.20.30 (nodeId:myNode)",
-                }) {
+        }) {
             assertThat(UserAgents.format(UserAgents.parse(agent))).withFailMessage(agent).isEqualTo(agent);
         }
 
@@ -119,7 +119,7 @@ public class UserAgentTest {
         for (String agent : new String[] {
                 "s",
                 "foo|1.2.3",
-                }) {
+        }) {
             assertThatLoggableExceptionThrownBy(() -> UserAgents.format(UserAgents.parse(agent)))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasLogMessage("Failed to parse user agent string")

@@ -74,8 +74,8 @@ public final class ProxyConfigurationTests {
                 .hostAndPort("squid:3128")
                 .type(ProxyConfiguration.Type.DIRECT)
                 .build())
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Neither credential nor host-and-port may be configured for DIRECT proxies");
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessage("Neither credential nor host-and-port may be configured for DIRECT proxies");
     }
 
     @Test
@@ -84,15 +84,15 @@ public final class ProxyConfigurationTests {
                 .credentials(BasicCredentials.of("foo", "bar"))
                 .type(ProxyConfiguration.Type.DIRECT)
                 .build())
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Neither credential nor host-and-port may be configured for DIRECT proxies");
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessage("Neither credential nor host-and-port may be configured for DIRECT proxies");
         assertThatThrownBy(() -> ProxyConfiguration.builder()
                 .type(ProxyConfiguration.Type.MESH)
                 .credentials(BasicCredentials.of("foo", "bar"))
                 .hostAndPort("localhost:1234")
                 .build())
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("credentials only valid for HTTP proxies");
+                        .isInstanceOf(IllegalArgumentException.class)
+                        .hasMessage("credentials only valid for HTTP proxies");
     }
 
     @Test

@@ -88,7 +88,6 @@ public final class ServiceConfigurationFactoryTests {
         assertThat(service3.apiToken()).contains(BearerToken.valueOf("defaultApiToken"));
     }
 
-
     @Test
     public void testUsesDefaultConfigurationWhenNoExplicitConfigIsGiven() {
         PartialServiceConfiguration partial = PartialServiceConfiguration.of(uris, Optional.empty());
@@ -212,10 +211,10 @@ public final class ServiceConfigurationFactoryTests {
         assertThat(ObjectMappers.newClientObjectMapper().writeValueAsString(deserialized)).isEqualTo(camelCase);
         assertThat(ObjectMappers.newClientObjectMapper()
                 .readValue(camelCase, ServicesConfigBlock.class))
-                .isEqualTo(deserialized);
+                        .isEqualTo(deserialized);
         assertThat(ObjectMappers.newClientObjectMapper()
                 .readValue(kebabCase, ServicesConfigBlock.class))
-                .isEqualTo(deserialized);
+                        .isEqualTo(deserialized);
     }
 
     @Test
@@ -233,10 +232,10 @@ public final class ServiceConfigurationFactoryTests {
                 .isEqualTo(serializedCamelCase);
         assertThat(ObjectMappers.newClientObjectMapper()
                 .readValue(serializedCamelCase, ServicesConfigBlock.class))
-                .isEqualTo(deserialized);
+                        .isEqualTo(deserialized);
         assertThat(ObjectMappers.newClientObjectMapper()
                 .readValue(serializedKebabCase, ServicesConfigBlock.class))
-                .isEqualTo(deserialized);
+                        .isEqualTo(deserialized);
     }
 
     private ServicesConfigBlock deserialize(String file) {

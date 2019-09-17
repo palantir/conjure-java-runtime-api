@@ -76,8 +76,8 @@ public final class SerializableErrorTest {
 
         assertThat(mapper.writeValueAsString(
                 SerializableError.builder().from(ERROR).errorInstanceId("errorId").build()))
-                .isEqualTo("{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
-                        + "\"errorInstanceId\":\"errorId\",\"parameters\":{}}");
+                        .isEqualTo("{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
+                                + "\"errorInstanceId\":\"errorId\",\"parameters\":{}}");
     }
 
     @Test

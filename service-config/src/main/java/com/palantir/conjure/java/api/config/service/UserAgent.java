@@ -74,7 +74,8 @@ public interface UserAgent {
     default void check() {
         if (nodeId().isPresent()) {
             Preconditions.checkArgument(UserAgents.isValidNodeId(nodeId().get()),
-                    "Illegal node id format", SafeArg.of("nodeId", nodeId().get()));
+                    "Illegal node id format",
+                    SafeArg.of("nodeId", nodeId().get()));
         }
     }
 
@@ -85,15 +86,18 @@ public interface UserAgent {
         String DEFAULT_VERSION = "0.0.0";
 
         String name();
+
         String version();
 
         @Value.Check
         default void check() {
-            Preconditions.checkArgument(UserAgents.isValidName(name()), "Illegal agent name format",
+            Preconditions.checkArgument(UserAgents.isValidName(name()),
+                    "Illegal agent name format",
                     SafeArg.of("name", name()));
             // Should never hit the following.
             Preconditions.checkArgument(UserAgents.isValidVersion(version()),
-                    "Illegal version format. This is a bug", SafeArg.of("version", version()));
+                    "Illegal version format. This is a bug",
+                    SafeArg.of("version", version()));
         }
 
         static Agent of(String name, String version) {

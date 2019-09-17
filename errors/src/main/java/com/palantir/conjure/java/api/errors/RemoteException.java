@@ -39,7 +39,9 @@ public final class RemoteException extends RuntimeException {
         super(error.errorCode().equals(error.errorName())
                 ? String.format("RemoteException: %s with instance ID %s", error.errorCode(), error.errorInstanceId())
                 : String.format("RemoteException: %s (%s) with instance ID %s",
-                        error.errorCode(), error.errorName(), error.errorInstanceId()));
+                        error.errorCode(),
+                        error.errorName(),
+                        error.errorInstanceId()));
 
         this.error = error;
         this.status = status;
