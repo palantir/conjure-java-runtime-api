@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.palantir.conjure.java.api.ext.jackson.ObjectMappers;
 import java.nio.file.Paths;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class SslConfigurationTest {
 

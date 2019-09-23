@@ -37,7 +37,7 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.Optional;
 import org.assertj.core.util.Lists;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class ServiceConfigurationFactoryTests {
 

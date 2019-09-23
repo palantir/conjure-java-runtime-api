@@ -9,12 +9,12 @@ dependencies {
     compile "com.palantir.safe-logging:preconditions"
     compile "com.palantir.tokens:auth-tokens"
 
-    testCompile project(":extras:jackson-support")
-    testCompile "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
-    testCompile "com.palantir.safe-logging:preconditions-assertj"
-    testCompile "junit:junit"
-    testCompile "org.assertj:assertj-core"
-    testCompile "org.mockito:mockito-core"
+    testImplementation project(":extras:jackson-support")
+    testImplementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
+    testImplementation "com.palantir.safe-logging:preconditions-assertj"
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation "org.assertj:assertj-core"
+    testImplementation "org.mockito:mockito-core"
 
     annotationProcessor "org.immutables:value"
     compileOnly 'org.immutables:value::annotations'

@@ -9,7 +9,7 @@ dependencies {
 
     testImplementation project(':extras:jackson-support')
     testImplementation "org.assertj:assertj-core"
-    testImplementation "junit:junit"
+    testImplementation 'org.junit.jupiter:junit-jupiter'
 
     annotationProcessor "org.immutables:value"
     compileOnly 'org.immutables:value::annotations'

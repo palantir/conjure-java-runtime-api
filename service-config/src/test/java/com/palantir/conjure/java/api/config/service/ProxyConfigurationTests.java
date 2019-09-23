@@ -18,7 +18,6 @@ package com.palantir.conjure.java.api.config.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertEquals;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -27,7 +26,7 @@ import com.google.common.io.Resources;
 import com.palantir.conjure.java.api.ext.jackson.ObjectMappers;
 import java.io.IOException;
 import java.net.URL;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("CheckReturnValue") // .build() is used to throw validation exceptions
 public final class ProxyConfigurationTests {
@@ -39,7 +38,7 @@ public final class ProxyConfigurationTests {
         ProxyConfiguration actualProxyConfiguration = mapper.readValue(resource.openStream(), ProxyConfiguration.class);
 
         ProxyConfiguration expectedProxyConfiguration = ProxyConfiguration.of("squid:3128");
-        assertEquals(expectedProxyConfiguration, actualProxyConfiguration);
+        assertThat(expectedProxyConfiguration).isEqualTo(actualProxyConfiguration);
     }
 
     @Test
@@ -50,21 +49,21 @@ public final class ProxyConfigurationTests {
         ProxyConfiguration expectedProxyConfiguration =
                 ProxyConfiguration.of("squid:3128", BasicCredentials.of("username", "password"));
 
-        assertEquals(expectedProxyConfiguration, actualProxyConfiguration);
+        assertThat(expectedProxyConfiguration).isEqualTo(actualProxyConfiguration);
     }
 
     @Test
     public void testDeserializationDirect() throws Exception {
         URL resource = Resources.getResource("configs/proxy-config-direct.yml");
         ProxyConfiguration config = mapper.readValue(resource, ProxyConfiguration.class);
-        assertEquals(config, ProxyConfiguration.DIRECT);
+        assertThat(config).isEqualTo(ProxyConfiguration.DIRECT);
     }
 
     @Test
     public void testDeserializationMesh() throws Exception {
         URL resource = Resources.getResource("configs/proxy-config-mesh.yml");
         ProxyConfiguration config = mapper.readValue(resource, ProxyConfiguration.class);
-        assertEquals(config,
+        assertThat(config).isEqualTo(
                 ProxyConfiguration.builder().type(ProxyConfiguration.Type.MESH).hostAndPort("localhost:123").build());
     }
 
