@@ -1,0 +1,5 @@
+type: improvement
+improvement:
+  description: Remove unnecessary dependency on junit:junit
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/326
