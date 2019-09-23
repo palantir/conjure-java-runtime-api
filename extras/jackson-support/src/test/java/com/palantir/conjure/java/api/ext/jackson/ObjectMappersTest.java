@@ -31,7 +31,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Optional;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class ObjectMappersTest {
     private static final ObjectMapper MAPPER = ObjectMappers.newClientObjectMapper();

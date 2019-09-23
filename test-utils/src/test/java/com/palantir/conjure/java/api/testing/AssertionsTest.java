@@ -24,7 +24,7 @@ import com.palantir.conjure.java.api.errors.ErrorType;
 import com.palantir.conjure.java.api.errors.RemoteException;
 import com.palantir.conjure.java.api.errors.SerializableError;
 import com.palantir.conjure.java.api.errors.ServiceException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class AssertionsTest {
 

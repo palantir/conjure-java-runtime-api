@@ -19,7 +19,7 @@ package com.palantir.conjure.java.api.errors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.URL;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class QosExceptionTest {
 
