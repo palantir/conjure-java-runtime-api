@@ -1,6 +1,6 @@
 com.fasterxml.jackson.*:jackson-* = 2.9.9
 com.google.code.findbugs:jsr305 = 3.0.2
-com.palantir.safe-logging:* = 1.10.1
+com.palantir.safe-logging:* = 1.11.0
 com.palantir.tokens:auth-tokens = 3.6.1
 org.apache.commons:commons-lang3 = 3.9
 org.assertj:assertj-core = 3.13.2
