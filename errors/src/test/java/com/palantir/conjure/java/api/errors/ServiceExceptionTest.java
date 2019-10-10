@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.palantir.logsafe.Arg;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.UnsafeArg;
+import com.palantir.logsafe.exceptions.SafeRuntimeException;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
@@ -80,5 +81,24 @@ public final class ServiceExceptionTest {
         UUID errorId2 = UUID.fromString(new ServiceException(ERROR).getErrorInstanceId());
 
         assertThat(errorId1).isNotEqualTo(errorId2);
+    }
+
+    @Test
+    public void testErrorIdsAreInheritedFromServiceExceptions() {
+        ServiceException rootCause = new ServiceException(ERROR);
+        SafeRuntimeException intermediate = new SafeRuntimeException("Handled an exception", rootCause);
+        ServiceException parent = new ServiceException(ERROR, intermediate);
+        assertThat(parent.getErrorInstanceId()).isEqualTo(rootCause.getErrorInstanceId());
+    }
+
+    @Test
+    public void testErrorIdsAreInheritedFromRemoteExceptions() {
+        RemoteException rootCause = new RemoteException(new SerializableError.Builder()
+                .errorCode("errorCode")
+                .errorName("errorName")
+                .build(), 500);
+        SafeRuntimeException intermediate = new SafeRuntimeException("Handled an exception", rootCause);
+        ServiceException parent = new ServiceException(ERROR, intermediate);
+        assertThat(parent.getErrorInstanceId()).isEqualTo(rootCause.getError().errorInstanceId());
     }
 }
