@@ -101,4 +101,16 @@ public final class ServiceExceptionTest {
         ServiceException parent = new ServiceException(ERROR, intermediate);
         assertThat(parent.getErrorInstanceId()).isEqualTo(rootCause.getError().errorInstanceId());
     }
+
+    @Test
+    public void testCircularCause() {
+        RuntimeException first = new RuntimeException();
+        RuntimeException second = new RuntimeException(first);
+        // Yes, you can do this. In practice it's often more subtle when libraries attempt to piece together
+        // more helpful exception chains and encounter unexpected edge cases.
+        first.initCause(second);
+        // invoke getErrorInstanceId to ensure this is tested even if future developers
+        // optimize generation to occur lazily.
+        assertThat(new ServiceException(ERROR, second).getErrorInstanceId()).isNotNull();
+    }
 }

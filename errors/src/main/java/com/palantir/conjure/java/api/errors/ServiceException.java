@@ -20,7 +20,9 @@ import com.palantir.logsafe.Arg;
 import com.palantir.logsafe.SafeLoggable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -130,7 +132,14 @@ public final class ServiceException extends RuntimeException implements SafeLogg
      * {@link Throwable#getSuppressed() suppressed causes}.
      */
     private static String generateErrorInstanceId(@Nullable Throwable cause) {
-        if (cause == null) {
+        return generateErrorInstanceId(cause, Collections.newSetFromMap(new IdentityHashMap<>()));
+    }
+
+    private static String generateErrorInstanceId(
+            @Nullable Throwable cause,
+            // Guard against cause cycles, see Throwable.printStackTrace(PrintStreamOrWriter)
+            Set<Throwable> dejaVu) {
+        if (cause == null || !dejaVu.add(cause)) {
             return UUID.randomUUID().toString();
         }
         if (cause instanceof ServiceException) {
@@ -139,6 +148,6 @@ public final class ServiceException extends RuntimeException implements SafeLogg
         if (cause instanceof RemoteException) {
             return ((RemoteException) cause).getError().errorInstanceId();
         }
-        return generateErrorInstanceId(cause.getCause());
+        return generateErrorInstanceId(cause.getCause(), dejaVu);
     }
 }
