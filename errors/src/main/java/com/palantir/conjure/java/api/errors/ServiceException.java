@@ -20,7 +20,9 @@ import com.palantir.logsafe.Arg;
 import com.palantir.logsafe.SafeLoggable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -30,7 +32,7 @@ public final class ServiceException extends RuntimeException implements SafeLogg
     private final ErrorType errorType;
     private final List<Arg<?>> args; // unmodifiable
 
-    private final String errorInstanceId = UUID.randomUUID().toString();
+    private final String errorInstanceId;
     private final String unsafeMessage;
     private final String noArgsMessage;
 
@@ -47,6 +49,7 @@ public final class ServiceException extends RuntimeException implements SafeLogg
         // TODO(rfink): Memoize formatting?
         super(cause);
 
+        this.errorInstanceId = generateErrorInstanceId(cause);
         this.errorType = errorType;
         // Note that instantiators cannot mutate List<> args since it comes through copyToList in all code paths.
         this.args = copyToUnmodifiableList(args);
@@ -121,5 +124,30 @@ public final class ServiceException extends RuntimeException implements SafeLogg
 
     private static String renderNoArgsMessage(ErrorType errorType) {
         return String.format("ServiceException: %s (%s)", errorType.code(), errorType.name());
+    }
+
+    /**
+     * Finds the errorInstanceId of the most recent cause if present, otherwise generates a new random identifier.
+     * Note that this only searches {@link Throwable#getCause() causal exceptions}, not
+     * {@link Throwable#getSuppressed() suppressed causes}.
+     */
+    private static String generateErrorInstanceId(@Nullable Throwable cause) {
+        return generateErrorInstanceId(cause, Collections.newSetFromMap(new IdentityHashMap<>()));
+    }
+
+    private static String generateErrorInstanceId(
+            @Nullable Throwable cause,
+            // Guard against cause cycles, see Throwable.printStackTrace(PrintStreamOrWriter)
+            Set<Throwable> dejaVu) {
+        if (cause == null || !dejaVu.add(cause)) {
+            return UUID.randomUUID().toString();
+        }
+        if (cause instanceof ServiceException) {
+            return ((ServiceException) cause).getErrorInstanceId();
+        }
+        if (cause instanceof RemoteException) {
+            return ((RemoteException) cause).getError().errorInstanceId();
+        }
+        return generateErrorInstanceId(cause.getCause(), dejaVu);
     }
 }

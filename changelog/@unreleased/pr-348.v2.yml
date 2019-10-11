@@ -1,0 +1,8 @@
+type: improvement
+improvement:
+  description: ServiceException retains the `errorInstanceId` from its cause, allowing RemoteExceptions
+    to be caught and used as the cause for as more specific ServiceException without sacrificing observability.
+    In most cases a single error identifier query is sufficient to discover the root cause of a failure
+    instead of individually requesting each segment back to the root.
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/348
