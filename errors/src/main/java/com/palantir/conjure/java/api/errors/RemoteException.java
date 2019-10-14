@@ -16,10 +16,15 @@
 
 package com.palantir.conjure.java.api.errors;
 
+import com.palantir.logsafe.Arg;
+import com.palantir.logsafe.SafeLoggable;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * An exception thrown by an RPC client to indicate remote/server-side failure.
  */
-public final class RemoteException extends RuntimeException {
+public final class RemoteException extends RuntimeException implements SafeLoggable {
     private static final long serialVersionUID = 1L;
 
     private final SerializableError error;
@@ -45,5 +50,17 @@ public final class RemoteException extends RuntimeException {
 
         this.error = error;
         this.status = status;
+    }
+
+    @Override
+    public String getLogMessage() {
+        return getMessage();
+    }
+
+    @Override
+    public List<Arg<?>> getArgs() {
+        // RemoteException explicitly does not support arguments because they have already been recorded
+        // on the service which produced the causal SerializableError.
+        return Collections.emptyList();
     }
 }

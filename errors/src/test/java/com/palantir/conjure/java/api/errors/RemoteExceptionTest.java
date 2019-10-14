@@ -63,4 +63,30 @@ public final class RemoteExceptionTest {
         assertThat(new RemoteException(error, 500).getMessage())
                 .isEqualTo("RemoteException: errorCode with instance ID errorId");
     }
+
+    @Test
+    public void testLogMessageMessage() {
+        SerializableError error = new SerializableError.Builder()
+                .errorCode("errorCode")
+                .errorName("errorName")
+                .errorInstanceId("errorId")
+                .build();
+        RemoteException remoteException = new RemoteException(error, 500);
+        assertThat(remoteException.getLogMessage())
+                .isEqualTo(remoteException.getMessage())
+                .isEqualTo("RemoteException: errorCode (errorName) with instance ID errorId");
+    }
+
+    @Test
+    public void testArgsIsEmpty() {
+        RemoteException remoteException = new RemoteException(new SerializableError.Builder()
+                .errorCode("errorCode")
+                .errorName("errorName")
+                .errorInstanceId("errorId")
+                .putParameters("param", "value")
+                .build(), 500);
+        assertThat(remoteException.getArgs())
+                .describedAs("RemoteException does not support parameters by design")
+                .isEmpty();
+    }
 }
