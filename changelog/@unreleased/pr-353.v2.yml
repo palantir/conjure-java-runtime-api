@@ -1,0 +1,5 @@
+type: improvement
+improvement:
+  description: RemoteException messages are safe loggable
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/353
