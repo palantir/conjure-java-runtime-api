@@ -24,6 +24,7 @@ import com.palantir.conjure.java.api.config.ssl.SslConfiguration;
 import com.palantir.tokens.auth.BearerToken;
 import java.util.Map;
 import java.util.Optional;
+import org.immutables.value.Value;
 import org.immutables.value.Value.Immutable;
 
 /**
@@ -44,6 +45,7 @@ public abstract class ServicesConfigBlock {
      */
     @JsonProperty("apiToken")
     @JsonAlias("api-token")
+    @Value.Redacted
     public abstract Optional<BearerToken> defaultApiToken();
 
     /**

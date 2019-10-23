@@ -1,0 +1,6 @@
+type: fix
+fix:
+  description: Password and token-related fields are now annotated as redacted, which
+    should prevent the field values from appearing in toString output.
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/368

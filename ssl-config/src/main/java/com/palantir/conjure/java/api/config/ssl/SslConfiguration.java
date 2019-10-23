@@ -51,6 +51,7 @@ public abstract class SslConfiguration {
     public abstract Optional<Path> keyStorePath();
 
     @JsonAlias("key-store-password")
+    @Value.Redacted
     public abstract Optional<String> keyStorePassword();
 
     @SuppressWarnings("checkstyle:designforextension")
