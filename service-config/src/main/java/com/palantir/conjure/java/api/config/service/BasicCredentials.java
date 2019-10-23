@@ -30,6 +30,7 @@ public abstract class BasicCredentials {
     @Value.Parameter
     public abstract String username();
 
+    @Value.Redacted
     @Value.Parameter
     public abstract String password();
 

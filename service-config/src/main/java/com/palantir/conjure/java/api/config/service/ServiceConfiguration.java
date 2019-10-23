@@ -30,6 +30,7 @@ import org.immutables.value.Value;
 @ImmutablesStyle
 public interface ServiceConfiguration {
 
+    @Value.Redacted
     Optional<BearerToken> apiToken();
 
     SslConfiguration security();

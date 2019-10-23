@@ -23,6 +23,7 @@ import com.palantir.conjure.java.api.config.ssl.SslConfiguration;
 import com.palantir.tokens.auth.BearerToken;
 import java.util.List;
 import java.util.Optional;
+import org.immutables.value.Value;
 import org.immutables.value.Value.Immutable;
 
 @Immutable
@@ -33,6 +34,7 @@ public interface PartialServiceConfiguration {
 
     /** The API token to be used to interact with the service. */
     @JsonAlias("api-token")
+    @Value.Redacted
     Optional<BearerToken> apiToken();
 
     /** The SSL configuration needed to interact with the service. */
