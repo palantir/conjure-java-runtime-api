@@ -1,0 +1,11 @@
+type: fix
+fix:
+  description: |-
+    Change ImmutablesStyle's retention policy
+
+    Change immutablesStyle's retention policy to be SOURCE instead of CLASS.
+    Also make SerializableError use it.
+
+    Before this change, any class that's importing an immutable class with @ImmutablesStyle in the package, or directly with @Value.Style(visibility = Value.Style.ImplementationVisibility.PACKAGE), but doesn't add 'org.immutables.value.Value' as compile dependency will get a warning during compilation. This is no longer the case
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/369
