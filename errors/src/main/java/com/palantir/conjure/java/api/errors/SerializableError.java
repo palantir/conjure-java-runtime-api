@@ -37,6 +37,7 @@ import org.immutables.value.Value;
 @JsonSerialize(as = ImmutableSerializableError.class)
 @Value.Immutable
 @ImmutablesStyle
+@Value.Style(overshadowImplementation = false)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class SerializableError implements Serializable {
 
