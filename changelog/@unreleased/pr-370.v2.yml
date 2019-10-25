@@ -1,0 +1,5 @@
+type: improvement
+fix:
+  description: Adds utility to propagate original RemoteExceptions back to clients.
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/370
