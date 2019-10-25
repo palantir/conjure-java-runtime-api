@@ -77,7 +77,10 @@ public abstract class ErrorType {
     public abstract String name();
 
     /** The HTTP error code used to convey this error to HTTP clients. */
-    public abstract int httpErrorCode();
+    @Value.Derived
+    public int httpErrorCode() {
+        return code().httpErrorCode;
+    }
 
     @Value.Check
     final void check() {
@@ -113,7 +116,6 @@ public abstract class ErrorType {
         return ImmutableErrorType.builder()
                 .code(code)
                 .name(name)
-                .httpErrorCode(code.httpErrorCode)
                 .build();
     }
 }
