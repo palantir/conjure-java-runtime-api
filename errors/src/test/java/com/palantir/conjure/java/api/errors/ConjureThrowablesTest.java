@@ -37,7 +37,7 @@ public class ConjureThrowablesTest {
                 .build();
         RemoteException remoteException = new RemoteException(error, 400);
 
-        assertThatServiceExceptionThrownBy(() -> ConjureThrowables.propagateIfErrorTypeOf(remoteException, ERROR_TYPE))
+        assertThatServiceExceptionThrownBy(() -> ConjureThrowables.propagateIfErrorTypeEquals(remoteException, ERROR_TYPE))
                 .hasType(ERROR_TYPE)
                 .hasErrorInstanceId(ERROR_INSTANCE_ID)
                 .hasArgs(UnsafeArg.of("arg", "value"));
@@ -52,7 +52,7 @@ public class ConjureThrowablesTest {
         RemoteException remoteException = new RemoteException(error, 400);
 
         assertThatServiceExceptionThrownBy(
-                () -> ConjureThrowables.propagateIfErrorTypeOf(remoteException, ErrorType.INVALID_ARGUMENT))
+                () -> ConjureThrowables.propagateIfErrorTypeEquals(remoteException, ErrorType.INVALID_ARGUMENT))
                 .hasType(ErrorType.INVALID_ARGUMENT);
     }
 
@@ -64,7 +64,7 @@ public class ConjureThrowablesTest {
                 .build();
         RemoteException remoteException = new RemoteException(error, 400);
 
-        assertThatCode(() -> ConjureThrowables.propagateIfErrorTypeOf(remoteException, ErrorType.INVALID_ARGUMENT))
+        assertThatCode(() -> ConjureThrowables.propagateIfErrorTypeEquals(remoteException, ErrorType.INVALID_ARGUMENT))
                 .doesNotThrowAnyException();
     }
 
@@ -76,7 +76,7 @@ public class ConjureThrowablesTest {
                 .build();
         RemoteException remoteException = new RemoteException(error, 400);
 
-        assertThatCode(() -> ConjureThrowables.propagateIfErrorTypeOf(remoteException, ErrorType.INVALID_ARGUMENT))
+        assertThatCode(() -> ConjureThrowables.propagateIfErrorTypeEquals(remoteException, ErrorType.INVALID_ARGUMENT))
                 .doesNotThrowAnyException();
     }
 }

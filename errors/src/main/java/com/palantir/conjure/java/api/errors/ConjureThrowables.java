@@ -33,12 +33,12 @@ public final class ConjureThrowables {
      * try {
      *     service.someMethod();
      * } catch (RemoteException e) {
-     *     ConjureThrowables.propagateIfErrorTypeOf(e, ServiceErrors.REMOTE_ERROR_TYPE);
+     *     ConjureThrowables.propagateIfErrorTypeEquals(e, ServiceErrors.REMOTE_ERROR_TYPE);
      *     throw e;
      * }
      * </pre>
      */
-    public static void propagateIfErrorTypeOf(RemoteException remoteException, ErrorType errorType) {
+    public static void propagateIfErrorTypeEquals(RemoteException remoteException, ErrorType errorType) {
         if (hasErrorType(remoteException, errorType)) {
             throw new ServiceException(errorType, remoteException, argsFromRemoteException(remoteException));
         }
