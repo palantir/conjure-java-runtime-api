@@ -16,5 +16,54 @@
 
 package com.palantir.conjure.java.api.errors;
 
-public class ConjureThrowables {
+import com.palantir.logsafe.Arg;
+import com.palantir.logsafe.UnsafeArg;
+
+/**
+ * Static utility to propagate instances of {@link RemoteException} as {@link ServiceException}.
+ */
+public final class ConjureThrowables {
+    private ConjureThrowables() {}
+
+    /**
+     * Re-throws {@code remoteException} as instance of {@link ServiceException} iff it matches {@code errorType}.
+     * Parameters and errorInstanceId of the {@code remoteException} are preserved.
+     *
+     * <pre>
+     * try {
+     *     service.someMethod();
+     * } catch (RemoteException e) {
+     *     ConjureThrowables.propagateIfErrorTypeOf(e, ServiceErrors.REMOTE_ERROR_TYPE);
+     *     throw e;
+     * }
+     * </pre>
+     */
+    public static void propagateIfErrorTypeOf(RemoteException remoteException, ErrorType errorType) {
+        if (hasErrorType(remoteException, errorType)) {
+            throw new ServiceException(errorType, remoteException, argsFromRemoteException(remoteException));
+        }
+    }
+
+    private static ErrorType getErrorTypeFromRemoteException(RemoteException remoteException) {
+        ErrorType.Code errorCode = ErrorType.Code.valueOf(remoteException.getError().errorCode());
+        return ImmutableErrorType.builder()
+                .code(errorCode)
+                .name(remoteException.getError().errorName())
+                .build();
+    }
+
+    private static boolean hasErrorType(RemoteException remoteException, ErrorType errorType) {
+        try {
+            ErrorType remoteErrorType = getErrorTypeFromRemoteException(remoteException);
+            return remoteErrorType.equals(errorType);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    private static Arg<?>[] argsFromRemoteException(RemoteException remoteException) {
+        return remoteException.getError().parameters().entrySet().stream()
+                .map(entry -> UnsafeArg.of(entry.getKey(), entry.getValue()))
+                .toArray(Arg<?>[]::new);
+    }
 }
