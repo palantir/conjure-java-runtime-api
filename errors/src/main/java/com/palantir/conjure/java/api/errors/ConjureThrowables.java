@@ -62,7 +62,10 @@ public final class ConjureThrowables {
     }
 
     private static Arg<?>[] argsFromRemoteException(RemoteException remoteException) {
-        return remoteException.getError().parameters().entrySet().stream()
+        return remoteException.getError()
+                .parameters()
+                .entrySet()
+                .stream()
                 .map(entry -> UnsafeArg.of(entry.getKey(), entry.getValue()))
                 .toArray(Arg<?>[]::new);
     }

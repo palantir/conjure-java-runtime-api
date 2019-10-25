@@ -37,10 +37,11 @@ public class ConjureThrowablesTest {
                 .build();
         RemoteException remoteException = new RemoteException(error, 400);
 
-        assertThatServiceExceptionThrownBy(() -> ConjureThrowables.propagateIfErrorTypeEquals(remoteException, ERROR_TYPE))
-                .hasType(ERROR_TYPE)
-                .hasErrorInstanceId(ERROR_INSTANCE_ID)
-                .hasArgs(UnsafeArg.of("arg", "value"));
+        assertThatServiceExceptionThrownBy(
+                () -> ConjureThrowables.propagateIfErrorTypeEquals(remoteException, ERROR_TYPE))
+                        .hasType(ERROR_TYPE)
+                        .hasErrorInstanceId(ERROR_INSTANCE_ID)
+                        .hasArgs(UnsafeArg.of("arg", "value"));
     }
 
     @Test
@@ -53,7 +54,7 @@ public class ConjureThrowablesTest {
 
         assertThatServiceExceptionThrownBy(
                 () -> ConjureThrowables.propagateIfErrorTypeEquals(remoteException, ErrorType.INVALID_ARGUMENT))
-                .hasType(ErrorType.INVALID_ARGUMENT);
+                        .hasType(ErrorType.INVALID_ARGUMENT);
     }
 
     @Test
@@ -64,8 +65,9 @@ public class ConjureThrowablesTest {
                 .build();
         RemoteException remoteException = new RemoteException(error, 400);
 
-        assertThatCode(() -> ConjureThrowables.propagateIfErrorTypeEquals(remoteException, ErrorType.INVALID_ARGUMENT))
-                .doesNotThrowAnyException();
+        assertThatCode(
+                () -> ConjureThrowables.propagateIfErrorTypeEquals(remoteException, ErrorType.INVALID_ARGUMENT))
+                        .doesNotThrowAnyException();
     }
 
     @Test
@@ -76,7 +78,8 @@ public class ConjureThrowablesTest {
                 .build();
         RemoteException remoteException = new RemoteException(error, 400);
 
-        assertThatCode(() -> ConjureThrowables.propagateIfErrorTypeEquals(remoteException, ErrorType.INVALID_ARGUMENT))
-                .doesNotThrowAnyException();
+        assertThatCode(
+                () -> ConjureThrowables.propagateIfErrorTypeEquals(remoteException, ErrorType.INVALID_ARGUMENT))
+                        .doesNotThrowAnyException();
     }
 }
