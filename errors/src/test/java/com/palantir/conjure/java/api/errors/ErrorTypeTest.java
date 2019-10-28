@@ -61,6 +61,7 @@ public final class ErrorTypeTest {
 
     @Test
     public void testDefaultErrorTypeHttpErrorCodes() throws Exception {
+        assertThat(ErrorType.UNAUTHORIZED.httpErrorCode()).isEqualTo(401);
         assertThat(ErrorType.PERMISSION_DENIED.httpErrorCode()).isEqualTo(403);
         assertThat(ErrorType.INVALID_ARGUMENT.httpErrorCode()).isEqualTo(400);
         assertThat(ErrorType.NOT_FOUND.httpErrorCode()).isEqualTo(404);

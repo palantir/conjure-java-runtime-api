@@ -36,6 +36,7 @@ public abstract class ErrorType {
             Pattern.compile(String.format("%s:%s", UPPER_CAMEL_CASE, UPPER_CAMEL_CASE));
 
     public enum Code {
+        UNAUTHORIZED(401),
         PERMISSION_DENIED(403),
         INVALID_ARGUMENT(400),
         NOT_FOUND(404),
@@ -54,6 +55,8 @@ public abstract class ErrorType {
         }
     }
 
+    public static final ErrorType UNAUTHORIZED =
+            createInternal(Code.UNAUTHORIZED, "Default:Unauthorized");
     public static final ErrorType PERMISSION_DENIED =
             createInternal(Code.PERMISSION_DENIED, "Default:PermissionDenied");
     public static final ErrorType INVALID_ARGUMENT =
