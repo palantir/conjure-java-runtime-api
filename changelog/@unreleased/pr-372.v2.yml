@@ -1,0 +1,5 @@
+type: fix
+fix:
+  description: No code changes - fixing a broken publish of 2.8.0
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/372
