@@ -29,7 +29,7 @@ class UnknownRemoteExceptionTest {
         assertThat(exception.getMessage())
                 .isEqualTo("Error 404. (Failed to parse response body as SerializableError.)");
         assertThat(exception.getLogMessage())
-                .isEqualTo("Error 404. (Failed to parse response body as SerializableError.)");
+                .isEqualTo("Failed to parse response body as SerializableError.");
     }
 
     @Test

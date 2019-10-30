@@ -49,7 +49,7 @@ public final class UnknownRemoteException extends RuntimeException implements Sa
 
     @Override
     public String getLogMessage() {
-        return getMessage();
+        return "Failed to parse response body as SerializableError.";
     }
 
     @Override
