@@ -16,10 +16,10 @@
 
 package com.palantir.conjure.java.api.errors;
 
-import com.google.common.collect.ImmutableList;
 import com.palantir.logsafe.Arg;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.SafeLoggable;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -54,7 +54,7 @@ public final class UnknownRemoteException extends RuntimeException implements Sa
 
     @Override
     public List<Arg<?>> getArgs() {
-        return ImmutableList.of(SafeArg.of("status", getStatus()));
+        return Collections.singletonList(SafeArg.of("status", getStatus()));
     }
 
 }
