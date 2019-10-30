@@ -16,10 +16,16 @@
 
 package com.palantir.conjure.java.api.errors;
 
+import com.palantir.logsafe.Arg;
+import com.palantir.logsafe.SafeArg;
+import com.palantir.logsafe.SafeLoggable;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * An exception thrown by an RPC client to indicate remote/server-side failure from a non-remoting server.
  */
-public final class UnknownRemoteException extends RuntimeException {
+public final class UnknownRemoteException extends RuntimeException implements SafeLoggable {
     private static final long serialVersionUID = 1L;
 
     private final int status;
@@ -39,6 +45,16 @@ public final class UnknownRemoteException extends RuntimeException {
         super(String.format("Error %s. (Failed to parse response body as SerializableError.)", status));
         this.status = status;
         this.body = body;
+    }
+
+    @Override
+    public String getLogMessage() {
+        return "Failed to parse response body as SerializableError.";
+    }
+
+    @Override
+    public List<Arg<?>> getArgs() {
+        return Collections.singletonList(SafeArg.of("status", getStatus()));
     }
 
 }
