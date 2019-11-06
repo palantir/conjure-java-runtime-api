@@ -63,35 +63,37 @@ public final class ProxyConfigurationTests {
     public void testDeserializationMesh() throws Exception {
         URL resource = Resources.getResource("configs/proxy-config-mesh.yml");
         ProxyConfiguration config = mapper.readValue(resource, ProxyConfiguration.class);
-        assertThat(config).isEqualTo(
-                ProxyConfiguration.builder().type(ProxyConfiguration.Type.MESH).hostAndPort("localhost:123").build());
+        assertThat(config).isEqualTo(ProxyConfiguration.builder()
+                .type(ProxyConfiguration.Type.MESH)
+                .hostAndPort("localhost:123")
+                .build());
     }
 
     @Test
     public void testNonHttpProxyWithHostAndPort() {
         assertThatThrownBy(() -> new ProxyConfiguration.Builder()
-                .hostAndPort("squid:3128")
-                .type(ProxyConfiguration.Type.DIRECT)
-                .build())
-                        .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("Neither credential nor host-and-port may be configured for DIRECT proxies");
+                        .hostAndPort("squid:3128")
+                        .type(ProxyConfiguration.Type.DIRECT)
+                        .build())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Neither credential nor host-and-port may be configured for DIRECT proxies");
     }
 
     @Test
     public void credentialsWithNonHttp() {
         assertThatThrownBy(() -> ProxyConfiguration.builder()
-                .credentials(BasicCredentials.of("foo", "bar"))
-                .type(ProxyConfiguration.Type.DIRECT)
-                .build())
-                        .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("Neither credential nor host-and-port may be configured for DIRECT proxies");
+                        .credentials(BasicCredentials.of("foo", "bar"))
+                        .type(ProxyConfiguration.Type.DIRECT)
+                        .build())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Neither credential nor host-and-port may be configured for DIRECT proxies");
         assertThatThrownBy(() -> ProxyConfiguration.builder()
-                .type(ProxyConfiguration.Type.MESH)
-                .credentials(BasicCredentials.of("foo", "bar"))
-                .hostAndPort("localhost:1234")
-                .build())
-                        .isInstanceOf(IllegalArgumentException.class)
-                        .hasMessage("credentials only valid for HTTP proxies");
+                        .type(ProxyConfiguration.Type.MESH)
+                        .credentials(BasicCredentials.of("foo", "bar"))
+                        .hostAndPort("localhost:1234")
+                        .build())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("credentials only valid for HTTP proxies");
     }
 
     @Test
@@ -108,5 +110,4 @@ public final class ProxyConfigurationTests {
         assertThat(ObjectMappers.newClientObjectMapper().readValue(kebabCase, ProxyConfiguration.class))
                 .isEqualTo(config);
     }
-
 }

@@ -40,9 +40,8 @@ public final class ServiceConfigurationFactory {
     /** Returns the {@link ServiceConfiguration} for the given name. */
     public ServiceConfiguration get(String serviceName) {
         PartialServiceConfiguration partial = services.services().get(serviceName);
-        Preconditions.checkNotNull(partial,
-                "No configuration found for service",
-                SafeArg.of("serviceName", serviceName));
+        Preconditions.checkNotNull(
+                partial, "No configuration found for service", SafeArg.of("serviceName", serviceName));
         return propagateDefaults(serviceName, partial);
     }
 
@@ -71,26 +70,26 @@ public final class ServiceConfigurationFactory {
     private ServiceConfiguration propagateDefaults(String serviceName, PartialServiceConfiguration partial) {
         return ServiceConfiguration.builder()
                 .apiToken(orElse(partial.apiToken(), services.defaultApiToken()))
-                .security(orElse(partial.security(), services.defaultSecurity()).orElseThrow(
-                        () -> new IllegalArgumentException("Must provide default security or "
+                .security(orElse(partial.security(), services.defaultSecurity()).orElseThrow(() ->
+                        new IllegalArgumentException("Must provide default security or "
                                 + "service-specific security block for service: "
                                 + serviceName)))
                 .uris(partial.uris())
-                .connectTimeout(orElse(partial.connectTimeout(), services.defaultConnectTimeout())
-                        .map(t -> Duration.ofMillis(t.toMilliseconds())))
-                .readTimeout(orElse(partial.readTimeout(), services.defaultReadTimeout())
-                        .map(t -> Duration.ofMillis(t.toMilliseconds())))
-                .writeTimeout(orElse(partial.writeTimeout(), services.defaultWriteTimeout())
-                        .map(t -> Duration.ofMillis(t.toMilliseconds())))
+                .connectTimeout(orElse(partial.connectTimeout(), services.defaultConnectTimeout()).map(t ->
+                        Duration.ofMillis(t.toMilliseconds())))
+                .readTimeout(orElse(partial.readTimeout(), services.defaultReadTimeout()).map(t ->
+                        Duration.ofMillis(t.toMilliseconds())))
+                .writeTimeout(orElse(partial.writeTimeout(), services.defaultWriteTimeout()).map(t ->
+                        Duration.ofMillis(t.toMilliseconds())))
                 .maxNumRetries(partial.maxNumRetries())
-                .backoffSlotSize(orElse(partial.backoffSlotSize(), services.defaultBackoffSlotSize())
-                        .map(t -> Duration.ofMillis(t.toMilliseconds())))
+                .backoffSlotSize(orElse(partial.backoffSlotSize(), services.defaultBackoffSlotSize()).map(t ->
+                        Duration.ofMillis(t.toMilliseconds())))
                 .proxy(orElse(partial.proxyConfiguration(), services.defaultProxyConfiguration()))
-                .enableGcmCipherSuites(
-                        orElse(partial.enableGcmCipherSuites(), services.defaultEnableGcmCipherSuites()))
-                .fallbackToCommonNameVerification(orElse(
-                        partial.fallbackToCommonNameVerification(),
-                        services.defaultFallbackToCommonNameVerification()))
+                .enableGcmCipherSuites(orElse(partial.enableGcmCipherSuites(), services.defaultEnableGcmCipherSuites()))
+                .fallbackToCommonNameVerification(
+                        orElse(
+                                partial.fallbackToCommonNameVerification(),
+                                services.defaultFallbackToCommonNameVerification()))
                 .build();
     }
 

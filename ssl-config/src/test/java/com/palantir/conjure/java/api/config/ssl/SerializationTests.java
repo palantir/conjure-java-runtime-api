@@ -30,43 +30,32 @@ public final class SerializationTests {
     private static final ObjectMapper MAPPER = ObjectMappers.newClientObjectMapper();
 
     static final Path CA_TRUST_STORE_PATH = Paths.get("src", "test", "resources", "testCA", "testCA.jks");
-    static final Path SERVER_KEY_STORE_JKS_PATH = Paths.get(
-            "src",
-            "test",
-            "resources",
-            "testServer",
-            "testServer.jks");
+    static final Path SERVER_KEY_STORE_JKS_PATH = Paths.get("src", "test", "resources", "testServer", "testServer.jks");
     static final String SERVER_KEY_STORE_JKS_PASSWORD = "serverStore";
 
     @Test
     public void testJsonSerDe() throws IOException {
 
-        SslConfiguration sslConfig = SslConfiguration.of(
-                CA_TRUST_STORE_PATH,
-                SERVER_KEY_STORE_JKS_PATH,
-                SERVER_KEY_STORE_JKS_PASSWORD);
+        SslConfiguration sslConfig =
+                SslConfiguration.of(CA_TRUST_STORE_PATH, SERVER_KEY_STORE_JKS_PATH, SERVER_KEY_STORE_JKS_PASSWORD);
 
         assertThat(MAPPER.readValue(MAPPER.writeValueAsBytes(sslConfig), SslConfiguration.class)).isEqualTo(sslConfig);
     }
 
     @Test
     public void testJsonDeserialize() throws IOException {
-        SslConfiguration sslConfig = SslConfiguration.of(
-                CA_TRUST_STORE_PATH,
-                SERVER_KEY_STORE_JKS_PATH,
-                SERVER_KEY_STORE_JKS_PASSWORD);
+        SslConfiguration sslConfig =
+                SslConfiguration.of(CA_TRUST_STORE_PATH, SERVER_KEY_STORE_JKS_PATH, SERVER_KEY_STORE_JKS_PASSWORD);
 
         assertThat(MAPPER.readValue(JSON_STRING, SslConfiguration.class)).isEqualTo(sslConfig);
     }
 
-    private static final String JSON_STRING =
-            "{"
-                    + "\"trustStorePath\":\"src/test/resources/testCA/testCA.jks\","
-                    + "\"trustStoreType\":\"JKS\","
-                    + "\"keyStorePath\":\"src/test/resources/testServer/testServer.jks\","
-                    + "\"keyStorePassword\":\"serverStore\","
-                    + "\"keyStoreType\":\"JKS\","
-                    + "\"keyStoreKeyAlias\":null"
-                    + "}";
-
+    private static final String JSON_STRING = "{"
+            + "\"trustStorePath\":\"src/test/resources/testCA/testCA.jks\","
+            + "\"trustStoreType\":\"JKS\","
+            + "\"keyStorePath\":\"src/test/resources/testServer/testServer.jks\","
+            + "\"keyStorePassword\":\"serverStore\","
+            + "\"keyStoreType\":\"JKS\","
+            + "\"keyStoreKeyAlias\":null"
+            + "}";
 }

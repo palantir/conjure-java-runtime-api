@@ -62,14 +62,13 @@ public final class ServiceConfigurationFactoryTests {
     private static final boolean defaultFallbackToCn = true;
     private static final boolean fallbackToCn = false;
 
-    private final ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
-            .registerModule(new ShimJdk7Module())
-            .registerModule(new Jdk8Module());
+    private final ObjectMapper mapper =
+            new ObjectMapper(new YAMLFactory()).registerModule(new ShimJdk7Module()).registerModule(new Jdk8Module());
 
     @Test
     public void testIsServiceEnabled_noEnabledIfNoUrisOrServiceDoesNotExist() throws IOException {
-        ServiceConfigurationFactory factory = ServiceConfigurationFactory.of(
-                deserialize("configs/discovery-config-with-empty-uri.yml"));
+        ServiceConfigurationFactory factory =
+                ServiceConfigurationFactory.of(deserialize("configs/discovery-config-with-empty-uri.yml"));
 
         assertThat(factory.isEnabled("service1")).isFalse();
         assertThat(factory.isEnabled("service2")).isTrue();
@@ -209,12 +208,10 @@ public final class ServiceConfigurationFactoryTests {
                 + "\"read-timeout\":\"1 day\",\"write-timeout\":\"1 day\",\"backoff-slot-size\":\"1 day\"}";
 
         assertThat(ObjectMappers.newClientObjectMapper().writeValueAsString(deserialized)).isEqualTo(camelCase);
-        assertThat(ObjectMappers.newClientObjectMapper()
-                .readValue(camelCase, ServicesConfigBlock.class))
-                        .isEqualTo(deserialized);
-        assertThat(ObjectMappers.newClientObjectMapper()
-                .readValue(kebabCase, ServicesConfigBlock.class))
-                        .isEqualTo(deserialized);
+        assertThat(ObjectMappers.newClientObjectMapper().readValue(camelCase, ServicesConfigBlock.class))
+                .isEqualTo(deserialized);
+        assertThat(ObjectMappers.newClientObjectMapper().readValue(kebabCase, ServicesConfigBlock.class))
+                .isEqualTo(deserialized);
     }
 
     @Test
@@ -230,12 +227,10 @@ public final class ServiceConfigurationFactoryTests {
 
         assertThat(ObjectMappers.newClientObjectMapper().writeValueAsString(deserialized))
                 .isEqualTo(serializedCamelCase);
-        assertThat(ObjectMappers.newClientObjectMapper()
-                .readValue(serializedCamelCase, ServicesConfigBlock.class))
-                        .isEqualTo(deserialized);
-        assertThat(ObjectMappers.newClientObjectMapper()
-                .readValue(serializedKebabCase, ServicesConfigBlock.class))
-                        .isEqualTo(deserialized);
+        assertThat(ObjectMappers.newClientObjectMapper().readValue(serializedCamelCase, ServicesConfigBlock.class))
+                .isEqualTo(deserialized);
+        assertThat(ObjectMappers.newClientObjectMapper().readValue(serializedKebabCase, ServicesConfigBlock.class))
+                .isEqualTo(deserialized);
     }
 
     private ServicesConfigBlock deserialize(String file) {

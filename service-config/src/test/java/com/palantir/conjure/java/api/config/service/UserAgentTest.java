@@ -28,26 +28,16 @@ public class UserAgentTest {
     public void validAndInvalidNodeSyntax() {
         // Valid nodeId
         for (String nodeId : new String[] {
-                "nodeId",
-                "NODEID",
-                "node-id",
-                "node.id",
-                "nodeId.",
-                "192.168.0.1",
-                "my.server.foo.local"
+            "nodeId", "NODEID", "node-id", "node.id", "nodeId.", "192.168.0.1", "my.server.foo.local"
         }) {
             UserAgent.of(UserAgent.Agent.of("valid-service", "1.0.0"), nodeId);
         }
 
         // Invalid nodeId
-        for (String nodeId : new String[] {
-                ".nodeId",
-                "node$",
-                "node_id"
-        }) {
+        for (String nodeId : new String[] {".nodeId", "node$", "node_id"}) {
             assertThatLoggableExceptionThrownBy(
-                    () -> UserAgent.of(UserAgent.Agent.of("valid-service", "1.0.0"), nodeId))
-                            .isInstanceOf(IllegalArgumentException.class);
+                            () -> UserAgent.of(UserAgent.Agent.of("valid-service", "1.0.0"), nodeId))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -80,10 +70,10 @@ public class UserAgentTest {
     @Test
     public void testInvalidNodeId() {
         assertThatLoggableExceptionThrownBy(
-                () -> UserAgent.of(UserAgent.Agent.of("serviceName", "1.0.0"), "invalid node id"))
-                        .isInstanceOf(IllegalArgumentException.class)
-                        .hasExactlyArgs(SafeArg.of("nodeId", "invalid node id"))
-                        .hasLogMessage("Illegal node id format");
+                        () -> UserAgent.of(UserAgent.Agent.of("serviceName", "1.0.0"), "invalid node id"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasExactlyArgs(SafeArg.of("nodeId", "invalid node id"))
+                .hasLogMessage("Illegal node id format");
     }
 
     @Test
@@ -96,11 +86,11 @@ public class UserAgentTest {
     public void parse_handlesPrimaryAgent() {
         // Valid strings
         for (String agent : new String[] {
-                "service/1.2",
-                "service/1.2.3-2-g4658d8a",
-                "service/1.2.3-rc1-2-g4658d8a",
-                "service/10.20.30",
-                "service/10.20.30 (nodeId:myNode)",
+            "service/1.2",
+            "service/1.2.3-2-g4658d8a",
+            "service/1.2.3-rc1-2-g4658d8a",
+            "service/10.20.30",
+            "service/10.20.30 (nodeId:myNode)",
         }) {
             assertThat(UserAgents.format(UserAgents.parse(agent))).withFailMessage(agent).isEqualTo(agent);
         }
@@ -117,8 +107,7 @@ public class UserAgentTest {
 
         // Invalid syntax throws exception
         for (String agent : new String[] {
-                "s",
-                "foo|1.2.3",
+            "s", "foo|1.2.3",
         }) {
             assertThatLoggableExceptionThrownBy(() -> UserAgents.format(UserAgents.parse(agent)))
                     .isInstanceOf(IllegalArgumentException.class)
@@ -130,10 +119,8 @@ public class UserAgentTest {
     @Test
     public void parse_handlesInformationalAgents() {
         // Valid strings
-        for (String agent : new String[] {
-                "serviceA/1.2.3 serviceB/4.5.6",
-                "serviceB/1.2.3 (nodeId:myNode) serviceB/4.5.6"
-        }) {
+        for (String agent :
+                new String[] {"serviceA/1.2.3 serviceB/4.5.6", "serviceB/1.2.3 (nodeId:myNode) serviceB/4.5.6"}) {
             assertThat(UserAgents.format(UserAgents.parse(agent))).withFailMessage(agent).isEqualTo(agent);
         }
 
@@ -156,8 +143,8 @@ public class UserAgentTest {
 
     @Test
     public void parse_canParseBrowserAgentWithEmptyComment() {
-        String chrome = "Mozilla/5.0 ( ) AppleWebKit/537.36 (KHTML, like Gecko) "
-                + "Chrome/61.0.3163.100 Safari/537.36";
+        String chrome =
+                "Mozilla/5.0 ( ) AppleWebKit/537.36 (KHTML, like Gecko) " + "Chrome/61.0.3163.100 Safari/537.36";
         String expected = "Mozilla/5.0 AppleWebKit/537.36 Chrome/61.0.3163.100 Safari/537.36";
         assertThat(UserAgents.format(UserAgents.tryParse(chrome))).isEqualTo(expected);
         assertThat(UserAgents.format(UserAgents.parse(chrome))).isEqualTo(expected);
@@ -175,5 +162,4 @@ public class UserAgentTest {
         assertThat(UserAgents.format(UserAgents.tryParse("serviceA/1.2.3 bogus|1.2.3 foo bar (boom)")))
                 .isEqualTo("serviceA/1.2.3");
     }
-
 }

@@ -34,12 +34,11 @@ public final class RemoteExceptionAssertTest {
         Assertions.assertThat(new RemoteException(error, actualType.httpErrorCode()))
                 .isGeneratedFromErrorType(actualType);
 
-        assertThatThrownBy(
-                () -> Assertions.assertThat(new RemoteException(error, actualType.httpErrorCode() + 1))
+        assertThatThrownBy(() -> Assertions.assertThat(new RemoteException(error, actualType.httpErrorCode() + 1))
                         .isGeneratedFromErrorType(actualType))
-                                .isInstanceOf(AssertionError.class)
-                                .hasMessage("Expected error status to be %s, but found %s",
-                                        actualType.httpErrorCode(),
-                                        actualType.httpErrorCode() + 1);
+                .isInstanceOf(AssertionError.class)
+                .hasMessage(
+                        "Expected error status to be %s, but found %s",
+                        actualType.httpErrorCode(), actualType.httpErrorCode() + 1);
     }
 }

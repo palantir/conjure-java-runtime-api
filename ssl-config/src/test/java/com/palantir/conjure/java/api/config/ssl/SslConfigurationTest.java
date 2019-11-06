@@ -44,12 +44,9 @@ public final class SslConfigurationTest {
                 + "\"key-store-path\":\"keystore.jks\",\"key-store-password\":\"password\","
                 + "\"key-store-type\":\"JKS\",\"key-store-key-alias\":\"alias\"}";
 
-        assertThat(MAPPER.writeValueAsString(serialized))
-                .isEqualTo(deserializedCamelCase);
-        assertThat(MAPPER.readValue(deserializedCamelCase, SslConfiguration.class))
-                .isEqualTo(serialized);
-        assertThat(MAPPER.readValue(deserializedKebabCase, SslConfiguration.class))
-                .isEqualTo(serialized);
+        assertThat(MAPPER.writeValueAsString(serialized)).isEqualTo(deserializedCamelCase);
+        assertThat(MAPPER.readValue(deserializedCamelCase, SslConfiguration.class)).isEqualTo(serialized);
+        assertThat(MAPPER.readValue(deserializedKebabCase, SslConfiguration.class)).isEqualTo(serialized);
     }
 
     @Test
@@ -61,11 +58,8 @@ public final class SslConfigurationTest {
                 + "\"key-store-path\":null,\"key-store-password\":null,\"key-store-type\":\"JKS\","
                 + "\"key-store-key-alias\":null}";
 
-        assertThat(MAPPER.writeValueAsString(serialized))
-                .isEqualTo(deserializedCamelCase);
-        assertThat(MAPPER.readValue(deserializedCamelCase, SslConfiguration.class))
-                .isEqualTo(serialized);
-        assertThat(MAPPER.readValue(deserializedKebabCase, SslConfiguration.class))
-                .isEqualTo(serialized);
+        assertThat(MAPPER.writeValueAsString(serialized)).isEqualTo(deserializedCamelCase);
+        assertThat(MAPPER.readValue(deserializedCamelCase, SslConfiguration.class)).isEqualTo(serialized);
+        assertThat(MAPPER.readValue(deserializedKebabCase, SslConfiguration.class)).isEqualTo(serialized);
     }
 }

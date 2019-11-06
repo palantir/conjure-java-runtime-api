@@ -34,9 +34,7 @@ import org.slf4j.LoggerFactory;
 
 public final class UserAgents {
 
-    /**
-     * The {@link UserAgent.Agent#name agent name} identifying the conjure-java library in a {@link UserAgent}.
-     */
+    /** The {@link UserAgent.Agent#name agent name} identifying the conjure-java library in a {@link UserAgent}. */
     public static final String CONJURE_AGENT_NAME = "conjure-java-runtime";
 
     private static final Logger log = LoggerFactory.getLogger(UserAgents.class);
@@ -46,8 +44,8 @@ public final class UserAgents {
     private static final Pattern NODE_REGEX = Pattern.compile("[a-zA-Z0-9][a-zA-Z0-9.\\-]*");
     private static final Pattern VERSION_REGEX =
             Pattern.compile("^[0-9]+(\\.[0-9]+)*(-rc[0-9]+)?(-[0-9]+-g[a-f0-9]+)?$");
-    private static final Pattern SEGMENT_PATTERN = Pattern.compile(
-            String.format("(%s)/(%s)( \\((.+?)\\))?", NAME_REGEX, LENIENT_VERSION_REGEX));
+    private static final Pattern SEGMENT_PATTERN =
+            Pattern.compile(String.format("(%s)/(%s)( \\((.+?)\\))?", NAME_REGEX, LENIENT_VERSION_REGEX));
 
     private UserAgents() {}
 
@@ -61,8 +59,8 @@ public final class UserAgents {
         List<String> agents = new LinkedList<>();
         agents.add(formatSingleAgent(userAgent.primary(), primaryComments));
 
-        return Stream.concat(agents.stream(),
-                userAgent.informational().stream().map(a -> formatSingleAgent(a, Collections.emptyMap())))
+        return Stream.concat(agents.stream(), userAgent.informational().stream()
+                        .map(a -> formatSingleAgent(a, Collections.emptyMap())))
                 .map(Object::toString)
                 .collect(Collectors.joining(" "));
     }
@@ -73,19 +71,12 @@ public final class UserAgents {
      */
     private static String formatSingleAgent(UserAgent.Agent agent, Map<String, String> comments) {
         // TODO(rfink): Think about validation comments here? Must not contain special characters.
-        StringBuilder formatted = new StringBuilder()
-                .append(agent.name())
-                .append("/")
-                .append(agent.version());
+        StringBuilder formatted = new StringBuilder().append(agent.name()).append("/").append(agent.version());
 
-        String formattedComments = comments.entrySet()
-                .stream()
-                .map(e -> e.getKey() + ":" + e.getValue())
-                .collect(Collectors.joining(";"));
+        String formattedComments =
+                comments.entrySet().stream().map(e -> e.getKey() + ":" + e.getValue()).collect(Collectors.joining(";"));
         if (!formattedComments.isEmpty()) {
-            formatted.append(" (")
-                    .append(formattedComments)
-                    .append(')');
+            formatted.append(" (").append(formattedComments).append(')');
         }
         return formatted.toString();
     }
@@ -93,8 +84,8 @@ public final class UserAgents {
     /**
      * Parses the given string into a {@link UserAgent} or throws an {@link IllegalArgumentException} if no correctly
      * formatted primary user agent can be found. Incorrectly formatted informational agents are omitted.
-     * <p>
-     * Valid user agent strings loosely follow RFC 7230 (https://tools.ietf.org/html/rfc7230#section-3.2.6).
+     *
+     * <p>Valid user agent strings loosely follow RFC 7230 (https://tools.ietf.org/html/rfc7230#section-3.2.6).
      */
     public static UserAgent parse(String userAgent) {
         Preconditions.checkNotNull(userAgent, "userAgent must not be null");
@@ -140,13 +131,13 @@ public final class UserAgents {
         if (!foundFirst) {
             if (lenient) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Invalid user agent '{}', falling back to default/unknown agent",
-                            SafeArg.of("userAgent", userAgent));
+                    log.debug("Invalid user agent '{}', falling back to default/unknown agent", SafeArg.of(
+                            "userAgent", userAgent));
                 }
                 return builder.primary(UserAgent.Agent.of("unknown", UserAgent.Agent.DEFAULT_VERSION)).build();
             } else {
-                throw new SafeIllegalArgumentException("Failed to parse user agent string",
-                        SafeArg.of("userAgent", userAgent));
+                throw new SafeIllegalArgumentException(
+                        "Failed to parse user agent string", SafeArg.of("userAgent", userAgent));
             }
         }
 

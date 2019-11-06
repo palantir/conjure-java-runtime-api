@@ -41,7 +41,7 @@ public abstract class ProxyConfiguration {
         DIRECT,
 
         /**
-         * Use an http-proxy specified by {@link ProxyConfiguration#hostAndPort()}  and (optionally) {@link
+         * Use an http-proxy specified by {@link ProxyConfiguration#hostAndPort()} and (optionally) {@link
          * ProxyConfiguration#credentials()}.
          */
         HTTP,
@@ -61,15 +61,13 @@ public abstract class ProxyConfiguration {
     @JsonAlias("host-and-port")
     public abstract Optional<String> hostAndPort();
 
-    /**
-     * Credentials if the proxy needs authentication.
-     */
+    /** Credentials if the proxy needs authentication. */
     public abstract Optional<BasicCredentials> credentials();
 
     /**
      * The type of Proxy. Defaults to {@link Type#HTTP}.
-     * <p>
-     * TODO(rfink): Would be great to make this field required, but that's a config break.
+     *
+     * <p>TODO(rfink): Would be great to make this field required, but that's a config break.
      */
     @Value.Default
     @SuppressWarnings("checkstyle:designforextension")
@@ -84,15 +82,14 @@ public abstract class ProxyConfiguration {
             case MESH:
             case HTTP:
                 Preconditions.checkArgument(
-                        hostAndPort().isPresent(),
-                        "host-and-port must be configured for an HTTP proxy");
+                        hostAndPort().isPresent(), "host-and-port must be configured for an HTTP proxy");
                 HostAndPort host = HostAndPort.fromString(hostAndPort().get());
-                Preconditions.checkArgument(host.hasPort(),
-                        "Given hostname does not contain a port number",
-                        SafeArg.of("hostname", host));
+                Preconditions.checkArgument(
+                        host.hasPort(), "Given hostname does not contain a port number", SafeArg.of("hostname", host));
                 break;
             case DIRECT:
-                Preconditions.checkArgument(!hostAndPort().isPresent() && !credentials().isPresent(),
+                Preconditions.checkArgument(
+                        !hostAndPort().isPresent() && !credentials().isPresent(),
                         "Neither credential nor host-and-port may be configured for DIRECT proxies");
                 break;
             default:

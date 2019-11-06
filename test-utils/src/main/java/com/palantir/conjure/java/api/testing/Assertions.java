@@ -51,10 +51,9 @@ public class Assertions extends org.assertj.core.api.Assertions {
             throw Failures.instance().failure("Expecting code to raise a throwable.");
         }
         if (!clazz.isInstance(throwable)) {
-            throw Failures.instance()
-                    .failure(String.format("Expecting code to throw a %s, but caught a %s.",
-                            clazz.getCanonicalName(),
-                            throwable.getClass().getCanonicalName()));
+            throw Failures.instance().failure(String.format(
+                    "Expecting code to throw a %s, but caught a %s.",
+                    clazz.getCanonicalName(), throwable.getClass().getCanonicalName()));
         }
     }
 }

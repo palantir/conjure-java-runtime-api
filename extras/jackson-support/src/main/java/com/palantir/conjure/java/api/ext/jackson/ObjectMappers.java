@@ -31,21 +31,22 @@ public final class ObjectMappers {
 
     /**
      * Returns a default ObjectMapper with settings adjusted for use in clients.
-     * <p>
-     * Settings:
+     *
+     * <p>Settings:
+     *
      * <ul>
      *   <li>Ignore unknown properties found during deserialization.
      * </ul>
      */
     public static ObjectMapper newClientObjectMapper() {
-        return withDefaultModules(new ObjectMapper())
-                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        return withDefaultModules(new ObjectMapper()).disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     }
 
     /**
      * Returns a default ObjectMapper which uses the cbor factory with settings adjusted for use in clients.
-     * <p>
-     * Settings:
+     *
+     * <p>Settings:
+     *
      * <ul>
      *   <li>Ignore unknown properties found during deserialization.
      * </ul>
@@ -57,21 +58,22 @@ public final class ObjectMappers {
 
     /**
      * Returns a default ObjectMapper with settings adjusted for use in servers.
-     * <p>
-     * Settings:
+     *
+     * <p>Settings:
+     *
      * <ul>
      *   <li>Throw on unknown properties found during deserialization.
      * </ul>
      */
     public static ObjectMapper newServerObjectMapper() {
-        return withDefaultModules(new ObjectMapper())
-                .enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        return withDefaultModules(new ObjectMapper()).enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     }
 
     /**
      * Returns a default ObjectMapper which uses the cbor factory with settings adjusted for use in servers.
-     * <p>
-     * Settings:
+     *
+     * <p>Settings:
+     *
      * <ul>
      *   <li>Throw on unknown properties found during deserialization.
      * </ul>
@@ -83,10 +85,11 @@ public final class ObjectMappers {
 
     /**
      * Configures provided ObjectMapper with default modules and settings.
-     * <p>
-     * Modules: Guava, JDK7, JDK8, Afterburner, JavaTime
-     * <p>
-     * Settings:
+     *
+     * <p>Modules: Guava, JDK7, JDK8, Afterburner, JavaTime
+     *
+     * <p>Settings:
+     *
      * <ul>
      *   <li>Dates written as ISO-8601 strings.
      *   <li>Dates remain in received timezone.
@@ -95,8 +98,7 @@ public final class ObjectMappers {
      * </ul>
      */
     public static ObjectMapper withDefaultModules(ObjectMapper mapper) {
-        return mapper
-                .registerModule(new GuavaModule())
+        return mapper.registerModule(new GuavaModule())
                 .registerModule(new ShimJdk7Module())
                 .registerModule(new Jdk8Module().configureAbsentsAsNulls(true))
                 .registerModule(new AfterburnerModule())

@@ -22,9 +22,7 @@ import com.palantir.logsafe.SafeLoggable;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * An exception thrown by an RPC client to indicate remote/server-side failure from a non-remoting server.
- */
+/** An exception thrown by an RPC client to indicate remote/server-side failure from a non-remoting server. */
 public final class UnknownRemoteException extends RuntimeException implements SafeLoggable {
     private static final long serialVersionUID = 1L;
 
@@ -56,5 +54,4 @@ public final class UnknownRemoteException extends RuntimeException implements Sa
     public List<Arg<?>> getArgs() {
         return Collections.singletonList(SafeArg.of("status", getStatus()));
     }
-
 }

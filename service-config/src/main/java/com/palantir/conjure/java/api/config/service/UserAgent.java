@@ -45,10 +45,7 @@ public interface UserAgent {
 
     /** Creates a new {@link UserAgent} with the given {@link #primary} agent and originating node id. */
     static UserAgent of(Agent agent, String nodeId) {
-        return ImmutableUserAgent.builder()
-                .nodeId(nodeId)
-                .primary(agent)
-                .build();
+        return ImmutableUserAgent.builder().nodeId(nodeId).primary(agent).build();
     }
 
     /**
@@ -64,18 +61,14 @@ public interface UserAgent {
      * given agent.
      */
     default UserAgent addAgent(Agent agent) {
-        return ImmutableUserAgent.builder()
-                .from(this)
-                .addInformational(agent)
-                .build();
+        return ImmutableUserAgent.builder().from(this).addInformational(agent).build();
     }
 
     @Value.Check
     default void check() {
         if (nodeId().isPresent()) {
-            Preconditions.checkArgument(UserAgents.isValidNodeId(nodeId().get()),
-                    "Illegal node id format",
-                    SafeArg.of("nodeId", nodeId().get()));
+            Preconditions.checkArgument(UserAgents.isValidNodeId(nodeId().get()), "Illegal node id format", SafeArg.of(
+                    "nodeId", nodeId().get()));
         }
     }
 
@@ -91,13 +84,12 @@ public interface UserAgent {
 
         @Value.Check
         default void check() {
-            Preconditions.checkArgument(UserAgents.isValidName(name()),
-                    "Illegal agent name format",
-                    SafeArg.of("name", name()));
+            Preconditions.checkArgument(
+                    UserAgents.isValidName(name()), "Illegal agent name format", SafeArg.of("name", name()));
             // Should never hit the following.
-            Preconditions.checkArgument(UserAgents.isValidVersion(version()),
-                    "Illegal version format. This is a bug",
-                    SafeArg.of("version", version()));
+            Preconditions.checkArgument(
+                    UserAgents.isValidVersion(version()), "Illegal version format. This is a bug", SafeArg.of(
+                            "version", version()));
         }
 
         static Agent of(String name, String version) {

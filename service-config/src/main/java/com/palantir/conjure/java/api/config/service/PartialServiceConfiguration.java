@@ -72,6 +72,7 @@ public interface PartialServiceConfiguration {
 
     /**
      * Enables fallback to common name verification, defaults to false.
+     *
      * @deprecated This option will be removed by the end of 2019. Certificates are expected to provide valid SANs.
      */
     @Deprecated
@@ -83,10 +84,7 @@ public interface PartialServiceConfiguration {
     Optional<ProxyConfiguration> proxyConfiguration();
 
     static PartialServiceConfiguration of(List<String> uris, Optional<SslConfiguration> sslConfig) {
-        return PartialServiceConfiguration.builder()
-                .uris(uris)
-                .security(sslConfig)
-                .build();
+        return PartialServiceConfiguration.builder().uris(uris).security(sslConfig).build();
     }
 
     static Builder builder() {

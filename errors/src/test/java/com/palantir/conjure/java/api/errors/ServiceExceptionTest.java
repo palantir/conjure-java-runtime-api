@@ -33,10 +33,7 @@ public final class ServiceExceptionTest {
 
     @Test
     public void testExceptionMessageContainsNoArgs_safeLogMessageContainsSafeArgsOnly() {
-        Arg<?>[] args = {
-                SafeArg.of("arg1", "foo"),
-                UnsafeArg.of("arg2", 2),
-                UnsafeArg.of("arg3", null)};
+        Arg<?>[] args = {SafeArg.of("arg1", "foo"), UnsafeArg.of("arg2", 2), UnsafeArg.of("arg3", null)};
         ServiceException ex = new ServiceException(ERROR, args);
 
         assertThat(ex.getLogMessage()).isEqualTo(EXPECTED_ERROR_MSG);
@@ -93,10 +90,8 @@ public final class ServiceExceptionTest {
 
     @Test
     public void testErrorIdsAreInheritedFromRemoteExceptions() {
-        RemoteException rootCause = new RemoteException(new SerializableError.Builder()
-                .errorCode("errorCode")
-                .errorName("errorName")
-                .build(), 500);
+        RemoteException rootCause = new RemoteException(
+                new SerializableError.Builder().errorCode("errorCode").errorName("errorName").build(), 500);
         SafeRuntimeException intermediate = new SafeRuntimeException("Handled an exception", rootCause);
         ServiceException parent = new ServiceException(ERROR, intermediate);
         assertThat(parent.getErrorInstanceId()).isEqualTo(rootCause.getError().errorInstanceId());

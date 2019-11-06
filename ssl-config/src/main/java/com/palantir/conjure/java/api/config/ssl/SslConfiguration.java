@@ -72,8 +72,7 @@ public abstract class SslConfiguration {
                     "keyStorePath and keyStorePassword must both be present or both be absent");
         }
         if (keyStoreKeyAlias().isPresent() && !keyStorePath().isPresent()) {
-            throw new SafeIllegalArgumentException(
-                    "keyStorePath must be present if keyStoreKeyAlias is present");
+            throw new SafeIllegalArgumentException("keyStorePath must be present if keyStoreKeyAlias is present");
         }
     }
 

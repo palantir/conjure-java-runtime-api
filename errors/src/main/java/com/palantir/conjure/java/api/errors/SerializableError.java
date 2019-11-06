@@ -50,8 +50,8 @@ public abstract class SerializableError implements Serializable {
     @JsonProperty("errorCode")
     @Value.Default
     public String errorCode() {
-        return getExceptionClass().orElseThrow(() -> new SafeIllegalStateException(
-                "Expected either 'errorCode' or 'exceptionClass' to be set"));
+        return getExceptionClass().orElseThrow(() ->
+                new SafeIllegalStateException("Expected either 'errorCode' or 'exceptionClass' to be set"));
     }
 
     /**
@@ -62,8 +62,8 @@ public abstract class SerializableError implements Serializable {
     @JsonProperty("errorName")
     @Value.Default
     public String errorName() {
-        return getMessage().orElseThrow(() -> new SafeIllegalStateException(
-                "Expected either 'errorName' or 'message' to be set"));
+        return getMessage()
+                .orElseThrow(() -> new SafeIllegalStateException("Expected either 'errorName' or 'message' to be set"));
     }
 
     /**
@@ -84,6 +84,7 @@ public abstract class SerializableError implements Serializable {
 
     /**
      * Returns the deprecated "exceptionClass" field returned by remoting2 servers.
+     *
      * @deprecated Used by the serialization-mechanism for back-compat only. Do not use.
      */
     @Deprecated
@@ -94,6 +95,7 @@ public abstract class SerializableError implements Serializable {
 
     /**
      * Returns the deprecated "message" field returned by remoting2 servers.
+     *
      * @deprecated Used by the serialization-mechanism for back-compat only. Do not use.
      */
     @Deprecated
