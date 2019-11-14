@@ -16,7 +16,6 @@
 
 package com.palantir.conjure.java.api.errors;
 
-import com.google.common.collect.ImmutableList;
 import com.palantir.logsafe.Arg;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.SafeLoggable;
