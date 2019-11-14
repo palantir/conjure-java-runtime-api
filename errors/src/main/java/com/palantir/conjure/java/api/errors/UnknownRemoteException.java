@@ -54,7 +54,9 @@ public final class UnknownRemoteException extends RuntimeException implements Sa
 
     @Override
     public List<Arg<?>> getArgs() {
-        return Collections.singletonList(SafeArg.of("status", getStatus()));
+        return Collections.singletonList(
+            SafeArg.of("status", getStatus()),
+            UnsafeArg.of("body", getBody()));
     }
 
 }
