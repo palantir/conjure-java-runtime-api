@@ -21,6 +21,7 @@ import com.palantir.logsafe.Arg;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.SafeLoggable;
 import com.palantir.logsafe.UnsafeArg;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -55,9 +56,11 @@ public final class UnknownRemoteException extends RuntimeException implements Sa
 
     @Override
     public List<Arg<?>> getArgs() {
-        return ImmutableList.of(
-            SafeArg.of("status", getStatus()),
-            UnsafeArg.of("body", getBody()));
+        List<Arg<?>> args = new ArrayList<>();
+        args.add(SafeArg.of("status", getStatus()));
+        args.add(UnsafeArg.of("body", getBody()));
+
+        return args;
     }
 
 }
