@@ -21,7 +21,10 @@ import com.palantir.conjure.java.api.errors.ServiceException;
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.assertj.core.internal.Failures;
+import org.assertj.core.util.CanIgnoreReturnValue;
+import org.assertj.core.util.CheckReturnValue;
 
+@CheckReturnValue
 public class Assertions extends org.assertj.core.api.Assertions {
 
     Assertions() {}
@@ -34,12 +37,14 @@ public class Assertions extends org.assertj.core.api.Assertions {
         return new RemoteExceptionAssert(actual);
     }
 
+    @CanIgnoreReturnValue
     public static ServiceExceptionAssert assertThatServiceExceptionThrownBy(ThrowingCallable shouldRaiseThrowable) {
         Throwable throwable = AssertionsForClassTypes.catchThrowable(shouldRaiseThrowable);
         checkThrowableIsOfType(throwable, ServiceException.class);
         return new ServiceExceptionAssert((ServiceException) throwable);
     }
 
+    @CanIgnoreReturnValue
     public static RemoteExceptionAssert assertThatRemoteExceptionThrownBy(ThrowingCallable shouldRaiseThrowable) {
         Throwable throwable = AssertionsForClassTypes.catchThrowable(shouldRaiseThrowable);
         checkThrowableIsOfType(throwable, RemoteException.class);
