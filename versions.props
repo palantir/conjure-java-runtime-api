@@ -1,9 +1,9 @@
-com.fasterxml.jackson.*:jackson-* = 2.9.9
+com.fasterxml.jackson.*:jackson-* = 2.10.2
 com.google.code.findbugs:jsr305 = 3.0.2
-com.palantir.safe-logging:* = 1.11.0
+com.palantir.safe-logging:* = 1.13.0
 com.palantir.tokens:auth-tokens = 3.6.1
 org.apache.commons:commons-lang3 = 3.9
 org.assertj:assertj-core = 3.14.0
-org.immutables:value = 2.8.1
+org.immutables:value = 2.8.3
 org.junit.jupiter:* = 5.5.2
-org.mockito:mockito-core = 3.1.0
+org.mockito:mockito-core = 3.2.4
