@@ -91,4 +91,33 @@ public final class SslConfigurationTest {
                 .keyStoreType(SslConfiguration.StoreType.PEM)
                 .build()).doesNotThrowAnyException();
     }
+
+    @Test
+    public void testDefaultTypeIsPem() {
+        SslConfiguration sslConfiguration = SslConfiguration.builder()
+                .trustStorePath(Paths.get("cert.cer"))
+                .keyStorePath(Paths.get("key.pem"))
+                .keyStorePassword("password")
+                .build();
+        assertThat(sslConfiguration.trustStoreType()).isEqualTo(SslConfiguration.StoreType.PEM);
+        assertThat(sslConfiguration.keyStoreType()).isEqualTo(SslConfiguration.StoreType.PEM);
+    }
+
+    @Test
+    public void testDefaultTypeIsJKS() {
+        SslConfiguration sslConfiguration = SslConfiguration.of(Paths.get("truststore.jks"));
+        assertThat(sslConfiguration.trustStoreType()).isEqualTo(SslConfiguration.StoreType.JKS);
+        assertThat(sslConfiguration.keyStoreType()).isEqualTo(SslConfiguration.StoreType.JKS);
+    }
+
+    @Test
+    public void testDefaultType() {
+        SslConfiguration sslConfiguration = SslConfiguration.builder()
+                .trustStorePath(Paths.get("cert.cer"))
+                .keyStorePath(Paths.get("keystore.jks"))
+                .keyStorePassword("password")
+                .build();
+        assertThat(sslConfiguration.trustStoreType()).isEqualTo(SslConfiguration.StoreType.PEM);
+        assertThat(sslConfiguration.keyStoreType()).isEqualTo(SslConfiguration.StoreType.JKS);
+    }   
 }

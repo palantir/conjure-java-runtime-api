@@ -35,8 +35,6 @@ public abstract class SslConfiguration {
         PUPPET
     }
 
-    private static final StoreType DEFAULT_STORE_TYPE = StoreType.JKS;
-
     @JsonAlias("trust-store-path")
     public abstract Path trustStorePath();
 
@@ -44,7 +42,11 @@ public abstract class SslConfiguration {
     @Value.Default
     @JsonAlias("trust-store-type")
     public StoreType trustStoreType() {
-        return DEFAULT_STORE_TYPE;
+        if (trustStorePath().getFileName().toString().endsWith("jks")) {
+            return StoreType.JKS;
+        } else {
+            return StoreType.PEM;
+        }
     }
 
     @JsonAlias("key-store-path")
@@ -58,7 +60,11 @@ public abstract class SslConfiguration {
     @Value.Default
     @JsonAlias("key-store-type")
     public StoreType keyStoreType() {
-        return DEFAULT_STORE_TYPE;
+        if (keyStorePath().map(keyStore ->  keyStore.getFileName().toString().endsWith("jks")).orElse(true)) {
+            return StoreType.JKS;
+        } else {
+            return StoreType.PEM;
+        }
     }
 
     @JsonAlias("key-store-key-alias")

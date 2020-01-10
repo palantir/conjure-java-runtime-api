@@ -43,8 +43,8 @@ public final class ServiceConfigurationFactoryTests {
 
     private static final BearerToken apiToken = BearerToken.valueOf("token");
     private static final BearerToken defaultApiToken = BearerToken.valueOf("defaultToken");
-    private static final SslConfiguration security = SslConfiguration.of(mock(Path.class));
-    private static final SslConfiguration defaultSecurity = SslConfiguration.of(mock(Path.class));
+    private static final SslConfiguration security = SslConfiguration.of(Paths.get("store.jks"));
+    private static final SslConfiguration defaultSecurity = SslConfiguration.of(Paths.get("default-store.jks"));
     private static final HumanReadableDuration connectTimeout = HumanReadableDuration.seconds(1);
     private static final HumanReadableDuration defaultConnectTimeout = HumanReadableDuration.seconds(2);
     private static final HumanReadableDuration readTimeout = HumanReadableDuration.minutes(1);
