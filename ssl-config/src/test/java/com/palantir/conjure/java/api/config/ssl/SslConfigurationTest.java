@@ -17,9 +17,12 @@
 package com.palantir.conjure.java.api.config.ssl;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.palantir.conjure.java.api.ext.jackson.ObjectMappers;
+import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import java.nio.file.Paths;
 import org.junit.jupiter.api.Test;
 
@@ -67,5 +70,25 @@ public final class SslConfigurationTest {
                 .isEqualTo(serialized);
         assertThat(MAPPER.readValue(deserializedKebabCase, SslConfiguration.class))
                 .isEqualTo(serialized);
+    }
+
+    @Test
+    public void jksKeystorePassword() {
+        assertThatThrownBy(() -> SslConfiguration.builder()
+                .trustStorePath(Paths.get("truststore.jks"))
+                .keyStorePath(Paths.get("keystore.jks"))
+                .keyStoreType(SslConfiguration.StoreType.JKS)
+                .build())
+                        .isInstanceOf(SafeIllegalArgumentException.class)
+                        .hasMessage("keyStorePassword must be present if keyStoreType is JKS");
+    }
+
+    @Test
+    public void nonJksKeystorePassword() {
+        assertThatCode(() -> SslConfiguration.builder()
+                .trustStorePath(Paths.get("truststore.jks"))
+                .keyStorePath(Paths.get("key.pem"))
+                .keyStoreType(SslConfiguration.StoreType.PEM)
+                .build()).doesNotThrowAnyException();
     }
 }
