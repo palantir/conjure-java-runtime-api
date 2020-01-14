@@ -104,7 +104,7 @@ public final class SslConfigurationTest {
     }
 
     @Test
-    public void testDefaultTypeIsJKS() {
+    public void testDefaultTypeIsJks() {
         SslConfiguration sslConfiguration = SslConfiguration.of(Paths.get("truststore.jks"));
         assertThat(sslConfiguration.trustStoreType()).isEqualTo(SslConfiguration.StoreType.JKS);
         assertThat(sslConfiguration.keyStoreType()).isEqualTo(SslConfiguration.StoreType.JKS);

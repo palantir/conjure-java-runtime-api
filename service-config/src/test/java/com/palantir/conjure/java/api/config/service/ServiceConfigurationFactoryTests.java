@@ -18,7 +18,6 @@ package com.palantir.conjure.java.api.config.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -32,7 +31,6 @@ import com.palantir.conjure.java.api.ext.jackson.ShimJdk7Module;
 import com.palantir.tokens.auth.BearerToken;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.Optional;
