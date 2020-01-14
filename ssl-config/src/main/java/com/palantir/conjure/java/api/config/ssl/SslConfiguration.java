@@ -60,7 +60,7 @@ public abstract class SslConfiguration {
     @Value.Default
     @JsonAlias("key-store-type")
     public StoreType keyStoreType() {
-        if (keyStorePath().map(keyStore ->  keyStore.getFileName().toString().endsWith("jks")).orElse(true)) {
+        if (keyStorePath().map(keyStore -> keyStore.getFileName().toString().endsWith("jks")).orElse(true)) {
             return StoreType.JKS;
         } else {
             return StoreType.PEM;
