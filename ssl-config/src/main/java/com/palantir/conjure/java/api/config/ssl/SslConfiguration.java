@@ -45,7 +45,7 @@ public abstract class SslConfiguration {
     @Value.Default
     @JsonAlias("trust-store-type")
     public StoreType trustStoreType() {
-        if (PEM_EXTENSIONS.stream().anyMatch(ext -> trustStorePath().getFileName().toString().endsWith(ext))) {
+        if (isPemExtension(trustStorePath())) {
             return StoreType.PEM;
         } else {
             return StoreType.JKS;
@@ -63,9 +63,7 @@ public abstract class SslConfiguration {
     @Value.Default
     @JsonAlias("key-store-type")
     public StoreType keyStoreType() {
-        if (keyStorePath().map(keyStore -> PEM_EXTENSIONS.stream()
-                .anyMatch(ext -> keyStore.getFileName().toString().endsWith(ext)))
-                .orElse(false)) {
+        if (keyStorePath().map(this::isPemExtension).orElse(false)) {
             return StoreType.PEM;
         } else {
             return StoreType.JKS;
@@ -86,6 +84,10 @@ public abstract class SslConfiguration {
             throw new SafeIllegalArgumentException(
                     "keyStorePath must be present if keyStoreKeyAlias is present");
         }
+    }
+
+    protected final boolean isPemExtension(Path filePath) {
+        return PEM_EXTENSIONS.stream().anyMatch(ext -> filePath.getFileName().toString().endsWith(ext));
     }
 
     public static SslConfiguration of(Path trustStorePath) {
