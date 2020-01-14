@@ -67,7 +67,7 @@ public abstract class SslConfiguration {
 
     @Value.Check
     protected final void check() {
-        if (keyStorePath().isPresent() && keyStoreType().equals(StoreType.JKS) != keyStorePassword().isPresent()) {
+        if (keyStorePath().isPresent() && keyStoreType().equals(StoreType.JKS) && !keyStorePassword().isPresent()) {
             throw new SafeIllegalArgumentException(
                     "keyStorePassword must be present if keyStoreType is JKS");
         }
