@@ -18,6 +18,7 @@ package com.palantir.conjure.java.api.config.ssl;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.google.common.collect.ImmutableSet;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import java.nio.file.Path;
 import java.util.Optional;
@@ -28,14 +29,14 @@ import org.immutables.value.Value;
 @ImmutablesStyle
 public abstract class SslConfiguration {
 
+    private static final ImmutableSet<String> PEM_EXTENSIONS = ImmutableSet.of("key", "pem", "cer", "crt");
+
     public enum StoreType {
         JKS,
         PEM,
         PKCS12,
         PUPPET
     }
-
-    private static final StoreType DEFAULT_STORE_TYPE = StoreType.JKS;
 
     @JsonAlias("trust-store-path")
     public abstract Path trustStorePath();
@@ -44,7 +45,11 @@ public abstract class SslConfiguration {
     @Value.Default
     @JsonAlias("trust-store-type")
     public StoreType trustStoreType() {
-        return DEFAULT_STORE_TYPE;
+        if (isPemExtension(trustStorePath())) {
+            return StoreType.PEM;
+        } else {
+            return StoreType.JKS;
+        }
     }
 
     @JsonAlias("key-store-path")
@@ -58,7 +63,11 @@ public abstract class SslConfiguration {
     @Value.Default
     @JsonAlias("key-store-type")
     public StoreType keyStoreType() {
-        return DEFAULT_STORE_TYPE;
+        if (keyStorePath().map(this::isPemExtension).orElse(false)) {
+            return StoreType.PEM;
+        } else {
+            return StoreType.JKS;
+        }
     }
 
     @JsonAlias("key-store-key-alias")
@@ -75,6 +84,10 @@ public abstract class SslConfiguration {
             throw new SafeIllegalArgumentException(
                     "keyStorePath must be present if keyStoreKeyAlias is present");
         }
+    }
+
+    protected final boolean isPemExtension(Path filePath) {
+        return PEM_EXTENSIONS.stream().anyMatch(ext -> filePath.getFileName().toString().endsWith(ext));
     }
 
     public static SslConfiguration of(Path trustStorePath) {

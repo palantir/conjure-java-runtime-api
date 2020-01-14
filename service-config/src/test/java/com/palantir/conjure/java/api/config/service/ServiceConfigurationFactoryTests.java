@@ -18,7 +18,6 @@ package com.palantir.conjure.java.api.config.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -32,7 +31,6 @@ import com.palantir.conjure.java.api.ext.jackson.ShimJdk7Module;
 import com.palantir.tokens.auth.BearerToken;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.Optional;
@@ -43,8 +41,8 @@ public final class ServiceConfigurationFactoryTests {
 
     private static final BearerToken apiToken = BearerToken.valueOf("token");
     private static final BearerToken defaultApiToken = BearerToken.valueOf("defaultToken");
-    private static final SslConfiguration security = SslConfiguration.of(mock(Path.class));
-    private static final SslConfiguration defaultSecurity = SslConfiguration.of(mock(Path.class));
+    private static final SslConfiguration security = SslConfiguration.of(Paths.get("store.jks"));
+    private static final SslConfiguration defaultSecurity = SslConfiguration.of(Paths.get("default-store.jks"));
     private static final HumanReadableDuration connectTimeout = HumanReadableDuration.seconds(1);
     private static final HumanReadableDuration defaultConnectTimeout = HumanReadableDuration.seconds(2);
     private static final HumanReadableDuration readTimeout = HumanReadableDuration.minutes(1);
