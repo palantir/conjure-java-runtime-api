@@ -18,6 +18,7 @@ package com.palantir.conjure.java.api.config.ssl;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.google.common.collect.ImmutableSet;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import java.nio.file.Path;
 import java.util.Optional;
@@ -27,6 +28,8 @@ import org.immutables.value.Value;
 @Value.Immutable
 @ImmutablesStyle
 public abstract class SslConfiguration {
+
+    private static final ImmutableSet<String> PEM_EXTENSIONS = ImmutableSet.of("key", "pem", "cer", "crt");
 
     public enum StoreType {
         JKS,
@@ -42,10 +45,10 @@ public abstract class SslConfiguration {
     @Value.Default
     @JsonAlias("trust-store-type")
     public StoreType trustStoreType() {
-        if (trustStorePath().getFileName().toString().endsWith("jks")) {
-            return StoreType.JKS;
-        } else {
+        if (PEM_EXTENSIONS.stream().anyMatch(ext -> trustStorePath().getFileName().toString().endsWith(ext))) {
             return StoreType.PEM;
+        } else {
+            return StoreType.JKS;
         }
     }
 
@@ -60,10 +63,12 @@ public abstract class SslConfiguration {
     @Value.Default
     @JsonAlias("key-store-type")
     public StoreType keyStoreType() {
-        if (keyStorePath().map(keyStore -> keyStore.getFileName().toString().endsWith("jks")).orElse(true)) {
-            return StoreType.JKS;
-        } else {
+        if (keyStorePath().map(keyStore -> PEM_EXTENSIONS.stream()
+                .anyMatch(ext -> keyStore.getFileName().toString().endsWith(ext)))
+                .orElse(false)) {
             return StoreType.PEM;
+        } else {
+            return StoreType.JKS;
         }
     }
 
