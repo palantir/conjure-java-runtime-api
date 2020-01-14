@@ -119,5 +119,5 @@ public final class SslConfigurationTest {
                 .build();
         assertThat(sslConfiguration.trustStoreType()).isEqualTo(SslConfiguration.StoreType.PEM);
         assertThat(sslConfiguration.keyStoreType()).isEqualTo(SslConfiguration.StoreType.JKS);
-    }   
+    }
 }
