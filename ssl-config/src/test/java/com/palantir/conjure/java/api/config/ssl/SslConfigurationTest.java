@@ -79,8 +79,8 @@ public final class SslConfigurationTest {
                 .keyStorePath(Paths.get("keystore.jks"))
                 .keyStoreType(SslConfiguration.StoreType.JKS)
                 .build())
-                .isInstanceOf(SafeIllegalArgumentException.class)
-                .hasMessage("keyStorePassword must be present if keyStoreType is JKS");
+                        .isInstanceOf(SafeIllegalArgumentException.class)
+                        .hasMessage("keyStorePassword must be present if keyStoreType is JKS");
     }
 
     @Test
@@ -88,6 +88,7 @@ public final class SslConfigurationTest {
         assertThatCode(() -> SslConfiguration.builder()
                 .trustStorePath(Paths.get("truststore.jks"))
                 .keyStorePath(Paths.get("key.pem"))
+                .keyStoreType(SslConfiguration.StoreType.PEM)
                 .build()).doesNotThrowAnyException();
     }
 }
