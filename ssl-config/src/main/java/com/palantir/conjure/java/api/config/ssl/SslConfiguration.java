@@ -76,18 +76,19 @@ public abstract class SslConfiguration {
 
     @Value.Check
     protected final void check() {
-        if (keyStorePath().isPresent() && keyStoreType().equals(StoreType.JKS) && !keyStorePassword().isPresent()) {
-            throw new SafeIllegalArgumentException(
-                    "keyStorePassword must be present if keyStoreType is JKS");
+        if (keyStorePath().isPresent()
+                && keyStoreType().equals(StoreType.JKS)
+                && !keyStorePassword().isPresent()) {
+            throw new SafeIllegalArgumentException("keyStorePassword must be present if keyStoreType is JKS");
         }
         if (keyStoreKeyAlias().isPresent() && !keyStorePath().isPresent()) {
-            throw new SafeIllegalArgumentException(
-                    "keyStorePath must be present if keyStoreKeyAlias is present");
+            throw new SafeIllegalArgumentException("keyStorePath must be present if keyStoreKeyAlias is present");
         }
     }
 
     protected final boolean isPemExtension(Path filePath) {
-        return PEM_EXTENSIONS.stream().anyMatch(ext -> filePath.getFileName().toString().endsWith(ext));
+        return PEM_EXTENSIONS.stream()
+                .anyMatch(ext -> filePath.getFileName().toString().endsWith(ext));
     }
 
     public static SslConfiguration of(Path trustStorePath) {

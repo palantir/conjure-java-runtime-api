@@ -24,8 +24,5 @@ import org.immutables.value.Value;
 
 @Target({ElementType.PACKAGE, ElementType.TYPE})
 @Retention(RetentionPolicy.SOURCE)
-@Value.Style(
-        visibility = Value.Style.ImplementationVisibility.PACKAGE,
-        overshadowImplementation = true,
-        jdkOnly = true)
+@Value.Style(visibility = Value.Style.ImplementationVisibility.PACKAGE, overshadowImplementation = true, jdkOnly = true)
 @interface ImmutablesStyle {}

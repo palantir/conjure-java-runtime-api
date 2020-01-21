@@ -79,12 +79,14 @@ public final class RemoteExceptionTest {
 
     @Test
     public void testArgsIsEmpty() {
-        RemoteException remoteException = new RemoteException(new SerializableError.Builder()
-                .errorCode("errorCode")
-                .errorName("errorName")
-                .errorInstanceId("errorId")
-                .putParameters("param", "value")
-                .build(), 500);
+        RemoteException remoteException = new RemoteException(
+                new SerializableError.Builder()
+                        .errorCode("errorCode")
+                        .errorName("errorName")
+                        .errorInstanceId("errorId")
+                        .putParameters("param", "value")
+                        .build(),
+                500);
         assertThat(remoteException.getArgs())
                 .describedAs("RemoteException does not support parameters by design")
                 .isEmpty();

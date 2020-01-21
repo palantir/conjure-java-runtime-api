@@ -47,8 +47,7 @@ public final class SslConfigurationTest {
                 + "\"key-store-path\":\"keystore.jks\",\"key-store-password\":\"password\","
                 + "\"key-store-type\":\"JKS\",\"key-store-key-alias\":\"alias\"}";
 
-        assertThat(MAPPER.writeValueAsString(serialized))
-                .isEqualTo(deserializedCamelCase);
+        assertThat(MAPPER.writeValueAsString(serialized)).isEqualTo(deserializedCamelCase);
         assertThat(MAPPER.readValue(deserializedCamelCase, SslConfiguration.class))
                 .isEqualTo(serialized);
         assertThat(MAPPER.readValue(deserializedKebabCase, SslConfiguration.class))
@@ -64,8 +63,7 @@ public final class SslConfigurationTest {
                 + "\"key-store-path\":null,\"key-store-password\":null,\"key-store-type\":\"JKS\","
                 + "\"key-store-key-alias\":null}";
 
-        assertThat(MAPPER.writeValueAsString(serialized))
-                .isEqualTo(deserializedCamelCase);
+        assertThat(MAPPER.writeValueAsString(serialized)).isEqualTo(deserializedCamelCase);
         assertThat(MAPPER.readValue(deserializedCamelCase, SslConfiguration.class))
                 .isEqualTo(serialized);
         assertThat(MAPPER.readValue(deserializedKebabCase, SslConfiguration.class))
@@ -75,21 +73,22 @@ public final class SslConfigurationTest {
     @Test
     public void jksKeystorePassword() {
         assertThatThrownBy(() -> SslConfiguration.builder()
-                .trustStorePath(Paths.get("truststore.jks"))
-                .keyStorePath(Paths.get("keystore.jks"))
-                .keyStoreType(SslConfiguration.StoreType.JKS)
-                .build())
-                        .isInstanceOf(SafeIllegalArgumentException.class)
-                        .hasMessage("keyStorePassword must be present if keyStoreType is JKS");
+                        .trustStorePath(Paths.get("truststore.jks"))
+                        .keyStorePath(Paths.get("keystore.jks"))
+                        .keyStoreType(SslConfiguration.StoreType.JKS)
+                        .build())
+                .isInstanceOf(SafeIllegalArgumentException.class)
+                .hasMessage("keyStorePassword must be present if keyStoreType is JKS");
     }
 
     @Test
     public void nonJksKeystorePassword() {
         assertThatCode(() -> SslConfiguration.builder()
-                .trustStorePath(Paths.get("truststore.jks"))
-                .keyStorePath(Paths.get("key.pem"))
-                .keyStoreType(SslConfiguration.StoreType.PEM)
-                .build()).doesNotThrowAnyException();
+                        .trustStorePath(Paths.get("truststore.jks"))
+                        .keyStorePath(Paths.get("key.pem"))
+                        .keyStoreType(SslConfiguration.StoreType.PEM)
+                        .build())
+                .doesNotThrowAnyException();
     }
 
     @Test

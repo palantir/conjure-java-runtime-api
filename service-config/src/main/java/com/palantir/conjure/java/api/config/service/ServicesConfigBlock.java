@@ -28,10 +28,10 @@ import org.immutables.value.Value;
 import org.immutables.value.Value.Immutable;
 
 /**
- * Configuration class that contains a map of {@code serviceName}s and their respective {@link
- * PartialServiceConfiguration}s. Allows users to specify default properties for all services. Use a {@link
- * ServiceConfigurationFactory} to propagate the defaults to the partially-specified services and obtain fully-specified
- * {@link ServiceConfiguration} objects.
+ * Configuration class that contains a map of {@code serviceName}s and their respective
+ * {@link PartialServiceConfiguration}s. Allows users to specify default properties for all services. Use a
+ * {@link ServiceConfigurationFactory} to propagate the defaults to the partially-specified services and obtain
+ * fully-specified {@link ServiceConfiguration} objects.
  */
 @Immutable
 @JsonSerialize(as = ImmutableServicesConfigBlock.class)
@@ -40,8 +40,8 @@ import org.immutables.value.Value.Immutable;
 public abstract class ServicesConfigBlock {
 
     /**
-     * Fallback API token to be used if the service specific API token is not defined in the {@link
-     * PartialServiceConfiguration}.
+     * Fallback API token to be used if the service specific API token is not defined in the
+     * {@link PartialServiceConfiguration}.
      */
     @JsonProperty("apiToken")
     @JsonAlias("api-token")
@@ -49,8 +49,8 @@ public abstract class ServicesConfigBlock {
     public abstract Optional<BearerToken> defaultApiToken();
 
     /**
-     * Fallback SSL Configuration to be used if the service specific SSL configuration is not defined in the {@link
-     * PartialServiceConfiguration}.
+     * Fallback SSL Configuration to be used if the service specific SSL configuration is not defined in the
+     * {@link PartialServiceConfiguration}.
      */
     @JsonProperty("security")
     public abstract Optional<SslConfiguration> defaultSecurity();
@@ -58,50 +58,39 @@ public abstract class ServicesConfigBlock {
     @JsonProperty("services")
     public abstract Map<String, PartialServiceConfiguration> services();
 
-    /**
-     * Default global proxy configuration for connecting to the services.
-     */
+    /** Default global proxy configuration for connecting to the services. */
     @JsonProperty("proxyConfiguration")
     @JsonAlias("proxy-configuration")
     public abstract Optional<ProxyConfiguration> defaultProxyConfiguration();
 
-    /**
-     * Default global connect timeout.
-     */
+    /** Default global connect timeout. */
     @JsonProperty("connectTimeout")
     @JsonAlias("connect-timeout")
     public abstract Optional<HumanReadableDuration> defaultConnectTimeout();
 
-    /**
-     * Default global read timeout.
-     */
+    /** Default global read timeout. */
     @JsonProperty("readTimeout")
     @JsonAlias("read-timeout")
     public abstract Optional<HumanReadableDuration> defaultReadTimeout();
 
-    /**
-     * Default global write timeout.
-     */
+    /** Default global write timeout. */
     @JsonProperty("writeTimeout")
     @JsonAlias("write-timeout")
     public abstract Optional<HumanReadableDuration> defaultWriteTimeout();
 
-    /**
-     * Default global backoff slot size, see {@link PartialServiceConfiguration#backoffSlotSize()}.
-     */
+    /** Default global backoff slot size, see {@link PartialServiceConfiguration#backoffSlotSize()}. */
     @JsonProperty("backoffSlotSize")
     @JsonAlias("backoff-slot-size")
     public abstract Optional<HumanReadableDuration> defaultBackoffSlotSize();
 
-    /**
-     * Default enablement of gcm cipher suites, defaults to false.
-     */
+    /** Default enablement of gcm cipher suites, defaults to false. */
     @JsonProperty("enableGcmCipherSuites")
     @JsonAlias("enable-gcm-cipher-suites")
     public abstract Optional<Boolean> defaultEnableGcmCipherSuites();
 
     /**
      * Default fallback to common name verification, defaults to false.
+     *
      * @deprecated This option will be removed by the end of 2019. Certificates are expected to provide valid SANs.
      */
     @Deprecated

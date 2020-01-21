@@ -60,13 +60,16 @@ public final class PartialServiceConfigurationTest {
                 + "\"enable-gcm-cipher-suites\":null,\"fallback-to-common-name-verification\":null}";
 
         assertThat(mapper.writeValueAsString(serialized)).isEqualTo(camelCase);
-        assertThat(mapper.readValue(camelCase, PartialServiceConfiguration.class)).isEqualTo(serialized);
-        assertThat(mapper.readValue(kebabCase, PartialServiceConfiguration.class)).isEqualTo(serialized);
+        assertThat(mapper.readValue(camelCase, PartialServiceConfiguration.class))
+                .isEqualTo(serialized);
+        assertThat(mapper.readValue(kebabCase, PartialServiceConfiguration.class))
+                .isEqualTo(serialized);
     }
 
     @Test
     public void serDe_optional() throws Exception {
-        PartialServiceConfiguration serialized = PartialServiceConfiguration.builder().build();
+        PartialServiceConfiguration serialized =
+                PartialServiceConfiguration.builder().build();
         String camelCase = "{\"apiToken\":null,\"security\":null,\"uris\":[],\"connectTimeout\":null,"
                 + "\"readTimeout\":null,\"writeTimeout\":null,\"maxNumRetries\":null,\"backoffSlotSize\":null,"
                 + "\"enableGcmCipherSuites\":null,\"fallbackToCommonNameVerification\":null,"
@@ -76,8 +79,11 @@ public final class PartialServiceConfigurationTest {
                 + "\"enable-gcm-cipher-suites\":null,\"fallback-to-common-name-verification\":null,"
                 + "\"uris\":[],\"proxy-configuration\":null}";
 
-        assertThat(ObjectMappers.newClientObjectMapper().writeValueAsString(serialized)).isEqualTo(camelCase);
-        assertThat(mapper.readValue(camelCase, PartialServiceConfiguration.class)).isEqualTo(serialized);
-        assertThat(mapper.readValue(kebabCase, PartialServiceConfiguration.class)).isEqualTo(serialized);
+        assertThat(ObjectMappers.newClientObjectMapper().writeValueAsString(serialized))
+                .isEqualTo(camelCase);
+        assertThat(mapper.readValue(camelCase, PartialServiceConfiguration.class))
+                .isEqualTo(serialized);
+        assertThat(mapper.readValue(kebabCase, PartialServiceConfiguration.class))
+                .isEqualTo(serialized);
     }
 }

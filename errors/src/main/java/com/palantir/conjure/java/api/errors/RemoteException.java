@@ -21,9 +21,7 @@ import com.palantir.logsafe.SafeLoggable;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * An exception thrown by an RPC client to indicate remote/server-side failure.
- */
+/** An exception thrown by an RPC client to indicate remote/server-side failure. */
 public final class RemoteException extends RuntimeException implements SafeLoggable {
     private static final long serialVersionUID = 1L;
 
@@ -41,12 +39,13 @@ public final class RemoteException extends RuntimeException implements SafeLogga
     }
 
     public RemoteException(SerializableError error, int status) {
-        super(error.errorCode().equals(error.errorName())
-                ? String.format("RemoteException: %s with instance ID %s", error.errorCode(), error.errorInstanceId())
-                : String.format("RemoteException: %s (%s) with instance ID %s",
-                        error.errorCode(),
-                        error.errorName(),
-                        error.errorInstanceId()));
+        super(
+                error.errorCode().equals(error.errorName())
+                        ? String.format(
+                                "RemoteException: %s with instance ID %s", error.errorCode(), error.errorInstanceId())
+                        : String.format(
+                                "RemoteException: %s (%s) with instance ID %s",
+                                error.errorCode(), error.errorName(), error.errorInstanceId()));
 
         this.error = error;
         this.status = status;
