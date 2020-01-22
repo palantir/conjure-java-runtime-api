@@ -37,8 +37,8 @@ public final class ServiceException extends RuntimeException implements SafeLogg
     private final String noArgsMessage;
 
     /**
-     * Creates a new exception for the given error. All {@link com.palantir.logsafe.Arg parameters} are
-     * propagated to clients; they are serialized via {@link Object#toString}.
+     * Creates a new exception for the given error. All {@link com.palantir.logsafe.Arg parameters} are propagated to
+     * clients; they are serialized via {@link Object#toString}.
      */
     public ServiceException(ErrorType errorType, Arg<?>... parameters) {
         this(errorType, null, parameters);
@@ -127,9 +127,9 @@ public final class ServiceException extends RuntimeException implements SafeLogg
     }
 
     /**
-     * Finds the errorInstanceId of the most recent cause if present, otherwise generates a new random identifier.
-     * Note that this only searches {@link Throwable#getCause() causal exceptions}, not
-     * {@link Throwable#getSuppressed() suppressed causes}.
+     * Finds the errorInstanceId of the most recent cause if present, otherwise generates a new random identifier. Note
+     * that this only searches {@link Throwable#getCause() causal exceptions}, not {@link Throwable#getSuppressed()
+     * suppressed causes}.
      */
     private static String generateErrorInstanceId(@Nullable Throwable cause) {
         return generateErrorInstanceId(cause, Collections.newSetFromMap(new IdentityHashMap<>()));

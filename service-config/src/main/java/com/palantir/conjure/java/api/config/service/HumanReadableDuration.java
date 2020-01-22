@@ -157,8 +157,8 @@ public final class HumanReadableDuration implements Comparable<HumanReadableDura
 
     /**
      * Converts a {@code TimeUnit} to a {@code ChronoUnit}.
-     * <p>
-     * This handles the seven units declared in {@code TimeUnit}.
+     *
+     * <p>This handles the seven units declared in {@code TimeUnit}.
      *
      * @param unit the unit to convert, not null
      * @return the converted unit, not null
@@ -196,7 +196,6 @@ public final class HumanReadableDuration implements Comparable<HumanReadableDura
         }
         final HumanReadableDuration duration = (HumanReadableDuration) obj;
         return (count == duration.count) && (unit == duration.unit);
-
     }
 
     @Override

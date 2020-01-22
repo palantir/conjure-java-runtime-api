@@ -33,7 +33,8 @@ public class RemoteExceptionAssert extends AbstractThrowableAssert<RemoteExcepti
         int actualStatus = actual.getStatus();
 
         if (!actualCode.equals(type.code().name())) {
-            failWithMessage("Expected error code to be %s, but found %s", type.code().name(), actualCode);
+            failWithMessage(
+                    "Expected error code to be %s, but found %s", type.code().name(), actualCode);
         }
         if (!actualName.equals(type.name())) {
             failWithMessage("Expected error name to be %s, but found %s", type.name(), actualName);

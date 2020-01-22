@@ -31,16 +31,16 @@ public final class AssertionsTest {
     @Test
     public void testAssertThatServiceExceptionThrownBy_failsIfNothingThrown() {
         assertThatThrownBy(() -> assertThatServiceExceptionThrownBy(() -> {
-            // Not going to throw anything
-        }))
+                    // Not going to throw anything
+                }))
                 .hasMessage("Expecting code to raise a throwable.");
     }
 
     @Test
     public void testAssertThatServiceExceptionThrownBy_failsIfWrongExceptionThrown() {
         assertThatThrownBy(() -> assertThatServiceExceptionThrownBy(() -> {
-            throw new RuntimeException();
-        }))
+                    throw new RuntimeException();
+                }))
                 .hasMessage("Expecting code to throw a com.palantir.conjure.java.api.errors.ServiceException,"
                         + " but caught a java.lang.RuntimeException.");
     }
@@ -48,23 +48,24 @@ public final class AssertionsTest {
     @Test
     public void testAssertThatServiceExceptionThrownBy_catchesServiceException() {
         assertThatServiceExceptionThrownBy(() -> {
-            throw new ServiceException(ErrorType.INTERNAL);
-        }).hasType(ErrorType.INTERNAL);
+                    throw new ServiceException(ErrorType.INTERNAL);
+                })
+                .hasType(ErrorType.INTERNAL);
     }
 
     @Test
     public void testAssertThatRemoteExceptionThrownBy_failsIfNothingThrown() {
         assertThatThrownBy(() -> assertThatRemoteExceptionThrownBy(() -> {
-            // Not going to throw anything
-        }))
+                    // Not going to throw anything
+                }))
                 .hasMessage("Expecting code to raise a throwable.");
     }
 
     @Test
     public void testAssertThatRemoteExceptionThrownBy_failsIfWrongExceptionThrown() {
         assertThatThrownBy(() -> assertThatRemoteExceptionThrownBy(() -> {
-            throw new RuntimeException();
-        }))
+                    throw new RuntimeException();
+                }))
                 .hasMessage("Expecting code to throw a com.palantir.conjure.java.api.errors.RemoteException, "
                         + "but caught a java.lang.RuntimeException.");
     }
@@ -72,9 +73,10 @@ public final class AssertionsTest {
     @Test
     public void testAssertThatRemoteExceptionThrownBy_catchesServiceException() {
         assertThatRemoteExceptionThrownBy(() -> {
-            throw new RemoteException(SerializableError.forException(new ServiceException(ErrorType.INTERNAL)),
-                    ErrorType.INTERNAL.httpErrorCode());
-        }).isGeneratedFromErrorType(ErrorType.INTERNAL);
+                    throw new RemoteException(
+                            SerializableError.forException(new ServiceException(ErrorType.INTERNAL)),
+                            ErrorType.INTERNAL.httpErrorCode());
+                })
+                .isGeneratedFromErrorType(ErrorType.INTERNAL);
     }
-
 }

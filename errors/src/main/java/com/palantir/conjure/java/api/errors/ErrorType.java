@@ -55,12 +55,10 @@ public abstract class ErrorType {
         }
     }
 
-    public static final ErrorType UNAUTHORIZED =
-            createInternal(Code.UNAUTHORIZED, "Default:Unauthorized");
+    public static final ErrorType UNAUTHORIZED = createInternal(Code.UNAUTHORIZED, "Default:Unauthorized");
     public static final ErrorType PERMISSION_DENIED =
             createInternal(Code.PERMISSION_DENIED, "Default:PermissionDenied");
-    public static final ErrorType INVALID_ARGUMENT =
-            createInternal(Code.INVALID_ARGUMENT, "Default:InvalidArgument");
+    public static final ErrorType INVALID_ARGUMENT = createInternal(Code.INVALID_ARGUMENT, "Default:InvalidArgument");
     public static final ErrorType REQUEST_ENTITY_TOO_LARGE =
             createInternal(Code.REQUEST_ENTITY_TOO_LARGE, "Default:RequestEntityTooLarge");
     public static final ErrorType NOT_FOUND = createInternal(Code.NOT_FOUND, "Default:NotFound");
@@ -90,9 +88,7 @@ public abstract class ErrorType {
         }
     }
 
-    /**
-     * Constructs an {@link ErrorType} with the given error {@link Code} and name.
-     */
+    /** Constructs an {@link ErrorType} with the given error {@link Code} and name. */
     public static ErrorType create(Code code, String name) {
         return createAndCheckNamespaceIsNotDefault(code, name);
     }
