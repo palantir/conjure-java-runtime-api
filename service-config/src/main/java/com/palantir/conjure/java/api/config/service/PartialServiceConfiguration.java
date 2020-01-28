@@ -71,6 +71,13 @@ public interface PartialServiceConfiguration {
     Optional<Boolean> enableGcmCipherSuites();
 
     /**
+     * Whether or not to allow the http/2 protocol. A default value is not guaranteed, and may differ between
+     * client implementations.
+     */
+    @JsonAlias("enable-http2")
+    Optional<Boolean> enableHttp2();
+
+    /**
      * Enables fallback to common name verification, defaults to false.
      *
      * @deprecated This option will be removed by the end of 2019. Certificates are expected to provide valid SANs.

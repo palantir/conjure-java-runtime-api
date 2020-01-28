@@ -88,6 +88,11 @@ public abstract class ServicesConfigBlock {
     @JsonAlias("enable-gcm-cipher-suites")
     public abstract Optional<Boolean> defaultEnableGcmCipherSuites();
 
+    /** Default enablement of http/2.. */
+    @JsonProperty("enableHttp2")
+    @JsonAlias("enable-http2")
+    public abstract Optional<Boolean> defaultEnableHttp2();
+
     /**
      * Default fallback to common name verification, defaults to false.
      *

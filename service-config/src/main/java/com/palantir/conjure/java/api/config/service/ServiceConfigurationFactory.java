@@ -86,6 +86,7 @@ public final class ServiceConfigurationFactory {
                         .map(t -> Duration.ofMillis(t.toMilliseconds())))
                 .proxy(orElse(partial.proxyConfiguration(), services.defaultProxyConfiguration()))
                 .enableGcmCipherSuites(orElse(partial.enableGcmCipherSuites(), services.defaultEnableGcmCipherSuites()))
+                .enableHttp2(orElse(partial.enableHttp2(), services.defaultEnableHttp2()))
                 .fallbackToCommonNameVerification(orElse(
                         partial.fallbackToCommonNameVerification(), services.defaultFallbackToCommonNameVerification()))
                 .build();
