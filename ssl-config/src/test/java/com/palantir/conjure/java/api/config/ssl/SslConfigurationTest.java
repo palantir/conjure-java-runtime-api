@@ -82,6 +82,17 @@ public final class SslConfigurationTest {
     }
 
     @Test
+    public void keystorePasswordWithoutPath() {
+        assertThatThrownBy(() -> SslConfiguration.builder()
+                        .trustStorePath(Paths.get("truststore.jks"))
+                        .keyStoreType(SslConfiguration.StoreType.PEM)
+                        .keyStorePassword("password")
+                        .build())
+                .isInstanceOf(SafeIllegalArgumentException.class)
+                .hasMessage("keyStorePath must be present if a keyStorePassword is provided");
+    }
+
+    @Test
     public void nonJksKeystorePassword() {
         assertThatCode(() -> SslConfiguration.builder()
                         .trustStorePath(Paths.get("truststore.jks"))

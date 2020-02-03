@@ -1,0 +1,5 @@
+type: fix
+fix:
+  description: SslConfiguration validates that keyStorePassword requires keyStorePath
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/449
