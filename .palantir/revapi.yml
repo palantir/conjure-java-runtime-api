@@ -3,4 +3,21 @@ versionOverrides:
   com.palantir.conjure.java.api:ssl-config:2.8.0: "2.7.0"
   com.palantir.conjure.java.api:errors:2.8.0: "2.7.0"
   com.palantir.conjure.java.api:service-config:2.8.0: "2.7.0"
-acceptedBreaks: {}
+acceptedBreaks:
+  "2.10.0":
+    com.palantir.conjure.java.api:service-config:
+    - code: "java.method.addedToInterface"
+      old: null
+      new: "method java.util.Optional<java.lang.Boolean> com.palantir.conjure.java.api.config.service.ServiceConfiguration::enableHttp2()"
+      justification: "Added a new field to ServiceConfiguration, @Immutables annotated\
+        \ types are not meant for extension"
+    - code: "java.method.addedToInterface"
+      old: null
+      new: "method java.util.Optional<java.lang.Boolean> com.palantir.conjure.java.api.config.service.PartialServiceConfiguration::enableHttp2()"
+      justification: "Added a new field to ServiceConfiguration, @Immutables annotated\
+        \ types are not meant for extension"
+    - code: "java.method.abstractMethodAdded"
+      old: null
+      new: "method java.util.Optional<java.lang.Boolean> com.palantir.conjure.java.api.config.service.ServicesConfigBlock::defaultEnableHttp2()"
+      justification: "Added a new field to ServiceConfiguration, @Immutables annotated\
+        \ types are not meant for extension"

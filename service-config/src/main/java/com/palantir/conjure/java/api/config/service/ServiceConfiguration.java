@@ -49,6 +49,8 @@ public interface ServiceConfiguration {
 
     Optional<Boolean> enableGcmCipherSuites();
 
+    Optional<Boolean> enableHttp2();
+
     Optional<Boolean> fallbackToCommonNameVerification();
 
     Optional<ProxyConfiguration> proxy();
