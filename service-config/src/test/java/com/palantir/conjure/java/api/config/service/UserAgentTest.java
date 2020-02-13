@@ -27,9 +27,9 @@ public class UserAgentTest {
     @Test
     public void validAndInvalidNodeSyntax() {
         // Valid nodeId
-        for (String nodeId : new String[] {
-            "nodeId", "NODEID", "node-id", "node.id", "nodeId.", "192.168.0.1", "my.server.foo.local"
-        }) {
+        for (String nodeId :
+                new String[] {"nodeId", "NODEID", "node-id", "node.id", "nodeId.", "192.168.0.1", "my.server.foo.local"
+                }) {
             UserAgent.of(UserAgent.Agent.of("valid-service", "1.0.0"), nodeId);
         }
 

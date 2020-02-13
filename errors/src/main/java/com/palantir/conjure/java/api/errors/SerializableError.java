@@ -50,8 +50,9 @@ public abstract class SerializableError implements Serializable {
     @JsonProperty("errorCode")
     @Value.Default
     public String errorCode() {
-        return getExceptionClass().orElseThrow(() ->
-                new SafeIllegalStateException("Expected either 'errorCode' or 'exceptionClass' to be set"));
+        return getExceptionClass()
+                .orElseThrow(() ->
+                        new SafeIllegalStateException("Expected either 'errorCode' or 'exceptionClass' to be set"));
     }
 
     /**
