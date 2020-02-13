@@ -59,8 +59,9 @@ public final class UserAgents {
         List<String> agents = new LinkedList<>();
         agents.add(formatSingleAgent(userAgent.primary(), primaryComments));
 
-        return Stream.concat(agents.stream(), userAgent.informational().stream().map(a ->
-                        formatSingleAgent(a, Collections.emptyMap())))
+        return Stream.concat(
+                        agents.stream(),
+                        userAgent.informational().stream().map(a -> formatSingleAgent(a, Collections.emptyMap())))
                 .map(Object::toString)
                 .collect(Collectors.joining(" "));
     }
