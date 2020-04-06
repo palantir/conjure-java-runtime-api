@@ -38,11 +38,11 @@ public abstract class ProxyConfiguration {
 
     public enum Type {
 
-        /** Use default JVM's proxy selector. */
-        FROM_ENVIRONMENT,
-
         /** Use a direct connection. This option will bypass any JVM-level configured proxy settings. */
         DIRECT,
+
+        /** Use default JVM's proxy selector. */
+        FROM_ENVIRONMENT,
 
         /**
          * Use an http-proxy specified by {@link ProxyConfiguration#hostAndPort()} and (optionally)
