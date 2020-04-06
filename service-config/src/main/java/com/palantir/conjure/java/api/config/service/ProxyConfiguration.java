@@ -100,8 +100,7 @@ public abstract class ProxyConfiguration {
                 break;
             case FROM_ENVIRONMENT:
                 Preconditions.checkArgument(
-                        !hostAndPort().isPresent() && !credentials().isPresent(),
-                        "Neither credential nor host-and-port may be configured for FROM_ENVIRONMENT proxies");
+                        !hostAndPort().isPresent(), "Host-and-port may not be configured for FROM_ENVIRONMENT proxies");
                 break;
             default:
                 throw new SafeIllegalStateException("Unrecognized case; this is a library bug");
