@@ -60,6 +60,16 @@ public final class ProxyConfigurationTests {
     }
 
     @Test
+    public void testDeserializationFromEnvironment() throws Exception {
+        URL resource = Resources.getResource("configs/proxy-config-from-environment.yml");
+        ProxyConfiguration config = mapper.readValue(resource, ProxyConfiguration.class);
+        assertThat(config)
+                .isEqualTo(ProxyConfiguration.builder()
+                        .type(ProxyConfiguration.Type.FROM_ENVIRONMENT)
+                        .build());
+    }
+
+    @Test
     public void testDeserializationMesh() throws Exception {
         URL resource = Resources.getResource("configs/proxy-config-mesh.yml");
         ProxyConfiguration config = mapper.readValue(resource, ProxyConfiguration.class);
@@ -78,6 +88,16 @@ public final class ProxyConfigurationTests {
                         .build())
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Neither credential nor host-and-port may be configured for DIRECT proxies");
+    }
+
+    @Test
+    public void testFromEnvironmentProxyWithHostAndPort() {
+        assertThatThrownBy(() -> new ProxyConfiguration.Builder()
+                        .hostAndPort("squid:3128")
+                        .type(ProxyConfiguration.Type.FROM_ENVIRONMENT)
+                        .build())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Host-and-port may not be configured for FROM_ENVIRONMENT proxies");
     }
 
     @Test

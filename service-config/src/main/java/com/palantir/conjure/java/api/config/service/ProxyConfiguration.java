@@ -42,6 +42,11 @@ public abstract class ProxyConfiguration {
         DIRECT,
 
         /**
+         * Use an http-proxy with {@link ProxyConfiguration#hostAndPort()} extracted from environment's "https_proxy".
+         */
+        FROM_ENVIRONMENT,
+
+        /**
          * Use an http-proxy specified by {@link ProxyConfiguration#hostAndPort()} and (optionally)
          * {@link ProxyConfiguration#credentials()}.
          */
@@ -92,6 +97,10 @@ public abstract class ProxyConfiguration {
                 Preconditions.checkArgument(
                         !hostAndPort().isPresent() && !credentials().isPresent(),
                         "Neither credential nor host-and-port may be configured for DIRECT proxies");
+                break;
+            case FROM_ENVIRONMENT:
+                Preconditions.checkArgument(
+                        !hostAndPort().isPresent(), "Host-and-port may not be configured for FROM_ENVIRONMENT proxies");
                 break;
             default:
                 throw new SafeIllegalStateException("Unrecognized case; this is a library bug");
