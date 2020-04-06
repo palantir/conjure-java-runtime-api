@@ -91,15 +91,15 @@ public abstract class ProxyConfiguration {
                 Preconditions.checkArgument(
                         host.hasPort(), "Given hostname does not contain a port number", SafeArg.of("hostname", host));
                 break;
-            case FROM_ENVIRONMENT:
-                Preconditions.checkArgument(
-                        !hostAndPort().isPresent() && !credentials().isPresent(),
-                        "Neither credential nor host-and-port may be configured for FROM_ENVIRONMENT proxies");
-                break;
             case DIRECT:
                 Preconditions.checkArgument(
                         !hostAndPort().isPresent() && !credentials().isPresent(),
                         "Neither credential nor host-and-port may be configured for DIRECT proxies");
+                break;
+            case FROM_ENVIRONMENT:
+                Preconditions.checkArgument(
+                        !hostAndPort().isPresent() && !credentials().isPresent(),
+                        "Neither credential nor host-and-port may be configured for FROM_ENVIRONMENT proxies");
                 break;
             default:
                 throw new SafeIllegalStateException("Unrecognized case; this is a library bug");
