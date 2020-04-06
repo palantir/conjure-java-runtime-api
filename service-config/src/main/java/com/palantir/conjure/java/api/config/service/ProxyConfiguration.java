@@ -39,7 +39,7 @@ public abstract class ProxyConfiguration {
     public enum Type {
 
         /** Use default JVM's proxy selector. */
-        DEFAULT,
+        FROM_ENVIRONMENT,
 
         /** Use a direct connection. This option will bypass any JVM-level configured proxy settings. */
         DIRECT,
@@ -91,10 +91,10 @@ public abstract class ProxyConfiguration {
                 Preconditions.checkArgument(
                         host.hasPort(), "Given hostname does not contain a port number", SafeArg.of("hostname", host));
                 break;
-            case DEFAULT:
+            case FROM_ENVIRONMENT:
                 Preconditions.checkArgument(
                         !hostAndPort().isPresent() && !credentials().isPresent(),
-                        "Neither credential nor host-and-port may be configured for DEFAULT proxies");
+                        "Neither credential nor host-and-port may be configured for FROM_ENVIRONMENT proxies");
                 break;
             case DIRECT:
                 Preconditions.checkArgument(
