@@ -41,7 +41,9 @@ public abstract class ProxyConfiguration {
         /** Use a direct connection. This option will bypass any JVM-level configured proxy settings. */
         DIRECT,
 
-        /** Use default JVM's proxy selector. */
+        /**
+         * Use an http-proxy with {@link ProxyConfiguration#hostAndPort()} extracted from environment's "https_proxy".
+         */
         FROM_ENVIRONMENT,
 
         /**
