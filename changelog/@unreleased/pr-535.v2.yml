@@ -1,0 +1,7 @@
+type: improvement
+improvement:
+  description: Add new proxy selection type "FROM_ENVIRONMENT" that will be used in
+    `conjure-java-runtime` to instantiate proxy selection based on environment variable
+    `https_proxy`.
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/535
