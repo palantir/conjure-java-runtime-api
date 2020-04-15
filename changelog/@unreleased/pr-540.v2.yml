@@ -1,0 +1,5 @@
+type: improvement
+improvement:
+  description: Add Helper class to create PartialServiceConfiguration from ServiceConfiguration.
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/540
