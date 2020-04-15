@@ -107,6 +107,10 @@ public final class HumanReadableDuration implements Comparable<HumanReadableDura
         return new HumanReadableDuration(count, unit);
     }
 
+    public static HumanReadableDuration fromJavaDuration(Duration duration) {
+        return new HumanReadableDuration(duration.toNanos(), TimeUnit.NANOSECONDS);
+    }
+
     private final long count;
     private final TimeUnit unit;
 
