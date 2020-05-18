@@ -19,16 +19,11 @@ package com.palantir.conjure.java.api.config.service;
 import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,37 +46,23 @@ public final class UserAgents {
 
     /** Returns the canonical string format for the given {@link UserAgent}. */
     public static String format(UserAgent userAgent) {
-        Map<String, String> primaryComments = new HashMap<>();
+        StringBuilder formatted = new StringBuilder();
+        formatSimpleAgent(userAgent.primary(), formatted);
         if (userAgent.nodeId().isPresent()) {
-            primaryComments.put("nodeId", userAgent.nodeId().get());
+            formatted
+                    .append(" (nodeId:")
+                    .append(userAgent.nodeId().get())
+                    .append(')');
         }
-
-        List<String> agents = new LinkedList<>();
-        agents.add(formatSingleAgent(userAgent.primary(), primaryComments));
-
-        return Stream.concat(
-                        agents.stream(),
-                        userAgent.informational().stream().map(a -> formatSingleAgent(a, Collections.emptyMap())))
-                .map(Object::toString)
-                .collect(Collectors.joining(" "));
-    }
-
-    /**
-     * Formats the given agent in the form {@code name/version (key:value; key:value)}, where the ()-block of comments
-     * is omitted if zero comments are provided.
-     */
-    private static String formatSingleAgent(UserAgent.Agent agent, Map<String, String> comments) {
-        // TODO(rfink): Think about validation comments here? Must not contain special characters.
-        StringBuilder formatted =
-                new StringBuilder().append(agent.name()).append("/").append(agent.version());
-
-        String formattedComments = comments.entrySet().stream()
-                .map(e -> e.getKey() + ":" + e.getValue())
-                .collect(Collectors.joining(";"));
-        if (!formattedComments.isEmpty()) {
-            formatted.append(" (").append(formattedComments).append(')');
+        for (UserAgent.Agent informationalAgent : userAgent.informational()) {
+            formatted.append(' ');
+            formatSimpleAgent(informationalAgent, formatted);
         }
         return formatted.toString();
+    }
+
+    private static void formatSimpleAgent(UserAgent.Agent agent, StringBuilder output) {
+        output.append(agent.name()).append('/').append(agent.version());
     }
 
     /**
