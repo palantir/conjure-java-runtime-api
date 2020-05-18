@@ -49,10 +49,7 @@ public final class UserAgents {
         StringBuilder formatted = new StringBuilder();
         formatSimpleAgent(userAgent.primary(), formatted);
         if (userAgent.nodeId().isPresent()) {
-            formatted
-                    .append(" (nodeId:")
-                    .append(userAgent.nodeId().get())
-                    .append(')');
+            formatted.append(" (nodeId:").append(userAgent.nodeId().get()).append(')');
         }
         for (UserAgent.Agent informationalAgent : userAgent.informational()) {
             formatted.append(' ');
