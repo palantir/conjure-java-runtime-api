@@ -19,6 +19,7 @@ package com.palantir.conjure.java.api.errors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.palantir.logsafe.SafeArg;
+import com.palantir.logsafe.UnsafeArg;
 import org.junit.jupiter.api.Test;
 
 class UnknownRemoteExceptionTest {
@@ -34,6 +35,6 @@ class UnknownRemoteExceptionTest {
     @Test
     public void testArgsContainsStatus() {
         UnknownRemoteException exception = new UnknownRemoteException(404, "not found");
-        assertThat(exception.getArgs()).containsOnly(SafeArg.of("status", 404));
+        assertThat(exception.getArgs()).containsExactly(SafeArg.of("status", 404), UnsafeArg.of("body", "not found"));
     }
 }
