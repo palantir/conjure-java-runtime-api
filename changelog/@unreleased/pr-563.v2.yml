@@ -1,0 +1,5 @@
+type: improvement
+improvement:
+  description: add the body of the UnknownRemoteException as a unsafe parameter
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/563
