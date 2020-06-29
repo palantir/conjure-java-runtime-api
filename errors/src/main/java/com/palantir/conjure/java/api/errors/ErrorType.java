@@ -42,6 +42,8 @@ public abstract class ErrorType {
         NOT_FOUND(404),
         CONFLICT(409),
         REQUEST_ENTITY_TOO_LARGE(413),
+        UNSUPPORTED_MEDIA_TYPE(415),
+        UNPROCESSABLE_ENTITY(422),
         FAILED_PRECONDITION(500),
         INTERNAL(500),
         TIMEOUT(500),
