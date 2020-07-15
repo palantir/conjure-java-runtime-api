@@ -38,6 +38,10 @@ public abstract class QosException extends RuntimeException {
         super(message);
     }
 
+    private QosException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
     public abstract <T> T accept(Visitor<T> visitor);
 
     public interface Visitor<T> {
@@ -57,11 +61,25 @@ public abstract class QosException extends RuntimeException {
     }
 
     /**
+     * Like {@link #throttle()}, but includes a cause.
+     */
+    public static Throttle throttle(Throwable cause) {
+        return new Throttle(Optional.empty(), cause);
+    }
+
+    /**
      * Like {@link #throttle()}, but additionally requests that the client wait for at least the given duration before
      * retrying the request.
      */
     public static Throttle throttle(Duration duration) {
         return new Throttle(Optional.of(duration));
+    }
+
+    /**
+     * Like {@link #throttle(Duration)}, but includes a cause.
+     */
+    public static Throttle throttle(Duration duration, Throwable cause) {
+        return new Throttle(Optional.of(duration), cause);
     }
 
     /**
@@ -73,11 +91,25 @@ public abstract class QosException extends RuntimeException {
     }
 
     /**
+     * Like {@link #retryOther(URL)}, but includes a cause.
+     */
+    public static RetryOther retryOther(URL redirectTo, Throwable cause) {
+        return new RetryOther(redirectTo, cause);
+    }
+
+    /**
      * An exception indicating that (this node of) this service is currently unavailable and the client may try again at
      * a later time, possibly against a different node of this service.
      */
     public static Unavailable unavailable() {
         return new Unavailable();
+    }
+
+    /**
+     * Like {@link #unavailable()}, but includes a cause.
+     */
+    public static Unavailable unavailable(Throwable cause) {
+        return new Unavailable(cause);
     }
 
     /** See {@link #throttle}. */
@@ -86,6 +118,11 @@ public abstract class QosException extends RuntimeException {
 
         private Throttle(Optional<Duration> retryAfter) {
             super("Suggesting request throttling with optional retryAfter duration: " + retryAfter);
+            this.retryAfter = retryAfter;
+        }
+
+        private Throttle(Optional<Duration> retryAfter, Throwable cause) {
+            super("Suggesting request throttling with optional retryAfter duration: " + retryAfter, cause);
             this.retryAfter = retryAfter;
         }
 
@@ -105,6 +142,11 @@ public abstract class QosException extends RuntimeException {
 
         private RetryOther(URL redirectTo) {
             super("Suggesting request retry against: " + redirectTo.toString());
+            this.redirectTo = redirectTo;
+        }
+
+        private RetryOther(URL redirectTo, Throwable cause) {
+            super("Suggesting request retry against: " + redirectTo.toString(), cause);
             this.redirectTo = redirectTo;
         }
 
@@ -135,6 +177,10 @@ public abstract class QosException extends RuntimeException {
     public static final class Unavailable extends QosException {
         private Unavailable() {
             super("Server unavailable");
+        }
+
+        private Unavailable(Throwable cause) {
+            super("Server unavailable", cause);
         }
 
         @Override
