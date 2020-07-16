@@ -1,0 +1,5 @@
+type: feature
+feature:
+  description: '`QosException` can now be created with a cause.'
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/591
