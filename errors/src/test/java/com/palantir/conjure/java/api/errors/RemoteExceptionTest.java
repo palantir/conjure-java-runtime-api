@@ -53,14 +53,16 @@ public final class RemoteExceptionTest {
                 .errorName("errorName")
                 .errorInstanceId("errorId")
                 .build();
-        assertThat(new RemoteException(error, 500).getMessage()).isEqualTo("RemoteException: errorCode (errorName)");
+        assertThat(new RemoteException(error, 500).getMessage())
+                .isEqualTo("RemoteException: errorCode (errorName) with instance ID errorId");
 
         error = new SerializableError.Builder()
                 .errorCode("errorCode")
                 .errorName("errorCode")
                 .errorInstanceId("errorId")
                 .build();
-        assertThat(new RemoteException(error, 500).getMessage()).isEqualTo("RemoteException: errorCode");
+        assertThat(new RemoteException(error, 500).getMessage())
+                .isEqualTo("RemoteException: errorCode with instance ID errorId");
     }
 
     @Test
@@ -71,9 +73,7 @@ public final class RemoteExceptionTest {
                 .errorInstanceId("errorId")
                 .build();
         RemoteException remoteException = new RemoteException(error, 500);
-        assertThat(remoteException.getLogMessage())
-                .isEqualTo(remoteException.getMessage())
-                .isEqualTo("RemoteException: errorCode (errorName)");
+        assertThat(remoteException.getLogMessage()).isEqualTo("RemoteException: errorCode (errorName)");
     }
 
     @Test

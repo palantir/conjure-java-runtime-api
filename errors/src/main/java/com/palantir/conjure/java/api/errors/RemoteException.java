@@ -26,6 +26,8 @@ import java.util.List;
 public final class RemoteException extends RuntimeException implements SafeLoggable {
     private static final long serialVersionUID = 1L;
 
+    private final String message;
+    private final String stableMessage;
     private final SerializableError error;
     private final int status;
     private final List<Arg<?>> args;
@@ -41,19 +43,23 @@ public final class RemoteException extends RuntimeException implements SafeLogga
     }
 
     public RemoteException(SerializableError error, int status) {
-        super(
-                error.errorCode().equals(error.errorName())
-                        ? String.format("RemoteException: %s", error.errorCode())
-                        : String.format("RemoteException: %s (%s)", error.errorCode(), error.errorName()));
-
+        this.stableMessage = error.errorCode().equals(error.errorName())
+                ? String.format("RemoteException: %s", error.errorCode())
+                : String.format("RemoteException: %s (%s)", error.errorCode(), error.errorName());
+        this.message = this.stableMessage + " with instance ID " + error.errorInstanceId();
         this.error = error;
         this.status = status;
         this.args = Collections.singletonList(SafeArg.of("errorInstanceId", error.errorInstanceId()));
     }
 
     @Override
+    public String getMessage() {
+        return message;
+    }
+
+    @Override
     public String getLogMessage() {
-        return getMessage();
+        return stableMessage;
     }
 
     @Override
