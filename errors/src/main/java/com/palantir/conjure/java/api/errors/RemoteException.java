@@ -17,6 +17,7 @@
 package com.palantir.conjure.java.api.errors;
 
 import com.palantir.logsafe.Arg;
+import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.SafeLoggable;
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +28,7 @@ public final class RemoteException extends RuntimeException implements SafeLogga
 
     private final SerializableError error;
     private final int status;
+    private final List<Arg<?>> args;
 
     /** Returns the error thrown by a remote process which caused an RPC call to fail. */
     public SerializableError getError() {
@@ -41,14 +43,12 @@ public final class RemoteException extends RuntimeException implements SafeLogga
     public RemoteException(SerializableError error, int status) {
         super(
                 error.errorCode().equals(error.errorName())
-                        ? String.format(
-                                "RemoteException: %s with instance ID %s", error.errorCode(), error.errorInstanceId())
-                        : String.format(
-                                "RemoteException: %s (%s) with instance ID %s",
-                                error.errorCode(), error.errorName(), error.errorInstanceId()));
+                        ? String.format("RemoteException: %s", error.errorCode())
+                        : String.format("RemoteException: %s (%s)", error.errorCode(), error.errorName()));
 
         this.error = error;
         this.status = status;
+        this.args = Collections.singletonList(SafeArg.of("errorInstanceId", error.errorInstanceId()));
     }
 
     @Override
@@ -60,6 +60,6 @@ public final class RemoteException extends RuntimeException implements SafeLogga
     public List<Arg<?>> getArgs() {
         // RemoteException explicitly does not support arguments because they have already been recorded
         // on the service which produced the causal SerializableError.
-        return Collections.emptyList();
+        return args;
     }
 }

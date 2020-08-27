@@ -18,6 +18,7 @@ package com.palantir.conjure.java.api.errors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.palantir.logsafe.SafeArg;
 import org.apache.commons.lang3.SerializationUtils;
 import org.junit.jupiter.api.Test;
 
@@ -52,16 +53,14 @@ public final class RemoteExceptionTest {
                 .errorName("errorName")
                 .errorInstanceId("errorId")
                 .build();
-        assertThat(new RemoteException(error, 500).getMessage())
-                .isEqualTo("RemoteException: errorCode (errorName) with instance ID errorId");
+        assertThat(new RemoteException(error, 500).getMessage()).isEqualTo("RemoteException: errorCode (errorName)");
 
         error = new SerializableError.Builder()
                 .errorCode("errorCode")
                 .errorName("errorCode")
                 .errorInstanceId("errorId")
                 .build();
-        assertThat(new RemoteException(error, 500).getMessage())
-                .isEqualTo("RemoteException: errorCode with instance ID errorId");
+        assertThat(new RemoteException(error, 500).getMessage()).isEqualTo("RemoteException: errorCode");
     }
 
     @Test
@@ -74,7 +73,7 @@ public final class RemoteExceptionTest {
         RemoteException remoteException = new RemoteException(error, 500);
         assertThat(remoteException.getLogMessage())
                 .isEqualTo(remoteException.getMessage())
-                .isEqualTo("RemoteException: errorCode (errorName) with instance ID errorId");
+                .isEqualTo("RemoteException: errorCode (errorName)");
     }
 
     @Test
@@ -87,8 +86,6 @@ public final class RemoteExceptionTest {
                         .putParameters("param", "value")
                         .build(),
                 500);
-        assertThat(remoteException.getArgs())
-                .describedAs("RemoteException does not support parameters by design")
-                .isEmpty();
+        assertThat(remoteException.getArgs()).containsExactly(SafeArg.of("errorInstanceId", "errorId"));
     }
 }
