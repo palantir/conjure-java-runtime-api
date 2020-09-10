@@ -95,27 +95,37 @@ public final class ServiceException extends RuntimeException implements SafeLogg
     }
 
     private static <T> List<T> copyToUnmodifiableList(T[] elements) {
+        if (elements == null || elements.length == 0) {
+            return Collections.emptyList();
+        }
         List<T> list = new ArrayList<>(elements.length);
-        Collections.addAll(list, elements);
+        for (T item : elements) {
+            if (item != null) {
+                list.add(item);
+            }
+        }
         return Collections.unmodifiableList(list);
     }
 
     private static String renderUnsafeMessage(ErrorType errorType, Arg<?>... args) {
         String message = renderNoArgsMessage(errorType);
 
-        if (args.length == 0) {
+        if (args == null || args.length == 0) {
             return message;
         }
 
         StringBuilder builder = new StringBuilder();
+        boolean first = true;
         builder.append(message).append(": {");
-        for (int i = 0; i < args.length; i++) {
-            Arg<?> arg = args[i];
-            if (i > 0) {
-                builder.append(", ");
+        for (Arg<?> arg : args) {
+            if (arg != null) {
+                if (first) {
+                    first = false;
+                } else {
+                    builder.append(", ");
+                }
+                builder.append(arg.getName()).append("=").append(arg.getValue());
             }
-
-            builder.append(arg.getName()).append("=").append(arg.getValue());
         }
         builder.append("}");
 
