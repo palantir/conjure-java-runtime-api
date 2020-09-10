@@ -1,0 +1,5 @@
+type: fix
+fix:
+  description: ServiceException no longer throws NPE when null args are provided
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/608
