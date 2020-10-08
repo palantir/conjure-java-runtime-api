@@ -32,7 +32,7 @@ import java.util.Optional;
  * service. Typically, this exception gets translated into appropriate error codes of the underlying transport layer,
  * e.g., HTTP status codes 429, 503, etc. in the case of HTTP transport.
  */
-public abstract class QosException extends RuntimeException implements SafeLoggable {
+public abstract class QosException extends RuntimeException {
 
     // Not meant for external subclassing.
     private QosException(String message) {
@@ -114,7 +114,7 @@ public abstract class QosException extends RuntimeException implements SafeLogga
     }
 
     /** See {@link #throttle}. */
-    public static final class Throttle extends QosException {
+    public static final class Throttle extends QosException implements SafeLoggable {
         private final Optional<Duration> retryAfter;
 
         private Throttle(Optional<Duration> retryAfter) {
@@ -148,7 +148,7 @@ public abstract class QosException extends RuntimeException implements SafeLogga
     }
 
     /** See {@link #retryOther}. */
-    public static final class RetryOther extends QosException {
+    public static final class RetryOther extends QosException implements SafeLoggable {
         private final URL redirectTo;
 
         private RetryOther(URL redirectTo) {
@@ -183,7 +183,7 @@ public abstract class QosException extends RuntimeException implements SafeLogga
     }
 
     /** See {@link #unavailable}. */
-    public static final class Unavailable extends QosException {
+    public static final class Unavailable extends QosException implements SafeLoggable {
         private static final String SERVER_UNAVAILABLE = "Server unavailable";
 
         private Unavailable() {
