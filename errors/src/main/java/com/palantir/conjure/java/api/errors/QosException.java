@@ -19,9 +19,10 @@ package com.palantir.conjure.java.api.errors;
 import com.palantir.logsafe.Arg;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.SafeLoggable;
+import com.palantir.logsafe.UnsafeArg;
 import java.net.URL;
 import java.time.Duration;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +32,7 @@ import java.util.Optional;
  * service. Typically, this exception gets translated into appropriate error codes of the underlying transport layer,
  * e.g., HTTP status codes 429, 503, etc. in the case of HTTP transport.
  */
-public abstract class QosException extends RuntimeException {
+public abstract class QosException extends RuntimeException implements SafeLoggable {
 
     // Not meant for external subclassing.
     private QosException(String message) {
@@ -134,10 +135,20 @@ public abstract class QosException extends RuntimeException {
         public <T> T accept(Visitor<T> visitor) {
             return visitor.visit(this);
         }
+
+        @Override
+        public String getLogMessage() {
+            return "Suggested request throttling";
+        }
+
+        @Override
+        public List<Arg<?>> getArgs() {
+            return Collections.singletonList(SafeArg.of("retryAfter", retryAfter.orElse(null)));
+        }
     }
 
     /** See {@link #retryOther}. */
-    public static final class RetryOther extends QosException implements SafeLoggable {
+    public static final class RetryOther extends QosException {
         private final URL redirectTo;
 
         private RetryOther(URL redirectTo) {
@@ -167,25 +178,35 @@ public abstract class QosException extends RuntimeException {
 
         @Override
         public List<Arg<?>> getArgs() {
-            List<Arg<?>> args = new ArrayList<>();
-            args.add(SafeArg.of("redirectTo", redirectTo));
-            return args;
+            return Collections.singletonList(UnsafeArg.of("redirectTo", redirectTo));
         }
     }
 
     /** See {@link #unavailable}. */
     public static final class Unavailable extends QosException {
+        private static final String SERVER_UNAVAILABLE = "Server unavailable";
+
         private Unavailable() {
-            super("Server unavailable");
+            super(SERVER_UNAVAILABLE);
         }
 
         private Unavailable(Throwable cause) {
-            super("Server unavailable", cause);
+            super(SERVER_UNAVAILABLE, cause);
         }
 
         @Override
         public <T> T accept(Visitor<T> visitor) {
             return visitor.visit(this);
+        }
+
+        @Override
+        public String getLogMessage() {
+            return SERVER_UNAVAILABLE;
+        }
+
+        @Override
+        public List<Arg<?>> getArgs() {
+            return Collections.emptyList();
         }
     }
 }
