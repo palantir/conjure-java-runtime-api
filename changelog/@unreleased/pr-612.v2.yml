@@ -1,0 +1,5 @@
+type: fix
+fix:
+  description: All QosExceptions are now SafeLoggable
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/612

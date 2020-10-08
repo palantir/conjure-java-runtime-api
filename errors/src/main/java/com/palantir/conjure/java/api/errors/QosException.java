@@ -19,9 +19,10 @@ package com.palantir.conjure.java.api.errors;
 import com.palantir.logsafe.Arg;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.SafeLoggable;
+import com.palantir.logsafe.UnsafeArg;
 import java.net.URL;
 import java.time.Duration;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -113,7 +114,7 @@ public abstract class QosException extends RuntimeException {
     }
 
     /** See {@link #throttle}. */
-    public static final class Throttle extends QosException {
+    public static final class Throttle extends QosException implements SafeLoggable {
         private final Optional<Duration> retryAfter;
 
         private Throttle(Optional<Duration> retryAfter) {
@@ -133,6 +134,16 @@ public abstract class QosException extends RuntimeException {
         @Override
         public <T> T accept(Visitor<T> visitor) {
             return visitor.visit(this);
+        }
+
+        @Override
+        public String getLogMessage() {
+            return "Suggested request throttling";
+        }
+
+        @Override
+        public List<Arg<?>> getArgs() {
+            return Collections.singletonList(SafeArg.of("retryAfter", retryAfter.orElse(null)));
         }
     }
 
@@ -167,25 +178,35 @@ public abstract class QosException extends RuntimeException {
 
         @Override
         public List<Arg<?>> getArgs() {
-            List<Arg<?>> args = new ArrayList<>();
-            args.add(SafeArg.of("redirectTo", redirectTo));
-            return args;
+            return Collections.singletonList(UnsafeArg.of("redirectTo", redirectTo));
         }
     }
 
     /** See {@link #unavailable}. */
-    public static final class Unavailable extends QosException {
+    public static final class Unavailable extends QosException implements SafeLoggable {
+        private static final String SERVER_UNAVAILABLE = "Server unavailable";
+
         private Unavailable() {
-            super("Server unavailable");
+            super(SERVER_UNAVAILABLE);
         }
 
         private Unavailable(Throwable cause) {
-            super("Server unavailable", cause);
+            super(SERVER_UNAVAILABLE, cause);
         }
 
         @Override
         public <T> T accept(Visitor<T> visitor) {
             return visitor.visit(this);
+        }
+
+        @Override
+        public String getLogMessage() {
+            return SERVER_UNAVAILABLE;
+        }
+
+        @Override
+        public List<Arg<?>> getArgs() {
+            return Collections.emptyList();
         }
     }
 }
