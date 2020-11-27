@@ -56,6 +56,27 @@ public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExcep
         }
     }
 
+    public final ServiceExceptionAssert hasArgsIncluding(Arg<?>... args) {
+        isNotNull();
+
+        AssertableArgs actualArgs = new AssertableArgs(actual.getParameters());
+        AssertableArgs expectedArgs = new AssertableArgs(Arrays.asList(args));
+
+        failIfDoesNotContain(
+                "Expected safe args to contain %s, but found %s", expectedArgs.safeArgs, actualArgs.safeArgs);
+        failIfDoesNotContain(
+                "Expected unsafe args to contain %s, but found %s", expectedArgs.unsafeArgs, actualArgs.unsafeArgs);
+
+        return this;
+    }
+
+    private void failIfDoesNotContain(
+            String message, Map<String, Object> expectedArgs, Map<String, Object> actualArgs) {
+        if (!actualArgs.entrySet().containsAll(expectedArgs.entrySet())) {
+            failWithMessage(message, expectedArgs, actualArgs);
+        }
+    }
+
     private static final class AssertableArgs {
         private final Map<String, Object> safeArgs = new HashMap<>();
         private final Map<String, Object> unsafeArgs = new HashMap<>();
