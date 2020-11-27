@@ -1,0 +1,5 @@
+type: improvement
+improvement:
+  description: Added `ServiceExceptionAssert.hasArgsIncluding`, a weaker form of `hasArgs`.
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/620
