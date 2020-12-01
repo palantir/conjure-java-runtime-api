@@ -56,7 +56,7 @@ public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExcep
         }
     }
 
-    public final ServiceExceptionAssert hasArgsIncluding(Arg<?>... args) {
+    public final ServiceExceptionAssert containsArgs(Arg<?>... args) {
         isNotNull();
 
         AssertableArgs actualArgs = new AssertableArgs(actual.getParameters());
