@@ -60,7 +60,8 @@ public class ServiceExceptionAssertTest {
         assertThatThrownBy(() -> Assertions.assertThat(
                                 new ServiceException(actualType, SafeArg.of("a", "b"), UnsafeArg.of("c", "d")))
                         .containsArgs(UnsafeArg.of("a", "b")))
-                .isInstanceOf(AssertionError.class);
+                .isInstanceOf(AssertionError.class)
+                .hasMessage("Expected unsafe args to contain {a=b}, but found {c=d}");
 
         assertThatThrownBy(() -> Assertions.assertThat(new ServiceException(actualType, SafeArg.of("a", "b")))
                         .containsArgs(SafeArg.of("c", "d")))
