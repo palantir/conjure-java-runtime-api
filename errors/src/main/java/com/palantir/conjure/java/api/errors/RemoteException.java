@@ -26,11 +26,13 @@ import java.util.List;
 public final class RemoteException extends RuntimeException implements SafeLoggable {
     private static final long serialVersionUID = 1L;
 
-    private final String message;
     private final String stableMessage;
     private final SerializableError error;
     private final int status;
     private final List<Arg<?>> args;
+    // Lazily evaluated based on the stableMessage, errorInstanceId, and args.
+    @SuppressWarnings("MutableException")
+    private String unsafeMessage;
 
     /** Returns the error thrown by a remote process which caused an RPC call to fail. */
     public SerializableError getError() {
@@ -44,9 +46,8 @@ public final class RemoteException extends RuntimeException implements SafeLogga
 
     public RemoteException(SerializableError error, int status) {
         this.stableMessage = error.errorCode().equals(error.errorName())
-                ? String.format("RemoteException: %s", error.errorCode())
-                : String.format("RemoteException: %s (%s)", error.errorCode(), error.errorName());
-        this.message = this.stableMessage + " with instance ID " + error.errorInstanceId();
+                ? "RemoteException: " + error.errorCode()
+                : "RemoteException: " + error.errorCode() + " (" + error.errorName() + ")";
         this.error = error;
         this.status = status;
         this.args = Collections.singletonList(SafeArg.of("errorInstanceId", error.errorInstanceId()));
@@ -54,7 +55,31 @@ public final class RemoteException extends RuntimeException implements SafeLogga
 
     @Override
     public String getMessage() {
-        return message;
+        // This field is not used in most environments so the cost of computation may be avoided.
+        String messageValue = unsafeMessage;
+        if (messageValue == null) {
+            messageValue = renderUnsafeMessage();
+            unsafeMessage = messageValue;
+        }
+        return messageValue;
+    }
+
+    private String renderUnsafeMessage() {
+        StringBuilder builder = new StringBuilder()
+                .append(stableMessage)
+                .append(" with instance ID ")
+                .append(error.errorInstanceId());
+        if (!error.parameters().isEmpty()) {
+            builder.append(": {");
+            error.parameters()
+                    .forEach((name, unsafeValue) ->
+                            builder.append(name).append('=').append(unsafeValue).append(", "));
+            // remove the trailing space
+            builder.setLength(builder.length() - 1);
+            // replace the trailing comma with a close curly brace
+            builder.setCharAt(builder.length() - 1, '}');
+        }
+        return builder.toString();
     }
 
     @Override
