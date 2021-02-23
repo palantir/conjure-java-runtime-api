@@ -1,0 +1,5 @@
+type: improvement
+improvement:
+  description: RemoteException.getMessage (unsafe message) includes SerializableError parameters. RemoteException.getLogMessage (safe) is not impacted.
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/633
