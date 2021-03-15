@@ -30,7 +30,7 @@ import javax.annotation.Nullable;
  * A {@link CheckedServiceException} thrown in server-side code to indicate server-side {@link ErrorType error states}.
  * Must be explicitly caught by the clients.
  **/
-public final class CheckedServiceException extends Exception implements SafeLoggable {
+public abstract class CheckedServiceException extends Exception implements SafeLoggable {
 
     private final ErrorType errorType;
     private final List<Arg<?>> args; // unmodifiable
@@ -71,19 +71,19 @@ public final class CheckedServiceException extends Exception implements SafeLogg
     }
 
     @Override
-    public String getMessage() {
+    public final String getMessage() {
         // Including all args here since any logger not configured with safe-logging will log this message.
         return unsafeMessage;
     }
 
     @Override
-    public String getLogMessage() {
+    public final String getLogMessage() {
         // Not returning safe args here since the safe-logging framework will log this message + args explicitly.
         return noArgsMessage;
     }
 
     @Override
-    public List<Arg<?>> getArgs() {
+    public final List<Arg<?>> getArgs() {
         return args;
     }
 
