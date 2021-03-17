@@ -25,8 +25,10 @@ import java.util.List;
 /**
  * A checked exception thrown by an RPC client to indicate remote/server-side failure that should be handled by the
  * client.
+ *
+ * This is a copy of {@link RemoteException}, except it extends {@link Exception}.
  **/
-public final class CheckedRemoteException extends Exception implements SafeLoggable {
+public abstract class CheckedRemoteException extends Exception implements SafeLoggable {
     private static final long serialVersionUID = 1L;
 
     private final String message;
@@ -45,7 +47,7 @@ public final class CheckedRemoteException extends Exception implements SafeLogga
         return status;
     }
 
-    public CheckedRemoteException(SerializableError error, int status) {
+    protected CheckedRemoteException(SerializableError error, int status) {
         this.stableMessage = error.errorCode().equals(error.errorName())
                 ? String.format("RemoteException: %s", error.errorCode())
                 : String.format("RemoteException: %s (%s)", error.errorCode(), error.errorName());
@@ -56,17 +58,17 @@ public final class CheckedRemoteException extends Exception implements SafeLogga
     }
 
     @Override
-    public String getMessage() {
+    public final String getMessage() {
         return message;
     }
 
     @Override
-    public String getLogMessage() {
+    public final String getLogMessage() {
         return stableMessage;
     }
 
     @Override
-    public List<Arg<?>> getArgs() {
+    public final List<Arg<?>> getArgs() {
         // RemoteException explicitly does not support arguments because they have already been recorded
         // on the service which produced the causal SerializableError.
         return args;

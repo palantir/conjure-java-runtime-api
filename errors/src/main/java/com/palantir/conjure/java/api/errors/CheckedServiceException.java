@@ -29,6 +29,8 @@ import javax.annotation.Nullable;
 /**
  * A {@link CheckedServiceException} thrown in server-side code to indicate server-side {@link ErrorType error states}.
  * Must be explicitly caught by the clients.
+ *
+ * This is a copy of {@link ServiceException}, except it extends {@link Exception}.
  **/
 public abstract class CheckedServiceException extends Exception implements SafeLoggable {
 
@@ -43,12 +45,12 @@ public abstract class CheckedServiceException extends Exception implements SafeL
      * Creates a new exception for the given error. All {@link Arg parameters} are propagated to
      * clients; they are serialized via {@link Object#toString}.
      */
-    public CheckedServiceException(ErrorType errorType, Arg<?>... parameters) {
+    protected CheckedServiceException(ErrorType errorType, Arg<?>... parameters) {
         this(errorType, null, parameters);
     }
 
     /** As above, but additionally records the cause of this exception. */
-    public CheckedServiceException(ErrorType errorType, @Nullable Throwable cause, Arg<?>... args) {
+    protected CheckedServiceException(ErrorType errorType, @Nullable Throwable cause, Arg<?>... args) {
         // TODO(rfink): Memoize formatting?
         super(cause);
 
