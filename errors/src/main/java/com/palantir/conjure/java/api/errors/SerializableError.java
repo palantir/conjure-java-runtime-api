@@ -44,8 +44,8 @@ public abstract class SerializableError implements Serializable {
     /**
      * A fixed code word identifying the type of error. For errors generated from {@link ServiceException}, this
      * corresponds to the {@link ErrorType#code} and is part of the service's API surface. Clients are given access to
-     * the server-side error code via {@link RemoteException#getError} and typically switch&dispatch on the error code
-     * and/or name.
+     * the server-side error code via {@link RemoteException#getError} and typically switch and dispatch on the error
+     * code and/or name.
      */
     @JsonProperty("errorCode")
     @Value.Default
@@ -58,7 +58,7 @@ public abstract class SerializableError implements Serializable {
     /**
      * A fixed name identifying the error. For errors generated from {@link ServiceException}, this corresponding to the
      * {@link ErrorType#name} and is part of the service's API surface. Clients are given access to the service-side
-     * error name via {@link RemoteException#getError} and typically switch&dispatch on the error code and/or name.
+     * error name via {@link RemoteException#getError} and typically switch and dispatch on the error code and/or name.
      */
     @JsonProperty("errorName")
     @Value.Default
