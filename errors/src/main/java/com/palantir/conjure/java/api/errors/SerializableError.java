@@ -122,6 +122,23 @@ public abstract class SerializableError implements Serializable {
         return builder.build();
     }
 
+    /**
+     * Creates a {@link SerializableError} representation of this checked exception that derives from the error code and
+     * message, as well as the {@link Arg#isSafeForLogging safe} and unsafe {@link ServiceException#args parameters}.
+     */
+    public static SerializableError forCheckedException(CheckedServiceException exception) {
+        Builder builder = new Builder()
+                .errorCode(exception.getErrorType().code().name())
+                .errorName(exception.getErrorType().name())
+                .errorInstanceId(exception.getErrorInstanceId());
+
+        for (Arg<?> arg : exception.getArgs()) {
+            builder.putParameters(arg.getName(), Objects.toString(arg.getValue()));
+        }
+
+        return builder.build();
+    }
+
     // TODO(rfink): Remove once all error producers have switched to errorCode/errorName.
     public static final class Builder extends ImmutableSerializableError.Builder {}
 

@@ -79,4 +79,15 @@ public final class AssertionsTest {
                 })
                 .isGeneratedFromErrorType(ErrorType.INTERNAL);
     }
+
+    @Test
+    public void testAssertThatRemoteExceptionThrownBy_catchesCheckedServiceException() {
+        assertThatRemoteExceptionThrownBy(() -> {
+                    throw new RemoteException(
+                            SerializableError.forCheckedException(
+                                    new ExampleCheckedServiceException(ErrorType.INTERNAL)),
+                            ErrorType.INTERNAL.httpErrorCode());
+                })
+                .isGeneratedFromErrorType(ErrorType.INTERNAL);
+    }
 }

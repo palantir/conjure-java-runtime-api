@@ -24,12 +24,6 @@ import org.junit.jupiter.api.Test;
 
 public final class CheckedRemoteExceptionTest {
 
-    private static class CheckedRemoteExceptionImpl extends CheckedRemoteException {
-        protected CheckedRemoteExceptionImpl(SerializableError error, int status) {
-            super(error, status);
-        }
-    }
-
     @Test
     public void testJavaSerialization() {
         // With explicit error instance
@@ -38,8 +32,8 @@ public final class CheckedRemoteExceptionTest {
                 .errorName("errorName")
                 .errorInstanceId("errorId")
                 .build();
-        CheckedRemoteExceptionImpl expected = new CheckedRemoteExceptionImpl(error, 500);
-        CheckedRemoteExceptionImpl actual = SerializationUtils.deserialize(SerializationUtils.serialize(expected));
+        ExampleCheckedRemoteException expected = new ExampleCheckedRemoteException(error, 500);
+        ExampleCheckedRemoteException actual = SerializationUtils.deserialize(SerializationUtils.serialize(expected));
         assertThat(actual).isEqualToComparingFieldByField(expected);
 
         // Without error instance
@@ -47,7 +41,7 @@ public final class CheckedRemoteExceptionTest {
                 .errorCode("errorCode")
                 .errorName("errorName")
                 .build();
-        expected = new CheckedRemoteExceptionImpl(error, 500);
+        expected = new ExampleCheckedRemoteException(error, 500);
         actual = SerializationUtils.deserialize(SerializationUtils.serialize(expected));
         assertThat(actual).isEqualToComparingFieldByField(expected);
     }
@@ -59,16 +53,16 @@ public final class CheckedRemoteExceptionTest {
                 .errorName("errorName")
                 .errorInstanceId("errorId")
                 .build();
-        assertThat(new CheckedRemoteExceptionImpl(error, 500).getMessage())
-                .isEqualTo("CheckedRemoteExceptionImpl: errorCode (errorName) with instance ID errorId");
+        assertThat(new ExampleCheckedRemoteException(error, 500).getMessage())
+                .isEqualTo("ExampleCheckedRemoteException: errorCode (errorName) with instance ID errorId");
 
         error = new SerializableError.Builder()
                 .errorCode("errorCode")
                 .errorName("errorCode")
                 .errorInstanceId("errorId")
                 .build();
-        assertThat(new CheckedRemoteExceptionImpl(error, 500).getMessage())
-                .isEqualTo("CheckedRemoteExceptionImpl: errorCode with instance ID errorId");
+        assertThat(new ExampleCheckedRemoteException(error, 500).getMessage())
+                .isEqualTo("ExampleCheckedRemoteException: errorCode with instance ID errorId");
     }
 
     @Test
@@ -78,13 +72,13 @@ public final class CheckedRemoteExceptionTest {
                 .errorName("errorName")
                 .errorInstanceId("errorId")
                 .build();
-        CheckedRemoteExceptionImpl remoteException = new CheckedRemoteExceptionImpl(error, 500);
-        assertThat(remoteException.getLogMessage()).isEqualTo("CheckedRemoteExceptionImpl: errorCode (errorName)");
+        ExampleCheckedRemoteException remoteException = new ExampleCheckedRemoteException(error, 500);
+        assertThat(remoteException.getLogMessage()).isEqualTo("ExampleCheckedRemoteException: errorCode (errorName)");
     }
 
     @Test
     public void testArgsIsEmpty() {
-        CheckedRemoteExceptionImpl remoteException = new CheckedRemoteExceptionImpl(
+        ExampleCheckedRemoteException remoteException = new ExampleCheckedRemoteException(
                 new SerializableError.Builder()
                         .errorCode("errorCode")
                         .errorName("errorName")

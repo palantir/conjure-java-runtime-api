@@ -23,7 +23,6 @@ import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.UnsafeArg;
 import com.palantir.logsafe.exceptions.SafeRuntimeException;
 import java.util.UUID;
-import javax.annotation.Nullable;
 import org.junit.jupiter.api.Test;
 
 public final class CheckedServiceExceptionTest {
@@ -31,22 +30,12 @@ public final class CheckedServiceExceptionTest {
     private static final String ERROR_NAME = "Namespace:MyDesc";
     private static final ErrorType ERROR = ErrorType.create(ErrorType.Code.CUSTOM_CLIENT, ERROR_NAME);
     private static final String EXPECTED_ERROR_MSG =
-            "CheckedServiceExceptionImpl: " + "CUSTOM_CLIENT (Namespace:MyDesc)";
-
-    private static class CheckedServiceExceptionImpl extends CheckedServiceException {
-        protected CheckedServiceExceptionImpl(ErrorType errorType, Arg<?>... parameters) {
-            super(errorType, parameters);
-        }
-
-        protected CheckedServiceExceptionImpl(ErrorType errorType, @Nullable Throwable cause, Arg<?>... args) {
-            super(errorType, cause, args);
-        }
-    }
+            "ExampleCheckedServiceException: " + "CUSTOM_CLIENT (Namespace:MyDesc)";
 
     @Test
     public void testExceptionMessageContainsNoArgs_safeLogMessageContainsSafeArgsOnly() {
         Arg<?>[] args = {SafeArg.of("arg1", "foo"), UnsafeArg.of("arg2", 2), UnsafeArg.of("arg3", null)};
-        CheckedServiceException ex = new CheckedServiceExceptionImpl(ERROR, args);
+        CheckedServiceException ex = new ExampleCheckedServiceException(ERROR, args);
 
         assertThat(ex.getLogMessage()).isEqualTo(EXPECTED_ERROR_MSG);
         assertThat(ex.getMessage()).isEqualTo(EXPECTED_ERROR_MSG + ": {arg1=foo, arg2=2, arg3=null}");
@@ -55,58 +44,58 @@ public final class CheckedServiceExceptionTest {
     @Test
     public void testExceptionMessageWithDuplicateKeys() {
         CheckedServiceException ex =
-                new CheckedServiceExceptionImpl(ERROR, SafeArg.of("arg1", "foo"), SafeArg.of("arg1", 2));
+                new ExampleCheckedServiceException(ERROR, SafeArg.of("arg1", "foo"), SafeArg.of("arg1", 2));
         assertThat(ex.getMessage()).isEqualTo(EXPECTED_ERROR_MSG + ": {arg1=foo, arg1=2}");
     }
 
     @Test
     public void testExceptionMessageWithUnsafeArgs() {
-        CheckedServiceExceptionImpl ex =
-                new CheckedServiceExceptionImpl(ERROR, UnsafeArg.of("arg1", 1), SafeArg.of("arg2", 2));
+        ExampleCheckedServiceException ex =
+                new ExampleCheckedServiceException(ERROR, UnsafeArg.of("arg1", 1), SafeArg.of("arg2", 2));
         assertThat(ex.getMessage()).isEqualTo(EXPECTED_ERROR_MSG + ": {arg1=1, arg2=2}");
     }
 
     @Test
     public void testExceptionMessageWithNullArg() {
-        CheckedServiceExceptionImpl ex =
-                new CheckedServiceExceptionImpl(ERROR, UnsafeArg.of("arg1", 1), null, SafeArg.of("arg2", 2));
+        ExampleCheckedServiceException ex =
+                new ExampleCheckedServiceException(ERROR, UnsafeArg.of("arg1", 1), null, SafeArg.of("arg2", 2));
         assertThat(ex.getMessage()).isEqualTo(EXPECTED_ERROR_MSG + ": {arg1=1, arg2=2}");
         assertThat(ex.getArgs()).doesNotContainNull().hasSize(2);
     }
 
     @Test
     public void testExceptionMessageWithNoArgs() {
-        CheckedServiceExceptionImpl ex = new CheckedServiceExceptionImpl(ERROR);
+        ExampleCheckedServiceException ex = new ExampleCheckedServiceException(ERROR);
         assertThat(ex.getMessage()).isEqualTo(EXPECTED_ERROR_MSG);
     }
 
     @Test
     public void testExceptionCause() {
         Throwable cause = new RuntimeException("foo");
-        CheckedServiceExceptionImpl ex = new CheckedServiceExceptionImpl(ERROR, cause);
+        ExampleCheckedServiceException ex = new ExampleCheckedServiceException(ERROR, cause);
 
         assertThat(ex.getCause()).isEqualTo(cause);
     }
 
     @Test
     public void testStatus() {
-        CheckedServiceExceptionImpl ex = new CheckedServiceExceptionImpl(ERROR);
+        ExampleCheckedServiceException ex = new ExampleCheckedServiceException(ERROR);
         assertThat(ex.getErrorType().httpErrorCode()).isEqualTo(400);
     }
 
     @Test
     public void testErrorIdsAreUnique() {
-        UUID errorId1 = UUID.fromString(new CheckedServiceExceptionImpl(ERROR).getErrorInstanceId());
-        UUID errorId2 = UUID.fromString(new CheckedServiceExceptionImpl(ERROR).getErrorInstanceId());
+        UUID errorId1 = UUID.fromString(new ExampleCheckedServiceException(ERROR).getErrorInstanceId());
+        UUID errorId2 = UUID.fromString(new ExampleCheckedServiceException(ERROR).getErrorInstanceId());
 
         assertThat(errorId1).isNotEqualTo(errorId2);
     }
 
     @Test
-    public void testErrorIdsAreInheritedFromCheckedServiceExceptionImpls() {
-        CheckedServiceExceptionImpl rootCause = new CheckedServiceExceptionImpl(ERROR);
+    public void testErrorIdsAreInheritedFromExampleCheckedServiceExceptions() {
+        ExampleCheckedServiceException rootCause = new ExampleCheckedServiceException(ERROR);
         SafeRuntimeException intermediate = new SafeRuntimeException("Handled an exception", rootCause);
-        CheckedServiceExceptionImpl parent = new CheckedServiceExceptionImpl(ERROR, intermediate);
+        ExampleCheckedServiceException parent = new ExampleCheckedServiceException(ERROR, intermediate);
         assertThat(parent.getErrorInstanceId()).isEqualTo(rootCause.getErrorInstanceId());
     }
 
@@ -119,7 +108,7 @@ public final class CheckedServiceExceptionTest {
                         .build(),
                 500);
         SafeRuntimeException intermediate = new SafeRuntimeException("Handled an exception", rootCause);
-        CheckedServiceExceptionImpl parent = new CheckedServiceExceptionImpl(ERROR, intermediate);
+        ExampleCheckedServiceException parent = new ExampleCheckedServiceException(ERROR, intermediate);
         assertThat(parent.getErrorInstanceId()).isEqualTo(rootCause.getError().errorInstanceId());
     }
 
@@ -132,7 +121,7 @@ public final class CheckedServiceExceptionTest {
         first.initCause(second);
         // invoke getErrorInstanceId to ensure this is tested even if future developers
         // optimize generation to occur lazily.
-        assertThat(new CheckedServiceExceptionImpl(ERROR, second).getErrorInstanceId())
+        assertThat(new ExampleCheckedServiceException(ERROR, second).getErrorInstanceId())
                 .isNotNull();
     }
 }
