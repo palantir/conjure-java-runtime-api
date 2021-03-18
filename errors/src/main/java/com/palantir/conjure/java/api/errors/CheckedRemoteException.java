@@ -49,8 +49,8 @@ public abstract class CheckedRemoteException extends Exception implements SafeLo
 
     protected CheckedRemoteException(SerializableError error, int status) {
         this.stableMessage = error.errorCode().equals(error.errorName())
-                ? String.format("RemoteException: %s", error.errorCode())
-                : String.format("RemoteException: %s (%s)", error.errorCode(), error.errorName());
+                ? String.format("%s: %s", this.getClass().getSimpleName(), error.errorCode())
+                : String.format("%s: %s (%s)", this.getClass().getSimpleName(), error.errorCode(), error.errorName());
         this.message = this.stableMessage + " with instance ID " + error.errorInstanceId();
         this.error = error;
         this.status = status;

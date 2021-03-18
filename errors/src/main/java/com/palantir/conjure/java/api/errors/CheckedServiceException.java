@@ -18,12 +18,7 @@ package com.palantir.conjure.java.api.errors;
 
 import com.palantir.logsafe.Arg;
 import com.palantir.logsafe.SafeLoggable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 import javax.annotation.Nullable;
 
 /**
@@ -54,12 +49,12 @@ public abstract class CheckedServiceException extends Exception implements SafeL
         // TODO(rfink): Memoize formatting?
         super(cause);
 
-        this.errorInstanceId = generateErrorInstanceId(cause);
+        this.errorInstanceId = ServiceExceptionUtils.generateErrorInstanceId(cause);
         this.errorType = errorType;
         // Note that instantiators cannot mutate List<> args since it comes through copyToList in all code paths.
-        this.args = copyToUnmodifiableList(args);
-        this.unsafeMessage = renderUnsafeMessage(errorType, args);
-        this.noArgsMessage = renderNoArgsMessage(errorType);
+        this.args = ServiceExceptionUtils.copyToUnmodifiableList(args);
+        this.unsafeMessage = ServiceExceptionUtils.renderUnsafeMessage(errorType, this.getClass(), args);
+        this.noArgsMessage = ServiceExceptionUtils.renderNoArgsMessage(errorType, this.getClass());
     }
 
     /** The {@link ErrorType} that gave rise to this exception. */
@@ -97,72 +92,5 @@ public abstract class CheckedServiceException extends Exception implements SafeL
     @Deprecated
     public List<Arg<?>> getParameters() {
         return getArgs();
-    }
-
-    private static <T> List<T> copyToUnmodifiableList(T[] elements) {
-        if (elements == null || elements.length == 0) {
-            return Collections.emptyList();
-        }
-        List<T> list = new ArrayList<>(elements.length);
-        for (T item : elements) {
-            if (item != null) {
-                list.add(item);
-            }
-        }
-        return Collections.unmodifiableList(list);
-    }
-
-    private static String renderUnsafeMessage(ErrorType errorType, Arg<?>... args) {
-        String message = renderNoArgsMessage(errorType);
-
-        if (args == null || args.length == 0) {
-            return message;
-        }
-
-        StringBuilder builder = new StringBuilder();
-        boolean first = true;
-        builder.append(message).append(": {");
-        for (Arg<?> arg : args) {
-            if (arg != null) {
-                if (first) {
-                    first = false;
-                } else {
-                    builder.append(", ");
-                }
-                builder.append(arg.getName()).append("=").append(arg.getValue());
-            }
-        }
-        builder.append("}");
-
-        return builder.toString();
-    }
-
-    private static String renderNoArgsMessage(ErrorType errorType) {
-        return String.format("ServiceException: %s (%s)", errorType.code(), errorType.name());
-    }
-
-    /**
-     * Finds the errorInstanceId of the most recent cause if present, otherwise generates a new random identifier. Note
-     * that this only searches {@link Throwable#getCause() causal exceptions}, not {@link Throwable#getSuppressed()
-     * suppressed causes}.
-     */
-    private static String generateErrorInstanceId(@Nullable Throwable cause) {
-        return generateErrorInstanceId(cause, Collections.newSetFromMap(new IdentityHashMap<>()));
-    }
-
-    private static String generateErrorInstanceId(
-            @Nullable Throwable cause,
-            // Guard against cause cycles, see Throwable.printStackTrace(PrintStreamOrWriter)
-            Set<Throwable> dejaVu) {
-        if (cause == null || !dejaVu.add(cause)) {
-            return UUID.randomUUID().toString();
-        }
-        if (cause instanceof CheckedServiceException) {
-            return ((CheckedServiceException) cause).getErrorInstanceId();
-        }
-        if (cause instanceof RemoteException) {
-            return ((RemoteException) cause).getError().errorInstanceId();
-        }
-        return generateErrorInstanceId(cause.getCause(), dejaVu);
     }
 }
