@@ -22,7 +22,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 /** A {@link ServiceException} thrown in server-side code to indicate server-side {@link ErrorType error states}. */
-public final class ServiceException extends RuntimeException implements SafeLoggable {
+public final class ServiceException extends RuntimeException implements SafeLoggable, TypedException {
 
     private final ErrorType errorType;
     private final List<Arg<?>> args; // unmodifiable
@@ -52,12 +52,12 @@ public final class ServiceException extends RuntimeException implements SafeLogg
         this.noArgsMessage = ServiceExceptionUtils.renderNoArgsMessage(errorType, this.getClass());
     }
 
-    /** The {@link ErrorType} that gave rise to this exception. */
+    @Override
     public ErrorType getErrorType() {
         return errorType;
     }
 
-    /** A unique identifier for (this instance of) this error. */
+    @Override
     public String getErrorInstanceId() {
         return errorInstanceId;
     }

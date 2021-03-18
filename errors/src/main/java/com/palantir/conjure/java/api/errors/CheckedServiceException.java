@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
  *
  * This is a copy of {@link ServiceException}, except it extends {@link Exception}.
  **/
-public abstract class CheckedServiceException extends Exception implements SafeLoggable {
+public abstract class CheckedServiceException extends Exception implements SafeLoggable, TypedException {
 
     private final ErrorType errorType;
     private final List<Arg<?>> args; // unmodifiable
@@ -57,12 +57,12 @@ public abstract class CheckedServiceException extends Exception implements SafeL
         this.noArgsMessage = ServiceExceptionUtils.renderNoArgsMessage(errorType, this.getClass());
     }
 
-    /** The {@link ErrorType} that gave rise to this exception. */
+    @Override
     public ErrorType getErrorType() {
         return errorType;
     }
 
-    /** A unique identifier for (this instance of) this error. */
+    @Override
     public String getErrorInstanceId() {
         return errorInstanceId;
     }
