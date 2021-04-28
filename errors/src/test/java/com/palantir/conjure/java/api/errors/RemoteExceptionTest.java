@@ -86,6 +86,10 @@ public final class RemoteExceptionTest {
                         .putParameters("param", "value")
                         .build(),
                 500);
-        assertThat(remoteException.getArgs()).containsExactly(SafeArg.of("errorInstanceId", "errorId"));
+        assertThat(remoteException.getArgs())
+                .containsExactlyInAnyOrder(
+                        SafeArg.of("errorInstanceId", "errorId"),
+                        SafeArg.of("errorCode", "errorCode"),
+                        SafeArg.of("errorName", "errorName"));
     }
 }
