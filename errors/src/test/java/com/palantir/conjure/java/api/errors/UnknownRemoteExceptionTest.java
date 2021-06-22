@@ -27,9 +27,8 @@ class UnknownRemoteExceptionTest {
     @Test
     public void testMessage() {
         UnknownRemoteException exception = new UnknownRemoteException(404, "not found");
-        assertThat(exception.getMessage())
-                .isEqualTo("Error 404. (Failed to parse response body as SerializableError.)");
-        assertThat(exception.getLogMessage()).isEqualTo("Failed to parse response body as SerializableError.");
+        assertThat(exception.getMessage()).isEqualTo("UnknownRemoteException: 404");
+        assertThat(exception.getLogMessage()).isEqualTo("UnknownRemoteException: 404");
     }
 
     @Test
