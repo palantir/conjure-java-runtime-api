@@ -27,8 +27,8 @@ class UnknownRemoteExceptionTest {
     @Test
     public void testMessage() {
         UnknownRemoteException exception = new UnknownRemoteException(404, "not found");
-        assertThat(exception.getMessage()).isEqualTo("UnknownRemoteException: 404");
-        assertThat(exception.getLogMessage()).isEqualTo("UnknownRemoteException: 404");
+        assertThat(exception.getMessage()).isEqualTo("Response status: 404");
+        assertThat(exception.getLogMessage()).isEqualTo("Response status: 404");
     }
 
     @Test

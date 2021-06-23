@@ -42,7 +42,7 @@ public final class UnknownRemoteException extends RuntimeException implements Sa
     }
 
     public UnknownRemoteException(int status, String body) {
-        super(String.format("UnknownRemoteException: %s", status));
+        super(String.format("Response status: %s", status));
         this.status = status;
         this.body = body;
     }
