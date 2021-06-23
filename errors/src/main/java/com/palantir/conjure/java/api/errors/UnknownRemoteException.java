@@ -42,14 +42,14 @@ public final class UnknownRemoteException extends RuntimeException implements Sa
     }
 
     public UnknownRemoteException(int status, String body) {
-        super(String.format("Error %s. (Failed to parse response body as SerializableError.)", status));
+        super(String.format("Response status: %s", status));
         this.status = status;
         this.body = body;
     }
 
     @Override
     public String getLogMessage() {
-        return "Failed to parse response body as SerializableError.";
+        return getMessage();
     }
 
     @Override
