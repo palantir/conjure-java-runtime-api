@@ -4,10 +4,11 @@ apply plugin: 'com.palantir.external-publish-jar'
 apply plugin: 'com.palantir.revapi'
 
 dependencies {
-    compile project(":ssl-config")
-    compile "com.palantir.safe-logging:safe-logging"
-    compile "com.palantir.safe-logging:preconditions"
-    compile "com.palantir.tokens:auth-tokens"
+    api project(":ssl-config")
+    api "com.palantir.safe-logging:safe-logging"
+    api "com.palantir.safe-logging:preconditions"
+    api "com.palantir.tokens:auth-tokens"
+    implementation "com.palantir.safe-logging:logger"
 
     testImplementation project(":extras:jackson-support")
     testImplementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"
