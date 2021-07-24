@@ -33,6 +33,8 @@ import org.immutables.value.Value;
  * the (specific sub-) type of error, an optional set of named parameters detailing the error condition. Intended to
  * transport errors through RPC channels such as HTTP responses.
  */
+// Automatically suppressed to unblock enforcement in new code
+@SuppressWarnings("ImmutablesStyle")
 @JsonDeserialize(builder = SerializableError.Builder.class)
 @JsonSerialize(as = ImmutableSerializableError.class)
 @Value.Immutable
