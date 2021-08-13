@@ -4,10 +4,10 @@ apply plugin: 'com.palantir.external-publish-jar'
 apply plugin: 'com.palantir.revapi'
 
 dependencies {
-    compile project(":errors")
+    api project(":errors")
 
-    compile "org.assertj:assertj-core"
-    compile "org.mockito:mockito-core", {
+    api "org.assertj:assertj-core"
+    api "org.mockito:mockito-core", {
         exclude module: 'byte-buddy-agent'
     }
 

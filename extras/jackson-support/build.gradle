@@ -1,12 +1,12 @@
 // For repo-internal use, do not publish.
 
 dependencies {
-    compile "com.fasterxml.jackson.core:jackson-databind"
-    compile "com.fasterxml.jackson.datatype:jackson-datatype-guava"
-    compile "com.fasterxml.jackson.module:jackson-module-afterburner"
-    compile "com.fasterxml.jackson.datatype:jackson-datatype-jdk8"
-    compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
-    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor"
+    api "com.fasterxml.jackson.core:jackson-databind"
+    api "com.fasterxml.jackson.datatype:jackson-datatype-guava"
+    api "com.fasterxml.jackson.module:jackson-module-afterburner"
+    api "com.fasterxml.jackson.datatype:jackson-datatype-jdk8"
+    api "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
+    api "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor"
 
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation "org.assertj:assertj-core"
