@@ -4,14 +4,14 @@ apply plugin: 'com.palantir.external-publish-jar'
 apply plugin: 'com.palantir.revapi'
 
 dependencies {
-    compile "com.fasterxml.jackson.core:jackson-databind"
-    compile "com.google.code.findbugs:jsr305"
-    compile "com.palantir.safe-logging:safe-logging"
+    api "com.fasterxml.jackson.core:jackson-databind"
+    api "com.google.code.findbugs:jsr305"
+    api "com.palantir.safe-logging:safe-logging"
     implementation "com.palantir.safe-logging:preconditions"
 
-    testCompile project(":extras:jackson-support")
-    testCompile "org.assertj:assertj-core"
-    testCompile "org.apache.commons:commons-lang3"
+    testImplementation project(":extras:jackson-support")
+    testImplementation "org.assertj:assertj-core"
+    testImplementation "org.apache.commons:commons-lang3"
     testImplementation 'org.junit.jupiter:junit-jupiter'
 
     annotationProcessor "org.immutables:value"
