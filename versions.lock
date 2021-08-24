@@ -21,7 +21,7 @@ net.bytebuddy:byte-buddy:1.11.13 (1 constraints: 710ba7e9)
 net.bytebuddy:byte-buddy-agent:1.11.13 (1 constraints: 710ba7e9)
 org.assertj:assertj-core:3.20.2 (2 constraints: 94192cde)
 org.immutables:value:2.8.8 (1 constraints: 14051536)
-org.mockito:mockito-core:3.12.1 (1 constraints: 39053c3b)
+org.mockito:mockito-core:3.12.2 (1 constraints: 3a053d3b)
 org.objenesis:objenesis:3.2 (1 constraints: b10a13bd)
 org.slf4j:slf4j-api:1.7.31 (2 constraints: 511e8597)
 
