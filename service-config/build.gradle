@@ -9,6 +9,7 @@ dependencies {
     api "com.palantir.safe-logging:preconditions"
     api "com.palantir.tokens:auth-tokens"
     implementation "com.palantir.safe-logging:logger"
+    implementation 'com.palantir.conjure.java:conjure-undertow-lib:6.5.0'
 
     testImplementation project(":extras:jackson-support")
     testImplementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml"

@@ -18,11 +18,19 @@ package com.palantir.conjure.java.api.config.service;
 
 import static com.palantir.logsafe.testing.Assertions.assertThatLoggableExceptionThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import com.palantir.conjure.java.undertow.lib.RequestContext;
 import com.palantir.logsafe.SafeArg;
+import java.util.Optional;
+import javax.ws.rs.core.HttpHeaders;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
 public class UserAgentTest {
+    @Mock
+    private RequestContext requestContext = mock(RequestContext.class);
 
     @Test
     public void validAndInvalidNodeSyntax() {
@@ -159,7 +167,7 @@ public class UserAgentTest {
     @Test
     public void tryParse_parsesWithBestEffort() {
         // Fixes up the primary agent
-        assertThat(UserAgents.format(UserAgents.tryParse(null))).isEqualTo("unknown/0.0.0");
+        assertThat(UserAgents.format(UserAgents.tryParse((String) null))).isEqualTo("unknown/0.0.0");
         assertThat(UserAgents.format(UserAgents.tryParse(""))).isEqualTo("unknown/0.0.0");
         assertThat(UserAgents.format(UserAgents.tryParse("serviceA|1.2.3"))).isEqualTo("unknown/0.0.0");
         assertThat(UserAgents.format(UserAgents.tryParse("foo serviceA/1.2.3"))).isEqualTo("serviceA/1.2.3");
@@ -167,5 +175,13 @@ public class UserAgentTest {
         // Omits malformed informational agents
         assertThat(UserAgents.format(UserAgents.tryParse("serviceA/1.2.3 bogus|1.2.3 foo bar (boom)")))
                 .isEqualTo("serviceA/1.2.3");
+    }
+
+    @Test
+    public void tryParse_worksWithRequestContex() {
+        when(this.requestContext.firstHeader(HttpHeaders.USER_AGENT))
+                .thenReturn(Optional.of("serviceA/1.2.3 serviceB/4.5.6"));
+        assertThat(UserAgents.format(UserAgents.tryParse(this.requestContext)))
+                .isEqualTo("serviceA/1.2.3 serviceB/4.5.6");
     }
 }

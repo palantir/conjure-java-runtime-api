@@ -16,6 +16,7 @@
 
 package com.palantir.conjure.java.api.config.service;
 
+import com.palantir.conjure.java.undertow.lib.RequestContext;
 import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
@@ -26,6 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.ws.rs.core.HttpHeaders;
 
 public final class UserAgents {
 
@@ -71,6 +73,10 @@ public final class UserAgents {
     public static UserAgent parse(String userAgent) {
         Preconditions.checkNotNull(userAgent, "userAgent must not be null");
         return parseInternal(userAgent, false /* strict */);
+    }
+
+    public static UserAgent tryParse(RequestContext requestContext) {
+        return tryParse(requestContext.firstHeader(HttpHeaders.USER_AGENT).orElse(null));
     }
 
     /**
