@@ -1,0 +1,6 @@
+type: feature
+feature:
+  description: UserAgents::tryParse now has convenience overload with RequestContext
+    as param
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/696
