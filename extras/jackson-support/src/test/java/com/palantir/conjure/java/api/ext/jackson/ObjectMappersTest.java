@@ -52,7 +52,7 @@ public final class ObjectMappersTest {
 
     @Test
     public void deserializeJdk8ModulePresentOptional() throws IOException {
-        assertThat(MAPPER.readValue("\"Test\"", Optional.class)).isEqualTo(Optional.of("Test"));
+        assertThat(MAPPER.readValue("\"Test\"", Optional.class)).contains("Test");
     }
 
     @Test
