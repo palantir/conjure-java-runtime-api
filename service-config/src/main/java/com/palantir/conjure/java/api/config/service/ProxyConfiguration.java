@@ -136,6 +136,10 @@ public abstract class ProxyConfiguration {
         return builder().type(Type.MESH).hostAndPort(hostAndPort).build();
     }
 
+    public static ProxyConfiguration socks(String hostAndPort) {
+        return builder().type(Type.SOCKS).hostAndPort(hostAndPort).build();
+    }
+
     public static Builder builder() {
         return new Builder();
     }
