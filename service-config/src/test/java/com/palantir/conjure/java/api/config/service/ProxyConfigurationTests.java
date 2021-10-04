@@ -101,15 +101,30 @@ public final class ProxyConfigurationTests {
     }
 
     @Test
-    public void credentialsWithNonHttp() {
+    public void credentialsWithDirectProxy() {
         assertThatThrownBy(() -> ProxyConfiguration.builder()
                         .credentials(BasicCredentials.of("foo", "bar"))
                         .type(ProxyConfiguration.Type.DIRECT)
                         .build())
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Neither credential nor host-and-port may be configured for DIRECT proxies");
+    }
+
+    @Test
+    public void credentialsWithMeshProxy() {
         assertThatThrownBy(() -> ProxyConfiguration.builder()
                         .type(ProxyConfiguration.Type.MESH)
+                        .credentials(BasicCredentials.of("foo", "bar"))
+                        .hostAndPort("localhost:1234")
+                        .build())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("credentials only valid for HTTP proxies");
+    }
+
+    @Test
+    public void credentialsWithSocksProxy() {
+        assertThatThrownBy(() -> ProxyConfiguration.builder()
+                        .type(ProxyConfiguration.Type.SOCKS)
                         .credentials(BasicCredentials.of("foo", "bar"))
                         .hostAndPort("localhost:1234")
                         .build())

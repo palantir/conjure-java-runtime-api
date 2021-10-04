@@ -56,7 +56,10 @@ public abstract class ProxyConfiguration {
          * Redirects requests to the {@link #hostAndPort} and sets the HTTP Host header to the original request's
          * authority.
          */
-        MESH
+        MESH,
+
+        /** Connections are created using a SOCKS proxy. */
+        SOCKS,
     }
 
     /**
@@ -95,12 +98,22 @@ public abstract class ProxyConfiguration {
                 break;
             case DIRECT:
                 Preconditions.checkArgument(
-                        !hostAndPort().isPresent() && !credentials().isPresent(),
+                        hostAndPort().isEmpty() && credentials().isEmpty(),
                         "Neither credential nor host-and-port may be configured for DIRECT proxies");
                 break;
             case FROM_ENVIRONMENT:
                 Preconditions.checkArgument(
-                        !hostAndPort().isPresent(), "Host-and-port may not be configured for FROM_ENVIRONMENT proxies");
+                        hostAndPort().isEmpty(), "Host-and-port may not be configured for FROM_ENVIRONMENT proxies");
+                break;
+            case SOCKS:
+                Preconditions.checkArgument(
+                        hostAndPort().isPresent(), "host-and-port must be configured for a SOCKS proxy");
+                HostAndPort socksHostAndPort =
+                        HostAndPort.fromString(hostAndPort().get());
+                Preconditions.checkArgument(
+                        socksHostAndPort.hasPort(),
+                        "Given hostname does not contain a port number",
+                        SafeArg.of("hostname", socksHostAndPort));
                 break;
             default:
                 throw new SafeIllegalStateException("Unrecognized case; this is a library bug");
