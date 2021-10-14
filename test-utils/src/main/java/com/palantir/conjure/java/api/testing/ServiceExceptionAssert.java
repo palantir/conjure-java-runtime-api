@@ -64,7 +64,6 @@ public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExcep
         return this;
     }
 
-
     private void failIfNotEqual(String message, Object expected, Object actual) {
         if (!Objects.equals(expected, actual)) {
             failWithMessage(message, expected, actual);
