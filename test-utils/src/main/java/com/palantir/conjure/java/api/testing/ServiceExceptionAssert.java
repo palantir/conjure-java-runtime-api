@@ -50,6 +50,21 @@ public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExcep
         return this;
     }
 
+    public final ServiceExceptionAssert hasNoArgs() {
+        isNotNull();
+
+        AssertableArgs actualArgs = new AssertableArgs(actual.getArgs());
+        if (!actualArgs.safeArgs.isEmpty() || !actualArgs.unsafeArgs.isEmpty()) {
+            Map<String, Object> allArgs = new HashMap<>();
+            allArgs.putAll(actualArgs.safeArgs);
+            allArgs.putAll(actualArgs.unsafeArgs);
+            failWithMessage("Expected no args, but found %s", allArgs);
+        }
+
+        return this;
+    }
+
+
     private void failIfNotEqual(String message, Object expected, Object actual) {
         if (!Objects.equals(expected, actual)) {
             failWithMessage(message, expected, actual);
