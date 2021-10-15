@@ -38,6 +38,8 @@ public class ServiceExceptionAssertTest {
                 .hasType(actualType)
                 .hasArgs(UnsafeArg.of("c", "d"), SafeArg.of("a", "b")); // Order doesn't matter
 
+        Assertions.assertThat(new ServiceException(actualType)).hasNoArgs();
+
         assertThatThrownBy(() ->
                         Assertions.assertThat(new ServiceException(actualType)).hasType(ErrorType.INTERNAL))
                 .isInstanceOf(AssertionError.class)
@@ -52,6 +54,17 @@ public class ServiceExceptionAssertTest {
                         .hasArgs(UnsafeArg.of("c", "d")))
                 .isInstanceOf(AssertionError.class)
                 .hasMessage("Expected unsafe args to be {c=d}, but found {a=b}");
+
+        assertThatThrownBy(() -> Assertions.assertThat(new ServiceException(actualType, SafeArg.of("a", "b")))
+                        .hasNoArgs())
+                .isInstanceOf(AssertionError.class)
+                .hasMessage("Expected no args, but found {a=b}");
+
+        assertThatThrownBy(() -> Assertions.assertThat(
+                                new ServiceException(actualType, SafeArg.of("a", "b"), UnsafeArg.of("c", "d")))
+                        .hasNoArgs())
+                .isInstanceOf(AssertionError.class)
+                .hasMessage("Expected no args, but found {a=b, c=d}");
 
         Assertions.assertThat(new ServiceException(actualType, UnsafeArg.of("a", "b"), UnsafeArg.of("c", "d")))
                 .containsArgs(UnsafeArg.of("a", "b"));
