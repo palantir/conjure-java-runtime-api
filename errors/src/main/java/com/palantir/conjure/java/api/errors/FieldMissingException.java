@@ -17,12 +17,14 @@
 package com.palantir.conjure.java.api.errors;
 
 import com.palantir.conjure.java.api.errors.ErrorType.Code;
+import com.palantir.conjure.java.api.errors.SerializableError.Builder;
 import com.palantir.logsafe.Arg;
 import com.palantir.logsafe.SafeLoggable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nullable;
@@ -129,5 +131,18 @@ public final class FieldMissingException extends RuntimeException implements Saf
             return ((RemoteException) cause).getError().errorInstanceId();
         }
         return generateErrorInstanceId(cause.getCause(), dejaVu);
+    }
+
+    public SerializableError asSerializableError() {
+        SerializableError.Builder builder = new Builder()
+                .errorCode(FieldMissingException.ERROR_TYPE.code().toString())
+                .errorName(FieldMissingException.ERROR_TYPE.name())
+                .errorInstanceId(getErrorInstanceId());
+
+        for (Arg<?> arg : getArgs()) {
+            builder.putParameters(arg.getName(), Objects.toString(arg.getValue()));
+        }
+
+        return builder.build();
     }
 }

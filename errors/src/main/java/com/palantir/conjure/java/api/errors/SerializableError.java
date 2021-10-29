@@ -123,19 +123,6 @@ public abstract class SerializableError implements Serializable {
         return builder.build();
     }
 
-    public static SerializableError forException(FieldMissingException exception) {
-        Builder builder = new Builder()
-                .errorCode(FieldMissingException.ERROR_TYPE.code().toString())
-                .errorName(FieldMissingException.ERROR_TYPE.name())
-                .errorInstanceId(exception.getErrorInstanceId());
-
-        for (Arg<?> arg : exception.getArgs()) {
-            builder.putParameters(arg.getName(), Objects.toString(arg.getValue()));
-        }
-
-        return builder.build();
-    }
-
     // TODO(rfink): Remove once all error producers have switched to errorCode/errorName.
     public static final class Builder extends ImmutableSerializableError.Builder {}
 
