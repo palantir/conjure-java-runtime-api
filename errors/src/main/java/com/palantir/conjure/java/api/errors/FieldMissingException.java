@@ -37,7 +37,6 @@ public final class FieldMissingException extends RuntimeException implements Saf
     private final String unsafeMessage;
     private final String noArgsMessage;
 
-
     public FieldMissingException(Arg<?>... args) {
         this(null, args);
     }
