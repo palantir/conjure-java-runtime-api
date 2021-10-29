@@ -18,15 +18,11 @@ package com.palantir.conjure.java.api.errors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.palantir.conjure.java.api.ext.jackson.ObjectMappers;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.UnsafeArg;
 import org.junit.jupiter.api.Test;
 
 public final class FieldMissingExceptionTest {
-
-    private static final ObjectMapper mapper = ObjectMappers.newServerObjectMapper();
 
     @Test
     public void asSerializableError_should_keep_both_safe_and_unsafe_args() {
