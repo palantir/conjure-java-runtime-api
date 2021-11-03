@@ -1,0 +1,7 @@
+type: improvement
+improvement:
+  description: A RemoteException can now be constructed directly from a ServiceException,
+    rather than requiring a SerializableError. This is designed to allow constructing
+    RemoteExceptions from other service's generated ServiceExceptions for testing.
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/710
