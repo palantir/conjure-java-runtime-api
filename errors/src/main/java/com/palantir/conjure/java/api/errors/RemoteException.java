@@ -59,6 +59,12 @@ public final class RemoteException extends RuntimeException implements SafeLogga
                 SafeArg.of(ERROR_CODE, error.errorCode())));
     }
 
+    public RemoteException(ServiceException serviceException) {
+        this(
+                SerializableError.forException(serviceException),
+                serviceException.getErrorType().httpErrorCode());
+    }
+
     @Override
     public String getMessage() {
         return message;

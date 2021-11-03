@@ -47,6 +47,15 @@ public final class RemoteExceptionTest {
     }
 
     @Test
+    public void testFromServiceException() {
+        ServiceException serviceException =
+                new ServiceException(ErrorType.INTERNAL, SafeArg.of("safeArg", "safeValue"));
+        RemoteException expected = new RemoteException(SerializableError.forException(serviceException), 500);
+        RemoteException actual = new RemoteException(serviceException);
+        assertThat(actual).isEqualToComparingFieldByField(expected);
+    }
+
+    @Test
     public void testSuperMessage() {
         SerializableError error = new SerializableError.Builder()
                 .errorCode("errorCode")
