@@ -21,6 +21,12 @@ plugins {
 apply plugin: 'com.palantir.external-publish'
 apply plugin: 'com.palantir.baseline'
 apply plugin: 'com.palantir.consistent-versions'
+apply plugin: 'com.palantir.baseline-java-versions'
+
+javaVersions {
+    libraryTarget = 11
+    runtime = 17
+}
 
 allprojects {
     apply plugin: 'com.palantir.java-format'
@@ -36,7 +42,6 @@ subprojects {
     apply plugin: 'java-library'
     apply plugin: 'com.palantir.baseline-class-uniqueness'
 
-    sourceCompatibility = 1.8
     tasks.check.dependsOn(javadoc)
 
     test {
