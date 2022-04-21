@@ -47,7 +47,7 @@ public final class RemoteExceptionTest {
     }
 
     @Test
-    public void testSuperMessage() {
+    public void testUnsafeMessage_differentCodeAndName() {
         SerializableError error = new SerializableError.Builder()
                 .errorCode("errorCode")
                 .errorName("errorName")
@@ -55,14 +55,42 @@ public final class RemoteExceptionTest {
                 .build();
         assertThat(new RemoteException(error, 500).getMessage())
                 .isEqualTo("RemoteException: errorCode (errorName) with instance ID errorId");
+    }
 
-        error = new SerializableError.Builder()
+    @Test
+    public void testUnsafeMessage_sameCodeAndName() {
+        SerializableError error = new SerializableError.Builder()
                 .errorCode("errorCode")
                 .errorName("errorCode")
                 .errorInstanceId("errorId")
                 .build();
         assertThat(new RemoteException(error, 500).getMessage())
                 .isEqualTo("RemoteException: errorCode with instance ID errorId");
+    }
+
+    @Test
+    public void testUnsafeMessage_oneParameter() {
+        SerializableError error = new SerializableError.Builder()
+                .errorCode("errorCode")
+                .errorName("errorName")
+                .errorInstanceId("errorId")
+                .putParameters("foo", "bar")
+                .build();
+        assertThat(new RemoteException(error, 500).getMessage())
+                .isEqualTo("RemoteException: errorCode (errorName) with instance ID errorId: {foo=bar}");
+    }
+
+    @Test
+    public void testUnsafeMessage_multipleParameters() {
+        SerializableError error = new SerializableError.Builder()
+                .errorCode("errorCode")
+                .errorName("errorName")
+                .errorInstanceId("errorId")
+                .putParameters("a", "b")
+                .putParameters("c", "d")
+                .build();
+        assertThat(new RemoteException(error, 500).getMessage())
+                .isEqualTo("RemoteException: errorCode (errorName) with instance ID errorId: {a=b, c=d}");
     }
 
     @Test
@@ -77,7 +105,19 @@ public final class RemoteExceptionTest {
     }
 
     @Test
-    public void testArgsIsEmpty() {
+    public void testLogMessageMessageDoesNotIncludeParameters() {
+        SerializableError error = new SerializableError.Builder()
+                .errorCode("errorCode")
+                .errorName("errorName")
+                .errorInstanceId("errorId")
+                .putParameters("param", "value")
+                .build();
+        RemoteException remoteException = new RemoteException(error, 500);
+        assertThat(remoteException.getLogMessage()).isEqualTo("RemoteException: errorCode (errorName)");
+    }
+
+    @Test
+    public void testArgsContainsOnlyErrorInstanceId() {
         RemoteException remoteException = new RemoteException(
                 new SerializableError.Builder()
                         .errorCode("errorCode")
