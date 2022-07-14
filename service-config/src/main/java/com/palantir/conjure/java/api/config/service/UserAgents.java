@@ -149,7 +149,7 @@ public final class UserAgents {
     }
 
     static boolean isValidVersion(String version) {
-        if (VersionParser.tryParse(version) >= 2 || slowFallbackRegexMatchesVersion(version)) {
+        if (VersionParser.countGroups(version) >= 2 || slowFallbackRegexMatchesVersion(version)) {
             return true;
         }
 

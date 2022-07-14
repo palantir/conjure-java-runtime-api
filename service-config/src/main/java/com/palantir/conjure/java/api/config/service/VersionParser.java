@@ -24,11 +24,11 @@ import com.google.errorprone.annotations.Immutable;
  * browser user-agent version strings.
  * <p>
  * We're using parser combinator-style ideas here, where each parser function
- * {@link #number(String, int)} accepts an index into our source string and returns a two values:
+ * {@link #number(String, int)} accepts an index into our source string and returns two values:
  * <p>
  * - an updated index into the string representing how many characters were parsed
  * - a value that was actually parsed out of the string (if the parser was able to parse the string), otherwise a
- * clear signal that the parser failed (we use {@link Integer#MIN_VALUE} for this.
+ * clear signal that the parser failed (we use {@link Integer#MIN_VALUE} for this).
  * <p>
  * We bit-pack these two integer values into a single long using {@link #ok(int, int)} and {@link #fail(int)} functions
  * because primitive longs live on the stack and don't impact GC.
@@ -38,47 +38,22 @@ final class VersionParser {
     private VersionParser() {}
 
     /** Returns the count of version number groups parsed if a valid version string, or -1 otherwise. */
-    public static int tryParse(String string) {
-        long state = number(string, 0);
-        if (failed(state)) {
-            return -1;
+    public static int countGroups(String string) {
+        long state = 0;
+        for (int i = 1; i < 6; i++) {
+            state = number(string, getIndex(state));
+            if (failed(state)) {
+                return -1;
+            }
+
+            state = literalDot(string, getIndex(state));
+            if (failed(state)) {
+                return i;
+            }
         }
 
-        state = literalDot(string, getIndex(state));
-        if (failed(state)) {
-            return -1;
-        }
-
-        state = number(string, getIndex(state));
-        if (failed(state)) {
-            return -1;
-        }
-
-        state = literalDot(string, getIndex(state));
-        if (failed(state)) {
-            return 2;
-        }
-
-        state = number(string, getIndex(state));
-        if (failed(state)) {
-            return -1;
-        }
-
-        state = literalDot(string, getIndex(state));
-        if (failed(state)) {
-            return 3;
-        }
-
-        state = number(string, getIndex(state));
-        if (failed(state)) {
-            return -1;
-        }
-
-        if (getIndex(state) < string.length()) {
-            return -1; // reject due to trailing stuff
-        }
-
-        return 4;
+        // reject due to trailing stuff
+        return -1;
     }
 
     private static final long INT_MASK = (1L << 32) - 1;
