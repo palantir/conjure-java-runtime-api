@@ -38,9 +38,9 @@ final class VersionParser {
     private VersionParser() {}
 
     /** Returns the count of version number groups parsed if a valid version string, or -1 otherwise. */
-    public static int countGroups(String string) {
+    public static int countNumericDotGroups(String string) {
         long state = 0;
-        for (int i = 1; i < 6; i++) {
+        for (int i = 1; getIndex(state) < string.length(); i++) {
             state = number(string, getIndex(state));
             if (failed(state)) {
                 return -1;
@@ -48,7 +48,10 @@ final class VersionParser {
 
             state = literalDot(string, getIndex(state));
             if (failed(state)) {
-                return i;
+                if (getIndex(state) < string.length()) {
+                    return -1; // reject due to trailing stuff
+                }
+                return i; // no more dots
             }
         }
 
