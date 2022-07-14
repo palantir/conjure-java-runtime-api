@@ -149,11 +149,15 @@ public final class UserAgents {
     }
 
     static boolean isValidVersion(String version) {
-        if (VERSION_REGEX.matcher(version).matches()) {
+        if (VersionParser.tryParse(version) >= 2 || slowFallbackRegexMatchesVersion(version)) {
             return true;
         }
 
         log.warn("Encountered invalid user agent version '{}'", SafeArg.of("version", version));
         return false;
+    }
+
+    private static boolean slowFallbackRegexMatchesVersion(String version) {
+        return VERSION_REGEX.matcher(version).matches();
     }
 }
