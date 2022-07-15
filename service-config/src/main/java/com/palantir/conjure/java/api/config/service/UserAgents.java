@@ -150,11 +150,16 @@ public final class UserAgents {
 
     static boolean isValidVersion(String version) {
         if (VersionParser.countNumericDotGroups(version) >= 2 // fast path for numeric & dot only version numbers
-                || VERSION_REGEX.matcher(version).matches()) {
+                || versionMatchesRegex(version)) {
             return true;
         }
 
         log.warn("Encountered invalid user agent version '{}'", SafeArg.of("version", version));
         return false;
+    }
+
+    // visible for benchmarking
+    static boolean versionMatchesRegex(String version) {
+        return VERSION_REGEX.matcher(version).matches();
     }
 }
