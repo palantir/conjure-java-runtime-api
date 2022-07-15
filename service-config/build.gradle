@@ -2,6 +2,7 @@ apply plugin: "org.inferred.processors"
 
 apply plugin: 'com.palantir.external-publish-jar'
 apply plugin: 'com.palantir.revapi'
+apply plugin: 'me.champeau.jmh'
 
 dependencies {
     api project(":ssl-config")
