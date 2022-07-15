@@ -40,10 +40,14 @@ class VersionParserTest {
                 Arguments.of("1", 1, true),
                 Arguments.of("1.2", 2, true),
                 Arguments.of("1.2.3", 3, true),
+                Arguments.of("123.456.789", 3, true),
                 Arguments.of("1.2.3.4", 4, true),
+                Arguments.of("123.45.6.78", 4, true),
                 Arguments.of("1.2.3-rc4", -1, true),
+                Arguments.of("123.45.6.78-rc90", -1, true),
                 Arguments.of("1.2.3-4-gabc", -1, true),
                 Arguments.of("1.2.3.4-rc5-6-gabc", -1, true),
+                Arguments.of("123.456.789-rc0", -1, true),
                 Arguments.of("1.2.3-4", -1, false),
                 Arguments.of("0-0-0", -1, false));
     }
