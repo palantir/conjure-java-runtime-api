@@ -1,0 +1,5 @@
+type: feature
+feature:
+  description: Add RemoteException.isOfType(ErrorType) convenience method.
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/867
