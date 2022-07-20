@@ -46,7 +46,7 @@ public final class UserAgents {
 
     /** Returns the canonical string format for the given {@link UserAgent}. */
     public static String format(UserAgent userAgent) {
-        StringBuilder formatted = new StringBuilder();
+        StringBuilder formatted = new StringBuilder(64); // preallocate larger buffer for longer agents
         formatSimpleAgent(userAgent.primary(), formatted);
         if (userAgent.nodeId().isPresent()) {
             formatted.append(" (nodeId:").append(userAgent.nodeId().get()).append(')');
@@ -59,6 +59,8 @@ public final class UserAgents {
     }
 
     private static void formatSimpleAgent(UserAgent.Agent agent, StringBuilder output) {
+        output.ensureCapacity(
+                output.length() + 1 + agent.name().length() + agent.version().length());
         output.append(agent.name()).append('/').append(agent.version());
     }
 
