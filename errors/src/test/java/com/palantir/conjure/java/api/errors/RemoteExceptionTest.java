@@ -18,6 +18,7 @@ package com.palantir.conjure.java.api.errors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.palantir.conjure.java.api.errors.ErrorType.Code;
 import com.palantir.logsafe.SafeArg;
 import org.apache.commons.lang3.SerializationUtils;
 import org.junit.jupiter.api.Test;
@@ -131,5 +132,46 @@ public final class RemoteExceptionTest {
                         SafeArg.of("errorInstanceId", "errorId"),
                         SafeArg.of("errorCode", "errorCode"),
                         SafeArg.of("errorName", "errorName"));
+    }
+
+    @Test
+    public void testIsOfType_builtIn() {
+        SerializableError error = new SerializableError.Builder()
+                .errorCode("errorCode")
+                .errorName("Default:Conflict")
+                .errorInstanceId("errorId")
+                .putParameters("param", "value")
+                .build();
+        RemoteException remoteException = new RemoteException(error, 409);
+        assertThat(remoteException.isOfType(ErrorType.CONFLICT)).isTrue();
+        assertThat(remoteException.isOfType(ErrorType.INVALID_ARGUMENT)).isFalse();
+    }
+
+    @Test
+    public void testIsOfType_custom() {
+        ErrorType myError = ErrorType.create(Code.PERMISSION_DENIED, "MyNamespace:MyError");
+
+        SerializableError error = new SerializableError.Builder()
+                .errorCode("errorCode")
+                .errorName("MyNamespace:MyError")
+                .errorInstanceId("errorId")
+                .putParameters("param", "value")
+                .build();
+        RemoteException remoteException = new RemoteException(error, 403);
+        assertThat(remoteException.isOfType(myError)).isTrue();
+        assertThat(remoteException.isOfType(ErrorType.INVALID_ARGUMENT)).isFalse();
+    }
+
+    @Test
+    public void testIsOfType_wrongHttpCode() {
+        SerializableError error = new SerializableError.Builder()
+                .errorCode("errorCode")
+                .errorName("Default:Conflict")
+                .errorInstanceId("errorId")
+                .putParameters("param", "value")
+                .build();
+        RemoteException remoteException = new RemoteException(error, 123);
+        assertThat(remoteException.isOfType(ErrorType.CONFLICT)).isFalse(); // code isn't 409
+        assertThat(remoteException.isOfType(ErrorType.INVALID_ARGUMENT)).isFalse();
     }
 }

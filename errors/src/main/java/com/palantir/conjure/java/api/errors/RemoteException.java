@@ -100,4 +100,8 @@ public final class RemoteException extends RuntimeException implements SafeLogga
         // on the service which produced the causal SerializableError.
         return args;
     }
+
+    public boolean isOfType(ErrorType type) {
+        return error.errorName().equals(type.name()) && status == type.httpErrorCode();
+    }
 }
