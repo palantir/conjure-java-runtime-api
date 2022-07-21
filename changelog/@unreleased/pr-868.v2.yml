@@ -1,0 +1,11 @@
+type: improvement
+improvement:
+  description: |-
+    Optimize UserAgents
+
+    Optimize UserAgents.isValidName to use a hand-rolled implementation to validate user agent name to avoid
+    allocation and regex overhead.
+
+    Increase default UserAgents.format string builder buffer size and ensure capacity as we append user agents.
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/868

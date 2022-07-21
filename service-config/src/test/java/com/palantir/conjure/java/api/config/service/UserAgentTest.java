@@ -168,4 +168,40 @@ public class UserAgentTest {
         assertThat(UserAgents.format(UserAgents.tryParse("serviceA/1.2.3 bogus|1.2.3 foo bar (boom)")))
                 .isEqualTo("serviceA/1.2.3");
     }
+
+    @Test
+    public void valid_names() {
+        assertThat("a").satisfies(UserAgentTest::isValidName);
+        assertThat("a1").satisfies(UserAgentTest::isValidName);
+        assertThat("foo").satisfies(UserAgentTest::isValidName);
+        assertThat("foo-bar").satisfies(UserAgentTest::isValidName);
+        assertThat("foo-bar123").satisfies(UserAgentTest::isValidName);
+    }
+
+    @Test
+    public void invalid_names() {
+        assertThat((String) null).satisfies(UserAgentTest::isNotValidName);
+        assertThat("").satisfies(UserAgentTest::isNotValidName);
+        assertThat(" ").satisfies(UserAgentTest::isNotValidName);
+        assertThat("1").satisfies(UserAgentTest::isNotValidName);
+        assertThat("1a").satisfies(UserAgentTest::isNotValidName);
+        assertThat("1.0").satisfies(UserAgentTest::isNotValidName);
+        assertThat("service name").satisfies(UserAgentTest::isNotValidName);
+        assertThat("service.name").satisfies(UserAgentTest::isNotValidName);
+        assertThat("service_name").satisfies(UserAgentTest::isNotValidName);
+    }
+
+    private static void isValidName(String name) {
+        assertThat(UserAgents.isValidName(name)).isTrue();
+        assertThat(name)
+                .describedAs("Name should match regex, inconsistent with isValidName for '%s'", name)
+                .matches(UserAgents.NAME_REGEX);
+    }
+
+    private static void isNotValidName(String name) {
+        assertThat(UserAgents.isValidName(name)).isFalse();
+        assertThat(name)
+                .describedAs("Name should not match regex, inconsistent with isValidName for '%s'", name)
+                .doesNotMatch(UserAgents.NAME_REGEX);
+    }
 }
