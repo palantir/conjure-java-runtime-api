@@ -151,18 +151,26 @@ public final class UserAgents {
             return false;
         }
         char ch = name.charAt(0);
-        if (!Character.isAlphabetic(ch)) {
+        if (!isAlpha(ch)) {
             return false;
         }
 
         for (int i = 1; i < name.length(); i++) {
             ch = name.charAt(i);
-            if (!Character.isAlphabetic(ch) && !Character.isDigit(ch) && ch != '-') {
+            if (!isAlpha(ch) && !isNumeric(ch) && ch != '-') {
                 return false;
             }
         }
 
         return true;
+    }
+
+    private static boolean isAlpha(char ch) {
+        return ('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z');
+    }
+
+    private static boolean isNumeric(char ch) {
+        return '0' <= ch && ch <= '9';
     }
 
     static boolean isValidNodeId(String instanceId) {
