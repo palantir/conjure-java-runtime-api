@@ -34,7 +34,9 @@ public final class UserAgents {
 
     private static final SafeLogger log = SafeLoggerFactory.get(UserAgents.class);
 
-    private static final Pattern NAME_REGEX = Pattern.compile("[a-zA-Z][a-zA-Z0-9\\-]*");
+    // performance note: isValidName uses hand-rolled parser to validate name effectively matches NAME_REGEX
+    // visible for testing compatibility
+    static final Pattern NAME_REGEX = Pattern.compile("[a-zA-Z][a-zA-Z0-9\\-]*");
     private static final Pattern LENIENT_VERSION_REGEX = Pattern.compile("[0-9a-z.-]+");
     private static final Pattern NODE_REGEX = Pattern.compile("[a-zA-Z0-9][a-zA-Z0-9.\\-]*");
     private static final Pattern VERSION_REGEX =
@@ -143,7 +145,24 @@ public final class UserAgents {
     }
 
     static boolean isValidName(String name) {
-        return NAME_REGEX.matcher(name).matches();
+        // hand rolled implementation of NAME_REGEX.matcher(name).matches() to avoid allocations
+        // "[a-zA-Z][a-zA-Z0-9\\-]*"
+        if (name == null || name.isEmpty()) {
+            return false;
+        }
+        char ch = name.charAt(0);
+        if (!Character.isAlphabetic(ch)) {
+            return false;
+        }
+
+        for (int i = 1; i < name.length(); i++) {
+            ch = name.charAt(i);
+            if (!Character.isAlphabetic(ch) && !Character.isDigit(ch) && ch != '-') {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     static boolean isValidNodeId(String instanceId) {
