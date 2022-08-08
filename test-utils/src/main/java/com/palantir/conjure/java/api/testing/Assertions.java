@@ -18,9 +18,8 @@ package com.palantir.conjure.java.api.testing;
 
 import com.palantir.conjure.java.api.errors.RemoteException;
 import com.palantir.conjure.java.api.errors.ServiceException;
-import org.assertj.core.api.AssertionsForClassTypes;
+import org.assertj.core.api.InstanceOfAssertFactory;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
-import org.assertj.core.internal.Failures;
 import org.assertj.core.util.CanIgnoreReturnValue;
 import org.assertj.core.util.CheckReturnValue;
 
@@ -39,27 +38,29 @@ public class Assertions extends org.assertj.core.api.Assertions {
 
     @CanIgnoreReturnValue
     public static ServiceExceptionAssert assertThatServiceExceptionThrownBy(ThrowingCallable shouldRaiseThrowable) {
-        Throwable throwable = AssertionsForClassTypes.catchThrowable(shouldRaiseThrowable);
-        checkThrowableIsOfType(throwable, ServiceException.class);
-        return new ServiceExceptionAssert((ServiceException) throwable);
+        return assertThatThrownBy(shouldRaiseThrowable).asInstanceOf(ServiceExceptionInstanceOfAssertFactory.INSTANCE);
     }
 
     @CanIgnoreReturnValue
     public static RemoteExceptionAssert assertThatRemoteExceptionThrownBy(ThrowingCallable shouldRaiseThrowable) {
-        Throwable throwable = AssertionsForClassTypes.catchThrowable(shouldRaiseThrowable);
-        checkThrowableIsOfType(throwable, RemoteException.class);
-        return new RemoteExceptionAssert((RemoteException) throwable);
+        return assertThatThrownBy(shouldRaiseThrowable).asInstanceOf(RemoteExceptionInstanceOfAssertFactory.INSTANCE);
     }
 
-    private static void checkThrowableIsOfType(Throwable throwable, Class<?> clazz) {
-        if (throwable == null) {
-            throw Failures.instance().failure("Expecting code to raise a throwable.");
+    private static final class ServiceExceptionInstanceOfAssertFactory
+            extends InstanceOfAssertFactory<ServiceException, ServiceExceptionAssert> {
+        static final ServiceExceptionInstanceOfAssertFactory INSTANCE = new ServiceExceptionInstanceOfAssertFactory();
+
+        ServiceExceptionInstanceOfAssertFactory() {
+            super(ServiceException.class, ServiceExceptionAssert::new);
         }
-        if (!clazz.isInstance(throwable)) {
-            throw Failures.instance()
-                    .failure(String.format(
-                            "Expecting code to throw a %s, but caught a %s.",
-                            clazz.getCanonicalName(), throwable.getClass().getCanonicalName()));
+    }
+
+    private static final class RemoteExceptionInstanceOfAssertFactory
+            extends InstanceOfAssertFactory<RemoteException, RemoteExceptionAssert> {
+        static final RemoteExceptionInstanceOfAssertFactory INSTANCE = new RemoteExceptionInstanceOfAssertFactory();
+
+        RemoteExceptionInstanceOfAssertFactory() {
+            super(RemoteException.class, RemoteExceptionAssert::new);
         }
     }
 }
