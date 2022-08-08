@@ -1,0 +1,7 @@
+type: improvement
+improvement:
+  description: Add causes to the AssertionErrors thrown by `assertThatServiceExceptionThrownBy`
+    and `assertThatRemoteExceptionThrownBy` if a throwable of the wrong class is raised
+    by the code under test.
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/882
