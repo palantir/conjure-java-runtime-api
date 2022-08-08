@@ -1,0 +1,5 @@
+type: improvement
+improvement:
+  description: conjure assertions provide diagnostic info for unexpected exceptions
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/883
