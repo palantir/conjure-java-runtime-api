@@ -39,10 +39,12 @@ public final class AssertionsTest {
     @Test
     public void testAssertThatServiceExceptionThrownBy_failsIfWrongExceptionThrown() {
         assertThatThrownBy(() -> assertThatServiceExceptionThrownBy(() -> {
-                    throw new RuntimeException();
+                    throw new RuntimeException("My message");
                 }))
                 .hasMessageContaining(
-                        "com.palantir.conjure.java.api.errors.ServiceException", "java.lang.RuntimeException");
+                        "com.palantir.conjure.java.api.errors.ServiceException",
+                        "java.lang.RuntimeException",
+                        "My message");
     }
 
     @Test
@@ -64,10 +66,12 @@ public final class AssertionsTest {
     @Test
     public void testAssertThatRemoteExceptionThrownBy_failsIfWrongExceptionThrown() {
         assertThatThrownBy(() -> assertThatRemoteExceptionThrownBy(() -> {
-                    throw new RuntimeException();
+                    throw new RuntimeException("My message");
                 }))
                 .hasMessageContaining(
-                        "com.palantir.conjure.java.api.errors.RemoteException", "java.lang.RuntimeException");
+                        "com.palantir.conjure.java.api.errors.RemoteException",
+                        "java.lang.RuntimeException",
+                        "My message");
     }
 
     @Test
