@@ -41,7 +41,7 @@ public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExcep
     public final ServiceExceptionAssert hasArgs(Arg<?>... args) {
         isNotNull();
 
-        AssertableArgs actualArgs = new AssertableArgs(actual.getParameters());
+        AssertableArgs actualArgs = new AssertableArgs(actual.getArgs());
         AssertableArgs expectedArgs = new AssertableArgs(Arrays.asList(args));
 
         failIfNotEqual("Expected safe args to be %s, but found %s", expectedArgs.safeArgs, actualArgs.safeArgs);
@@ -73,7 +73,7 @@ public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExcep
     public final ServiceExceptionAssert containsArgs(Arg<?>... args) {
         isNotNull();
 
-        AssertableArgs actualArgs = new AssertableArgs(actual.getParameters());
+        AssertableArgs actualArgs = new AssertableArgs(actual.getArgs());
         AssertableArgs expectedArgs = new AssertableArgs(Arrays.asList(args));
 
         failIfDoesNotContain(

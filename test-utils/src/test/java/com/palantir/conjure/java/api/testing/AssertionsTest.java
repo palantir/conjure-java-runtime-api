@@ -33,16 +33,18 @@ public final class AssertionsTest {
         assertThatThrownBy(() -> assertThatServiceExceptionThrownBy(() -> {
                     // Not going to throw anything
                 }))
-                .hasMessage("Expecting code to raise a throwable.");
+                .hasMessageContaining("Expecting code to raise a throwable.");
     }
 
     @Test
     public void testAssertThatServiceExceptionThrownBy_failsIfWrongExceptionThrown() {
         assertThatThrownBy(() -> assertThatServiceExceptionThrownBy(() -> {
-                    throw new RuntimeException();
+                    throw new RuntimeException("My message");
                 }))
-                .hasMessage("Expecting code to throw a com.palantir.conjure.java.api.errors.ServiceException,"
-                        + " but caught a java.lang.RuntimeException.");
+                .hasMessageContaining(
+                        "com.palantir.conjure.java.api.errors.ServiceException",
+                        "java.lang.RuntimeException",
+                        "My message");
     }
 
     @Test
@@ -58,16 +60,18 @@ public final class AssertionsTest {
         assertThatThrownBy(() -> assertThatRemoteExceptionThrownBy(() -> {
                     // Not going to throw anything
                 }))
-                .hasMessage("Expecting code to raise a throwable.");
+                .hasMessageContaining("Expecting code to raise a throwable.");
     }
 
     @Test
     public void testAssertThatRemoteExceptionThrownBy_failsIfWrongExceptionThrown() {
         assertThatThrownBy(() -> assertThatRemoteExceptionThrownBy(() -> {
-                    throw new RuntimeException();
+                    throw new RuntimeException("My message");
                 }))
-                .hasMessage("Expecting code to throw a com.palantir.conjure.java.api.errors.RemoteException, "
-                        + "but caught a java.lang.RuntimeException.");
+                .hasMessageContaining(
+                        "com.palantir.conjure.java.api.errors.RemoteException",
+                        "java.lang.RuntimeException",
+                        "My message");
     }
 
     @Test
