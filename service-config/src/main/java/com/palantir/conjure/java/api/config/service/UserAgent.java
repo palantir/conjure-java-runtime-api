@@ -18,6 +18,7 @@ package com.palantir.conjure.java.api.config.service;
 
 import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.SafeArg;
+import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import java.util.List;
 import java.util.Optional;
 import org.immutables.value.Value;
@@ -86,13 +87,14 @@ public interface UserAgent {
 
         @Value.Check
         default void check() {
-            Preconditions.checkArgument(
-                    UserAgents.isValidName(name()), "Illegal agent name format", SafeArg.of("name", name()));
-            // Should never hit the following.
-            Preconditions.checkArgument(
-                    UserAgents.isValidVersion(version()),
-                    "Illegal version format. This is a bug",
-                    SafeArg.of("version", version()));
+            if (!UserAgents.isValidName(name())) {
+                throw new SafeIllegalArgumentException("Illegal agent name format", SafeArg.of("name", name()));
+            }
+            if (!UserAgents.isValidVersion(version())) {
+                // Should never hit the following.
+                throw new SafeIllegalArgumentException(
+                        "Illegal version format. This is a bug", SafeArg.of("version", version()));
+            }
         }
 
         static Agent of(String name, String version) {
