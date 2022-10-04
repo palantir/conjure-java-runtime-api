@@ -16,7 +16,6 @@
 
 package com.palantir.conjure.java.api.config.service;
 
-import com.palantir.conjure.java.api.config.service.UserAgent.Agent;
 import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
@@ -46,16 +45,6 @@ public final class UserAgents {
             Pattern.compile(String.format("(%s)/(%s)( \\((.+?)\\))?", NAME_REGEX, LENIENT_VERSION_REGEX));
 
     private UserAgents() {}
-
-    /**
-     * Returns a user agent with the given base agent combined with specified additional informational agents.
-     */
-    public static UserAgent of(UserAgent base, Iterable<Agent> additional) {
-        return ImmutableUserAgent.builder()
-                .from(base)
-                .addAllInformational(additional)
-                .build();
-    }
 
     /** Returns the canonical string format for the given {@link UserAgent}. */
     public static String format(UserAgent userAgent) {

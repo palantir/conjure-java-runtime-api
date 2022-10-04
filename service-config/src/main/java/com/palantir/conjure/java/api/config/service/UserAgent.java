@@ -58,6 +58,16 @@ public interface UserAgent {
     }
 
     /**
+     * Returns a user agent with the given base agent combined with specified additional informational agents.
+     */
+    static UserAgent of(UserAgent base, Iterable<Agent> additional) {
+        return ImmutableUserAgent.builder()
+                .from(base)
+                .addAllInformational(additional)
+                .build();
+    }
+
+    /**
      * Returns a new {@link UserAgent} instance whose {@link #informational} agents are this instance's agents plus the
      * given agent.
      */

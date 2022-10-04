@@ -67,22 +67,22 @@ public class UserAgentTest {
     void testPrimaryWithInformational() {
         UserAgent baseUserAgent = UserAgent.of(Agent.of("service", "1.0.0"));
         List<Agent> info = ImmutableList.of(Agent.of("conjure", "1.2.3"), Agent.of("jdk", "17.0.4.1"));
-        UserAgent first = UserAgents.of(baseUserAgent, info);
+        UserAgent first = UserAgent.of(baseUserAgent, info);
         assertThat(first).satisfies(agent -> {
             assertThat(agent.primary()).isEqualTo(baseUserAgent.primary());
             assertThat(agent.informational()).hasSize(2).isEqualTo(info);
             assertThat(UserAgents.format(agent)).isEqualTo("service/1.0.0 conjure/1.2.3 jdk/17.0.4.1");
             assertThat(UserAgents.parse(UserAgents.format(agent))).isEqualTo(agent);
-            assertThat(UserAgents.of(agent, ImmutableList.of())).isEqualTo(agent);
+            assertThat(UserAgent.of(agent, ImmutableList.of())).isEqualTo(agent);
         });
 
         List<Agent> moreInfo = ImmutableList.of(Agent.of("test", "4.5.6"));
-        assertThat(UserAgents.of(first, moreInfo)).satisfies(agent -> {
+        assertThat(UserAgent.of(first, moreInfo)).satisfies(agent -> {
             assertThat(agent.primary()).isEqualTo(baseUserAgent.primary());
             assertThat(agent.informational()).hasSize(3).containsExactlyElementsOf(Iterables.concat(info, moreInfo));
             assertThat(UserAgents.format(agent)).isEqualTo("service/1.0.0 conjure/1.2.3 jdk/17.0.4.1 test/4.5.6");
             assertThat(UserAgents.parse(UserAgents.format(agent))).isEqualTo(agent);
-            assertThat(UserAgents.of(agent, ImmutableList.of())).isEqualTo(agent);
+            assertThat(UserAgent.of(agent, ImmutableList.of())).isEqualTo(agent);
         });
     }
 
