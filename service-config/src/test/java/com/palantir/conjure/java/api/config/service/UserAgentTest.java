@@ -19,7 +19,11 @@ package com.palantir.conjure.java.api.config.service;
 import static com.palantir.logsafe.testing.Assertions.assertThatLoggableExceptionThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.palantir.conjure.java.api.config.service.UserAgent.Agent;
 import com.palantir.logsafe.SafeArg;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 public class UserAgentTest {
@@ -57,6 +61,29 @@ public class UserAgentTest {
 
         UserAgent derivedAgent = baseUserAgent.addAgent(UserAgent.Agent.of("conjure", "2.0.0"));
         assertThat(UserAgents.format(derivedAgent)).isEqualTo("service/1.0.0 conjure/2.0.0");
+    }
+
+    @Test
+    void testPrimaryWithInformational() {
+        UserAgent baseUserAgent = UserAgent.of(Agent.of("service", "1.0.0"));
+        List<Agent> info = ImmutableList.of(Agent.of("conjure", "1.2.3"), Agent.of("jdk", "17.0.4.1"));
+        UserAgent first = UserAgent.of(baseUserAgent, info);
+        assertThat(first).satisfies(agent -> {
+            assertThat(agent.primary()).isEqualTo(baseUserAgent.primary());
+            assertThat(agent.informational()).hasSize(2).isEqualTo(info);
+            assertThat(UserAgents.format(agent)).isEqualTo("service/1.0.0 conjure/1.2.3 jdk/17.0.4.1");
+            assertThat(UserAgents.parse(UserAgents.format(agent))).isEqualTo(agent);
+            assertThat(UserAgent.of(agent, ImmutableList.of())).isEqualTo(agent);
+        });
+
+        List<Agent> moreInfo = ImmutableList.of(Agent.of("test", "4.5.6"));
+        assertThat(UserAgent.of(first, moreInfo)).satisfies(agent -> {
+            assertThat(agent.primary()).isEqualTo(baseUserAgent.primary());
+            assertThat(agent.informational()).hasSize(3).containsExactlyElementsOf(Iterables.concat(info, moreInfo));
+            assertThat(UserAgents.format(agent)).isEqualTo("service/1.0.0 conjure/1.2.3 jdk/17.0.4.1 test/4.5.6");
+            assertThat(UserAgents.parse(UserAgents.format(agent))).isEqualTo(agent);
+            assertThat(UserAgent.of(agent, ImmutableList.of())).isEqualTo(agent);
+        });
     }
 
     @Test

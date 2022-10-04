@@ -1,0 +1,5 @@
+type: improvement
+improvement:
+  description: Add UserAgents.of(UserAgent, Iterable<Agent>)
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/902
