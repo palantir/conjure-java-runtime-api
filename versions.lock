@@ -20,8 +20,8 @@ net.bytebuddy:byte-buddy-agent:1.12.16 (1 constraints: 750baee9)
 org.assertj:assertj-core:3.23.1 (2 constraints: 9819aede)
 org.immutables:value:2.8.8 (1 constraints: 14051536)
 org.jetbrains:annotations:23.0.0 (1 constraints: 31115ed1)
-org.mockito:mockito-core:4.8.1 (1 constraints: 0f051836)
-org.objenesis:objenesis:3.2 (1 constraints: b10a13bd)
+org.mockito:mockito-core:4.9.0 (1 constraints: 0f051a36)
+org.objenesis:objenesis:3.3 (1 constraints: b20a14bd)
 org.slf4j:slf4j-api:1.7.36 (2 constraints: 561e8a97)
 
 [Test dependencies]
