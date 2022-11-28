@@ -183,7 +183,10 @@ public final class UserAgents {
             return true;
         }
 
-        log.warn("Encountered invalid user agent version '{}'", SafeArg.of("version", version));
+        if (log.isDebugEnabled()) {
+            log.debug("Encountered invalid user agent version '{}'", SafeArg.of("version", version));
+        }
+
         return false;
     }
 
