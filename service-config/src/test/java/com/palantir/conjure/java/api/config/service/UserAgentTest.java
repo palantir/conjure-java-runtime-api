@@ -70,7 +70,7 @@ public class UserAgentTest {
         UserAgent first = UserAgent.of(baseUserAgent, info);
         assertThat(first).satisfies(agent -> {
             assertThat(agent.primary()).isEqualTo(baseUserAgent.primary());
-            assertThat(agent.informational()).hasSize(2).isEqualTo(info);
+            assertThat(agent.informational()).hasSize(2).containsExactlyElementsOf(info);
             assertThat(UserAgents.format(agent)).isEqualTo("service/1.0.0 conjure/1.2.3 jdk/17.0.4.1");
             assertThat(UserAgents.parse(UserAgents.format(agent))).isEqualTo(agent);
             assertThat(UserAgent.of(agent, ImmutableList.of())).isEqualTo(agent);
