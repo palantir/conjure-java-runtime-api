@@ -201,6 +201,26 @@ public abstract class QosException extends RuntimeException {
 
     /** See {@link #retryOther}. */
     public static final class RetryOther extends QosException implements SafeLoggable {
+        static class Factory {
+            private Reason reason;
+
+            private Factory(Reason reason) {
+                this.reason = reason;
+            }
+
+            public RetryOther retryOther(URL redirectTo) {
+                return new RetryOther(redirectTo, Optional.of(this.reason));
+            }
+
+            public RetryOther retryOther(URL redirectTO, Throwable cause) {
+                return new RetryOther(redirectTO, cause, Optional.of(this.reason));
+            }
+        }
+
+        static Factory reason(Reason reason) {
+            return new Factory(reason);
+        }
+
         private final URL redirectTo;
 
         private RetryOther(URL redirectTo) {
@@ -208,8 +228,13 @@ public abstract class QosException extends RuntimeException {
             this.redirectTo = redirectTo;
         }
 
-        private RetryOther(URL redirectTo, Throwable cause) {
-            super("Suggesting request retry against: " + redirectTo.toString(), cause);
+        private RetryOther(URL redirectTo, Optional<Reason> reason) {
+            super("Suggesting request retry against: " + redirectTo.toString(), reason);
+            this.redirectTo = redirectTo;
+        }
+
+        private RetryOther(URL redirectTo, Throwable cause, Optional<Reason> reason) {
+            super("Suggesting request retry against: " + redirectTo.toString(), cause, reason);
             this.redirectTo = redirectTo;
         }
 
@@ -236,14 +261,42 @@ public abstract class QosException extends RuntimeException {
 
     /** See {@link #unavailable}. */
     public static final class Unavailable extends QosException implements SafeLoggable {
+        static class Factory {
+            private Reason reason;
+
+            private Factory(Reason reason) {
+                this.reason = reason;
+            }
+
+            public Unavailable unavailable() {
+                return new Unavailable(Optional.of(this.reason));
+            }
+
+            public Unavailable unavailable(Throwable cause) {
+                return new Unavailable(cause, Optional.of(this.reason));
+            }
+        }
+
+        static Factory reason(Reason reason) {
+            return new Factory(reason);
+        }
+
         private static final String SERVER_UNAVAILABLE = "Server unavailable";
 
         private Unavailable() {
             super(SERVER_UNAVAILABLE);
         }
 
+        private Unavailable(Optional<Reason> reason) {
+            super(SERVER_UNAVAILABLE, reason);
+        }
+
         private Unavailable(Throwable cause) {
             super(SERVER_UNAVAILABLE, cause);
+        }
+
+        private Unavailable(Throwable cause, Optional<Reason> reason) {
+            super(SERVER_UNAVAILABLE, cause, reason);
         }
 
         @Override
