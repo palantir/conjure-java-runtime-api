@@ -61,11 +61,23 @@ public final class QosExceptionTest {
                 return "my-reason-2";
             }
         },
+        REASON_3 {
+            @Override
+            public String toString() {
+                return "my-reason-3";
+            }
+        },
     }
 
     @Test
     public void testQosExceptionWithReason() {
         QosException.Throttle.Factory throttleWithReasonFactory = QosException.Throttle.reason(MyQoSReason.REASON_1);
-        throw throttleWithReasonFactory.throttle();
+        // throw throttleWithReasonFactory.throttle();
+        QosException.RetryOther.Factory retryOtherWithReasonFactory =
+                QosException.RetryOther.reason(MyQoSReason.REASON_2);
+        // throw retryOtherWithReasonFactory.retryOther(new URL(...));
+        QosException.Unavailable.Factory unavailableWithReasonFactory =
+                QosException.Unavailable.reason(MyQoSReason.REASON_3);
+        // throw unavailableWithReasonFactory.unavailable();
     }
 }
