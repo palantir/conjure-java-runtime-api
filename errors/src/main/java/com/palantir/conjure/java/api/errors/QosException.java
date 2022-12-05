@@ -228,6 +228,11 @@ public abstract class QosException extends RuntimeException {
             this.redirectTo = redirectTo;
         }
 
+        private RetryOther(URL redirectTo, Throwable cause) {
+            super("Suggesting request retry against: " + redirectTo.toString(), cause);
+            this.redirectTo = redirectTo;
+        }
+
         private RetryOther(URL redirectTo, Optional<Reason> reason) {
             super("Suggesting request retry against: " + redirectTo.toString(), reason);
             this.redirectTo = redirectTo;
