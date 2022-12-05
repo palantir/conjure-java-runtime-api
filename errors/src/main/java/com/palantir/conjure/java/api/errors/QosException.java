@@ -34,13 +34,31 @@ import java.util.Optional;
  */
 public abstract class QosException extends RuntimeException {
 
+    private final Optional<Reason> reason;
+
     // Not meant for external subclassing.
     private QosException(String message) {
         super(message);
+        this.reason = Optional.empty();
+    }
+
+    private QosException(String message, Optional<Reason> reason) {
+        super(message);
+        this.reason = reason;
     }
 
     private QosException(String message, Throwable cause) {
         super(message, cause);
+        this.reason = Optional.empty();
+    }
+
+    private QosException(String message, Throwable cause, Optional<Reason> reason) {
+        super(message, cause);
+        this.reason = reason;
+    }
+
+    public Optional<String> getReason() {
+        return this.reason.map(Reason::toString);
     }
 
     public abstract <T> T accept(Visitor<T> visitor);
@@ -115,6 +133,30 @@ public abstract class QosException extends RuntimeException {
 
     /** See {@link #throttle}. */
     public static final class Throttle extends QosException implements SafeLoggable {
+        static class Factory {
+            private Reason reason;
+
+            private Factory(Reason reason) {
+                this.reason = reason;
+            }
+
+            public Throttle throttle() {
+                return new Throttle(Optional.empty(), Optional.of(this.reason));
+            }
+
+            public Throttle throttle(Optional<Duration> retryAfter) {
+                return new Throttle(retryAfter, Optional.of(this.reason));
+            }
+
+            public Throttle throttle(Optional<Duration> retryAfter, Throwable cause) {
+                return new Throttle(retryAfter, cause, Optional.of(this.reason));
+            }
+        }
+
+        static Factory reason(Reason reason) {
+            return new Factory(reason);
+        }
+
         private final Optional<Duration> retryAfter;
 
         private Throttle(Optional<Duration> retryAfter) {
@@ -122,8 +164,18 @@ public abstract class QosException extends RuntimeException {
             this.retryAfter = retryAfter;
         }
 
+        private Throttle(Optional<Duration> retryAfter, Optional<Reason> reason) {
+            super("Suggesting request throttling with optional retryAfter duration: " + retryAfter, reason);
+            this.retryAfter = retryAfter;
+        }
+
         private Throttle(Optional<Duration> retryAfter, Throwable cause) {
             super("Suggesting request throttling with optional retryAfter duration: " + retryAfter, cause);
+            this.retryAfter = retryAfter;
+        }
+
+        private Throttle(Optional<Duration> retryAfter, Throwable cause, Optional<Reason> reason) {
+            super("Suggesting request throttling with optional retryAfter duration: " + retryAfter, cause, reason);
             this.retryAfter = retryAfter;
         }
 
