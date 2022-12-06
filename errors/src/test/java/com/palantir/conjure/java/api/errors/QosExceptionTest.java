@@ -71,13 +71,8 @@ public final class QosExceptionTest {
 
     @Test
     public void testQosExceptionWithReason() {
-        QosException.Throttle.Factory throttleWithReasonFactory = QosException.Throttle.reason(MyQoSReason.REASON_1);
-        // throw throttleWithReasonFactory.throttle();
-        QosException.RetryOther.Factory retryOtherWithReasonFactory =
-                QosException.RetryOther.reason(MyQoSReason.REASON_2);
-        // throw retryOtherWithReasonFactory.retryOther(new URL(...));
-        QosException.Unavailable.Factory unavailableWithReasonFactory =
-                QosException.Unavailable.reason(MyQoSReason.REASON_3);
-        // throw unavailableWithReasonFactory.unavailable();
+        // throw QosException.throttle(MyQoSReason.REASON_1);
+        // throw QosException.retryOther(new URL(...), MyQoSReason.REASON_2);
+        // throw QosException.unavailable(MyQoSReason.REASON_3);
     }
 }

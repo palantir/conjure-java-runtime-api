@@ -42,9 +42,9 @@ public abstract class QosException extends RuntimeException {
         this.reason = Optional.empty();
     }
 
-    private QosException(String message, Optional<Reason> reason) {
+    private QosException(String message, Reason reason) {
         super(message);
-        this.reason = reason;
+        this.reason = Optional.of(reason);
     }
 
     private QosException(String message, Throwable cause) {
@@ -52,9 +52,9 @@ public abstract class QosException extends RuntimeException {
         this.reason = Optional.empty();
     }
 
-    private QosException(String message, Throwable cause, Optional<Reason> reason) {
+    private QosException(String message, Throwable cause, Reason reason) {
         super(message, cause);
-        this.reason = reason;
+        this.reason = Optional.of(reason);
     }
 
     public Optional<String> getReason() {
@@ -79,11 +79,19 @@ public abstract class QosException extends RuntimeException {
         return new Throttle(Optional.empty());
     }
 
+    public static Throttle throttle(Reason reason) {
+        return new Throttle(Optional.empty(), reason);
+    }
+
     /**
      * Like {@link #throttle()}, but includes a cause.
      */
     public static Throttle throttle(Throwable cause) {
         return new Throttle(Optional.empty(), cause);
+    }
+
+    public static Throttle throttle(Throwable cause, Reason reason) {
+        return new Throttle(Optional.empty(), cause, reason);
     }
 
     /**
@@ -94,11 +102,19 @@ public abstract class QosException extends RuntimeException {
         return new Throttle(Optional.of(duration));
     }
 
+    public static Throttle throttle(Duration duration, Reason reason) {
+        return new Throttle(Optional.of(duration), reason);
+    }
+
     /**
      * Like {@link #throttle(Duration)}, but includes a cause.
      */
     public static Throttle throttle(Duration duration, Throwable cause) {
         return new Throttle(Optional.of(duration), cause);
+    }
+
+    public static Throttle throttle(Duration duration, Throwable cause, Reason reason) {
+        return new Throttle(Optional.of(duration), cause, reason);
     }
 
     /**
@@ -109,11 +125,19 @@ public abstract class QosException extends RuntimeException {
         return new RetryOther(redirectTo);
     }
 
+    public static RetryOther retryOther(URL redirectTo, Reason reason) {
+        return new RetryOther(redirectTo, reason);
+    }
+
     /**
      * Like {@link #retryOther(URL)}, but includes a cause.
      */
     public static RetryOther retryOther(URL redirectTo, Throwable cause) {
         return new RetryOther(redirectTo, cause);
+    }
+
+    public static RetryOther retryOther(URL redirectTo, Throwable cause, Reason reason) {
+        return new RetryOther(redirectTo, cause, reason);
     }
 
     /**
@@ -124,6 +148,10 @@ public abstract class QosException extends RuntimeException {
         return new Unavailable();
     }
 
+    public static Unavailable unavailable(Reason reason) {
+        return new Unavailable(reason);
+    }
+
     /**
      * Like {@link #unavailable()}, but includes a cause.
      */
@@ -131,32 +159,12 @@ public abstract class QosException extends RuntimeException {
         return new Unavailable(cause);
     }
 
+    public static Unavailable unavailable(Throwable cause, Reason reason) {
+        return new Unavailable(cause, reason);
+    }
+
     /** See {@link #throttle}. */
     public static final class Throttle extends QosException implements SafeLoggable {
-        static class Factory {
-            private Reason reason;
-
-            private Factory(Reason reason) {
-                this.reason = reason;
-            }
-
-            public Throttle throttle() {
-                return new Throttle(Optional.empty(), Optional.of(this.reason));
-            }
-
-            public Throttle throttle(Optional<Duration> retryAfter) {
-                return new Throttle(retryAfter, Optional.of(this.reason));
-            }
-
-            public Throttle throttle(Optional<Duration> retryAfter, Throwable cause) {
-                return new Throttle(retryAfter, cause, Optional.of(this.reason));
-            }
-        }
-
-        static Factory reason(Reason reason) {
-            return new Factory(reason);
-        }
-
         private final Optional<Duration> retryAfter;
 
         private Throttle(Optional<Duration> retryAfter) {
@@ -164,7 +172,7 @@ public abstract class QosException extends RuntimeException {
             this.retryAfter = retryAfter;
         }
 
-        private Throttle(Optional<Duration> retryAfter, Optional<Reason> reason) {
+        private Throttle(Optional<Duration> retryAfter, Reason reason) {
             super("Suggesting request throttling with optional retryAfter duration: " + retryAfter, reason);
             this.retryAfter = retryAfter;
         }
@@ -174,7 +182,7 @@ public abstract class QosException extends RuntimeException {
             this.retryAfter = retryAfter;
         }
 
-        private Throttle(Optional<Duration> retryAfter, Throwable cause, Optional<Reason> reason) {
+        private Throttle(Optional<Duration> retryAfter, Throwable cause, Reason reason) {
             super("Suggesting request throttling with optional retryAfter duration: " + retryAfter, cause, reason);
             this.retryAfter = retryAfter;
         }
@@ -201,26 +209,6 @@ public abstract class QosException extends RuntimeException {
 
     /** See {@link #retryOther}. */
     public static final class RetryOther extends QosException implements SafeLoggable {
-        static class Factory {
-            private Reason reason;
-
-            private Factory(Reason reason) {
-                this.reason = reason;
-            }
-
-            public RetryOther retryOther(URL redirectTo) {
-                return new RetryOther(redirectTo, Optional.of(this.reason));
-            }
-
-            public RetryOther retryOther(URL redirectTO, Throwable cause) {
-                return new RetryOther(redirectTO, cause, Optional.of(this.reason));
-            }
-        }
-
-        static Factory reason(Reason reason) {
-            return new Factory(reason);
-        }
-
         private final URL redirectTo;
 
         private RetryOther(URL redirectTo) {
@@ -233,12 +221,12 @@ public abstract class QosException extends RuntimeException {
             this.redirectTo = redirectTo;
         }
 
-        private RetryOther(URL redirectTo, Optional<Reason> reason) {
+        private RetryOther(URL redirectTo, Reason reason) {
             super("Suggesting request retry against: " + redirectTo.toString(), reason);
             this.redirectTo = redirectTo;
         }
 
-        private RetryOther(URL redirectTo, Throwable cause, Optional<Reason> reason) {
+        private RetryOther(URL redirectTo, Throwable cause, Reason reason) {
             super("Suggesting request retry against: " + redirectTo.toString(), cause, reason);
             this.redirectTo = redirectTo;
         }
@@ -266,33 +254,13 @@ public abstract class QosException extends RuntimeException {
 
     /** See {@link #unavailable}. */
     public static final class Unavailable extends QosException implements SafeLoggable {
-        static class Factory {
-            private Reason reason;
-
-            private Factory(Reason reason) {
-                this.reason = reason;
-            }
-
-            public Unavailable unavailable() {
-                return new Unavailable(Optional.of(this.reason));
-            }
-
-            public Unavailable unavailable(Throwable cause) {
-                return new Unavailable(cause, Optional.of(this.reason));
-            }
-        }
-
-        static Factory reason(Reason reason) {
-            return new Factory(reason);
-        }
-
         private static final String SERVER_UNAVAILABLE = "Server unavailable";
 
         private Unavailable() {
             super(SERVER_UNAVAILABLE);
         }
 
-        private Unavailable(Optional<Reason> reason) {
+        private Unavailable(Reason reason) {
             super(SERVER_UNAVAILABLE, reason);
         }
 
@@ -300,7 +268,7 @@ public abstract class QosException extends RuntimeException {
             super(SERVER_UNAVAILABLE, cause);
         }
 
-        private Unavailable(Throwable cause, Optional<Reason> reason) {
+        private Unavailable(Throwable cause, Reason reason) {
             super(SERVER_UNAVAILABLE, cause, reason);
         }
 
