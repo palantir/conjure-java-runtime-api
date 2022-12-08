@@ -19,9 +19,6 @@ package com.palantir.conjure.java.api.errors;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 
-import com.palantir.conjure.java.api.errors.QosException.RetryOther;
-import com.palantir.conjure.java.api.errors.QosException.Throttle;
-import com.palantir.conjure.java.api.errors.QosException.Unavailable;
 import java.net.URL;
 import org.junit.jupiter.api.Test;
 
@@ -60,11 +57,11 @@ public final class QosExceptionTest {
 
     @Test
     public void testDefaultReasons() {
-        assertThat(QosException.throttle().getReason().toString()).isEqualTo(Throttle.DEFAULT_REASON);
+        assertThat(QosException.throttle().getReason().toString()).isEqualTo("qos-throttle");
         assertThatNoException().isThrownBy(() -> assertThat(QosException.retryOther(new URL("http://foo"))
                         .getReason()
                         .toString())
-                .isEqualTo(RetryOther.DEFAULT_REASON));
-        assertThat(QosException.unavailable().getReason().toString()).isEqualTo(Unavailable.DEFAULT_REASON);
+                .isEqualTo("qos-retry-other"));
+        assertThat(QosException.unavailable().getReason().toString()).isEqualTo("qos-unavailable");
     }
 }
