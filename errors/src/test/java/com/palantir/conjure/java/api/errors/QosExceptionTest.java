@@ -17,7 +17,11 @@
 package com.palantir.conjure.java.api.errors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 
+import com.palantir.conjure.java.api.errors.QosException.RetryOther;
+import com.palantir.conjure.java.api.errors.QosException.Throttle;
+import com.palantir.conjure.java.api.errors.QosException.Unavailable;
 import java.net.URL;
 import org.junit.jupiter.api.Test;
 
@@ -46,5 +50,21 @@ public final class QosExceptionTest {
         assertThat(QosException.retryOther(new URL("http://foo")).accept(visitor))
                 .isEqualTo(QosException.RetryOther.class);
         assertThat(QosException.unavailable().accept(visitor)).isEqualTo(QosException.Unavailable.class);
+    }
+
+    @Test
+    public void testReason() {
+        QosReason reason = QosReason.of("reason");
+        assertThat(QosException.throttle(reason).getReason()).isEqualTo(reason);
+    }
+
+    @Test
+    public void testDefaultReasons() {
+        assertThat(QosException.throttle().getReason().toString()).isEqualTo(Throttle.DEFAULT_REASON);
+        assertThatNoException().isThrownBy(() -> assertThat(QosException.retryOther(new URL("http://foo"))
+                        .getReason()
+                        .toString())
+                .isEqualTo(RetryOther.DEFAULT_REASON));
+        assertThat(QosException.unavailable().getReason().toString()).isEqualTo(Unavailable.DEFAULT_REASON);
     }
 }
