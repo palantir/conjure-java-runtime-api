@@ -17,24 +17,39 @@
 package com.palantir.conjure.java.api.errors;
 
 import com.google.errorprone.annotations.CompileTimeConstant;
+import com.palantir.logsafe.Preconditions;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
+/**
+ * A class representing the reason why a {@link QosException} was created.
+ *
+ * Clients should create a relatively small number of static constant Reason objects, which are reused when throwing
+ * QosExceptions. The string used to construct a Reason object should be able to be used as a metric tag, for
+ * observability into {@link QosException} calls. As such, the string is constrained to have at most 20 lowercase
+ * alphanumeric characters, and hyphens (-).
+ */
 public final class QosReason {
 
     @CompileTimeConstant
-    private final String name;
+    private final String reason;
 
-    private QosReason(@CompileTimeConstant String name) {
-        this.name = name;
+    private static final Pattern REASON_REGEX = Pattern.compile("^[a-z0-9\\-]{1,20}$");
+
+    private QosReason(@CompileTimeConstant String reason) {
+        this.reason = reason;
     }
 
-    public static QosReason of(@CompileTimeConstant String name) {
-        return new QosReason(name);
+    public static QosReason of(@CompileTimeConstant String reason) {
+        Preconditions.checkArgument(
+                REASON_REGEX.matcher(reason).matches(),
+                "Reason must be at most 20 characters, and only contain lowercase letters, numbers, and hyphens (-).");
+        return new QosReason(reason);
     }
 
     @Override
     public String toString() {
-        return name;
+        return reason;
     }
 
     @Override
@@ -45,12 +60,12 @@ public final class QosReason {
             return false;
         } else {
             QosReason otherReason = (QosReason) other;
-            return Objects.equals(this.name, otherReason.name);
+            return Objects.equals(this.reason, otherReason.reason);
         }
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(this.name);
+        return Objects.hashCode(this.reason);
     }
 }

@@ -17,8 +17,10 @@
 package com.palantir.conjure.java.api.errors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import org.junit.jupiter.api.Test;
 
@@ -56,12 +58,30 @@ public final class QosExceptionTest {
     }
 
     @Test
-    public void testDefaultReasons() {
+    public void testInvalidReason() {
+        // Too long
+        assertThatThrownBy(() -> QosReason.of("reason_reason_reason_"))
+                .isInstanceOf(SafeIllegalArgumentException.class)
+                .hasMessageContaining(
+                        "Reason must be at most 20 characters, and only contain lowercase letters, numbers, and hyphens (-).");
+
+        // Unsupported characters
+        assertThatThrownBy(() -> QosReason.of("reason?"))
+                .isInstanceOf(SafeIllegalArgumentException.class)
+                .hasMessageContaining(
+                        "Reason must be at most 20 characters, and only contain lowercase letters, numbers, and hyphens (-).");
+
+        assertThatThrownBy(() -> QosReason.of("Reason"))
+                .isInstanceOf(SafeIllegalArgumentException.class)
+                .hasMessageContaining(
+                        "Reason must be at most 20 characters, and only contain lowercase letters, numbers, and hyphens (-).");
+    }
+
+    @Test
+    public void testDefaultReasons() throws MalformedURLException {
         assertThat(QosException.throttle().getReason().toString()).isEqualTo("qos-throttle");
-        assertThatNoException().isThrownBy(() -> assertThat(QosException.retryOther(new URL("http://foo"))
-                        .getReason()
-                        .toString())
-                .isEqualTo("qos-retry-other"));
+        assertThat(QosException.retryOther(new URL("http://foo")).getReason().toString())
+                .isEqualTo("qos-retry-other");
         assertThat(QosException.unavailable().getReason().toString()).isEqualTo("qos-unavailable");
     }
 }

@@ -180,6 +180,7 @@ public abstract class QosException extends RuntimeException {
     /** See {@link #throttle}. */
     public static final class Throttle extends QosException implements SafeLoggable {
         private static final QosReason DEFAULT_REASON = QosReason.of("qos-throttle");
+
         private final Optional<Duration> retryAfter;
 
         private Throttle(Optional<Duration> retryAfter) {
@@ -228,6 +229,7 @@ public abstract class QosException extends RuntimeException {
     /** See {@link #retryOther}. */
     public static final class RetryOther extends QosException implements SafeLoggable {
         private static final QosReason DEFAULT_REASON = QosReason.of("qos-retry-other");
+
         private final URL redirectTo;
 
         private RetryOther(URL redirectTo) {
