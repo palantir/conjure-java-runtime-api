@@ -18,16 +18,17 @@ package com.palantir.conjure.java.api.errors;
 
 import com.google.errorprone.annotations.CompileTimeConstant;
 import com.palantir.logsafe.Preconditions;
+import com.palantir.logsafe.SafeArg;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
  * A class representing the reason why a {@link QosException} was created.
  *
- * Clients should create a relatively small number of static constant {@code Reason} objects, which are reused when throwing
- * QosExceptions. The string used to construct a {@code Reason} object should be able to be used as a metric tag, for
- * observability into {@link QosException} calls. As such, the string is constrained to have at most 20 lowercase
- * alphanumeric characters, and hyphens (-).
+ * Clients should create a relatively small number of static constant {@code Reason} objects, which are reused when
+ * throwing QosExceptions. The string used to construct a {@code Reason} object should be able to be used as a metric
+ * tag, for observability into {@link QosException} calls. As such, the string is constrained to have at most 20
+ * lowercase alphanumeric characters, and hyphens (-).
  */
 public final class QosReason {
 
@@ -43,7 +44,9 @@ public final class QosReason {
     public static QosReason of(@CompileTimeConstant String reason) {
         Preconditions.checkArgument(
                 REASON_REGEX.matcher(reason).matches(),
-                "Reason must be at most 20 characters, and only contain lowercase letters, numbers, and hyphens (-).");
+                "Reason must be at most 20 characters, and only contain lowercase letters, numbers, "
+                        + "and hyphens (-).",
+                SafeArg.of("reason", reason));
         return new QosReason(reason);
     }
 
