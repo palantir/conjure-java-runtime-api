@@ -63,18 +63,21 @@ public final class QosExceptionTest {
         assertThatThrownBy(() -> QosReason.of("reason_reason_reason_"))
                 .isInstanceOf(SafeIllegalArgumentException.class)
                 .hasMessageContaining(
-                        "Reason must be at most 20 characters, and only contain lowercase letters, numbers, and hyphens (-).");
+                        "Reason must be at most 20 characters, and only contain lowercase letters, numbers, "
+                                + "and hyphens (-).");
 
         // Unsupported characters
         assertThatThrownBy(() -> QosReason.of("reason?"))
                 .isInstanceOf(SafeIllegalArgumentException.class)
                 .hasMessageContaining(
-                        "Reason must be at most 20 characters, and only contain lowercase letters, numbers, and hyphens (-).");
+                        "Reason must be at most 20 characters, and only contain lowercase letters, numbers, "
+                                + "and hyphens (-).");
 
         assertThatThrownBy(() -> QosReason.of("Reason"))
                 .isInstanceOf(SafeIllegalArgumentException.class)
                 .hasMessageContaining(
-                        "Reason must be at most 20 characters, and only contain lowercase letters, numbers, and hyphens (-).");
+                        "Reason must be at most 20 characters, and only contain lowercase letters, numbers, and"
+                                + " hyphens (-).");
     }
 
     @Test
