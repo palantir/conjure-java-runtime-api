@@ -24,8 +24,8 @@ import java.util.regex.Pattern;
 /**
  * A class representing the reason why a {@link QosException} was created.
  *
- * Clients should create a relatively small number of static constant Reason objects, which are reused when throwing
- * QosExceptions. The string used to construct a Reason object should be able to be used as a metric tag, for
+ * Clients should create a relatively small number of static constant {@code Reason} objects, which are reused when throwing
+ * QosExceptions. The string used to construct a {@code Reason} object should be able to be used as a metric tag, for
  * observability into {@link QosException} calls. As such, the string is constrained to have at most 20 lowercase
  * alphanumeric characters, and hyphens (-).
  */
