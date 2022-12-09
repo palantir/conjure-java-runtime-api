@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  *
  * Clients should create a relatively small number of static constant {@code Reason} objects, which are reused when
  * throwing QosExceptions. The string used to construct a {@code Reason} object should be able to be used as a metric
- * tag, for observability into {@link QosException} calls. As such, the string is constrained to have at most 20
+ * tag, for observability into {@link QosException} calls. As such, the string is constrained to have at most 50
  * lowercase alphanumeric characters, and hyphens (-).
  */
 public final class QosReason {
@@ -35,7 +35,7 @@ public final class QosReason {
     @CompileTimeConstant
     private final String reason;
 
-    private static final Pattern REASON_REGEX = Pattern.compile("^[a-z0-9\\-]{1,20}$");
+    private static final Pattern PATTERN = Pattern.compile("^[a-z0-9\\-]{1,50}$");
 
     private QosReason(@CompileTimeConstant String reason) {
         this.reason = reason;
@@ -43,8 +43,8 @@ public final class QosReason {
 
     public static QosReason of(@CompileTimeConstant String reason) {
         Preconditions.checkArgument(
-                REASON_REGEX.matcher(reason).matches(),
-                "Reason must be at most 20 characters, and only contain lowercase letters, numbers, "
+                PATTERN.matcher(reason).matches(),
+                "Reason must be at most 50 characters, and only contain lowercase letters, numbers, "
                         + "and hyphens (-).",
                 SafeArg.of("reason", reason));
         return new QosReason(reason);
