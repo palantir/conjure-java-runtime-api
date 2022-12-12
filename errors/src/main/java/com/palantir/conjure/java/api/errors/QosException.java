@@ -47,7 +47,7 @@ public abstract class QosException extends RuntimeException {
         this.reason = reason;
     }
 
-    public QosReason getReason() {
+    public final QosReason getReason() {
         return reason;
     }
 
