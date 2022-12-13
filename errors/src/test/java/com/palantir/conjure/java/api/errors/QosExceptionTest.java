@@ -17,7 +17,10 @@
 package com.palantir.conjure.java.api.errors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import org.junit.jupiter.api.Test;
 
@@ -46,5 +49,42 @@ public final class QosExceptionTest {
         assertThat(QosException.retryOther(new URL("http://foo")).accept(visitor))
                 .isEqualTo(QosException.RetryOther.class);
         assertThat(QosException.unavailable().accept(visitor)).isEqualTo(QosException.Unavailable.class);
+    }
+
+    @Test
+    public void testReason() {
+        QosReason reason = QosReason.of("reason");
+        assertThat(QosException.throttle(reason).getReason()).isEqualTo(reason);
+    }
+
+    @Test
+    public void testInvalidReason() {
+        // Too long
+        assertThatThrownBy(() -> QosReason.of("reason-reason-reason-reason-reason-reason-reason---"))
+                .isInstanceOf(SafeIllegalArgumentException.class)
+                .hasMessageContaining(
+                        "Reason must be at most 50 characters, and only contain lowercase letters, numbers, "
+                                + "and hyphens (-).");
+
+        // Unsupported characters
+        assertThatThrownBy(() -> QosReason.of("reason?"))
+                .isInstanceOf(SafeIllegalArgumentException.class)
+                .hasMessageContaining(
+                        "Reason must be at most 50 characters, and only contain lowercase letters, numbers, "
+                                + "and hyphens (-).");
+
+        assertThatThrownBy(() -> QosReason.of("Reason"))
+                .isInstanceOf(SafeIllegalArgumentException.class)
+                .hasMessageContaining(
+                        "Reason must be at most 50 characters, and only contain lowercase letters, numbers, and"
+                                + " hyphens (-).");
+    }
+
+    @Test
+    public void testDefaultReasons() throws MalformedURLException {
+        assertThat(QosException.throttle().getReason().toString()).isEqualTo("qos-throttle");
+        assertThat(QosException.retryOther(new URL("http://foo")).getReason().toString())
+                .isEqualTo("qos-retry-other");
+        assertThat(QosException.unavailable().getReason().toString()).isEqualTo("qos-unavailable");
     }
 }
