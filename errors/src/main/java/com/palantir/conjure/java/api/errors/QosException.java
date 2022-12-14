@@ -222,7 +222,7 @@ public abstract class QosException extends RuntimeException {
 
         @Override
         public List<Arg<?>> getArgs() {
-            return Collections.singletonList(SafeArg.of("retryAfter", retryAfter.orElse(null)));
+            return List.of(SafeArg.of("retryAfter", retryAfter.orElse(null)), SafeArg.of("reason", getReason()));
         }
     }
 
@@ -269,7 +269,7 @@ public abstract class QosException extends RuntimeException {
 
         @Override
         public List<Arg<?>> getArgs() {
-            return Collections.singletonList(UnsafeArg.of("redirectTo", redirectTo));
+            return List.of(UnsafeArg.of("redirectTo", redirectTo), SafeArg.of("reason", getReason()));
         }
     }
 
@@ -307,7 +307,7 @@ public abstract class QosException extends RuntimeException {
 
         @Override
         public List<Arg<?>> getArgs() {
-            return Collections.emptyList();
+            return Collections.singletonList(SafeArg.of("reason", getReason()));
         }
     }
 }
