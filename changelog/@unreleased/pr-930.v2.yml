@@ -1,0 +1,6 @@
+type: improvement
+improvement:
+  description: QosException reasons are included in SafeLoggable args for better observability
+    when exceptions are wrapped and logged.
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/930
