@@ -10,6 +10,7 @@ dependencies {
     implementation "com.palantir.safe-logging:preconditions"
 
     testImplementation project(":extras:jackson-support")
+    testImplementation "com.palantir.safe-logging:preconditions-assertj"
     testImplementation "org.assertj:assertj-core"
     testImplementation "org.apache.commons:commons-lang3"
     testImplementation 'org.junit.jupiter:junit-jupiter'

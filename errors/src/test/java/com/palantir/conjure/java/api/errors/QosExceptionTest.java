@@ -16,9 +16,11 @@
 
 package com.palantir.conjure.java.api.errors;
 
+import static com.palantir.logsafe.testing.Assertions.assertThatLoggableExceptionThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -53,8 +55,12 @@ public final class QosExceptionTest {
 
     @Test
     public void testReason() {
-        QosReason reason = QosReason.of("reason");
+        QosReason reason = QosReason.of("custom-reason");
         assertThat(QosException.throttle(reason).getReason()).isEqualTo(reason);
+        assertThatLoggableExceptionThrownBy(() -> {
+                    throw QosException.throttle(reason);
+                })
+                .containsArgs(SafeArg.of("reason", reason));
     }
 
     @Test
