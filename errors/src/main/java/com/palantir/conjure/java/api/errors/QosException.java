@@ -17,6 +17,7 @@
 package com.palantir.conjure.java.api.errors;
 
 import com.palantir.logsafe.Arg;
+import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.SafeLoggable;
 import com.palantir.logsafe.UnsafeArg;
@@ -39,12 +40,12 @@ public abstract class QosException extends RuntimeException {
     // Not meant for external subclassing.
     private QosException(String message, QosReason reason) {
         super(message);
-        this.reason = reason;
+        this.reason = Preconditions.checkNotNull(reason, "QosReason is required");
     }
 
     private QosException(String message, Throwable cause, QosReason reason) {
         super(message, cause);
-        this.reason = reason;
+        this.reason = Preconditions.checkNotNull(reason, "QosReason is required");
     }
 
     public final QosReason getReason() {
