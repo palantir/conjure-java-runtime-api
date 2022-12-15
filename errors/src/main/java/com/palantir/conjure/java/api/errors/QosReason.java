@@ -35,13 +35,15 @@ public final class QosReason {
     @CompileTimeConstant
     private final String reason;
 
-    private static final Pattern PATTERN = Pattern.compile("^[a-z0-9\\-]{1,50}$");
+    private static final String PATTERN_STRING = "^[a-z0-9\\-]{1,50}$";
+    private static final Pattern PATTERN = Pattern.compile(PATTERN_STRING);
 
     private QosReason(@CompileTimeConstant String reason) {
         this.reason = reason;
     }
 
-    public static QosReason of(@CompileTimeConstant String reason) {
+    public static QosReason of(
+            @CompileTimeConstant @org.intellij.lang.annotations.Pattern(PATTERN_STRING) String reason) {
         Preconditions.checkArgument(
                 PATTERN.matcher(reason).matches(),
                 "Reason must be at most 50 characters, and only contain lowercase letters, numbers, "
