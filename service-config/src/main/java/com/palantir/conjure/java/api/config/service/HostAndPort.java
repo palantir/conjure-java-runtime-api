@@ -34,8 +34,9 @@ package com.palantir.conjure.java.api.config.service;
 
 import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.SafeArg;
+import org.jetbrains.annotations.VisibleForTesting;
 
-/** See Guava's {@code HostAndPort}. */
+/** See Guava's {@code HostAndPort}. This class is a re-implementation that throws safelog exceptions. */
 public final class HostAndPort {
     /** Magic value indicating the absence of a port number. */
     private static final int NO_PORT = -1;
@@ -146,5 +147,15 @@ public final class HostAndPort {
     /** Return true for valid port numbers. */
     private static boolean isValidPort(int port) {
         return port >= 0 && port <= 65535;
+    }
+
+    @VisibleForTesting
+    String getHost() {
+        return host;
+    }
+
+    @VisibleForTesting
+    int getPort() {
+        return port;
     }
 }

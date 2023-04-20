@@ -147,4 +147,14 @@ public final class ProxyConfigurationTests {
         assertThat(ObjectMappers.newClientObjectMapper().readValue(kebabCase, ProxyConfiguration.class))
                 .isEqualTo(config);
     }
+
+    @Test
+    public void incorrectlyFormattedHostAndPort() {
+        assertThatThrownBy(() -> ProxyConfiguration.builder()
+                        .hostAndPort("http://squid:3128")
+                        .type(ProxyConfiguration.Type.HTTP)
+                        .build())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Given hostname does not contain a port number: {hostname=[http://squid:3128]}");
+    }
 }
