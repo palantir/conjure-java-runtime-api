@@ -16,6 +16,7 @@
 
 package com.palantir.conjure.java.api.config.service;
 
+import static com.palantir.logsafe.testing.Assertions.assertThatLoggableExceptionThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -24,6 +25,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.google.common.io.Resources;
 import com.palantir.conjure.java.api.ext.jackson.ObjectMappers;
+import com.palantir.logsafe.UnsafeArg;
 import java.io.IOException;
 import java.net.URL;
 import org.junit.jupiter.api.Test;
@@ -150,11 +152,11 @@ public final class ProxyConfigurationTests {
 
     @Test
     public void incorrectlyFormattedHostAndPort() {
-        assertThatThrownBy(() -> ProxyConfiguration.builder()
+        assertThatLoggableExceptionThrownBy(() -> ProxyConfiguration.builder()
                         .hostAndPort("http://squid:3128")
                         .type(ProxyConfiguration.Type.HTTP)
                         .build())
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Given hostname does not contain a port number: {hostname=[http://squid:3128]}");
+                .hasMessageContaining("hostPortString must not contain a protocol prefix like http:// or https://")
+                .containsArgs(UnsafeArg.of("hostPortString", "http://squid:3128"));
     }
 }

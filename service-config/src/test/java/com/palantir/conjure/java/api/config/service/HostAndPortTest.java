@@ -16,8 +16,10 @@
 
 package com.palantir.conjure.java.api.config.service;
 
+import static com.palantir.logsafe.testing.Assertions.assertThatLoggableExceptionThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.palantir.logsafe.UnsafeArg;
 import org.junit.jupiter.api.Test;
 
 class HostAndPortTest {
@@ -31,8 +33,22 @@ class HostAndPortTest {
 
     @Test
     void fromString_onHostAndPortWithHttpProtocolPrefix_doesNotThrow() {
-        HostAndPort hostAndPort = HostAndPort.fromString("http://example.com:8080");
-        assertThat(hostAndPort.getHost()).isEqualTo("http://example.com:8080");
-        assertThat(hostAndPort.getPort()).isEqualTo(-1);
+        assertThatLoggableExceptionThrownBy(() -> HostAndPort.fromString("http://example.com:8080"))
+                .hasMessageContaining("hostPortString must not contain a protocol prefix like http:// or https://")
+                .containsArgs(UnsafeArg.of("hostPortString", "http://example.com:8080"));
+    }
+
+    @Test
+    void fromString_onHostAndPortWithHttpsProtocolPrefix_doesNotThrow() {
+        assertThatLoggableExceptionThrownBy(() -> HostAndPort.fromString("https://example.com:8080"))
+                .hasMessageContaining("hostPortString must not contain a protocol prefix like http:// or https://")
+                .containsArgs(UnsafeArg.of("hostPortString", "https://example.com:8080"));
+    }
+
+    @Test
+    void fromString_onHostAndPortWithAbcProtocolPrefix_doesNotThrow() {
+        assertThatLoggableExceptionThrownBy(() -> HostAndPort.fromString("abc://example.com:8080"))
+                .hasMessageContaining("hostPortString must not contain a protocol prefix like http:// or https://")
+                .containsArgs(UnsafeArg.of("hostPortString", "abc://example.com:8080"));
     }
 }
