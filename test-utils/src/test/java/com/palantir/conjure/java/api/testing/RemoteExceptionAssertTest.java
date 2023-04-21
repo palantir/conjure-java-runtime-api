@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 public final class RemoteExceptionAssertTest {
 
     @Test
-    public void testSanity() throws Exception {
+    public void testSanity() {
         ErrorType actualType = ErrorType.FAILED_PRECONDITION;
         SerializableError error = SerializableError.forException(new ServiceException(actualType));
 

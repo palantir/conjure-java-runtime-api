@@ -16,11 +16,14 @@
 
 package com.palantir.conjure.java.api.testing;
 
+import static com.palantir.conjure.java.api.testing.Assertions.assertThatQosExceptionThrownBy;
 import static com.palantir.conjure.java.api.testing.Assertions.assertThatRemoteExceptionThrownBy;
 import static com.palantir.conjure.java.api.testing.Assertions.assertThatServiceExceptionThrownBy;
 import static com.palantir.conjure.java.api.testing.Assertions.assertThatThrownBy;
 
 import com.palantir.conjure.java.api.errors.ErrorType;
+import com.palantir.conjure.java.api.errors.QosException;
+import com.palantir.conjure.java.api.errors.QosReason;
 import com.palantir.conjure.java.api.errors.RemoteException;
 import com.palantir.conjure.java.api.errors.SerializableError;
 import com.palantir.conjure.java.api.errors.ServiceException;
@@ -82,5 +85,32 @@ public final class AssertionsTest {
                             ErrorType.INTERNAL.httpErrorCode());
                 })
                 .isGeneratedFromErrorType(ErrorType.INTERNAL);
+    }
+
+    @Test
+    public void testAssertThatQosExceptionThrownBy_failsIfNothingThrown() {
+        assertThatThrownBy(() -> assertThatQosExceptionThrownBy(() -> {
+                    // Not going to throw anything
+                }))
+                .hasMessageContaining("Expecting code to raise a throwable.");
+    }
+
+    @Test
+    public void testAssertThatQosExceptionThrownBy_failsIfWrongExceptionThrown() {
+        assertThatThrownBy(() -> assertThatQosExceptionThrownBy(() -> {
+                    throw new RuntimeException("My message");
+                }))
+                .hasMessageContaining(
+                        "com.palantir.conjure.java.api.errors.QosException",
+                        "java.lang.RuntimeException",
+                        "My message");
+    }
+
+    @Test
+    public void testAssertThatQosExceptionThrownBy_catchesQosException() {
+        assertThatQosExceptionThrownBy(() -> {
+                    throw QosException.unavailable(QosReason.of("reason"));
+                })
+                .hasReason(QosReason.of("reason"));
     }
 }
