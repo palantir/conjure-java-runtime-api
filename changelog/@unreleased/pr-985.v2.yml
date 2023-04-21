@@ -1,0 +1,5 @@
+type: feature
+feature:
+  description: Add `QosExcepetion` assertions
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/985
