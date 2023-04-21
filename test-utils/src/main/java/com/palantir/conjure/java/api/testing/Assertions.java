@@ -16,6 +16,7 @@
 
 package com.palantir.conjure.java.api.testing;
 
+import com.palantir.conjure.java.api.errors.QosException;
 import com.palantir.conjure.java.api.errors.RemoteException;
 import com.palantir.conjure.java.api.errors.ServiceException;
 import org.assertj.core.api.InstanceOfAssertFactory;
@@ -36,6 +37,10 @@ public class Assertions extends org.assertj.core.api.Assertions {
         return new RemoteExceptionAssert(actual);
     }
 
+    public static QosExceptionAssert assertThat(QosException actual) {
+        return new QosExceptionAssert(actual);
+    }
+
     @CanIgnoreReturnValue
     public static ServiceExceptionAssert assertThatServiceExceptionThrownBy(ThrowingCallable shouldRaiseThrowable) {
         return assertThatThrownBy(shouldRaiseThrowable).asInstanceOf(ServiceExceptionInstanceOfAssertFactory.INSTANCE);
@@ -44,6 +49,11 @@ public class Assertions extends org.assertj.core.api.Assertions {
     @CanIgnoreReturnValue
     public static RemoteExceptionAssert assertThatRemoteExceptionThrownBy(ThrowingCallable shouldRaiseThrowable) {
         return assertThatThrownBy(shouldRaiseThrowable).asInstanceOf(RemoteExceptionInstanceOfAssertFactory.INSTANCE);
+    }
+
+    @CanIgnoreReturnValue
+    public static QosExceptionAssert assertThatQosExceptionThrownBy(ThrowingCallable shouldRaiseThrowable) {
+        return assertThatThrownBy(shouldRaiseThrowable).asInstanceOf(QosExceptionInstanceOfAssertFactory.INSTANCE);
     }
 
     private static final class ServiceExceptionInstanceOfAssertFactory
@@ -61,6 +71,15 @@ public class Assertions extends org.assertj.core.api.Assertions {
 
         RemoteExceptionInstanceOfAssertFactory() {
             super(RemoteException.class, RemoteExceptionAssert::new);
+        }
+    }
+
+    private static final class QosExceptionInstanceOfAssertFactory
+            extends InstanceOfAssertFactory<QosException, QosExceptionAssert> {
+        static final QosExceptionInstanceOfAssertFactory INSTANCE = new QosExceptionInstanceOfAssertFactory();
+
+        QosExceptionInstanceOfAssertFactory() {
+            super(QosException.class, QosExceptionAssert::new);
         }
     }
 }
