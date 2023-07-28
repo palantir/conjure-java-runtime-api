@@ -30,7 +30,7 @@ org.slf4j:slf4j-api:1.7.36 (2 constraints: 561e8a97)
 [Test dependencies]
 com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.2 (1 constraints: 3c05403b)
 com.palantir.safe-logging:preconditions-assertj:3.6.0 (1 constraints: 0b050c36)
-org.apache.commons:commons-lang3:3.12.0 (1 constraints: 38053b3b)
+org.apache.commons:commons-lang3:3.13.0 (1 constraints: 39053e3b)
 org.apiguardian:apiguardian-api:1.1.2 (5 constraints: 105480ac)
 org.junit.jupiter:junit-jupiter:5.10.0 (1 constraints: 3805413b)
 org.junit.jupiter:junit-jupiter-api:5.10.0 (3 constraints: eb2fe84f)
