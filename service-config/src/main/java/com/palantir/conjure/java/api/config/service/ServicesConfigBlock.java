@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.palantir.conjure.java.api.config.ssl.SslConfiguration;
+import com.palantir.logsafe.DoNotLog;
 import com.palantir.tokens.auth.BearerToken;
 import java.util.Map;
 import java.util.Optional;
@@ -33,6 +34,7 @@ import org.immutables.value.Value.Immutable;
  * {@link ServiceConfigurationFactory} to propagate the defaults to the partially-specified services and obtain
  * fully-specified {@link ServiceConfiguration} objects.
  */
+@DoNotLog
 @Immutable
 @JsonSerialize(as = ImmutableServicesConfigBlock.class)
 @JsonDeserialize(builder = ServicesConfigBlock.Builder.class)
