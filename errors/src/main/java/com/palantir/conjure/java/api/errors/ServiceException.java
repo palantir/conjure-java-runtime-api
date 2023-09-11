@@ -133,7 +133,7 @@ public final class ServiceException extends RuntimeException implements SafeLogg
     }
 
     private static String renderNoArgsMessage(ErrorType errorType) {
-        return String.format("ServiceException: %s (%s)", errorType.code(), errorType.name());
+        return "ServiceException: " + errorType.code() + " (" + errorType.name() + ")";
     }
 
     /**
