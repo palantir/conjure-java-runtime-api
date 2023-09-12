@@ -20,6 +20,7 @@ import com.palantir.logsafe.Arg;
 import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.SafeLoggable;
+import com.palantir.logsafe.Unsafe;
 import com.palantir.logsafe.UnsafeArg;
 import java.net.URL;
 import java.time.Duration;
@@ -268,6 +269,7 @@ public abstract class QosException extends RuntimeException {
             return this.getClass().getSimpleName() + ": Requesting retry";
         }
 
+        @Unsafe
         @Override
         public List<Arg<?>> getArgs() {
             return List.of(UnsafeArg.of("redirectTo", redirectTo), SafeArg.of("reason", getReason()));

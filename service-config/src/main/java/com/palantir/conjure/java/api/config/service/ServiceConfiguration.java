@@ -18,6 +18,7 @@ package com.palantir.conjure.java.api.config.service;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.palantir.conjure.java.api.config.ssl.SslConfiguration;
+import com.palantir.logsafe.DoNotLog;
 import com.palantir.tokens.auth.BearerToken;
 import java.time.Duration;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.Optional;
 import org.immutables.value.Value;
 
 /** A variant of {@link PartialServiceConfiguration} in which some fields (e.g., {@link #security}) are required. */
+@DoNotLog
 @JsonDeserialize(as = ImmutableServiceConfiguration.class)
 @Value.Immutable
 @ImmutablesStyle
