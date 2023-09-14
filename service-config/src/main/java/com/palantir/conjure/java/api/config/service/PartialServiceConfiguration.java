@@ -20,12 +20,14 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.palantir.conjure.java.api.config.ssl.SslConfiguration;
+import com.palantir.logsafe.DoNotLog;
 import com.palantir.tokens.auth.BearerToken;
 import java.util.List;
 import java.util.Optional;
 import org.immutables.value.Value;
 import org.immutables.value.Value.Immutable;
 
+@DoNotLog
 @Immutable
 @JsonSerialize(as = ImmutablePartialServiceConfiguration.class)
 @JsonDeserialize(builder = PartialServiceConfiguration.Builder.class)

@@ -19,11 +19,13 @@ package com.palantir.conjure.java.api.config.ssl;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.collect.ImmutableSet;
+import com.palantir.logsafe.DoNotLog;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import java.nio.file.Path;
 import java.util.Optional;
 import org.immutables.value.Value;
 
+@DoNotLog
 @JsonDeserialize(builder = SslConfiguration.Builder.class)
 @Value.Immutable
 @ImmutablesStyle
@@ -55,6 +57,7 @@ public abstract class SslConfiguration {
     @JsonAlias("key-store-path")
     public abstract Optional<Path> keyStorePath();
 
+    @DoNotLog
     @JsonAlias("key-store-password")
     @Value.Redacted
     public abstract Optional<String> keyStorePassword();

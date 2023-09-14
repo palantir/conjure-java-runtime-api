@@ -18,9 +18,11 @@ package com.palantir.conjure.java.api.config.service;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.palantir.logsafe.DoNotLog;
 import org.immutables.value.Value;
 import org.immutables.value.Value.Immutable;
 
+@DoNotLog
 @Immutable
 @JsonSerialize(as = ImmutableBasicCredentials.class)
 @JsonDeserialize(as = ImmutableBasicCredentials.class)
@@ -30,6 +32,7 @@ public abstract class BasicCredentials {
     @Value.Parameter
     public abstract String username();
 
+    @DoNotLog
     @Value.Redacted
     @Value.Parameter
     public abstract String password();
