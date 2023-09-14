@@ -19,9 +19,8 @@ package com.palantir.conjure.java.api.errors;
 import com.palantir.logsafe.Arg;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.SafeLoggable;
+import com.palantir.logsafe.Unsafe;
 import com.palantir.logsafe.UnsafeArg;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /** An exception thrown by an RPC client to indicate remote/server-side failure from a non-remoting server. */
@@ -42,7 +41,7 @@ public final class UnknownRemoteException extends RuntimeException implements Sa
     }
 
     public UnknownRemoteException(int status, String body) {
-        super(String.format("Response status: %s", status));
+        super("Response status: " + status);
         this.status = status;
         this.body = body;
     }
@@ -52,11 +51,9 @@ public final class UnknownRemoteException extends RuntimeException implements Sa
         return getMessage();
     }
 
+    @Unsafe
     @Override
     public List<Arg<?>> getArgs() {
-        List<Arg<?>> args = new ArrayList<>(2);
-        args.add(SafeArg.of("status", getStatus()));
-        args.add(UnsafeArg.of("body", getBody()));
-        return Collections.unmodifiableList(args);
+        return List.of(SafeArg.of("status", getStatus()), UnsafeArg.of("body", getBody()));
     }
 }
