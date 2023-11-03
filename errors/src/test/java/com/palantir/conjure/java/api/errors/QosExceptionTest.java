@@ -30,19 +30,19 @@ public final class QosExceptionTest {
 
     @Test
     public void testVisitorSanity() throws Exception {
-        QosException.Visitor<Class> visitor = new QosException.Visitor<Class>() {
+        QosException.Visitor<Class<?>> visitor = new QosException.Visitor<>() {
             @Override
-            public Class visit(QosException.Throttle exception) {
+            public Class<?> visit(QosException.Throttle exception) {
                 return exception.getClass();
             }
 
             @Override
-            public Class visit(QosException.RetryOther exception) {
+            public Class<?> visit(QosException.RetryOther exception) {
                 return exception.getClass();
             }
 
             @Override
-            public Class visit(QosException.Unavailable exception) {
+            public Class<?> visit(QosException.Unavailable exception) {
                 return exception.getClass();
             }
         };
