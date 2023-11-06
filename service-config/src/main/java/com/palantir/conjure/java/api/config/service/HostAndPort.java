@@ -34,8 +34,10 @@ package com.palantir.conjure.java.api.config.service;
 
 import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.SafeArg;
+import com.palantir.logsafe.UnsafeArg;
+import org.jetbrains.annotations.VisibleForTesting;
 
-/** See Guava's {@code HostAndPort}. */
+/** See Guava's {@code HostAndPort}. This class is a re-implementation that throws safelog exceptions. */
 public final class HostAndPort {
     /** Magic value indicating the absence of a port number. */
     private static final int NO_PORT = -1;
@@ -92,6 +94,16 @@ public final class HostAndPort {
                     isValidPort(port), "Port number out of range", SafeArg.of("port", hostPortString));
         }
 
+        // Additional validation for common errors. An alternative to this diff between conjure HostAndPort and
+        // Guava HostAndPort would be to use Guava's HostSpecifier.from() here instead.  But that would require
+        // either re-adding a Guava dependency (removed earlier in this repo's history), or copying that class
+        // and its dependencies (InetAddresses, InternetDomainName, Ascii.toLowerCase, Splitter, Joiner, and more)
+        // into this repo like we did with HostAndPort.
+        Preconditions.checkArgument(
+                !host.contains("://"),
+                "hostPortString must not contain a protocol prefix like http:// or https://",
+                UnsafeArg.of("hostPortString", hostPortString));
+
         return new HostAndPort(host, port);
     }
 
@@ -146,5 +158,15 @@ public final class HostAndPort {
     /** Return true for valid port numbers. */
     private static boolean isValidPort(int port) {
         return port >= 0 && port <= 65535;
+    }
+
+    @VisibleForTesting
+    String getHost() {
+        return host;
+    }
+
+    @VisibleForTesting
+    int getPort() {
+        return port;
     }
 }
