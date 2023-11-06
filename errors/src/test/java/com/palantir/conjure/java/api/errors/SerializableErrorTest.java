@@ -68,7 +68,8 @@ public final class SerializableErrorTest {
         assertThat(SerializableError.forException(exception)).isEqualTo(expected);
     }
 
-    // TODO(https://github.com/palantir/conjure-java/issues/1812): change this serialization to follow the conjure spec.
+    // Discussion of potentially changing the serialization format in these three _serializesWithToString tests is at
+    // https://github.com/palantir/conjure-java/issues/1812
     @Test
     public void forException_listArgValue_serializesWithToString() {
         ErrorType error = ErrorType.INTERNAL;
