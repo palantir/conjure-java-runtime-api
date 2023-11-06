@@ -24,6 +24,9 @@ import com.palantir.conjure.java.api.ext.jackson.ObjectMappers;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.UnsafeArg;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
 
 public final class SerializableErrorTest {
@@ -63,6 +66,63 @@ public final class SerializableErrorTest {
                 .putParameters("collision", "second")
                 .build();
         assertThat(SerializableError.forException(exception)).isEqualTo(expected);
+    }
+
+    // Discussion of potentially changing the serialization format in these three _serializesWithToString tests is at
+    // https://github.com/palantir/conjure-java/issues/1812
+    @Test
+    public void forException_listArgValue_serializesWithToString() {
+        ErrorType error = ErrorType.INTERNAL;
+        ServiceException exception = new ServiceException(
+                error, SafeArg.of("safe-list", List.of("1", "2")), UnsafeArg.of("unsafe-list", List.of("3", "4")));
+
+        SerializableError expected = new SerializableError.Builder()
+                .errorCode(error.code().name())
+                .errorName(error.name())
+                .errorInstanceId(exception.getErrorInstanceId())
+                .putParameters("safe-list", "[1, 2]")
+                .putParameters("unsafe-list", "[3, 4]")
+                .build();
+        assertThat(SerializableError.forException(exception)).isEqualTo(expected);
+    }
+
+    @Test
+    public void forException_mapArgValue_serializesWithToString() {
+        ErrorType error = ErrorType.INTERNAL;
+        ServiceException exception = new ServiceException(
+                error, SafeArg.of("safe-map", Map.of("1", "2")), UnsafeArg.of("unsafe-map", Map.of("ABC", "DEF")));
+
+        SerializableError expected = new SerializableError.Builder()
+                .errorCode(error.code().name())
+                .errorName(error.name())
+                .errorInstanceId(exception.getErrorInstanceId())
+                .putParameters("safe-map", "{1=2}")
+                .putParameters("unsafe-map", "{ABC=DEF}")
+                .build();
+        assertThat(SerializableError.forException(exception)).isEqualTo(expected);
+    }
+
+    @Test
+    public void forException_mapArrayArgValue_serializesWithToString() {
+        ErrorType error = ErrorType.INTERNAL;
+        ServiceException exception = new ServiceException(
+                error,
+                SafeArg.of("safe-array", new long[] {1L, 2L, 3L}),
+                UnsafeArg.of("unsafe-array", new String[] {"A", "B", "C"}));
+
+        SerializableError actual = SerializableError.forException(exception);
+
+        assertThat(actual.parameters())
+                .hasEntrySatisfying(
+                        "safe-array",
+                        value ->
+                                // Example: [J@714afbd4
+                                assertThat(value).matches(Pattern.quote("[J@") + "[0-9a-f]+"))
+                .hasEntrySatisfying(
+                        "unsafe-array",
+                        value ->
+                                // Example: [Ljava.lang.String;@769a49e3
+                                assertThat(value).matches(Pattern.quote("[Ljava.lang.String;@") + "[0-9a-f]+"));
     }
 
     @Test
