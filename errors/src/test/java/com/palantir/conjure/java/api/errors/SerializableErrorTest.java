@@ -26,6 +26,7 @@ import com.palantir.logsafe.UnsafeArg;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
 
@@ -123,6 +124,24 @@ public final class SerializableErrorTest {
                         value ->
                                 // Example: [Ljava.lang.String;@769a49e3
                                 assertThat(value).matches(Pattern.quote("[Ljava.lang.String;@") + "[0-9a-f]+"));
+    }
+
+    @Test
+    public void forException_optionalArgValue_serializesWithToString() {
+        ErrorType error = ErrorType.INTERNAL;
+        ServiceException exception = new ServiceException(
+                error,
+                SafeArg.of("safe-optional-present", Optional.of("hello")),
+                UnsafeArg.of("unsafe-optional-empty", Optional.empty()));
+
+        SerializableError expected = new SerializableError.Builder()
+                .errorCode(error.code().name())
+                .errorName(error.name())
+                .errorInstanceId(exception.getErrorInstanceId())
+                .putParameters("safe-optional-present", "Optional[hello]")
+                .putParameters("unsafe-optional-empty", "Optional.empty")
+                .build();
+        assertThat(SerializableError.forException(exception)).isEqualTo(expected);
     }
 
     @Test
