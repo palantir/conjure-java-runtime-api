@@ -117,12 +117,12 @@ public final class SerializableErrorTest {
                         "safe-array",
                         value ->
                                 // Example: [J@714afbd4
-                                assertThat(value).matches(Pattern.quote("[J@") + "[0-9a-ef]{8}"))
+                                assertThat(value).matches(Pattern.quote("[J@") + "[0-9a-f]+"))
                 .hasEntrySatisfying(
                         "unsafe-array",
                         value ->
                                 // Example: [Ljava.lang.String;@769a49e3
-                                assertThat(value).matches(Pattern.quote("[Ljava.lang.String;@") + "[0-9a-ef]{8}"));
+                                assertThat(value).matches(Pattern.quote("[Ljava.lang.String;@") + "[0-9a-f]+"));
     }
 
     @Test
