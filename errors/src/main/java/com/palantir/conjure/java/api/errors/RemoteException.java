@@ -17,6 +17,7 @@
 package com.palantir.conjure.java.api.errors;
 
 import com.palantir.logsafe.Arg;
+import com.palantir.logsafe.Safe;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.SafeLoggable;
 import com.palantir.logsafe.Unsafe;
@@ -32,7 +33,7 @@ public final class RemoteException extends RuntimeException implements SafeLogga
     private static final String ERROR_CODE = "errorCode";
     private static final String ERROR_NAME = "errorName";
 
-    @Unsafe // because errorName is unsafe
+    @Safe
     private final String stableMessage;
 
     private final SerializableError error;
@@ -96,7 +97,7 @@ public final class RemoteException extends RuntimeException implements SafeLogga
         return builder.toString();
     }
 
-    @Unsafe
+    @Safe
     @Override
     public String getLogMessage() {
         return stableMessage;
