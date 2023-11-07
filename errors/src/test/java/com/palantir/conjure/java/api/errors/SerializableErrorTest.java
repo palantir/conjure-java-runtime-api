@@ -171,13 +171,13 @@ public final class SerializableErrorTest {
     }
 
     @Test
-    public void testLegacyMessageUsedAsErrorNameWhenNoErrorNameIsSet() {
+    public void testLegacyMessageWhenNoErrorNameIsSetUsesDefaultErrorName() {
         SerializableError error = SerializableError.builder()
                 .errorCode("errorCode")
                 .message("the secret is 42")
                 .build();
 
-        assertThat(error.errorName()).isEqualTo("the secret is 42");
+        assertThat(error.errorName()).isEqualTo("Default:EmptyErrorNameWithLegacyMessageUsage");
     }
 
     @Test

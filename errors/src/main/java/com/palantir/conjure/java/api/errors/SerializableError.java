@@ -65,11 +65,12 @@ public abstract class SerializableError implements Serializable {
      * {@link ErrorType#name} and is part of the service's API surface. Clients are given access to the service-side
      * error name via {@link RemoteException#getError} and typically switch&dispatch on the error code and/or name.
      */
-    @Unsafe // because message is unsafe
+    @Safe
     @JsonProperty("errorName")
     @Value.Default
     public String errorName() {
         return getMessage()
+                .map(_unsafeMessage -> "Default:EmptyErrorNameWithLegacyMessageUsage")
                 .orElseThrow(() -> new SafeIllegalStateException("Expected either 'errorName' or 'message' to be set"));
     }
 
