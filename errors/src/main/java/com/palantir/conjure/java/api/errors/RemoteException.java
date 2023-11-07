@@ -19,6 +19,8 @@ package com.palantir.conjure.java.api.errors;
 import com.palantir.logsafe.Arg;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.SafeLoggable;
+import com.palantir.logsafe.Unsafe;
+import com.palantir.logsafe.UnsafeArg;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -30,12 +32,15 @@ public final class RemoteException extends RuntimeException implements SafeLogga
     private static final String ERROR_CODE = "errorCode";
     private static final String ERROR_NAME = "errorName";
 
+    @Unsafe // because errorName is unsafe
     private final String stableMessage;
+
     private final SerializableError error;
     private final int status;
     private final List<Arg<?>> args;
     // Lazily evaluated based on the stableMessage, errorInstanceId, and args.
     @SuppressWarnings("MutableException")
+    @Unsafe
     private String unsafeMessage;
 
     /** Returns the error thrown by a remote process which caused an RPC call to fail. */
@@ -56,10 +61,11 @@ public final class RemoteException extends RuntimeException implements SafeLogga
         this.status = status;
         this.args = Collections.unmodifiableList(Arrays.asList(
                 SafeArg.of(ERROR_INSTANCE_ID, error.errorInstanceId()),
-                SafeArg.of(ERROR_NAME, error.errorName()),
+                UnsafeArg.of(ERROR_NAME, error.errorName()),
                 SafeArg.of(ERROR_CODE, error.errorCode())));
     }
 
+    @Unsafe
     @Override
     public String getMessage() {
         // This field is not used in most environments so the cost of computation may be avoided.
@@ -71,6 +77,7 @@ public final class RemoteException extends RuntimeException implements SafeLogga
         return messageValue;
     }
 
+    @Unsafe
     private String renderUnsafeMessage() {
         StringBuilder builder = new StringBuilder()
                 .append(stableMessage)
@@ -89,6 +96,7 @@ public final class RemoteException extends RuntimeException implements SafeLogga
         return builder.toString();
     }
 
+    @Unsafe
     @Override
     public String getLogMessage() {
         return stableMessage;

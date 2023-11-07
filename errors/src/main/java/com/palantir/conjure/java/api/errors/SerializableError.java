@@ -21,6 +21,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.palantir.logsafe.Arg;
+import com.palantir.logsafe.Safe;
+import com.palantir.logsafe.Unsafe;
 import com.palantir.logsafe.exceptions.SafeIllegalStateException;
 import java.io.Serializable;
 import java.util.Map;
@@ -34,6 +36,7 @@ import org.immutables.value.Value;
  * transport errors through RPC channels such as HTTP responses.
  */
 // Automatically suppressed to unblock enforcement in new code
+@Unsafe
 @SuppressWarnings("ImmutablesStyle")
 @JsonDeserialize(builder = SerializableError.Builder.class)
 @JsonSerialize(as = ImmutableSerializableError.class)
@@ -48,6 +51,7 @@ public abstract class SerializableError implements Serializable {
      * the server-side error code via {@link RemoteException#getError} and typically switch&dispatch on the error code
      * and/or name.
      */
+    @Safe
     @JsonProperty("errorCode")
     @Value.Default
     public String errorCode() {
@@ -61,6 +65,7 @@ public abstract class SerializableError implements Serializable {
      * {@link ErrorType#name} and is part of the service's API surface. Clients are given access to the service-side
      * error name via {@link RemoteException#getError} and typically switch&dispatch on the error code and/or name.
      */
+    @Unsafe // because message is unsafe
     @JsonProperty("errorName")
     @Value.Default
     public String errorName() {
@@ -74,6 +79,7 @@ public abstract class SerializableError implements Serializable {
      * {@link #errorName}, the {@link #errorInstanceId} identifies a specific occurrence of an error, not a class of
      * errors. By convention, this field is a UUID.
      */
+    @Safe
     @JsonProperty("errorInstanceId")
     @Value.Default
     @SuppressWarnings("checkstyle:designforextension")
@@ -89,6 +95,7 @@ public abstract class SerializableError implements Serializable {
      *
      * @deprecated Used by the serialization-mechanism for back-compat only. Do not use.
      */
+    @Safe
     @Deprecated
     @JsonProperty(value = "exceptionClass", access = JsonProperty.Access.WRITE_ONLY)
     @Value.Auxiliary
@@ -100,6 +107,7 @@ public abstract class SerializableError implements Serializable {
      *
      * @deprecated Used by the serialization-mechanism for back-compat only. Do not use.
      */
+    @Unsafe
     @Deprecated
     @JsonProperty(value = "message", access = JsonProperty.Access.WRITE_ONLY)
     @Value.Auxiliary

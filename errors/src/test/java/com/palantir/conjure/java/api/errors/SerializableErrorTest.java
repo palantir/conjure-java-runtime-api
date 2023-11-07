@@ -19,6 +19,7 @@ package com.palantir.conjure.java.api.errors;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.palantir.conjure.java.api.ext.jackson.ObjectMappers;
 import com.palantir.logsafe.SafeArg;
@@ -146,16 +147,37 @@ public final class SerializableErrorTest {
 
     @Test
     public void testSerializationContainsRedundantParameters() throws Exception {
-        assertThat(mapper.writeValueAsString(ERROR))
+        assertThat(serialize(ERROR))
                 .isEqualTo("{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
                         + "\"errorInstanceId\":\"\",\"parameters\":{}}");
 
-        assertThat(mapper.writeValueAsString(SerializableError.builder()
+        assertThat(serialize(SerializableError.builder()
                         .from(ERROR)
                         .errorInstanceId("errorId")
                         .build()))
                 .isEqualTo("{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
                         + "\"errorInstanceId\":\"errorId\",\"parameters\":{}}");
+    }
+
+    @Test
+    public void testSerDeRoundTripDropsMessage() throws Exception {
+        SerializableError error = SerializableError.builder()
+                .from(ERROR)
+                .message("the secret is 42")
+                .build();
+
+        assertThat(error.getMessage()).hasValue("the secret is 42");
+        assertThat(deserialize(serialize(error)).getMessage()).isEmpty();
+    }
+
+    @Test
+    public void testLegacyMessageUsedAsErrorNameWhenNoErrorNameIsSet() {
+        SerializableError error = SerializableError.builder()
+                .errorCode("errorCode")
+                .message("the secret is 42")
+                .build();
+
+        assertThat(error.errorName()).isEqualTo("the secret is 42");
     }
 
     @Test
@@ -193,5 +215,9 @@ public final class SerializableErrorTest {
 
     private static SerializableError deserialize(String serialized) throws IOException {
         return mapper.readValue(serialized, SerializableError.class);
+    }
+
+    private static String serialize(SerializableError error) throws JsonProcessingException {
+        return mapper.writeValueAsString(error);
     }
 }
