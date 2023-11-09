@@ -16,7 +16,8 @@
 
 package com.palantir.conjure.java.api.errors;
 
-import java.util.regex.Matcher;
+import com.palantir.logsafe.SafeArg;
+import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import java.util.regex.Pattern;
 import org.immutables.value.Value;
 
@@ -55,18 +56,16 @@ public abstract class ErrorType {
         }
     }
 
-    public static final ErrorType UNAUTHORIZED = createInternal(Code.UNAUTHORIZED, "Default:Unauthorized");
-    public static final ErrorType PERMISSION_DENIED =
-            createInternal(Code.PERMISSION_DENIED, "Default:PermissionDenied");
-    public static final ErrorType INVALID_ARGUMENT = createInternal(Code.INVALID_ARGUMENT, "Default:InvalidArgument");
+    public static final ErrorType UNAUTHORIZED = create(Code.UNAUTHORIZED, "Default:Unauthorized");
+    public static final ErrorType PERMISSION_DENIED = create(Code.PERMISSION_DENIED, "Default:PermissionDenied");
+    public static final ErrorType INVALID_ARGUMENT = create(Code.INVALID_ARGUMENT, "Default:InvalidArgument");
     public static final ErrorType REQUEST_ENTITY_TOO_LARGE =
-            createInternal(Code.REQUEST_ENTITY_TOO_LARGE, "Default:RequestEntityTooLarge");
-    public static final ErrorType NOT_FOUND = createInternal(Code.NOT_FOUND, "Default:NotFound");
-    public static final ErrorType CONFLICT = createInternal(Code.CONFLICT, "Default:Conflict");
-    public static final ErrorType FAILED_PRECONDITION =
-            createInternal(Code.FAILED_PRECONDITION, "Default:FailedPrecondition");
-    public static final ErrorType INTERNAL = createInternal(Code.INTERNAL, "Default:Internal");
-    public static final ErrorType TIMEOUT = createInternal(Code.TIMEOUT, "Default:Timeout");
+            create(Code.REQUEST_ENTITY_TOO_LARGE, "Default:RequestEntityTooLarge");
+    public static final ErrorType NOT_FOUND = create(Code.NOT_FOUND, "Default:NotFound");
+    public static final ErrorType CONFLICT = create(Code.CONFLICT, "Default:Conflict");
+    public static final ErrorType FAILED_PRECONDITION = create(Code.FAILED_PRECONDITION, "Default:FailedPrecondition");
+    public static final ErrorType INTERNAL = create(Code.INTERNAL, "Default:Internal");
+    public static final ErrorType TIMEOUT = create(Code.TIMEOUT, "Default:Timeout");
 
     /** The {@link Code} of this error. */
     public abstract Code code();
@@ -83,32 +82,14 @@ public abstract class ErrorType {
     @Value.Check
     final void check() {
         if (!ERROR_NAME_PATTERN.matcher(name()).matches()) {
-            throw new IllegalArgumentException(
-                    "ErrorType names must be of the form 'UpperCamelNamespace:UpperCamelName': " + name());
+            throw new SafeIllegalArgumentException(
+                    "ErrorType names must be of the form 'UpperCamelNamespace:UpperCamelName'",
+                    SafeArg.of("name", name()));
         }
     }
 
     /** Constructs an {@link ErrorType} with the given error {@link Code} and name. */
     public static ErrorType create(Code code, String name) {
-        return createAndCheckNamespaceIsNotDefault(code, name);
-    }
-
-    private static ErrorType createAndCheckNamespaceIsNotDefault(Code code, String name) {
-        ErrorType error = createInternal(code, name);
-        Matcher matcher = ERROR_NAME_PATTERN.matcher(name);
-        if (!matcher.matches()) {
-            throw new IllegalArgumentException("Expected ERROR_NAME_PATTERN to match, this is a bug: " + name);
-        }
-
-        String namespace = matcher.group(1);
-        if (namespace.equals("Default")) {
-            throw new IllegalArgumentException("Namespace must not be 'Default' in ErrorType name: " + name);
-        }
-
-        return error;
-    }
-
-    private static ErrorType createInternal(Code code, String name) {
         return ImmutableErrorType.builder()
                 .code(code)
                 .name(name)

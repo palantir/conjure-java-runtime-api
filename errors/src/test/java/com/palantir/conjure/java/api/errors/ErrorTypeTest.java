@@ -16,9 +16,12 @@
 
 package com.palantir.conjure.java.api.errors;
 
+import static com.palantir.logsafe.testing.Assertions.assertThatLoggableExceptionThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.palantir.conjure.java.api.errors.ErrorType.Code;
+import com.palantir.logsafe.SafeArg;
+import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import org.junit.jupiter.api.Test;
 
 public final class ErrorTypeTest {
@@ -27,15 +30,18 @@ public final class ErrorTypeTest {
     public void testNameMustBeCamelCaseWithOptionalNameSpace() throws Exception {
         String[] badNames = new String[] {":", "foo:Bar", ":Bar", "Bar:", "foo:bar", "Foo:bar", "Foo:2Bar"};
         for (String name : badNames) {
-            assertThatThrownBy(() -> ErrorType.create(ErrorType.Code.CUSTOM_CLIENT, name))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("ErrorType names must be of the form 'UpperCamelNamespace:UpperCamelName': %s", name);
-            assertThatThrownBy(() -> ErrorType.create(ErrorType.Code.CUSTOM_SERVER, name))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("ErrorType names must be of the form 'UpperCamelNamespace:UpperCamelName': %s", name);
-            assertThatThrownBy(() -> ErrorType.create(ErrorType.Code.FAILED_PRECONDITION, name))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("ErrorType names must be of the form 'UpperCamelNamespace:UpperCamelName': %s", name);
+            assertThatLoggableExceptionThrownBy(() -> ErrorType.create(Code.CUSTOM_CLIENT, name))
+                    .isInstanceOf(SafeIllegalArgumentException.class)
+                    .hasLogMessage("ErrorType names must be of the form 'UpperCamelNamespace:UpperCamelName'")
+                    .hasExactlyArgs(SafeArg.of("name", name));
+            assertThatLoggableExceptionThrownBy(() -> ErrorType.create(ErrorType.Code.CUSTOM_SERVER, name))
+                    .isInstanceOf(SafeIllegalArgumentException.class)
+                    .hasLogMessage("ErrorType names must be of the form 'UpperCamelNamespace:UpperCamelName'")
+                    .hasExactlyArgs(SafeArg.of("name", name));
+            assertThatLoggableExceptionThrownBy(() -> ErrorType.create(ErrorType.Code.FAILED_PRECONDITION, name))
+                    .isInstanceOf(SafeIllegalArgumentException.class)
+                    .hasLogMessage("ErrorType names must be of the form 'UpperCamelNamespace:UpperCamelName'")
+                    .hasExactlyArgs(SafeArg.of("name", name));
         }
 
         String[] goodNames = new String[] {"Foo:Bar", "FooBar:Baz", "FooBar:BoomBang", "Foo:Bar2Baz3"};
@@ -44,19 +50,6 @@ public final class ErrorTypeTest {
             ErrorType.create(ErrorType.Code.CUSTOM_SERVER, name);
             ErrorType.create(ErrorType.Code.INVALID_ARGUMENT, name);
         }
-    }
-
-    @Test
-    public void testNamespaceMustNotBeDefault() throws Exception {
-        assertThatThrownBy(() -> ErrorType.create(ErrorType.Code.CUSTOM_SERVER, "Default:Foo"))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Namespace must not be 'Default' in ErrorType name: Default:Foo");
-        assertThatThrownBy(() -> ErrorType.create(ErrorType.Code.CUSTOM_SERVER, "Default:Foo"))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Namespace must not be 'Default' in ErrorType name: Default:Foo");
-        assertThatThrownBy(() -> ErrorType.create(ErrorType.Code.INVALID_ARGUMENT, "Default:Foo"))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Namespace must not be 'Default' in ErrorType name: Default:Foo");
     }
 
     @Test
