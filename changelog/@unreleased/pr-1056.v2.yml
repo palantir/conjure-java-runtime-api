@@ -1,0 +1,6 @@
+type: fix
+fix:
+  description: '`ErrorType.create` no longer prevents creating `ErrorType` values
+    in the `Default` namespace.'
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/1056
