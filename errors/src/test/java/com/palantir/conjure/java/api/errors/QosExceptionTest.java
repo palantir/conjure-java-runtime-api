@@ -18,13 +18,15 @@ package com.palantir.conjure.java.api.errors;
 
 import static com.palantir.logsafe.testing.Assertions.assertThatLoggableExceptionThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.google.errorprone.annotations.CompileTimeConstant;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public final class QosExceptionTest {
 
@@ -63,27 +65,21 @@ public final class QosExceptionTest {
                 .containsArgs(SafeArg.of("reason", reason));
     }
 
-    @Test
-    public void testInvalidReason() {
-        // Too long
-        assertThatThrownBy(() -> QosReason.of("reason-reason-reason-reason-reason-reason-reason---"))
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                // Too long
+                "reason-reason-reason-reason-reason-reason-reason---",
+                // Unsupported characters
+                "reason?",
+                "Reason"
+            })
+    public void testInvalidReason(@CompileTimeConstant String reason) {
+        assertThatLoggableExceptionThrownBy(() -> QosReason.of(reason))
                 .isInstanceOf(SafeIllegalArgumentException.class)
-                .hasMessageContaining(
-                        "Reason must be at most 50 characters, and only contain lowercase letters, numbers, "
-                                + "and hyphens (-).");
-
-        // Unsupported characters
-        assertThatThrownBy(() -> QosReason.of("reason?"))
-                .isInstanceOf(SafeIllegalArgumentException.class)
-                .hasMessageContaining(
-                        "Reason must be at most 50 characters, and only contain lowercase letters, numbers, "
-                                + "and hyphens (-).");
-
-        assertThatThrownBy(() -> QosReason.of("Reason"))
-                .isInstanceOf(SafeIllegalArgumentException.class)
-                .hasMessageContaining(
-                        "Reason must be at most 50 characters, and only contain lowercase letters, numbers, and"
-                                + " hyphens (-).");
+                .hasLogMessage("Reason must be at most 50 characters, and only contain lowercase letters, numbers, "
+                        + "and hyphens (-).")
+                .hasExactlyArgs(SafeArg.of("reason", reason));
     }
 
     @Test

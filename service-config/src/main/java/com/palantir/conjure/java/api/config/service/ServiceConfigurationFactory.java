@@ -18,6 +18,7 @@ package com.palantir.conjure.java.api.config.service;
 
 import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.SafeArg;
+import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -71,9 +72,9 @@ public final class ServiceConfigurationFactory {
         return ServiceConfiguration.builder()
                 .apiToken(orElse(partial.apiToken(), services.defaultApiToken()))
                 .security(orElse(partial.security(), services.defaultSecurity())
-                        .orElseThrow(() -> new IllegalArgumentException("Must provide default security or "
-                                + "service-specific security block for service: "
-                                + serviceName)))
+                        .orElseThrow(() -> new SafeIllegalArgumentException(
+                                "Must provide default security or service-specific security block for service",
+                                SafeArg.of("serviceName", serviceName))))
                 .uris(partial.uris())
                 .connectTimeout(orElse(partial.connectTimeout(), services.defaultConnectTimeout())
                         .map(t -> Duration.ofMillis(t.toMilliseconds())))

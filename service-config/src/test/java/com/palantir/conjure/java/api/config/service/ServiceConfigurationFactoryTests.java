@@ -16,8 +16,8 @@
 
 package com.palantir.conjure.java.api.config.service;
 
+import static com.palantir.logsafe.testing.Assertions.assertThatLoggableExceptionThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -28,6 +28,8 @@ import com.google.common.io.Resources;
 import com.palantir.conjure.java.api.config.ssl.SslConfiguration;
 import com.palantir.conjure.java.api.ext.jackson.ObjectMappers;
 import com.palantir.conjure.java.api.ext.jackson.ShimJdk7Module;
+import com.palantir.logsafe.SafeArg;
+import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import com.palantir.tokens.auth.BearerToken;
 import java.io.IOException;
 import java.net.URL;
@@ -170,9 +172,11 @@ public final class ServiceConfigurationFactoryTests {
         PartialServiceConfiguration partial = PartialServiceConfiguration.of(Lists.newArrayList(), Optional.empty());
         ServicesConfigBlock services =
                 ServicesConfigBlock.builder().putServices("service1", partial).build();
-        assertThatThrownBy(() -> ServiceConfigurationFactory.of(services).get("service1"))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Must provide default security or service-specific security block for service: service1");
+        assertThatLoggableExceptionThrownBy(
+                        () -> ServiceConfigurationFactory.of(services).get("service1"))
+                .isInstanceOf(SafeIllegalArgumentException.class)
+                .hasLogMessage("Must provide default security or service-specific security block for service")
+                .hasExactlyArgs(SafeArg.of("serviceName", "service1"));
     }
 
     @Test
