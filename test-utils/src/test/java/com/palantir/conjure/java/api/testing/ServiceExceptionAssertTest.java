@@ -43,28 +43,28 @@ public class ServiceExceptionAssertTest {
         assertThatThrownBy(() ->
                         Assertions.assertThat(new ServiceException(actualType)).hasType(ErrorType.INTERNAL))
                 .isInstanceOf(AssertionError.class)
-                .hasMessage("Expected ErrorType to be %s, but found %s", ErrorType.INTERNAL, actualType);
+                .hasMessageContaining("Expected ErrorType to be %s, but found %s", ErrorType.INTERNAL, actualType);
 
         assertThatThrownBy(() -> Assertions.assertThat(new ServiceException(actualType, SafeArg.of("a", "b")))
                         .hasArgs(SafeArg.of("c", "d")))
                 .isInstanceOf(AssertionError.class)
-                .hasMessage("Expected safe args to be {c=d}, but found {a=b}");
+                .hasMessageContaining("Expected safe args to be {c=d}, but found {a=b}");
 
         assertThatThrownBy(() -> Assertions.assertThat(new ServiceException(actualType, UnsafeArg.of("a", "b")))
                         .hasArgs(UnsafeArg.of("c", "d")))
                 .isInstanceOf(AssertionError.class)
-                .hasMessage("Expected unsafe args to be {c=d}, but found {a=b}");
+                .hasMessageContaining("Expected unsafe args to be {c=d}, but found {a=b}");
 
         assertThatThrownBy(() -> Assertions.assertThat(new ServiceException(actualType, SafeArg.of("a", "b")))
                         .hasNoArgs())
                 .isInstanceOf(AssertionError.class)
-                .hasMessage("Expected no args, but found {a=b}");
+                .hasMessageContaining("Expected no args, but found {a=b}");
 
         assertThatThrownBy(() -> Assertions.assertThat(
                                 new ServiceException(actualType, SafeArg.of("a", "b"), UnsafeArg.of("c", "d")))
                         .hasNoArgs())
                 .isInstanceOf(AssertionError.class)
-                .hasMessage("Expected no args, but found {a=b, c=d}");
+                .hasMessageContaining("Expected no args, but found {a=b, c=d}");
 
         Assertions.assertThat(new ServiceException(actualType, UnsafeArg.of("a", "b"), UnsafeArg.of("c", "d")))
                 .containsArgs(UnsafeArg.of("a", "b"));

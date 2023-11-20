@@ -58,15 +58,15 @@ public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExcep
             Map<String, Object> allArgs = new HashMap<>();
             allArgs.putAll(actualArgs.safeArgs);
             allArgs.putAll(actualArgs.unsafeArgs);
-            failWithMessage("Expected no args, but found %s", allArgs);
+            failWithMessage("Expected no args, but found %s; service exception: %s", allArgs, actual);
         }
 
         return this;
     }
 
-    private void failIfNotEqual(String message, Object expected, Object actual) {
-        if (!Objects.equals(expected, actual)) {
-            failWithMessage(message, expected, actual);
+    private <T> void failIfNotEqual(String message, T expectedValue, T actualValue) {
+        if (!Objects.equals(expectedValue, actualValue)) {
+            failWithMessage(message + "; service exception: %s", expectedValue, actualValue, actual);
         }
     }
 
@@ -87,7 +87,7 @@ public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExcep
     private void failIfDoesNotContain(
             String message, Map<String, Object> expectedArgs, Map<String, Object> actualArgs) {
         if (!actualArgs.entrySet().containsAll(expectedArgs.entrySet())) {
-            failWithMessage(message, expectedArgs, actualArgs);
+            failWithMessage(message + "; service exception: %s", expectedArgs, actualArgs, actual);
         }
     }
 

@@ -18,6 +18,7 @@ package com.palantir.conjure.java.api.testing;
 
 import com.palantir.conjure.java.api.errors.ErrorType;
 import com.palantir.conjure.java.api.errors.RemoteException;
+import java.util.Objects;
 import org.assertj.core.api.AbstractThrowableAssert;
 
 public class RemoteExceptionAssert extends AbstractThrowableAssert<RemoteExceptionAssert, RemoteException> {
@@ -28,21 +29,23 @@ public class RemoteExceptionAssert extends AbstractThrowableAssert<RemoteExcepti
 
     public final RemoteExceptionAssert isGeneratedFromErrorType(ErrorType type) {
         isNotNull();
+
         String actualCode = actual.getError().errorCode();
         String actualName = actual.getError().errorName();
         int actualStatus = actual.getStatus();
 
-        if (!actualCode.equals(type.code().name())) {
-            failWithMessage(
-                    "Expected error code to be %s, but found %s", type.code().name(), actualCode);
-        }
-        if (!actualName.equals(type.name())) {
-            failWithMessage("Expected error name to be %s, but found %s", type.name(), actualName);
-        }
-        if (!(actualStatus == type.httpErrorCode())) {
-            failWithMessage("Expected error status to be %s, but found %s", type.httpErrorCode(), actualStatus);
-        }
+        failIfNotEqual("error code", type.code().name(), actualCode);
+        failIfNotEqual("error name", type.name(), actualName);
+        failIfNotEqual("error status", type.httpErrorCode(), actualStatus);
 
         return this;
+    }
+
+    private <T> void failIfNotEqual(String fieldName, T expectedValue, T actualValue) {
+        if (!Objects.equals(expectedValue, actualValue)) {
+            failWithMessage(
+                    "Expected %s to be %s, but found %s; remote exception: %s",
+                    fieldName, expectedValue, actualValue, actual);
+        }
     }
 }
