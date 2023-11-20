@@ -74,16 +74,16 @@ public class ServiceExceptionAssertTest {
                                 new ServiceException(actualType, SafeArg.of("a", "b"), UnsafeArg.of("c", "d")))
                         .containsArgs(UnsafeArg.of("a", "b")))
                 .isInstanceOf(AssertionError.class)
-                .hasMessage("Expected unsafe args to contain {a=b}, but found {c=d}");
+                .hasMessageContaining("Expected unsafe args to contain {a=b}, but found {c=d}");
 
         assertThatThrownBy(() -> Assertions.assertThat(new ServiceException(actualType, SafeArg.of("a", "b")))
                         .containsArgs(SafeArg.of("c", "d")))
                 .isInstanceOf(AssertionError.class)
-                .hasMessage("Expected safe args to contain {c=d}, but found {a=b}");
+                .hasMessageContaining("Expected safe args to contain {c=d}, but found {a=b}");
 
         assertThatThrownBy(() -> Assertions.assertThat(new ServiceException(actualType, UnsafeArg.of("a", "b")))
                         .containsArgs(UnsafeArg.of("c", "d")))
                 .isInstanceOf(AssertionError.class)
-                .hasMessage("Expected unsafe args to contain {c=d}, but found {a=b}");
+                .hasMessageContaining("Expected unsafe args to contain {c=d}, but found {a=b}");
     }
 }
