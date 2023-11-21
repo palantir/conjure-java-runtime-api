@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import org.assertj.core.api.AbstractThrowableAssert;
+import org.assertj.core.util.Throwables;
 
 public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExceptionAssert, ServiceException> {
 
@@ -59,8 +60,7 @@ public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExcep
             allArgs.putAll(actualArgs.safeArgs);
             allArgs.putAll(actualArgs.unsafeArgs);
             failWithMessage(
-                    "Expected no args, but found %s; service exception: %s",
-                    allArgs, Assertions.printStackTrace(actual));
+                    "Expected no args, but found %s; service exception: %s", allArgs, Throwables.getStackTrace(actual));
         }
 
         return this;
@@ -69,10 +69,7 @@ public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExcep
     private <T> void failIfNotEqual(String message, T expectedValue, T actualValue) {
         if (!Objects.equals(expectedValue, actualValue)) {
             failWithMessage(
-                    message + "; service exception: %s",
-                    expectedValue,
-                    actualValue,
-                    Assertions.printStackTrace(actual));
+                    message + "; service exception: ", expectedValue, actualValue, Throwables.getStackTrace(actual));
         }
     }
 
@@ -94,7 +91,7 @@ public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExcep
             String message, Map<String, Object> expectedArgs, Map<String, Object> actualArgs) {
         if (!actualArgs.entrySet().containsAll(expectedArgs.entrySet())) {
             failWithMessage(
-                    message + "; service exception: %s", expectedArgs, actualArgs, Assertions.printStackTrace(actual));
+                    message + "; service exception: %s", expectedArgs, actualArgs, Throwables.getStackTrace(actual));
         }
     }
 

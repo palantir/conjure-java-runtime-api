@@ -20,6 +20,7 @@ import com.palantir.conjure.java.api.errors.ErrorType;
 import com.palantir.conjure.java.api.errors.RemoteException;
 import java.util.Objects;
 import org.assertj.core.api.AbstractThrowableAssert;
+import org.assertj.core.util.Throwables;
 
 public class RemoteExceptionAssert extends AbstractThrowableAssert<RemoteExceptionAssert, RemoteException> {
 
@@ -45,7 +46,7 @@ public class RemoteExceptionAssert extends AbstractThrowableAssert<RemoteExcepti
         if (!Objects.equals(expectedValue, actualValue)) {
             failWithMessage(
                     "Expected %s to be %s, but found %s; remote exception: %s",
-                    fieldName, expectedValue, actualValue, Assertions.printStackTrace(actual));
+                    fieldName, expectedValue, actualValue, Throwables.getStackTrace(actual));
         }
     }
 }

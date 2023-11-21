@@ -23,8 +23,6 @@ import org.assertj.core.api.InstanceOfAssertFactory;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.assertj.core.util.CanIgnoreReturnValue;
 import org.assertj.core.util.CheckReturnValue;
-import org.assertj.core.util.Strings;
-import org.assertj.core.util.Throwables;
 
 @CheckReturnValue
 public class Assertions extends org.assertj.core.api.Assertions {
@@ -83,9 +81,5 @@ public class Assertions extends org.assertj.core.api.Assertions {
         QosExceptionInstanceOfAssertFactory() {
             super(QosException.class, QosExceptionAssert::new);
         }
-    }
-
-    static String printStackTrace(Throwable actual) {
-        return Strings.escapePercent(Throwables.getStackTrace(actual));
     }
 }

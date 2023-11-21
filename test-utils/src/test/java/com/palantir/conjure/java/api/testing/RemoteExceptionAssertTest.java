@@ -41,7 +41,7 @@ public final class RemoteExceptionAssertTest {
                         "Expected error status to be %s, but found %s",
                         actualType.httpErrorCode(), actualType.httpErrorCode() + 1)
                 // Make sure the error type was captured.
-                .hasMessageContaining("FAILED_PRECONDITION")
+                .hasMessageContaining("bla")
                 // Make sure the instance ID was captured.
                 .hasMessageContaining("with instance ID");
     }
