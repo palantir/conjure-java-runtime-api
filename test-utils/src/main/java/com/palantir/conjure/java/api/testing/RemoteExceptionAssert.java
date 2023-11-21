@@ -45,7 +45,7 @@ public class RemoteExceptionAssert extends AbstractThrowableAssert<RemoteExcepti
         if (!Objects.equals(expectedValue, actualValue)) {
             failWithMessage(
                     "Expected %s to be %s, but found %s; remote exception: %s",
-                    fieldName, expectedValue, actualValue, actual);
+                    fieldName, expectedValue, actualValue, Assertions.printStackTrace(actual));
         }
     }
 }
