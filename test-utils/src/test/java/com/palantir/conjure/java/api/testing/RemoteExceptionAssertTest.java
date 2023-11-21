@@ -37,8 +37,12 @@ public final class RemoteExceptionAssertTest {
         assertThatThrownBy(() -> Assertions.assertThat(new RemoteException(error, actualType.httpErrorCode() + 1))
                         .isGeneratedFromErrorType(actualType))
                 .isInstanceOf(AssertionError.class)
-                .hasMessage(
+                .hasMessageContaining(
                         "Expected error status to be %s, but found %s",
-                        actualType.httpErrorCode(), actualType.httpErrorCode() + 1);
+                        actualType.httpErrorCode(), actualType.httpErrorCode() + 1)
+                // Make sure the error type was captured.
+                .hasMessageContaining("FAILED_PRECONDITION")
+                // Make sure the instance ID was captured.
+                .hasMessageContaining("with instance ID");
     }
 }
