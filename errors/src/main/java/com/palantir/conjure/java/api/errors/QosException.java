@@ -183,16 +183,16 @@ public abstract class QosException extends RuntimeException {
     public static final class Throttle extends QosException implements SafeLoggable {
         private static final QosReason DEFAULT_REASON = QosReason.of("qos-throttle");
 
-        private final Optional<Duration> retryAfter;
+        private final Duration retryAfter;
 
         private Throttle(Optional<Duration> retryAfter) {
             super("Suggesting request throttling with optional retryAfter duration: " + retryAfter, DEFAULT_REASON);
-            this.retryAfter = retryAfter;
+            this.retryAfter = retryAfter.orElse(null);
         }
 
         private Throttle(Optional<Duration> retryAfter, QosReason reason) {
             super("Suggesting request throttling with optional retryAfter duration: " + retryAfter, reason);
-            this.retryAfter = retryAfter;
+            this.retryAfter = retryAfter.orElse(null);
         }
 
         private Throttle(Optional<Duration> retryAfter, Throwable cause) {
@@ -200,16 +200,16 @@ public abstract class QosException extends RuntimeException {
                     "Suggesting request throttling with optional retryAfter duration: " + retryAfter,
                     cause,
                     DEFAULT_REASON);
-            this.retryAfter = retryAfter;
+            this.retryAfter = retryAfter.orElse(null);
         }
 
         private Throttle(Optional<Duration> retryAfter, Throwable cause, QosReason reason) {
             super("Suggesting request throttling with optional retryAfter duration: " + retryAfter, cause, reason);
-            this.retryAfter = retryAfter;
+            this.retryAfter = retryAfter.orElse(null);
         }
 
         public Optional<Duration> getRetryAfter() {
-            return retryAfter;
+            return Optional.ofNullable(retryAfter);
         }
 
         @Override
@@ -224,7 +224,7 @@ public abstract class QosException extends RuntimeException {
 
         @Override
         public List<Arg<?>> getArgs() {
-            return List.of(SafeArg.of("retryAfter", retryAfter.orElse(null)), SafeArg.of("reason", getReason()));
+            return List.of(SafeArg.of("retryAfter", retryAfter), SafeArg.of("reason", getReason()));
         }
     }
 
