@@ -19,6 +19,7 @@ package com.palantir.conjure.java.api.errors;
 import com.google.errorprone.annotations.CompileTimeConstant;
 import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.SafeArg;
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -30,7 +31,7 @@ import java.util.regex.Pattern;
  * tag, for observability into {@link QosException} calls. As such, the string is constrained to have at most 50
  * lowercase alphanumeric characters, and hyphens (-).
  */
-public final class QosReason {
+public final class QosReason implements Serializable {
 
     @CompileTimeConstant
     private final String reason;

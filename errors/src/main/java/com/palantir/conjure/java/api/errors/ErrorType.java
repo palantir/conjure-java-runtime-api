@@ -18,6 +18,7 @@ package com.palantir.conjure.java.api.errors;
 
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
+import java.io.Serializable;
 import java.util.regex.Pattern;
 import org.immutables.value.Value;
 
@@ -29,7 +30,7 @@ import org.immutables.value.Value;
  */
 @Value.Immutable
 @ImmutablesStyle
-public abstract class ErrorType {
+public abstract class ErrorType implements Serializable {
 
     private static final String UPPER_CAMEL_CASE = "(([A-Z][a-z0-9]+)+)";
     // UpperCamel with UpperCamel namespace prefix.
