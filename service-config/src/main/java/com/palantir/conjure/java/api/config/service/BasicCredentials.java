@@ -23,7 +23,7 @@ import org.immutables.value.Value;
 import org.immutables.value.Value.Immutable;
 
 @DoNotLog
-@Immutable
+@Immutable(builder = false)
 @JsonSerialize(as = ImmutableBasicCredentials.class)
 @JsonDeserialize(as = ImmutableBasicCredentials.class)
 @ImmutablesStyle
