@@ -27,7 +27,7 @@ import org.immutables.value.Value;
  * the HTTP specification, errors associated with a {@code 4xx} HTTP status code are client errors, and errors
  * associated with a {@code 5xx} status are server errors.
  */
-@Value.Immutable
+@Value.Immutable(builder = false)
 @ImmutablesStyle
 public abstract class ErrorType {
 
@@ -68,15 +68,18 @@ public abstract class ErrorType {
     public static final ErrorType TIMEOUT = create(Code.TIMEOUT, "Default:Timeout");
 
     /** The {@link Code} of this error. */
+    @Value.Parameter
     public abstract Code code();
 
     /**
      * The name of this error type. Names should be compile-time constants and are considered part of the API of a
      * service that produces this error.
      */
+    @Value.Parameter
     public abstract String name();
 
     /** The HTTP error code used to convey this error to HTTP clients. */
+    @Value.Parameter
     public abstract int httpErrorCode();
 
     @Value.Check
@@ -90,10 +93,6 @@ public abstract class ErrorType {
 
     /** Constructs an {@link ErrorType} with the given error {@link Code} and name. */
     public static ErrorType create(Code code, String name) {
-        return ImmutableErrorType.builder()
-                .code(code)
-                .name(name)
-                .httpErrorCode(code.httpErrorCode)
-                .build();
+        return ImmutableErrorType.of(code, name, code.httpErrorCode);
     }
 }
