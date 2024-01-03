@@ -20,11 +20,19 @@ import com.palantir.conjure.java.api.errors.QosException;
 import com.palantir.conjure.java.api.errors.QosReason;
 import java.util.Objects;
 import org.assertj.core.api.AbstractThrowableAssert;
+import org.assertj.core.api.InstanceOfAssertFactory;
 
 public class QosExceptionAssert extends AbstractThrowableAssert<QosExceptionAssert, QosException> {
 
+    private static final InstanceOfAssertFactory<QosException, QosExceptionAssert> INSTANCE_OF_ASSERT_FACTORY =
+            new InstanceOfAssertFactory<>(QosException.class, QosExceptionAssert::new);
+
     QosExceptionAssert(QosException actual) {
         super(actual, QosExceptionAssert.class);
+    }
+
+    public static InstanceOfAssertFactory<QosException, QosExceptionAssert> instanceOfAssertFactory() {
+        return INSTANCE_OF_ASSERT_FACTORY;
     }
 
     public final QosExceptionAssert hasReason(QosReason reason) {
