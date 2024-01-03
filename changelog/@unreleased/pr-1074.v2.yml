@@ -1,0 +1,7 @@
+type: feature
+feature:
+  description: '`ServiceExceptionAssert`, `RemoteExceptionAssert`, and `QosExceptionAssert`
+    expose a static `instanceOfFactoryAssert` method which provides an `InstanceOfAssertFactory`
+    that can be used to downcast these types in assertions using `asInstanceOf`.'
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/1074
