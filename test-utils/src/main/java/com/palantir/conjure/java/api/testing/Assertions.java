@@ -19,7 +19,6 @@ package com.palantir.conjure.java.api.testing;
 import com.palantir.conjure.java.api.errors.QosException;
 import com.palantir.conjure.java.api.errors.RemoteException;
 import com.palantir.conjure.java.api.errors.ServiceException;
-import org.assertj.core.api.InstanceOfAssertFactory;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.assertj.core.util.CanIgnoreReturnValue;
 import org.assertj.core.util.CheckReturnValue;
@@ -43,43 +42,16 @@ public class Assertions extends org.assertj.core.api.Assertions {
 
     @CanIgnoreReturnValue
     public static ServiceExceptionAssert assertThatServiceExceptionThrownBy(ThrowingCallable shouldRaiseThrowable) {
-        return assertThatThrownBy(shouldRaiseThrowable).asInstanceOf(ServiceExceptionInstanceOfAssertFactory.INSTANCE);
+        return assertThatThrownBy(shouldRaiseThrowable).asInstanceOf(ServiceExceptionAssert.instanceOfAssertFactory());
     }
 
     @CanIgnoreReturnValue
     public static RemoteExceptionAssert assertThatRemoteExceptionThrownBy(ThrowingCallable shouldRaiseThrowable) {
-        return assertThatThrownBy(shouldRaiseThrowable).asInstanceOf(RemoteExceptionInstanceOfAssertFactory.INSTANCE);
+        return assertThatThrownBy(shouldRaiseThrowable).asInstanceOf(RemoteExceptionAssert.instanceOfAssertFactory());
     }
 
     @CanIgnoreReturnValue
     public static QosExceptionAssert assertThatQosExceptionThrownBy(ThrowingCallable shouldRaiseThrowable) {
-        return assertThatThrownBy(shouldRaiseThrowable).asInstanceOf(QosExceptionInstanceOfAssertFactory.INSTANCE);
-    }
-
-    private static final class ServiceExceptionInstanceOfAssertFactory
-            extends InstanceOfAssertFactory<ServiceException, ServiceExceptionAssert> {
-        static final ServiceExceptionInstanceOfAssertFactory INSTANCE = new ServiceExceptionInstanceOfAssertFactory();
-
-        ServiceExceptionInstanceOfAssertFactory() {
-            super(ServiceException.class, ServiceExceptionAssert::new);
-        }
-    }
-
-    private static final class RemoteExceptionInstanceOfAssertFactory
-            extends InstanceOfAssertFactory<RemoteException, RemoteExceptionAssert> {
-        static final RemoteExceptionInstanceOfAssertFactory INSTANCE = new RemoteExceptionInstanceOfAssertFactory();
-
-        RemoteExceptionInstanceOfAssertFactory() {
-            super(RemoteException.class, RemoteExceptionAssert::new);
-        }
-    }
-
-    private static final class QosExceptionInstanceOfAssertFactory
-            extends InstanceOfAssertFactory<QosException, QosExceptionAssert> {
-        static final QosExceptionInstanceOfAssertFactory INSTANCE = new QosExceptionInstanceOfAssertFactory();
-
-        QosExceptionInstanceOfAssertFactory() {
-            super(QosException.class, QosExceptionAssert::new);
-        }
+        return assertThatThrownBy(shouldRaiseThrowable).asInstanceOf(QosExceptionAssert.instanceOfAssertFactory());
     }
 }

@@ -20,12 +20,20 @@ import com.palantir.conjure.java.api.errors.ErrorType;
 import com.palantir.conjure.java.api.errors.RemoteException;
 import java.util.Objects;
 import org.assertj.core.api.AbstractThrowableAssert;
+import org.assertj.core.api.InstanceOfAssertFactory;
 import org.assertj.core.util.Throwables;
 
 public class RemoteExceptionAssert extends AbstractThrowableAssert<RemoteExceptionAssert, RemoteException> {
 
+    private static final InstanceOfAssertFactory<RemoteException, RemoteExceptionAssert> INSTANCE_OF_ASSERT_FACTORY =
+            new InstanceOfAssertFactory<>(RemoteException.class, RemoteExceptionAssert::new);
+
     RemoteExceptionAssert(RemoteException actual) {
         super(actual, RemoteExceptionAssert.class);
+    }
+
+    public static InstanceOfAssertFactory<RemoteException, RemoteExceptionAssert> instanceOfAssertFactory() {
+        return INSTANCE_OF_ASSERT_FACTORY;
     }
 
     public final RemoteExceptionAssert isGeneratedFromErrorType(ErrorType type) {

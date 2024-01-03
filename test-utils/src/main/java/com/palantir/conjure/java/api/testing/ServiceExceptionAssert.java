@@ -25,12 +25,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import org.assertj.core.api.AbstractThrowableAssert;
+import org.assertj.core.api.InstanceOfAssertFactory;
 import org.assertj.core.util.Throwables;
 
 public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExceptionAssert, ServiceException> {
 
+    private static final InstanceOfAssertFactory<ServiceException, ServiceExceptionAssert> INSTANCE_OF_ASSERT_FACTORY =
+            new InstanceOfAssertFactory<>(ServiceException.class, ServiceExceptionAssert::new);
+
     ServiceExceptionAssert(ServiceException actual) {
         super(actual, ServiceExceptionAssert.class);
+    }
+
+    public static InstanceOfAssertFactory<ServiceException, ServiceExceptionAssert> instanceOfAssertFactory() {
+        return INSTANCE_OF_ASSERT_FACTORY;
     }
 
     public final ServiceExceptionAssert hasType(ErrorType type) {
