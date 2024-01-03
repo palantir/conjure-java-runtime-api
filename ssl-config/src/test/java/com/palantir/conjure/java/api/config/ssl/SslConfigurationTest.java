@@ -16,9 +16,9 @@
 
 package com.palantir.conjure.java.api.config.ssl;
 
+import static com.palantir.logsafe.testing.Assertions.assertThatLoggableExceptionThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.palantir.conjure.java.api.ext.jackson.ObjectMappers;
@@ -72,24 +72,26 @@ public final class SslConfigurationTest {
 
     @Test
     public void jksKeystorePassword() {
-        assertThatThrownBy(() -> SslConfiguration.builder()
+        assertThatLoggableExceptionThrownBy(() -> SslConfiguration.builder()
                         .trustStorePath(Paths.get("truststore.jks"))
                         .keyStorePath(Paths.get("keystore.jks"))
                         .keyStoreType(SslConfiguration.StoreType.JKS)
                         .build())
                 .isInstanceOf(SafeIllegalArgumentException.class)
-                .hasMessage("keyStorePassword must be present if keyStoreType is JKS");
+                .hasLogMessage("keyStorePassword must be present if keyStoreType is JKS")
+                .hasNoArgs();
     }
 
     @Test
     public void keystorePasswordWithoutPath() {
-        assertThatThrownBy(() -> SslConfiguration.builder()
+        assertThatLoggableExceptionThrownBy(() -> SslConfiguration.builder()
                         .trustStorePath(Paths.get("truststore.jks"))
                         .keyStoreType(SslConfiguration.StoreType.PEM)
                         .keyStorePassword("password")
                         .build())
                 .isInstanceOf(SafeIllegalArgumentException.class)
-                .hasMessage("keyStorePath must be present if a keyStorePassword is provided");
+                .hasLogMessage("keyStorePath must be present if a keyStorePassword is provided")
+                .hasNoArgs();
     }
 
     @Test

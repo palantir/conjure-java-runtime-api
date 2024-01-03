@@ -16,13 +16,14 @@
 
 package com.palantir.conjure.java.api.errors;
 
+import static com.palantir.logsafe.testing.Assertions.assertThatLoggableExceptionThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.palantir.conjure.java.api.ext.jackson.ObjectMappers;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.UnsafeArg;
+import com.palantir.logsafe.exceptions.SafeIllegalStateException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -184,11 +185,12 @@ public final class SerializableErrorTest {
     }
 
     @Test
-    public void testDeserializationFailsWhenNeitherErrorNameNorMessageIsSet() throws Exception {
+    public void testDeserializationFailsWhenNeitherErrorNameNorMessageIsSet() {
         String serialized = "{\"errorCode\":\"PERMISSION_DENIED\"}";
-        assertThatThrownBy(() -> deserialize(serialized))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Expected either 'errorName' or 'message' to be set");
+        assertThatLoggableExceptionThrownBy(() -> deserialize(serialized))
+                .isInstanceOf(SafeIllegalStateException.class)
+                .hasLogMessage("Expected either 'errorName' or 'message' to be set")
+                .hasNoArgs();
     }
 
     private static SerializableError deserialize(String serialized) throws IOException {

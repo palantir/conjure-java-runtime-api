@@ -34,6 +34,7 @@ package com.palantir.conjure.java.api.config.service;
 
 import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.SafeArg;
+import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 
 /** See Guava's {@code HostAndPort}. */
 public final class HostAndPort {
@@ -82,14 +83,15 @@ public final class HostAndPort {
             // Try to parse the whole port string as a number.
             // JDK7 accepts leading plus signs. We don't want to.
             Preconditions.checkArgument(
-                    !portString.startsWith("+"), "Unparseable port number", SafeArg.of("port", hostPortString));
+                    !portString.startsWith("+"), "Unparseable port number", SafeArg.of("hostPort", hostPortString));
             try {
                 port = Integer.parseInt(portString);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Unparseable port number: " + hostPortString);
+                throw new SafeIllegalArgumentException(
+                        "Unparseable port number", SafeArg.of("hostPort", hostPortString));
             }
             Preconditions.checkArgument(
-                    isValidPort(port), "Port number out of range", SafeArg.of("port", hostPortString));
+                    isValidPort(port), "Port number out of range", SafeArg.of("hostPort", hostPortString));
         }
 
         return new HostAndPort(host, port);
@@ -101,13 +103,13 @@ public final class HostAndPort {
         Preconditions.checkArgument(
                 hostPortString.charAt(0) == '[',
                 "Bracketed host-port string must start with a bracket",
-                SafeArg.of("port", hostPortString));
+                SafeArg.of("hostPort", hostPortString));
         colonIndex = hostPortString.indexOf(':');
         closeBracketIndex = hostPortString.lastIndexOf(']');
         Preconditions.checkArgument(
                 colonIndex > -1 && closeBracketIndex > colonIndex,
                 "Invalid bracketed host/port",
-                SafeArg.of("port", hostPortString));
+                SafeArg.of("hostPort", hostPortString));
 
         String host = hostPortString.substring(1, closeBracketIndex);
         if (closeBracketIndex + 1 == hostPortString.length()) {
@@ -116,12 +118,12 @@ public final class HostAndPort {
             Preconditions.checkArgument(
                     hostPortString.charAt(closeBracketIndex + 1) == ':',
                     "Only a colon may follow a close bracket",
-                    SafeArg.of("port", hostPortString));
+                    SafeArg.of("hostPort", hostPortString));
             for (int i = closeBracketIndex + 2; i < hostPortString.length(); ++i) {
                 Preconditions.checkArgument(
                         Character.isDigit(hostPortString.charAt(i)),
                         "Port must be numeric",
-                        SafeArg.of("port", hostPortString));
+                        SafeArg.of("hostPort", hostPortString));
             }
             return new String[] {host, hostPortString.substring(closeBracketIndex + 2)};
         }

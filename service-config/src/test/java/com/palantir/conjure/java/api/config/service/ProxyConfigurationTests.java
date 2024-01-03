@@ -16,14 +16,15 @@
 
 package com.palantir.conjure.java.api.config.service;
 
+import static com.palantir.logsafe.testing.Assertions.assertThatLoggableExceptionThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.google.common.io.Resources;
 import com.palantir.conjure.java.api.ext.jackson.ObjectMappers;
+import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import java.io.IOException;
 import java.net.URL;
 import org.junit.jupiter.api.Test;
@@ -82,54 +83,59 @@ public final class ProxyConfigurationTests {
 
     @Test
     public void testNonHttpProxyWithHostAndPort() {
-        assertThatThrownBy(() -> new ProxyConfiguration.Builder()
+        assertThatLoggableExceptionThrownBy(() -> new ProxyConfiguration.Builder()
                         .hostAndPort("squid:3128")
                         .type(ProxyConfiguration.Type.DIRECT)
                         .build())
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Neither credential nor host-and-port may be configured for DIRECT proxies");
+                .isInstanceOf(SafeIllegalArgumentException.class)
+                .hasLogMessage("Neither credential nor host-and-port may be configured for DIRECT proxies")
+                .hasNoArgs();
     }
 
     @Test
     public void testFromEnvironmentProxyWithHostAndPort() {
-        assertThatThrownBy(() -> new ProxyConfiguration.Builder()
+        assertThatLoggableExceptionThrownBy(() -> new ProxyConfiguration.Builder()
                         .hostAndPort("squid:3128")
                         .type(ProxyConfiguration.Type.FROM_ENVIRONMENT)
                         .build())
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Host-and-port may not be configured for FROM_ENVIRONMENT proxies");
+                .isInstanceOf(SafeIllegalArgumentException.class)
+                .hasLogMessage("Host-and-port may not be configured for FROM_ENVIRONMENT proxies")
+                .hasNoArgs();
     }
 
     @Test
     public void credentialsWithDirectProxy() {
-        assertThatThrownBy(() -> ProxyConfiguration.builder()
+        assertThatLoggableExceptionThrownBy(() -> ProxyConfiguration.builder()
                         .credentials(BasicCredentials.of("foo", "bar"))
                         .type(ProxyConfiguration.Type.DIRECT)
                         .build())
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Neither credential nor host-and-port may be configured for DIRECT proxies");
+                .isInstanceOf(SafeIllegalArgumentException.class)
+                .hasLogMessage("Neither credential nor host-and-port may be configured for DIRECT proxies")
+                .hasNoArgs();
     }
 
     @Test
     public void credentialsWithMeshProxy() {
-        assertThatThrownBy(() -> ProxyConfiguration.builder()
+        assertThatLoggableExceptionThrownBy(() -> ProxyConfiguration.builder()
                         .type(ProxyConfiguration.Type.MESH)
                         .credentials(BasicCredentials.of("foo", "bar"))
                         .hostAndPort("localhost:1234")
                         .build())
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("credentials only valid for HTTP proxies");
+                .isInstanceOf(SafeIllegalArgumentException.class)
+                .hasLogMessage("credentials only valid for HTTP proxies")
+                .hasNoArgs();
     }
 
     @Test
     public void credentialsWithSocksProxy() {
-        assertThatThrownBy(() -> ProxyConfiguration.builder()
+        assertThatLoggableExceptionThrownBy(() -> ProxyConfiguration.builder()
                         .type(ProxyConfiguration.Type.SOCKS)
                         .credentials(BasicCredentials.of("foo", "bar"))
                         .hostAndPort("localhost:1234")
                         .build())
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("credentials only valid for HTTP proxies");
+                .isInstanceOf(SafeIllegalArgumentException.class)
+                .hasLogMessage("credentials only valid for HTTP proxies")
+                .hasNoArgs();
     }
 
     @Test
