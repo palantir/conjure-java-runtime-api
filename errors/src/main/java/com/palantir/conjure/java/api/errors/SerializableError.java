@@ -21,6 +21,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.palantir.logsafe.Arg;
+import com.palantir.logsafe.Safe;
+import com.palantir.logsafe.Unsafe;
 import com.palantir.logsafe.exceptions.SafeIllegalStateException;
 import java.io.Serializable;
 import java.util.Map;
@@ -50,6 +52,7 @@ public abstract class SerializableError implements Serializable {
      */
     @JsonProperty("errorCode")
     @Value.Default
+    @Safe
     public String errorCode() {
         return getExceptionClass()
                 .orElseThrow(() ->
@@ -61,6 +64,7 @@ public abstract class SerializableError implements Serializable {
      * {@link ErrorType#name} and is part of the service's API surface. Clients are given access to the service-side
      * error name via {@link RemoteException#getError} and typically switch&dispatch on the error code and/or name.
      */
+    @Safe
     @JsonProperty("errorName")
     @Value.Default
     public String errorName() {
@@ -74,6 +78,7 @@ public abstract class SerializableError implements Serializable {
      * {@link #errorName}, the {@link #errorInstanceId} identifies a specific occurrence of an error, not a class of
      * errors. By convention, this field is a UUID.
      */
+    @Safe
     @JsonProperty("errorInstanceId")
     @Value.Default
     @SuppressWarnings("checkstyle:designforextension")
@@ -82,6 +87,7 @@ public abstract class SerializableError implements Serializable {
     }
 
     /** A set of parameters that further explain the error. */
+    @Unsafe
     public abstract Map<String, String> parameters();
 
     /**
