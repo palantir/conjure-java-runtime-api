@@ -1,0 +1,5 @@
+type: feature
+feature:
+  description: 'Be more lenient when deserializing error parameters'
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/1085
