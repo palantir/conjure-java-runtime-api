@@ -194,13 +194,46 @@ public final class SerializableErrorTest {
     }
 
     @Test
-    public void testDeserializeWithJsonParameters() throws Exception {
+    public void testDeserializeWithJsonObjectParameters() throws Exception {
         String serialized = "{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
                 + "\"parameters\":{\"key\":{\"nested\": \"value\"}}}";
         assertThat(deserialize(serialized))
                 .isEqualTo(SerializableError.builder()
                         .from(ERROR)
                         .putParameters("key", "{\"nested\":\"value\"}")
+                        .build());
+    }
+
+    @Test
+    public void testDeserializeWithJsonArrayParameters() throws Exception {
+        String serialized = "{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
+                + "\"parameters\":{\"key\":[\"nested\"]}}";
+        assertThat(deserialize(serialized))
+                .isEqualTo(SerializableError.builder()
+                        .from(ERROR)
+                        .putParameters("key", "[\"nested\"]")
+                        .build());
+    }
+
+    @Test
+    public void testDeserializeWithJsonBooleanParameters() throws Exception {
+        String serialized = "{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
+                + "\"parameters\":{\"key\":true}}";
+        assertThat(deserialize(serialized))
+                .isEqualTo(SerializableError.builder()
+                        .from(ERROR)
+                        .putParameters("key", "true")
+                        .build());
+    }
+
+    @Test
+    public void testDeserializeWithJsonNumberParameters() throws Exception {
+        String serialized = "{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
+                + "\"parameters\":{\"key\":1.1}}";
+        assertThat(deserialize(serialized))
+                .isEqualTo(SerializableError.builder()
+                        .from(ERROR)
+                        .putParameters("key", "1.1")
                         .build());
     }
 

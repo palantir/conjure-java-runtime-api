@@ -21,15 +21,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.palantir.logsafe.Arg;
 import com.palantir.logsafe.exceptions.SafeIllegalStateException;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -89,7 +86,7 @@ public abstract class SerializableError implements Serializable {
     }
 
     /** A set of parameters that further explain the error. */
-    @JsonDeserialize(using = ParametersDeserializer.class)
+    @JsonDeserialize(contentUsing = ParametersDeserializer.class)
     public abstract Map<String, String> parameters();
 
     /**
@@ -138,20 +135,11 @@ public abstract class SerializableError implements Serializable {
         return new Builder();
     }
 
-    static class ParametersDeserializer extends JsonDeserializer<Map<String, String>> {
+    static class ParametersDeserializer extends JsonDeserializer<String> {
 
         @Override
-        public Map<String, String> deserialize(JsonParser parser, DeserializationContext _ctxt) throws IOException {
-            Map<String, String> resultMap = new HashMap<>();
-            JsonNode rootNode = parser.getCodec().readTree(parser);
-            Iterator<Map.Entry<String, JsonNode>> fieldsIterator = rootNode.fields();
-
-            while (fieldsIterator.hasNext()) {
-                Map.Entry<String, JsonNode> field = fieldsIterator.next();
-                resultMap.put(field.getKey(), field.getValue().toString());
-            }
-
-            return resultMap;
+        public String deserialize(JsonParser parser, DeserializationContext _ctxt) throws IOException {
+            return parser.readValueAsTree().toString();
         }
     }
 }
