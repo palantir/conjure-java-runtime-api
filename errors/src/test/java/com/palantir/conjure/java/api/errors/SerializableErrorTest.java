@@ -193,6 +193,17 @@ public final class SerializableErrorTest {
                 .hasNoArgs();
     }
 
+    @Test
+    public void testDeserializeWithJsonParameters() throws Exception {
+        String serialized = "{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
+                + "\"parameters\":{\"key\":{\"nested\": \"value\"}}}";
+        assertThat(deserialize(serialized))
+                .isEqualTo(SerializableError.builder()
+                        .from(ERROR)
+                        .putParameters("key", "{\"nested\":\"value\"}")
+                        .build());
+    }
+
     private static SerializableError deserialize(String serialized) throws IOException {
         return mapper.readValue(serialized, SerializableError.class);
     }
