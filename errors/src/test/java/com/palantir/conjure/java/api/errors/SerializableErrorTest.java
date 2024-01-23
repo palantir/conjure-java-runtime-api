@@ -237,6 +237,17 @@ public final class SerializableErrorTest {
                         .build());
     }
 
+    @Test
+    public void testDeserializeWithJsonStringParameters() throws Exception {
+        String serialized = "{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
+                + "\"parameters\":{\"key\":\"value\"}}";
+        assertThat(deserialize(serialized))
+                .isEqualTo(SerializableError.builder()
+                        .from(ERROR)
+                        .putParameters("key", "value")
+                        .build());
+    }
+
     private static SerializableError deserialize(String serialized) throws IOException {
         return mapper.readValue(serialized, SerializableError.class);
     }

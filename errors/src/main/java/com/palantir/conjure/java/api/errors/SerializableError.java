@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.palantir.logsafe.Arg;
@@ -139,7 +140,13 @@ public abstract class SerializableError implements Serializable {
 
         @Override
         public String deserialize(JsonParser parser, DeserializationContext _ctxt) throws IOException {
-            return parser.readValueAsTree().toString();
+            JsonNode node = parser.readValueAsTree();
+            String textValue = node.textValue();
+            if (textValue != null) {
+                return textValue;
+            } else {
+                return node.toString();
+            }
         }
     }
 }
