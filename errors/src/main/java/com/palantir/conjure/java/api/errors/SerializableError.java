@@ -136,7 +136,7 @@ public abstract class SerializableError implements Serializable {
         return new Builder();
     }
 
-    protected static final class ParameterDeserializer extends JsonDeserializer<String> {
+    static final class ParameterDeserializer extends JsonDeserializer<String> {
 
         @Override
         public String deserialize(JsonParser parser, DeserializationContext _ctxt) throws IOException {
