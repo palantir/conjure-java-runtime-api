@@ -23,7 +23,7 @@ org.checkerframework:checker-compat-qual:2.0.0 (1 constraints: 140ae5b4)
 org.codehaus.mojo:animal-sniffer-annotations:1.14 (1 constraints: ea09d5aa)
 org.immutables:value:2.10.0 (1 constraints: 35052f3b)
 org.jetbrains:annotations:24.1.0 (1 constraints: 331166d1)
-org.mockito:mockito-core:5.9.0 (1 constraints: 10051f36)
+org.mockito:mockito-core:5.10.0 (1 constraints: 3805413b)
 org.objenesis:objenesis:3.3 (1 constraints: b20a14bd)
 org.slf4j:slf4j-api:1.7.36 (2 constraints: 561e8a97)
 
