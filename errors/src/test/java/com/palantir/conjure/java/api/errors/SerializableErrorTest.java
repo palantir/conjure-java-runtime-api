@@ -194,7 +194,7 @@ public final class SerializableErrorTest {
     }
 
     @Test
-    public void testDeserializeWithJsonObjectParameters() throws Exception {
+    public void testDeserializeWithJsonObjectParameter() throws Exception {
         String serialized = "{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
                 + "\"parameters\":{\"key\":{\"nested\": \"value\"}}}";
         assertThat(deserialize(serialized))
@@ -205,7 +205,7 @@ public final class SerializableErrorTest {
     }
 
     @Test
-    public void testDeserializeWithJsonArrayParameters() throws Exception {
+    public void testDeserializeWithJsonArrayParameter() throws Exception {
         String serialized = "{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
                 + "\"parameters\":{\"key\":[\"nested\"]}}";
         assertThat(deserialize(serialized))
@@ -216,7 +216,7 @@ public final class SerializableErrorTest {
     }
 
     @Test
-    public void testDeserializeWithJsonBooleanParameters() throws Exception {
+    public void testDeserializeWithJsonBooleanParameter() throws Exception {
         String serialized = "{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
                 + "\"parameters\":{\"key\":true}}";
         assertThat(deserialize(serialized))
@@ -227,7 +227,7 @@ public final class SerializableErrorTest {
     }
 
     @Test
-    public void testDeserializeWithJsonNumberParameters() throws Exception {
+    public void testDeserializeWithJsonNumberParameter() throws Exception {
         String serialized = "{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
                 + "\"parameters\":{\"key\":1.1}}";
         assertThat(deserialize(serialized))
@@ -238,7 +238,7 @@ public final class SerializableErrorTest {
     }
 
     @Test
-    public void testDeserializeWithJsonStringParameters() throws Exception {
+    public void testDeserializeWithJsonStringParameter() throws Exception {
         String serialized = "{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
                 + "\"parameters\":{\"key\":\"value\"}}";
         assertThat(deserialize(serialized))

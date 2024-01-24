@@ -87,7 +87,7 @@ public abstract class SerializableError implements Serializable {
     }
 
     /** A set of parameters that further explain the error. */
-    @JsonDeserialize(contentUsing = ParametersDeserializer.class)
+    @JsonDeserialize(contentUsing = ParameterDeserializer.class)
     public abstract Map<String, String> parameters();
 
     /**
@@ -136,7 +136,7 @@ public abstract class SerializableError implements Serializable {
         return new Builder();
     }
 
-    static class ParametersDeserializer extends JsonDeserializer<String> {
+    protected static final class ParameterDeserializer extends JsonDeserializer<String> {
 
         @Override
         public String deserialize(JsonParser parser, DeserializationContext _ctxt) throws IOException {
