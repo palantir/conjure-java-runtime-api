@@ -18,10 +18,15 @@ package com.palantir.conjure.java.api.errors;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.palantir.logsafe.Arg;
 import com.palantir.logsafe.exceptions.SafeIllegalStateException;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
@@ -82,6 +87,7 @@ public abstract class SerializableError implements Serializable {
     }
 
     /** A set of parameters that further explain the error. */
+    @JsonDeserialize(contentUsing = ParameterDeserializer.class)
     public abstract Map<String, String> parameters();
 
     /**
@@ -128,5 +134,19 @@ public abstract class SerializableError implements Serializable {
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    static final class ParameterDeserializer extends JsonDeserializer<String> {
+
+        @Override
+        public String deserialize(JsonParser parser, DeserializationContext _ctxt) throws IOException {
+            JsonNode node = parser.readValueAsTree();
+            String textValue = node.textValue();
+            if (textValue != null) {
+                return textValue;
+            } else {
+                return node.toString();
+            }
+        }
     }
 }

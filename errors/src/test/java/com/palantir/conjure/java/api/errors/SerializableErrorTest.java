@@ -193,6 +193,61 @@ public final class SerializableErrorTest {
                 .hasNoArgs();
     }
 
+    @Test
+    public void testDeserializeWithJsonObjectParameter() throws Exception {
+        String serialized = "{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
+                + "\"parameters\":{\"key\":{\"nested\": \"value\"}}}";
+        assertThat(deserialize(serialized))
+                .isEqualTo(SerializableError.builder()
+                        .from(ERROR)
+                        .putParameters("key", "{\"nested\":\"value\"}")
+                        .build());
+    }
+
+    @Test
+    public void testDeserializeWithJsonArrayParameter() throws Exception {
+        String serialized = "{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
+                + "\"parameters\":{\"key\":[\"nested\"]}}";
+        assertThat(deserialize(serialized))
+                .isEqualTo(SerializableError.builder()
+                        .from(ERROR)
+                        .putParameters("key", "[\"nested\"]")
+                        .build());
+    }
+
+    @Test
+    public void testDeserializeWithJsonBooleanParameter() throws Exception {
+        String serialized = "{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
+                + "\"parameters\":{\"key\":true}}";
+        assertThat(deserialize(serialized))
+                .isEqualTo(SerializableError.builder()
+                        .from(ERROR)
+                        .putParameters("key", "true")
+                        .build());
+    }
+
+    @Test
+    public void testDeserializeWithJsonNumberParameter() throws Exception {
+        String serialized = "{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
+                + "\"parameters\":{\"key\":1.1}}";
+        assertThat(deserialize(serialized))
+                .isEqualTo(SerializableError.builder()
+                        .from(ERROR)
+                        .putParameters("key", "1.1")
+                        .build());
+    }
+
+    @Test
+    public void testDeserializeWithJsonStringParameter() throws Exception {
+        String serialized = "{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
+                + "\"parameters\":{\"key\":\"value\"}}";
+        assertThat(deserialize(serialized))
+                .isEqualTo(SerializableError.builder()
+                        .from(ERROR)
+                        .putParameters("key", "value")
+                        .build());
+    }
+
     private static SerializableError deserialize(String serialized) throws IOException {
         return mapper.readValue(serialized, SerializableError.class);
     }
