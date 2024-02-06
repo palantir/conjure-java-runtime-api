@@ -7,6 +7,7 @@ dependencies {
     api "com.fasterxml.jackson.core:jackson-databind"
     api "com.google.code.findbugs:jsr305"
     api "com.palantir.safe-logging:safe-logging"
+    api 'org.immutables:value::annotations'
     api "org.jetbrains:annotations"
     implementation "com.palantir.safe-logging:preconditions"
 
@@ -17,5 +18,4 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter'
 
     annotationProcessor "org.immutables:value"
-    compileOnly 'org.immutables:value::annotations'
 }
