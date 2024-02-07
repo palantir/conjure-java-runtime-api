@@ -4,11 +4,15 @@ apply plugin: 'com.palantir.external-publish-jar'
 apply plugin: 'com.palantir.revapi'
 
 dependencies {
+    annotationProcessor "org.immutables:value"
+    
+    compileOnlyApi 'org.immutables:value::annotations'
+    
     api "com.fasterxml.jackson.core:jackson-databind"
     api "com.google.code.findbugs:jsr305"
     api "com.palantir.safe-logging:safe-logging"
-    api 'org.immutables:value::annotations'
     api "org.jetbrains:annotations"
+    
     implementation "com.palantir.safe-logging:preconditions"
 
     testImplementation project(":extras:jackson-support")
@@ -16,6 +20,4 @@ dependencies {
     testImplementation "org.assertj:assertj-core"
     testImplementation "org.apache.commons:commons-lang3"
     testImplementation 'org.junit.jupiter:junit-jupiter'
-
-    annotationProcessor "org.immutables:value"
 }
