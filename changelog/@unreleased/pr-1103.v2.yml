@@ -1,0 +1,6 @@
+type: feature
+feature:
+  description: Add `ServiceExceptionAssert.hasCode` to assert the `ErrorType.Code`
+    of a `ServiceException`.
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/1103
