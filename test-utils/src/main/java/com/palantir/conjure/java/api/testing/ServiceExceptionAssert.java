@@ -41,6 +41,14 @@ public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExcep
         return INSTANCE_OF_ASSERT_FACTORY;
     }
 
+    public final ServiceExceptionAssert hasCode(ErrorType.Code code) {
+        isNotNull();
+        failIfNotEqual(
+                "Expected ErrorType.Code to be %s, but found %s",
+                code, actual.getErrorType().code());
+        return this;
+    }
+
     public final ServiceExceptionAssert hasType(ErrorType type) {
         isNotNull();
         failIfNotEqual("Expected ErrorType to be %s, but found %s", type, actual.getErrorType());
