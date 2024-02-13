@@ -31,14 +31,22 @@ public class ServiceExceptionAssertTest {
         ErrorType actualType = ErrorType.FAILED_PRECONDITION;
 
         Assertions.assertThat(new ServiceException(actualType, SafeArg.of("a", "b"), UnsafeArg.of("c", "d")))
+                .hasCode(actualType.code())
                 .hasType(actualType)
                 .hasArgs(SafeArg.of("a", "b"), UnsafeArg.of("c", "d"));
 
         Assertions.assertThat(new ServiceException(actualType, SafeArg.of("a", "b"), UnsafeArg.of("c", "d")))
+                .hasCode(actualType.code())
                 .hasType(actualType)
                 .hasArgs(UnsafeArg.of("c", "d"), SafeArg.of("a", "b")); // Order doesn't matter
 
         Assertions.assertThat(new ServiceException(actualType)).hasNoArgs();
+
+        assertThatThrownBy(() ->
+                        Assertions.assertThat(new ServiceException(actualType)).hasCode(ErrorType.Code.INTERNAL))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining(
+                        "Expected ErrorType.Code to be %s, but found %s", ErrorType.Code.INTERNAL, actualType.code());
 
         assertThatThrownBy(() ->
                         Assertions.assertThat(new ServiceException(actualType)).hasType(ErrorType.INTERNAL))
