@@ -1,0 +1,5 @@
+type: feature
+feature:
+  description: Add `RemoteException.hasStatus` to assert the status of a `RemoteException`.
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/1144
