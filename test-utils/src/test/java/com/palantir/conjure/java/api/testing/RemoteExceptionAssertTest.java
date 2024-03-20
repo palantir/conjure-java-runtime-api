@@ -32,6 +32,7 @@ public final class RemoteExceptionAssertTest {
         SerializableError error = SerializableError.forException(new ServiceException(actualType));
 
         Assertions.assertThat(new RemoteException(error, actualType.httpErrorCode()))
+                .hasStatus(actualType.httpErrorCode())
                 .isGeneratedFromErrorType(actualType);
 
         assertThatThrownBy(() -> Assertions.assertThat(new RemoteException(error, actualType.httpErrorCode() + 1))
