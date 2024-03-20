@@ -36,16 +36,20 @@ public class RemoteExceptionAssert extends AbstractThrowableAssert<RemoteExcepti
         return INSTANCE_OF_ASSERT_FACTORY;
     }
 
+    public final RemoteExceptionAssert hasStatus(int status) {
+        isNotNull();
+
+        failIfNotEqual("error status", status, actual.getStatus());
+
+        return this;
+    }
+
     public final RemoteExceptionAssert isGeneratedFromErrorType(ErrorType type) {
         isNotNull();
 
-        String actualCode = actual.getError().errorCode();
-        String actualName = actual.getError().errorName();
-        int actualStatus = actual.getStatus();
-
-        failIfNotEqual("error code", type.code().name(), actualCode);
-        failIfNotEqual("error name", type.name(), actualName);
-        failIfNotEqual("error status", type.httpErrorCode(), actualStatus);
+        failIfNotEqual("error code", type.code().name(), actual.getError().errorCode());
+        failIfNotEqual("error name", type.name(), actual.getError().errorName());
+        failIfNotEqual("error status", type.httpErrorCode(), actual.getStatus());
 
         return this;
     }
