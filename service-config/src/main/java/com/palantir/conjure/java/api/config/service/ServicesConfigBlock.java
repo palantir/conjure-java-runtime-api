@@ -35,7 +35,7 @@ import org.immutables.value.Value.Immutable;
  * fully-specified {@link ServiceConfiguration} objects.
  */
 @DoNotLog
-@Immutable
+@Immutable(singleton = true)
 @JsonSerialize(as = ImmutableServicesConfigBlock.class)
 @JsonDeserialize(builder = ServicesConfigBlock.Builder.class)
 @ImmutablesStyle
@@ -104,6 +104,10 @@ public abstract class ServicesConfigBlock {
     @JsonProperty("fallbackToCommonNameVerification")
     @JsonAlias("fallback-to-common-name-verification")
     public abstract Optional<Boolean> defaultFallbackToCommonNameVerification();
+
+    public static ServicesConfigBlock empty() {
+        return ImmutableServicesConfigBlock.of();
+    }
 
     public static Builder builder() {
         return new Builder();
