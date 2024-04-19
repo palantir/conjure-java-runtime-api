@@ -5,15 +5,16 @@ apply plugin: 'com.palantir.revapi'
 
 dependencies {
     annotationProcessor "org.immutables:value"
-    
+
     compileOnlyApi 'org.immutables:value::annotations'
-    
+
     api "com.fasterxml.jackson.core:jackson-databind"
     api "com.google.code.findbugs:jsr305"
     api "com.palantir.safe-logging:safe-logging"
     api "org.jetbrains:annotations"
-    
+
     implementation "com.palantir.safe-logging:preconditions"
+    implementation "com.palantir.tritium:tritium-ids"
 
     testImplementation project(":extras:jackson-support")
     testImplementation "com.palantir.safe-logging:preconditions-assertj"
