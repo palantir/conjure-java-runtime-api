@@ -18,12 +18,12 @@ package com.palantir.conjure.java.api.errors;
 
 import com.palantir.logsafe.Arg;
 import com.palantir.logsafe.SafeLoggable;
+import com.palantir.tritium.ids.UniqueIds;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import javax.annotation.Nullable;
 
 /** A {@link ServiceException} thrown in server-side code to indicate server-side {@link ErrorType error states}. */
@@ -150,7 +150,8 @@ public final class ServiceException extends RuntimeException implements SafeLogg
             // Guard against cause cycles, see Throwable.printStackTrace(PrintStreamOrWriter)
             Set<Throwable> dejaVu) {
         if (cause == null || !dejaVu.add(cause)) {
-            return UUID.randomUUID().toString();
+            // we don't need cryptographically secure random UUIDs
+            return UniqueIds.pseudoRandomUuidV4().toString();
         }
         if (cause instanceof ServiceException) {
             return ((ServiceException) cause).getErrorInstanceId();
