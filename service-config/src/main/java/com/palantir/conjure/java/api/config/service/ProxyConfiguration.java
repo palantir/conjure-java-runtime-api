@@ -101,6 +101,7 @@ public abstract class ProxyConfiguration {
         switch (type()) {
             case MESH:
             case HTTP:
+            case HTTPS:
                 Preconditions.checkArgument(
                         hostAndPort().isPresent(), "host-and-port must be configured for an HTTP proxy");
                 HostAndPort host = HostAndPort.fromString(hostAndPort().get());
