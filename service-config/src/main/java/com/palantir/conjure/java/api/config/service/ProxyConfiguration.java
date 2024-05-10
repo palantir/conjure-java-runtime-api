@@ -24,7 +24,9 @@ import com.palantir.logsafe.DoNotLog;
 import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalStateException;
+
 import java.util.Optional;
+
 import org.immutables.value.Value;
 import org.immutables.value.Value.Immutable;
 
@@ -40,7 +42,9 @@ public abstract class ProxyConfiguration {
 
     public enum Type {
 
-        /** Use a direct connection. This option will bypass any JVM-level configured proxy settings. */
+        /**
+         * Use a direct connection. This option will bypass any JVM-level configured proxy settings.
+         */
         DIRECT,
 
         /**
@@ -55,12 +59,22 @@ public abstract class ProxyConfiguration {
         HTTP,
 
         /**
+         * Use an https-proxy specified by {@link ProxyConfiguration#hostAndPort()} and (optionally)
+         * {@link ProxyConfiguration#credentials()}.
+         * <p>
+         * This is a beta feature and may not be supported by all clients.
+         */
+        HTTPS,
+
+        /**
          * Redirects requests to the {@link #hostAndPort} and sets the HTTP Host header to the original request's
          * authority.
          */
         MESH,
 
-        /** Connections are created using a SOCKS proxy. */
+        /**
+         * Connections are created using a SOCKS proxy.
+         */
         SOCKS,
     }
 
@@ -72,7 +86,9 @@ public abstract class ProxyConfiguration {
     @JsonAlias("host-and-port")
     public abstract Optional<String> hostAndPort();
 
-    /** Credentials if the proxy needs authentication. */
+    /**
+     * Credentials if the proxy needs authentication.
+     */
     public abstract Optional<BasicCredentials> credentials();
 
     /**
@@ -146,5 +162,6 @@ public abstract class ProxyConfiguration {
         return new Builder();
     }
 
-    public static final class Builder extends ImmutableProxyConfiguration.Builder {}
+    public static final class Builder extends ImmutableProxyConfiguration.Builder {
+    }
 }
