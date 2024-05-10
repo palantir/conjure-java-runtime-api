@@ -24,10 +24,9 @@ import com.palantir.logsafe.DoNotLog;
 import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalStateException;
+import java.util.Optional;
 import org.immutables.value.Value;
 import org.immutables.value.Value.Immutable;
-
-import java.util.Optional;
 
 @DoNotLog
 @Immutable
@@ -132,7 +131,8 @@ public abstract class ProxyConfiguration {
         }
 
         if (credentials().isPresent()) {
-            Preconditions.checkArgument(type() == Type.HTTP, "credentials only valid for HTTP proxies");
+            Preconditions.checkArgument(
+                    type() == Type.HTTP || type() == Type.HTTPS, "credentials only valid for HTTP or HTTPS proxies");
         }
     }
 
