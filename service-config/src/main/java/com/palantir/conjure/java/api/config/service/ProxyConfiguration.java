@@ -132,7 +132,8 @@ public abstract class ProxyConfiguration {
 
         if (credentials().isPresent()) {
             Preconditions.checkArgument(
-                    type() == Type.HTTP || type() == Type.HTTPS, "credentials only valid for HTTP or HTTPS proxies");
+                    type() == Type.HTTP || type() == Type.HTTPS,
+                    "credentials are only valid for HTTP or HTTPS proxies");
         }
     }
 
