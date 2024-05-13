@@ -55,6 +55,14 @@ public abstract class ProxyConfiguration {
         HTTP,
 
         /**
+         * Use an https-proxy specified by {@link ProxyConfiguration#hostAndPort()} and (optionally)
+         * {@link ProxyConfiguration#credentials()}.
+         * <p>
+         * This is a beta feature and may not be supported by all clients.
+         */
+        HTTPS,
+
+        /**
          * Redirects requests to the {@link #hostAndPort} and sets the HTTP Host header to the original request's
          * authority.
          */
@@ -92,6 +100,7 @@ public abstract class ProxyConfiguration {
         switch (type()) {
             case MESH:
             case HTTP:
+            case HTTPS:
                 Preconditions.checkArgument(
                         hostAndPort().isPresent(), "host-and-port must be configured for an HTTP proxy");
                 HostAndPort host = HostAndPort.fromString(hostAndPort().get());
@@ -122,7 +131,9 @@ public abstract class ProxyConfiguration {
         }
 
         if (credentials().isPresent()) {
-            Preconditions.checkArgument(type() == Type.HTTP, "credentials only valid for HTTP proxies");
+            Preconditions.checkArgument(
+                    type() == Type.HTTP || type() == Type.HTTPS,
+                    "credentials are only valid for HTTP or HTTPS proxies");
         }
     }
 
