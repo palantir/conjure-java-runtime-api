@@ -122,7 +122,7 @@ public final class ProxyConfigurationTests {
                         .hostAndPort("localhost:1234")
                         .build())
                 .isInstanceOf(SafeIllegalArgumentException.class)
-                .hasLogMessage("credentials only valid for HTTP proxies")
+                .hasLogMessage("credentials only valid for HTTP(S) proxies")
                 .hasNoArgs();
     }
 
@@ -134,7 +134,7 @@ public final class ProxyConfigurationTests {
                         .hostAndPort("localhost:1234")
                         .build())
                 .isInstanceOf(SafeIllegalArgumentException.class)
-                .hasLogMessage("credentials only valid for HTTP proxies")
+                .hasLogMessage("credentials only valid for HTTP(S) proxies")
                 .hasNoArgs();
     }
 
