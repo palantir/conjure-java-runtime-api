@@ -1,0 +1,5 @@
+type: feature
+feature:
+  description: Add support for HTTPS proxies
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/1166
