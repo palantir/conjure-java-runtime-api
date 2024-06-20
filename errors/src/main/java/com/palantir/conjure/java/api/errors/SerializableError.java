@@ -25,12 +25,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.palantir.logsafe.Arg;
+import com.palantir.logsafe.Unsafe;
 import com.palantir.logsafe.exceptions.SafeIllegalStateException;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+
 import org.immutables.value.Value;
 
 /**
@@ -45,6 +48,7 @@ import org.immutables.value.Value;
 @Value.Immutable
 @Value.Style(overshadowImplementation = false)
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Unsafe
 public abstract class SerializableError implements Serializable {
 
     /**
@@ -86,7 +90,9 @@ public abstract class SerializableError implements Serializable {
         return "";
     }
 
-    /** A set of parameters that further explain the error. */
+    /**
+     * A set of parameters that further explain the error.
+     */
     @JsonDeserialize(contentUsing = ParameterDeserializer.class)
     public abstract Map<String, String> parameters();
 
@@ -130,7 +136,8 @@ public abstract class SerializableError implements Serializable {
     }
 
     // TODO(rfink): Remove once all error producers have switched to errorCode/errorName.
-    public static final class Builder extends ImmutableSerializableError.Builder {}
+    public static final class Builder extends ImmutableSerializableError.Builder {
+    }
 
     public static Builder builder() {
         return new Builder();
