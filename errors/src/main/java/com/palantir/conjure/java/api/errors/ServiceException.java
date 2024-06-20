@@ -17,6 +17,7 @@
 package com.palantir.conjure.java.api.errors;
 
 import com.palantir.logsafe.Arg;
+import com.palantir.logsafe.Safe;
 import com.palantir.logsafe.SafeLoggable;
 import com.palantir.tritium.ids.UniqueIds;
 import java.util.ArrayList;
@@ -63,6 +64,7 @@ public final class ServiceException extends RuntimeException implements SafeLogg
     }
 
     /** A unique identifier for (this instance of) this error. */
+    @Safe
     public String getErrorInstanceId() {
         return errorInstanceId;
     }
@@ -74,6 +76,7 @@ public final class ServiceException extends RuntimeException implements SafeLogg
     }
 
     @Override
+    @Safe
     public String getLogMessage() {
         // Not returning safe args here since the safe-logging framework will log this message + args explicitly.
         return noArgsMessage;

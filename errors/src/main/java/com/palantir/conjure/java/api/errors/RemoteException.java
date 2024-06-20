@@ -16,9 +16,8 @@
 
 package com.palantir.conjure.java.api.errors;
 
-import com.palantir.logsafe.Arg;
-import com.palantir.logsafe.SafeArg;
-import com.palantir.logsafe.SafeLoggable;
+import com.palantir.logsafe.*;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -61,6 +60,7 @@ public final class RemoteException extends RuntimeException implements SafeLogga
     }
 
     @Override
+    @Unsafe
     public String getMessage() {
         // This field is not used in most environments so the cost of computation may be avoided.
         String messageValue = unsafeMessage;
@@ -71,6 +71,7 @@ public final class RemoteException extends RuntimeException implements SafeLogga
         return messageValue;
     }
 
+    @Unsafe
     private String renderUnsafeMessage() {
         StringBuilder builder = new StringBuilder()
                 .append(stableMessage)
@@ -90,6 +91,7 @@ public final class RemoteException extends RuntimeException implements SafeLogga
     }
 
     @Override
+    @Safe
     public String getLogMessage() {
         return stableMessage;
     }

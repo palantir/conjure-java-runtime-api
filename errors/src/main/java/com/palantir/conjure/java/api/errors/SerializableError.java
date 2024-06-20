@@ -25,15 +25,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.palantir.logsafe.Arg;
+import com.palantir.logsafe.Safe;
 import com.palantir.logsafe.Unsafe;
 import com.palantir.logsafe.exceptions.SafeIllegalStateException;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-
 import org.immutables.value.Value;
 
 /**
@@ -59,6 +58,7 @@ public abstract class SerializableError implements Serializable {
      */
     @JsonProperty("errorCode")
     @Value.Default
+    @Safe
     public String errorCode() {
         return getExceptionClass()
                 .orElseThrow(() ->
@@ -72,6 +72,7 @@ public abstract class SerializableError implements Serializable {
      */
     @JsonProperty("errorName")
     @Value.Default
+    @Safe
     public String errorName() {
         return getMessage()
                 .orElseThrow(() -> new SafeIllegalStateException("Expected either 'errorName' or 'message' to be set"));
@@ -86,6 +87,7 @@ public abstract class SerializableError implements Serializable {
     @JsonProperty("errorInstanceId")
     @Value.Default
     @SuppressWarnings("checkstyle:designforextension")
+    @Safe
     public String errorInstanceId() {
         return "";
     }
@@ -94,6 +96,7 @@ public abstract class SerializableError implements Serializable {
      * A set of parameters that further explain the error.
      */
     @JsonDeserialize(contentUsing = ParameterDeserializer.class)
+    @Unsafe
     public abstract Map<String, String> parameters();
 
     /**
@@ -105,6 +108,7 @@ public abstract class SerializableError implements Serializable {
     @JsonProperty(value = "exceptionClass", access = JsonProperty.Access.WRITE_ONLY)
     @Value.Auxiliary
     @SuppressWarnings("checkstyle:designforextension")
+    @Safe
     abstract Optional<String> getExceptionClass();
 
     /**
@@ -116,6 +120,7 @@ public abstract class SerializableError implements Serializable {
     @JsonProperty(value = "message", access = JsonProperty.Access.WRITE_ONLY)
     @Value.Auxiliary
     @SuppressWarnings("checkstyle:designforextension")
+    @Safe
     abstract Optional<String> getMessage();
 
     /**
