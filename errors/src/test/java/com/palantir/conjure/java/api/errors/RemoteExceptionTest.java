@@ -19,6 +19,7 @@ package com.palantir.conjure.java.api.errors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.palantir.logsafe.SafeArg;
+import com.palantir.logsafe.UnsafeArg;
 import org.apache.commons.lang3.SerializationUtils;
 import org.junit.jupiter.api.Test;
 
@@ -130,6 +131,6 @@ public final class RemoteExceptionTest {
                 .containsExactlyInAnyOrder(
                         SafeArg.of("errorInstanceId", "errorId"),
                         SafeArg.of("errorCode", "errorCode"),
-                        SafeArg.of("errorName", "errorName"));
+                        UnsafeArg.of("errorName", "errorName"));
     }
 }
