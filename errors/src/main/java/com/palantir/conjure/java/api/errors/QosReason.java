@@ -110,6 +110,8 @@ public final class QosReason {
 
         private Builder() {}
 
+        // other.reason must be a compile-time-constant
+        @SuppressWarnings("CompileTimeConstant")
         public Builder from(QosReason other) {
             return reason(other.reason()).retryHint(other.retryHint()).dueTo(other.dueTo());
         }
