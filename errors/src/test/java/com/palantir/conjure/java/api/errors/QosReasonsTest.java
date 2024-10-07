@@ -24,6 +24,7 @@ import com.palantir.conjure.java.api.errors.QosReason.RetryHint;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 
 class QosReasonsTest {
@@ -45,7 +46,7 @@ class QosReasonsTest {
                 .retryHint(RetryHint.PROPAGATE)
                 .build();
         QosReasons.encodeToResponse(reason, headers, Encoder.INSTANCE);
-        assertThat(headers).isEqualTo(ImmutableMap.of("Qos-Due-To", "CUSTOM", "Qos-Retry-Hint", "PROPAGATE"));
+        assertThat(headers).isEqualTo(ImmutableMap.of("Qos-Due-To", "custom", "Qos-Retry-Hint", "propagate"));
     }
 
     @Test
@@ -64,6 +65,38 @@ class QosReasonsTest {
                         .from(original)
                         .reason("client-qos-response")
                         .build());
+    }
+
+    @Test
+    public void dueToRoundTrip() {
+        SoftAssertions softly = new SoftAssertions();
+        for (DueTo expected : DueTo.values()) {
+            Optional<DueTo> actual = QosReasons.parseDueTo(QosReasons.toHeaderValue(expected));
+            softly.assertThat(actual).hasValue(expected);
+        }
+        softly.assertAll();
+    }
+
+    @Test
+    public void dueToCaseSensitivity() {
+        assertThat(QosReasons.parseDueTo("custom")).hasValue(DueTo.CUSTOM);
+        assertThat(QosReasons.parseDueTo("CUSTOM")).hasValue(DueTo.CUSTOM);
+    }
+
+    @Test
+    public void retryHintRoundTrip() {
+        SoftAssertions softly = new SoftAssertions();
+        for (RetryHint expected : RetryHint.values()) {
+            Optional<RetryHint> actual = QosReasons.parseRetryHint(QosReasons.toHeaderValue(expected));
+            softly.assertThat(actual).hasValue(expected);
+        }
+        softly.assertAll();
+    }
+
+    @Test
+    public void retryHintCaseSensitivity() {
+        assertThat(QosReasons.parseRetryHint("propagate")).hasValue(RetryHint.PROPAGATE);
+        assertThat(QosReasons.parseRetryHint("PROPAGATE")).hasValue(RetryHint.PROPAGATE);
     }
 
     private enum Encoder implements QosReasons.QosResponseEncodingAdapter<Map<String, String>> {

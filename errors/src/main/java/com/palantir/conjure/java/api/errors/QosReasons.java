@@ -27,10 +27,22 @@ public final class QosReasons {
     private static final String DUE_TO_HEADER = "Qos-Due-To";
     private static final String RETRY_HINT_HEADER = "Qos-Retry-Hint";
 
+    private static final String DUE_TO_CUSTOM_HEADER_VALUE = "custom";
+    private static final String RETRY_HINT_PROPAGATE_HEADER_VALUE = "propagate";
+
     public static <T> void encodeToResponse(
             QosReason reason, T response, QosResponseEncodingAdapter<? super T> adapter) {
-        reason.dueTo().ifPresent(dueTo -> adapter.setHeader(response, DUE_TO_HEADER, dueTo.name()));
-        reason.retryHint().ifPresent(retryHint -> adapter.setHeader(response, RETRY_HINT_HEADER, retryHint.name()));
+        // Likely hot path, avoid ifPresent lambda
+        if (reason.dueTo().isPresent()) {
+            adapter.setHeader(
+                    response, DUE_TO_HEADER, toHeaderValue(reason.dueTo().get()));
+        }
+        if (reason.retryHint().isPresent()) {
+            adapter.setHeader(
+                    response,
+                    RETRY_HINT_HEADER,
+                    toHeaderValue(reason.retryHint().get()));
+        }
     }
 
     public static <T> QosReason parseFromResponse(T response, QosResponseDecodingAdapter<? super T> adapter) {
@@ -41,8 +53,8 @@ public final class QosReasons {
         }
         return QosReason.builder()
                 .reason(CLIENT_REASON)
-                .dueTo(maybeDueTo.flatMap(value -> parse(DueTo.class, value)))
-                .retryHint(maybeRetryHint.flatMap(value -> parse(RetryHint.class, value)))
+                .dueTo(maybeDueTo.flatMap(QosReasons::parseDueTo))
+                .retryHint(maybeRetryHint.flatMap(QosReasons::parseRetryHint))
                 .build();
     }
 
@@ -54,12 +66,34 @@ public final class QosReasons {
         Optional<String> getFirstHeader(RESPONSE response, String headerName);
     }
 
-    private static <T extends Enum<T>> Optional<T> parse(Class<T> type, String value) {
-        try {
-            return Optional.of(Enum.valueOf(type, value));
-        } catch (IllegalArgumentException ignored) {
-            return Optional.empty();
+    // VisibleForTesting
+    static Optional<DueTo> parseDueTo(String dueTo) {
+        if (DUE_TO_CUSTOM_HEADER_VALUE.equalsIgnoreCase(dueTo)) {
+            return Optional.of(DueTo.CUSTOM);
         }
+        return Optional.empty();
+    }
+
+    // VisibleForTesting
+    static Optional<RetryHint> parseRetryHint(String retryHint) {
+        if (RETRY_HINT_PROPAGATE_HEADER_VALUE.equalsIgnoreCase(retryHint)) {
+            return Optional.of(RetryHint.PROPAGATE);
+        }
+        return Optional.empty();
+    }
+
+    // VisibleForTesting
+    static String toHeaderValue(DueTo dueTo) {
+        return switch (dueTo) {
+            case CUSTOM -> DUE_TO_CUSTOM_HEADER_VALUE;
+        };
+    }
+
+    // VisibleForTesting
+    static String toHeaderValue(RetryHint retryHint) {
+        return switch (retryHint) {
+            case PROPAGATE -> RETRY_HINT_PROPAGATE_HEADER_VALUE;
+        };
     }
 
     private QosReasons() {}
