@@ -28,7 +28,7 @@ public final class QosReasons {
     private static final String RETRY_HINT_HEADER = "Qos-Retry-Hint";
 
     private static final String DUE_TO_CUSTOM_HEADER_VALUE = "custom";
-    private static final String RETRY_HINT_PROPAGATE_HEADER_VALUE = "propagate";
+    private static final String RETRY_HINT_DO_NOT_RETRY_HEADER_VALUE = "do-not-retry";
 
     public static <T> void encodeToResponse(
             QosReason reason, T response, QosResponseEncodingAdapter<? super T> adapter) {
@@ -76,8 +76,8 @@ public final class QosReasons {
 
     // VisibleForTesting
     static Optional<RetryHint> parseRetryHint(String retryHint) {
-        if (RETRY_HINT_PROPAGATE_HEADER_VALUE.equalsIgnoreCase(retryHint)) {
-            return Optional.of(RetryHint.PROPAGATE);
+        if (RETRY_HINT_DO_NOT_RETRY_HEADER_VALUE.equalsIgnoreCase(retryHint)) {
+            return Optional.of(RetryHint.DO_NOT_RETRY);
         }
         return Optional.empty();
     }
@@ -92,7 +92,7 @@ public final class QosReasons {
     // VisibleForTesting
     static String toHeaderValue(RetryHint retryHint) {
         return switch (retryHint) {
-            case PROPAGATE -> RETRY_HINT_PROPAGATE_HEADER_VALUE;
+            case DO_NOT_RETRY -> RETRY_HINT_DO_NOT_RETRY_HEADER_VALUE;
         };
     }
 

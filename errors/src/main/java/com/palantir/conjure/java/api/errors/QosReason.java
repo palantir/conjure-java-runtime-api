@@ -150,25 +150,26 @@ public final class QosReason {
         }
     }
 
+    /**
+     * Conveys the servers opinion on whether a QoS failure should be retried, or propagate
+     * back to the caller and result in a failure. There is no guarantee that these values
+     * will be respected by all clients, and should be considered best-effort.
+     */
     public enum RetryHint {
-        // TODO(ckozak): Should we declare the existing default value? Perhaps best if we only
-        // declare the minimal api to opt into new behavior.
-        //        /** Clients should attempt to retry this failure. */
-        //        EAGER,
         /**
          * Clients should not attempt to retry this failure,
          * providing the failure as context back to the initial caller.
          */
-        PROPAGATE;
+        DO_NOT_RETRY;
     }
 
+    /**
+     * Describes the cause of a QoS failure when known to be non-default. By default, we assume that
+     * a 503 Unavailable is the result of a node-wide limit being reached, and that a 429 is specific
+     * to an individual endpoint on a node. These assumptions do not hold true in all cases, so
+     * {@link DueTo} informs relays this intent.
+     */
     public enum DueTo {
-        // TODO(ckozak): should we declare values that align with the default 503 and 429 behavior, which
-        // impact rate limiters for the node and endpoint specifically? If we do, they will be propagated
-        // in ways that don't make sense (despite being the default behavior today). Declaring a user limit
-        // may be more reasonable since the user token is generally passed along, however per-endpoint limits
-        // lose some meaning when rethrown by a calling service.
-
         /**
          * A cause that the RPC system isn't directly aware of, for example a user or user-agent specific limit, or
          * based on a specific resource that's being accessed, as opposed to the target node as a whole, or endpoint.

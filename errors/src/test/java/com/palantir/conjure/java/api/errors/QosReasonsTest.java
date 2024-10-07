@@ -43,10 +43,10 @@ class QosReasonsTest {
         QosReason reason = QosReason.builder()
                 .reason("reason")
                 .dueTo(DueTo.CUSTOM)
-                .retryHint(RetryHint.PROPAGATE)
+                .retryHint(RetryHint.DO_NOT_RETRY)
                 .build();
         QosReasons.encodeToResponse(reason, headers, Encoder.INSTANCE);
-        assertThat(headers).isEqualTo(ImmutableMap.of("Qos-Due-To", "custom", "Qos-Retry-Hint", "propagate"));
+        assertThat(headers).isEqualTo(ImmutableMap.of("Qos-Due-To", "custom", "Qos-Retry-Hint", "do-not-retry"));
     }
 
     @Test
@@ -55,7 +55,7 @@ class QosReasonsTest {
         QosReason original = QosReason.builder()
                 .reason("reason")
                 .dueTo(DueTo.CUSTOM)
-                .retryHint(RetryHint.PROPAGATE)
+                .retryHint(RetryHint.DO_NOT_RETRY)
                 .build();
         QosReasons.encodeToResponse(original, headers, Encoder.INSTANCE);
         QosReason recreated = QosReasons.parseFromResponse(headers, Decoder.INSTANCE);
@@ -95,8 +95,8 @@ class QosReasonsTest {
 
     @Test
     public void retryHintCaseSensitivity() {
-        assertThat(QosReasons.parseRetryHint("propagate")).hasValue(RetryHint.PROPAGATE);
-        assertThat(QosReasons.parseRetryHint("PROPAGATE")).hasValue(RetryHint.PROPAGATE);
+        assertThat(QosReasons.parseRetryHint("do-not-retry")).hasValue(RetryHint.DO_NOT_RETRY);
+        assertThat(QosReasons.parseRetryHint("DO-NOT-RETRY")).hasValue(RetryHint.DO_NOT_RETRY);
     }
 
     private enum Encoder implements QosReasons.QosResponseEncodingAdapter<Map<String, String>> {
