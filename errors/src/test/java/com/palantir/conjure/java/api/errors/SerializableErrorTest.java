@@ -19,7 +19,9 @@ package com.palantir.conjure.java.api.errors;
 import static com.palantir.logsafe.testing.Assertions.assertThatLoggableExceptionThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.palantir.conjure.java.api.ext.jackson.ObjectMappers;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.UnsafeArg;
@@ -246,6 +248,62 @@ public final class SerializableErrorTest {
                         .from(ERROR)
                         .putParameters("key", "value")
                         .build());
+    }
+
+    @Test
+    public void testDeserializationWithPrimitiveParameterValues() throws Exception {
+        String serialized = "{\n  \"errorCode\": \"TIMEOUT\",\n"
+                + "  \"errorName\": \"MyApplication:Timeout\",\n"
+                + "  \"errorInstanceId\": \"63085482-7d00-11ee-b962-0242ac120002\",\n"
+                + "  \"parameters\": {\n"
+                + "    \"key-1\": \"string\","
+                + "    \"key-2\": 2,"
+                + "    \"key-3\": 4.56,"
+                + "    \"key-4\": false"
+                + "    }\n"
+                + "  }\n"
+                + "}";
+        assertThat(deserialize(serialized).parameters())
+                .containsExactly(
+                        // JSON primitive types are coerced to strings
+                        Map.entry("key-1", "string"),
+                        Map.entry("key-2", "2"),
+                        Map.entry("key-3", "4.56"),
+                        Map.entry("key-4", "false"));
+    }
+
+    @Test
+    public void testDeserializationWithNullParameterValue() {
+        String serialized = "{\n  \"errorCode\": \"TIMEOUT\",\n"
+                + "  \"errorName\": \"MyApplication:Timeout\",\n"
+                + "  \"errorInstanceId\": \"63085482-7d00-11ee-b962-0242ac120002\",\n"
+                + "  \"parameters\": {\n"
+                + "    \"some-key\": null\n"
+                + "    }\n"
+                + "  }\n"
+                + "}";
+        assertThatThrownBy(() -> deserialize(serialized))
+                .isInstanceOf(JsonMappingException.class)
+                .hasMessageContaining("parameters value for key: some-key");
+    }
+
+    @Test
+    public void testDeserializationWithJsonMap() throws Exception {
+        // Example from conjure-go's tests:
+        // https://github.com/palantir/conjure-go-runtime/blob/fdb08c91f7566c2109ff8c5c2ecebb2f96c97d58/conjure-go-contract/errors/serializable_error_test.go#L41-L50
+        String serialized = "{\n  \"errorCode\": \"TIMEOUT\",\n"
+                + "  \"errorName\": \"MyApplication:Timeout\",\n"
+                + "  \"errorInstanceId\": \"63085482-7d00-11ee-b962-0242ac120002\",\n"
+                + "  \"parameters\": {\n"
+                + "    \"metadata\": {\n"
+                + "      \"keyB\": 4\n"
+                + "    }\n"
+                + "  }\n"
+                + "}";
+        assertThatThrownBy(() -> deserialize(serialized))
+                .isInstanceOf(MismatchedInputException.class)
+                .hasMessageContaining("Cannot deserialize value of type `java.lang.String` from Object value "
+                        + "(token `JsonToken.START_OBJECT`)");
     }
 
     private static SerializableError deserialize(String serialized) throws IOException {
