@@ -155,12 +155,49 @@ public final class QosReason {
      * back to the caller and result in a failure. There is no guarantee that these values
      * will be respected by all clients, and should be considered best-effort.
      */
-    public enum RetryHint {
+    public static final class RetryHint {
+        private static final String DO_NOT_RETRY_STRING = "do-not-retry";
         /**
          * Clients should not attempt to retry this failure,
          * providing the failure as context back to the initial caller.
          */
-        DO_NOT_RETRY;
+        public static final RetryHint DO_NOT_RETRY = new RetryHint(DO_NOT_RETRY_STRING);
+
+        private final String value;
+
+        private RetryHint(String value) {
+            this.value = Preconditions.checkNotNull(value, "Value is required");
+        }
+
+        static RetryHint valueOf(String value) {
+            Preconditions.checkNotNull(value, "Value is required");
+            if (DO_NOT_RETRY_STRING.equalsIgnoreCase(value)) {
+                return DO_NOT_RETRY;
+            }
+            return new RetryHint(value);
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (this == other) {
+                return true;
+            }
+            if (other == null || getClass() != other.getClass()) {
+                return false;
+            }
+            RetryHint retryHint = (RetryHint) other;
+            return value.equals(retryHint.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
     }
 
     /**
@@ -169,13 +206,51 @@ public final class QosReason {
      * to an individual endpoint on a node. These assumptions do not hold true in all cases, so
      * {@link DueTo} informs relays this intent.
      */
-    public enum DueTo {
+    public static final class DueTo {
+        private static final String CUSTOM_STRING = "custom";
+
         /**
          * A cause that the RPC system isn't directly aware of, for example a user or user-agent specific limit, or
          * based on a specific resource that's being accessed, as opposed to the target node as a whole, or endpoint.
          * QosReasons with this cause shouldn't impact things like the dialogue concurrency limiter.
          */
-        CUSTOM;
+        public static final DueTo CUSTOM = new DueTo(CUSTOM_STRING);
+
+        private final String value;
+
+        private DueTo(String value) {
+            this.value = Preconditions.checkNotNull(value, "Value is required");
+        }
+
+        static DueTo valueOf(String value) {
+            Preconditions.checkNotNull(value, "Value is required");
+            if (CUSTOM_STRING.equalsIgnoreCase(value)) {
+                return CUSTOM;
+            }
+            return new DueTo(value);
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (this == other) {
+                return true;
+            }
+            if (other == null || getClass() != other.getClass()) {
+                return false;
+            }
+            DueTo dueTo = (DueTo) other;
+            return value.equals(dueTo.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
     }
 
     private static void checkReason(@Safe String reason) {

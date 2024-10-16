@@ -27,9 +27,6 @@ public final class QosReasons {
     private static final String DUE_TO_HEADER = "Qos-Due-To";
     private static final String RETRY_HINT_HEADER = "Qos-Retry-Hint";
 
-    private static final String DUE_TO_CUSTOM_HEADER_VALUE = "custom";
-    private static final String RETRY_HINT_DO_NOT_RETRY_HEADER_VALUE = "do-not-retry";
-
     public static <T> void encodeToResponse(
             QosReason reason, T response, QosResponseEncodingAdapter<? super T> adapter) {
         // Likely hot path, avoid ifPresent lambda
@@ -68,32 +65,22 @@ public final class QosReasons {
 
     // VisibleForTesting
     static Optional<DueTo> parseDueTo(String dueTo) {
-        if (DUE_TO_CUSTOM_HEADER_VALUE.equalsIgnoreCase(dueTo)) {
-            return Optional.of(DueTo.CUSTOM);
-        }
-        return Optional.empty();
+        return Optional.of(DueTo.valueOf(dueTo));
     }
 
     // VisibleForTesting
     static Optional<RetryHint> parseRetryHint(String retryHint) {
-        if (RETRY_HINT_DO_NOT_RETRY_HEADER_VALUE.equalsIgnoreCase(retryHint)) {
-            return Optional.of(RetryHint.DO_NOT_RETRY);
-        }
-        return Optional.empty();
+        return Optional.of(RetryHint.valueOf(retryHint));
     }
 
     // VisibleForTesting
     static String toHeaderValue(DueTo dueTo) {
-        return switch (dueTo) {
-            case CUSTOM -> DUE_TO_CUSTOM_HEADER_VALUE;
-        };
+        return dueTo.toString();
     }
 
     // VisibleForTesting
     static String toHeaderValue(RetryHint retryHint) {
-        return switch (retryHint) {
-            case DO_NOT_RETRY -> RETRY_HINT_DO_NOT_RETRY_HEADER_VALUE;
-        };
+        return retryHint.toString();
     }
 
     private QosReasons() {}

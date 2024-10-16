@@ -24,7 +24,6 @@ import com.palantir.conjure.java.api.errors.QosReason.RetryHint;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 
 class QosReasonsTest {
@@ -68,35 +67,47 @@ class QosReasonsTest {
     }
 
     @Test
+    public void testUnknownFromResponse() {
+        ImmutableMap<String, String> originalHeaders =
+                ImmutableMap.of("Qos-Due-To", "due-to-test", "Qos-Retry-Hint", "retry-hint-test");
+        QosReason parsed = QosReasons.parseFromResponse(originalHeaders, Decoder.INSTANCE);
+        assertThat(parsed.dueTo())
+                .hasValueSatisfying(dueTo -> assertThat(dueTo).asString().isEqualTo("due-to-test"));
+        assertThat(parsed.retryHint())
+                .hasValueSatisfying(dueTo -> assertThat(dueTo).asString().isEqualTo("retry-hint-test"));
+        Map<String, String> propagatedHeaders = new HashMap<>();
+        QosReasons.encodeToResponse(parsed, propagatedHeaders, Encoder.INSTANCE);
+        assertThat(propagatedHeaders).isEqualTo(originalHeaders);
+    }
+
+    @Test
     public void dueToRoundTrip() {
-        SoftAssertions softly = new SoftAssertions();
-        for (DueTo expected : DueTo.values()) {
-            Optional<DueTo> actual = QosReasons.parseDueTo(QosReasons.toHeaderValue(expected));
-            softly.assertThat(actual).hasValue(expected);
-        }
-        softly.assertAll();
+        Optional<DueTo> actual = QosReasons.parseDueTo(QosReasons.toHeaderValue(DueTo.CUSTOM));
+        assertThat(actual).hasValue(DueTo.CUSTOM);
     }
 
     @Test
     public void dueToCaseSensitivity() {
         assertThat(QosReasons.parseDueTo("custom")).hasValue(DueTo.CUSTOM);
+        assertThat(QosReasons.parseDueTo("custom").get()).isSameAs(DueTo.CUSTOM);
         assertThat(QosReasons.parseDueTo("CUSTOM")).hasValue(DueTo.CUSTOM);
+        assertThat(QosReasons.parseDueTo("CUSTOM").get()).isSameAs(DueTo.CUSTOM);
     }
 
     @Test
     public void retryHintRoundTrip() {
-        SoftAssertions softly = new SoftAssertions();
-        for (RetryHint expected : RetryHint.values()) {
-            Optional<RetryHint> actual = QosReasons.parseRetryHint(QosReasons.toHeaderValue(expected));
-            softly.assertThat(actual).hasValue(expected);
-        }
-        softly.assertAll();
+        Optional<RetryHint> actual = QosReasons.parseRetryHint(QosReasons.toHeaderValue(RetryHint.DO_NOT_RETRY));
+        assertThat(actual).hasValue(RetryHint.DO_NOT_RETRY);
     }
 
     @Test
     public void retryHintCaseSensitivity() {
         assertThat(QosReasons.parseRetryHint("do-not-retry")).hasValue(RetryHint.DO_NOT_RETRY);
+        assertThat(QosReasons.parseRetryHint("do-not-retry").get()).isSameAs(RetryHint.DO_NOT_RETRY);
+        assertThat(QosReasons.parseRetryHint("do-not-retry")).hasValue(RetryHint.DO_NOT_RETRY);
+        assertThat(QosReasons.parseRetryHint("do-not-retry").get()).isSameAs(RetryHint.DO_NOT_RETRY);
         assertThat(QosReasons.parseRetryHint("DO-NOT-RETRY")).hasValue(RetryHint.DO_NOT_RETRY);
+        assertThat(QosReasons.parseRetryHint("DO-NOT-RETRY").get()).isSameAs(RetryHint.DO_NOT_RETRY);
     }
 
     private enum Encoder implements QosReasons.QosResponseEncodingAdapter<Map<String, String>> {
