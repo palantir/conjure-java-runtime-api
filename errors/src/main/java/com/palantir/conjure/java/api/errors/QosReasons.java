@@ -50,8 +50,8 @@ public final class QosReasons {
         }
         return QosReason.builder()
                 .reason(CLIENT_REASON)
-                .dueTo(maybeDueTo.flatMap(QosReasons::parseDueTo))
-                .retryHint(maybeRetryHint.flatMap(QosReasons::parseRetryHint))
+                .dueTo(maybeDueTo.map(QosReasons::parseDueTo))
+                .retryHint(maybeRetryHint.map(QosReasons::parseRetryHint))
                 .build();
     }
 
@@ -64,13 +64,13 @@ public final class QosReasons {
     }
 
     // VisibleForTesting
-    static Optional<DueTo> parseDueTo(String dueTo) {
-        return Optional.of(DueTo.valueOf(dueTo));
+    static DueTo parseDueTo(String dueTo) {
+        return DueTo.valueOf(dueTo);
     }
 
     // VisibleForTesting
-    static Optional<RetryHint> parseRetryHint(String retryHint) {
-        return Optional.of(RetryHint.valueOf(retryHint));
+    static RetryHint parseRetryHint(String retryHint) {
+        return RetryHint.valueOf(retryHint);
     }
 
     // VisibleForTesting

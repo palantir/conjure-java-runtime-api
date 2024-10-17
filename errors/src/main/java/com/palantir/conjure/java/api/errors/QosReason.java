@@ -155,6 +155,7 @@ public final class QosReason {
      * back to the caller and result in a failure. There is no guarantee that these values
      * will be respected by all clients, and should be considered best-effort.
      */
+    @Safe
     public static final class RetryHint {
         private static final String DO_NOT_RETRY_STRING = "do-not-retry";
         /**
@@ -163,13 +164,14 @@ public final class QosReason {
          */
         public static final RetryHint DO_NOT_RETRY = new RetryHint(DO_NOT_RETRY_STRING);
 
+        @Safe
         private final String value;
 
-        private RetryHint(String value) {
+        private RetryHint(@Safe String value) {
             this.value = Preconditions.checkNotNull(value, "Value is required");
         }
 
-        static RetryHint valueOf(String value) {
+        static RetryHint valueOf(@Safe String value) {
             Preconditions.checkNotNull(value, "Value is required");
             if (DO_NOT_RETRY_STRING.equalsIgnoreCase(value)) {
                 return DO_NOT_RETRY;
@@ -206,6 +208,7 @@ public final class QosReason {
      * to an individual endpoint on a node. These assumptions do not hold true in all cases, so
      * {@link DueTo} informs relays this intent.
      */
+    @Safe
     public static final class DueTo {
         private static final String CUSTOM_STRING = "custom";
 
@@ -216,13 +219,14 @@ public final class QosReason {
          */
         public static final DueTo CUSTOM = new DueTo(CUSTOM_STRING);
 
+        @Safe
         private final String value;
 
-        private DueTo(String value) {
+        private DueTo(@Safe String value) {
             this.value = Preconditions.checkNotNull(value, "Value is required");
         }
 
-        static DueTo valueOf(String value) {
+        static DueTo valueOf(@Safe String value) {
             Preconditions.checkNotNull(value, "Value is required");
             if (CUSTOM_STRING.equalsIgnoreCase(value)) {
                 return CUSTOM;
