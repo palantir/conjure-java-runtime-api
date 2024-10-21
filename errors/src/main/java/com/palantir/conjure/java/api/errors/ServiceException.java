@@ -27,7 +27,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 /** A {@link ServiceException} thrown in server-side code to indicate server-side {@link ErrorType error states}. */
-public final class ServiceException extends RuntimeException implements SafeLoggable {
+public class ServiceException extends RuntimeException implements SafeLoggable {
 
     private final ErrorType errorType;
     private final List<Arg<?>> args; // unmodifiable

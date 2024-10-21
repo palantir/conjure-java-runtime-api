@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 /** An exception thrown by an RPC client to indicate remote/server-side failure. */
-public final class RemoteException extends RuntimeException implements SafeLoggable {
+public class RemoteException extends RuntimeException implements SafeLoggable {
     private static final long serialVersionUID = 1L;
     private static final String ERROR_INSTANCE_ID = "errorInstanceId";
     private static final String ERROR_CODE = "errorCode";
