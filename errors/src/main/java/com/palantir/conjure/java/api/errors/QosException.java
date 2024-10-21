@@ -24,7 +24,6 @@ import com.palantir.logsafe.Unsafe;
 import com.palantir.logsafe.UnsafeArg;
 import java.net.URL;
 import java.time.Duration;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -224,7 +223,11 @@ public abstract class QosException extends RuntimeException {
 
         @Override
         public List<Arg<?>> getArgs() {
-            return List.of(SafeArg.of("retryAfter", retryAfter.orElse(null)), SafeArg.of("reason", getReason()));
+            return List.of(
+                    SafeArg.of("retryAfter", retryAfter.orElse(null)),
+                    SafeArg.of("reason", getReason().reason()),
+                    SafeArg.of("dueTo", getReason().dueTo().orElse(null)),
+                    SafeArg.of("retryHint", getReason().retryHint().orElse(null)));
         }
     }
 
@@ -272,7 +275,11 @@ public abstract class QosException extends RuntimeException {
         @Unsafe
         @Override
         public List<Arg<?>> getArgs() {
-            return List.of(UnsafeArg.of("redirectTo", redirectTo), SafeArg.of("reason", getReason()));
+            return List.of(
+                    UnsafeArg.of("redirectTo", redirectTo),
+                    SafeArg.of("reason", getReason().reason()),
+                    SafeArg.of("dueTo", getReason().dueTo().orElse(null)),
+                    SafeArg.of("retryHint", getReason().retryHint().orElse(null)));
         }
     }
 
@@ -310,7 +317,10 @@ public abstract class QosException extends RuntimeException {
 
         @Override
         public List<Arg<?>> getArgs() {
-            return Collections.singletonList(SafeArg.of("reason", getReason()));
+            return List.of(
+                    SafeArg.of("reason", getReason().reason()),
+                    SafeArg.of("dueTo", getReason().dueTo().orElse(null)),
+                    SafeArg.of("retryHint", getReason().retryHint().orElse(null)));
         }
     }
 }

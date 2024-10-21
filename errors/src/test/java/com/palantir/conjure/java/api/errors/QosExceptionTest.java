@@ -20,6 +20,8 @@ import static com.palantir.logsafe.testing.Assertions.assertThatLoggableExceptio
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.errorprone.annotations.CompileTimeConstant;
+import com.palantir.conjure.java.api.errors.QosReason.DueTo;
+import com.palantir.conjure.java.api.errors.QosReason.RetryHint;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import java.net.MalformedURLException;
@@ -57,12 +59,19 @@ public final class QosExceptionTest {
 
     @Test
     public void testReason() {
-        QosReason reason = QosReason.of("custom-reason");
+        QosReason reason = QosReason.builder()
+                .reason("custom-reason")
+                .dueTo(DueTo.CUSTOM)
+                .retryHint(RetryHint.DO_NOT_RETRY)
+                .build();
         assertThat(QosException.throttle(reason).getReason()).isEqualTo(reason);
         assertThatLoggableExceptionThrownBy(() -> {
                     throw QosException.throttle(reason);
                 })
-                .containsArgs(SafeArg.of("reason", reason));
+                .containsArgs(
+                        SafeArg.of("reason", "custom-reason"),
+                        SafeArg.of("retryHint", RetryHint.DO_NOT_RETRY),
+                        SafeArg.of("dueTo", DueTo.CUSTOM));
     }
 
     @ParameterizedTest
