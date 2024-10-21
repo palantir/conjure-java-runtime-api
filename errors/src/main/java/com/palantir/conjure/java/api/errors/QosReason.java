@@ -206,7 +206,7 @@ public final class QosReason {
      * Describes the cause of a QoS failure when known to be non-default. By default, we assume that
      * a 503 Unavailable is the result of a node-wide limit being reached, and that a 429 is specific
      * to an individual endpoint on a node. These assumptions do not hold true in all cases, so
-     * {@link DueTo} informs relays this intent.
+     * {@link DueTo} relays the servers intent.
      */
     @Safe
     public static final class DueTo {
@@ -215,7 +215,7 @@ public final class QosReason {
         /**
          * A cause that the RPC system isn't directly aware of, for example a user or user-agent specific limit, or
          * based on a specific resource that's being accessed, as opposed to the target node as a whole, or endpoint.
-         * QosReasons with this cause shouldn't impact things like the dialogue concurrency limiter.
+         * QosReasons with this cause shouldn't impact things like the dialogue concurrency limiters.
          */
         public static final DueTo CUSTOM = new DueTo(CUSTOM_STRING);
 
