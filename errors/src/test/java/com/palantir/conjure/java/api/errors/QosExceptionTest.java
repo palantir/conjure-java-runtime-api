@@ -72,7 +72,9 @@ public final class QosExceptionTest {
                 "reason-reason-reason-reason-reason-reason-reason---",
                 // Unsupported characters
                 "reason?",
-                "Reason"
+                "Reason",
+                // too short
+                ""
             })
     public void testInvalidReason(@CompileTimeConstant String reason) {
         assertThatLoggableExceptionThrownBy(() -> QosReason.of(reason))

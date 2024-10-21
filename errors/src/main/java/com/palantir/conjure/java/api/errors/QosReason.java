@@ -18,9 +18,13 @@ package com.palantir.conjure.java.api.errors;
 
 import com.google.errorprone.annotations.CompileTimeConstant;
 import com.palantir.logsafe.Preconditions;
+import com.palantir.logsafe.Safe;
 import com.palantir.logsafe.SafeArg;
+import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import java.util.Objects;
-import java.util.regex.Pattern;
+import java.util.Optional;
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nullable;
 
 /**
  * A class representing the reason why a {@link QosException} was created.
@@ -30,28 +34,43 @@ import java.util.regex.Pattern;
  * tag, for observability into {@link QosException} calls. As such, the string is constrained to have at most 50
  * lowercase alphanumeric characters, and hyphens (-).
  */
+@Safe
 public final class QosReason {
 
-    @CompileTimeConstant
+    @Safe
     private final String reason;
 
-    private static final String PATTERN_STRING = "^[a-z0-9\\-]{1,50}$";
-    private static final Pattern PATTERN = Pattern.compile(PATTERN_STRING);
+    private final Optional<RetryHint> retryHint;
+    private final Optional<DueTo> dueTo;
 
-    private QosReason(@CompileTimeConstant String reason) {
+    private static final String PATTERN_STRING = "^[a-z0-9\\-]{1,50}$";
+
+    private QosReason(@Safe String reason, Optional<RetryHint> retryHint, Optional<DueTo> dueTo) {
+        checkReason(reason);
         this.reason = reason;
+        this.retryHint = retryHint;
+        this.dueTo = dueTo;
     }
 
     public static QosReason of(
-            @CompileTimeConstant @org.intellij.lang.annotations.Pattern(PATTERN_STRING) String reason) {
-        Preconditions.checkArgument(
-                PATTERN.matcher(reason).matches(),
-                "Reason must be at most 50 characters, and only contain lowercase letters, numbers, "
-                        + "and hyphens (-).",
-                SafeArg.of("reason", reason));
-        return new QosReason(reason);
+            @Safe @CompileTimeConstant @org.intellij.lang.annotations.Pattern(PATTERN_STRING) String reason) {
+        return new QosReason(reason, Optional.empty(), Optional.empty());
     }
 
+    @Safe
+    public String reason() {
+        return reason;
+    }
+
+    public Optional<RetryHint> retryHint() {
+        return retryHint;
+    }
+
+    public Optional<DueTo> dueTo() {
+        return dueTo;
+    }
+
+    /** Returns the {@link #reason()} for historical reasons, and should not be updated. */
     @Override
     public String toString() {
         return reason;
@@ -61,16 +80,203 @@ public final class QosReason {
     public boolean equals(Object other) {
         if (other == this) {
             return true;
-        } else if (!(other instanceof QosReason)) {
-            return false;
+        } else if (other instanceof QosReason otherReason) {
+            return Objects.equals(this.reason, otherReason.reason)
+                    && Objects.equals(this.retryHint, otherReason.retryHint)
+                    && Objects.equals(this.dueTo, otherReason.dueTo);
         } else {
-            QosReason otherReason = (QosReason) other;
-            return Objects.equals(this.reason, otherReason.reason);
+            return false;
         }
     }
 
     @Override
     public int hashCode() {
         return Objects.hashCode(this.reason);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static final class Builder {
+        @Nullable
+        private String reason;
+
+        @Nullable
+        private RetryHint retryHint;
+
+        @Nullable
+        private DueTo dueTo;
+
+        private Builder() {}
+
+        // other.reason must be a compile-time-constant
+        @SuppressWarnings("CompileTimeConstant")
+        public Builder from(QosReason other) {
+            return reason(other.reason()).retryHint(other.retryHint()).dueTo(other.dueTo());
+        }
+
+        public Builder reason(
+                @Safe @CompileTimeConstant @org.intellij.lang.annotations.Pattern(PATTERN_STRING) String value) {
+            this.reason = Preconditions.checkNotNull(value, "reason");
+            return this;
+        }
+
+        public Builder retryHint(RetryHint value) {
+            this.retryHint = Preconditions.checkNotNull(value, "retryHint");
+            return this;
+        }
+
+        public Builder retryHint(Optional<RetryHint> value) {
+            this.retryHint = Preconditions.checkNotNull(value, "retryHint").orElse(null);
+            return this;
+        }
+
+        public Builder dueTo(DueTo value) {
+            this.dueTo = Preconditions.checkNotNull(value, "dueTo");
+            return this;
+        }
+
+        public Builder dueTo(Optional<DueTo> value) {
+            this.dueTo = Preconditions.checkNotNull(value, "dueTo").orElse(null);
+            return this;
+        }
+
+        public QosReason build() {
+            return new QosReason(
+                    Preconditions.checkNotNull(reason, "reason"),
+                    Optional.ofNullable(retryHint),
+                    Optional.ofNullable(dueTo));
+        }
+    }
+
+    /**
+     * Conveys the servers opinion on whether a QoS failure should be retried, or propagate
+     * back to the caller and result in a failure. There is no guarantee that these values
+     * will be respected by all clients, and should be considered best-effort.
+     */
+    @Safe
+    public static final class RetryHint {
+        private static final String DO_NOT_RETRY_STRING = "do-not-retry";
+        /**
+         * Clients should not attempt to retry this failure,
+         * providing the failure as context back to the initial caller.
+         */
+        public static final RetryHint DO_NOT_RETRY = new RetryHint(DO_NOT_RETRY_STRING);
+
+        @Safe
+        private final String value;
+
+        private RetryHint(@Safe String value) {
+            this.value = Preconditions.checkNotNull(value, "Value is required");
+        }
+
+        static RetryHint valueOf(@Safe String value) {
+            Preconditions.checkNotNull(value, "Value is required");
+            if (DO_NOT_RETRY_STRING.equalsIgnoreCase(value)) {
+                return DO_NOT_RETRY;
+            }
+            return new RetryHint(value);
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (this == other) {
+                return true;
+            }
+            if (other == null || getClass() != other.getClass()) {
+                return false;
+            }
+            RetryHint retryHint = (RetryHint) other;
+            return value.equals(retryHint.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
+    }
+
+    /**
+     * Describes the cause of a QoS failure when known to be non-default. By default, we assume that
+     * a 503 Unavailable is the result of a node-wide limit being reached, and that a 429 is specific
+     * to an individual endpoint on a node. These assumptions do not hold true in all cases, so
+     * {@link DueTo} relays the servers intent.
+     */
+    @Safe
+    public static final class DueTo {
+        private static final String CUSTOM_STRING = "custom";
+
+        /**
+         * A cause that the RPC system isn't directly aware of, for example a user or user-agent specific limit, or
+         * based on a specific resource that's being accessed, as opposed to the target node as a whole, or endpoint.
+         * QosReasons with this cause shouldn't impact things like the dialogue concurrency limiters.
+         */
+        public static final DueTo CUSTOM = new DueTo(CUSTOM_STRING);
+
+        @Safe
+        private final String value;
+
+        private DueTo(@Safe String value) {
+            this.value = Preconditions.checkNotNull(value, "Value is required");
+        }
+
+        static DueTo valueOf(@Safe String value) {
+            Preconditions.checkNotNull(value, "Value is required");
+            if (CUSTOM_STRING.equalsIgnoreCase(value)) {
+                return CUSTOM;
+            }
+            return new DueTo(value);
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (this == other) {
+                return true;
+            }
+            if (other == null || getClass() != other.getClass()) {
+                return false;
+            }
+            DueTo dueTo = (DueTo) other;
+            return value.equals(dueTo.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return value;
+        }
+    }
+
+    private static void checkReason(@Safe String reason) {
+        if (reason == null || reason.isEmpty() || reason.length() > 50) {
+            throw invalidReason(reason);
+        }
+        for (int i = 0; i < reason.length(); i++) {
+            char character = reason.charAt(i);
+            boolean validCharacter = (character >= 'a' && character <= 'z')
+                    || (character >= '0' && character <= '9')
+                    || character == '-';
+            if (!validCharacter) {
+                throw invalidReason(reason);
+            }
+        }
+    }
+
+    @CheckReturnValue
+    private static SafeIllegalArgumentException invalidReason(@Safe String reason) {
+        return new SafeIllegalArgumentException(
+                "Reason must be at most 50 characters, and only contain lowercase letters, numbers, "
+                        + "and hyphens (-).",
+                SafeArg.of("reason", reason));
     }
 }
