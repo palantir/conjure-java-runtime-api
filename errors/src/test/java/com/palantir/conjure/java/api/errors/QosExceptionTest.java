@@ -20,12 +20,15 @@ import static com.palantir.logsafe.testing.Assertions.assertThatLoggableExceptio
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.errorprone.annotations.CompileTimeConstant;
+import com.palantir.conjure.java.api.errors.QosReason.DueTo;
+import com.palantir.conjure.java.api.errors.QosReason.RetryHint;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 public final class QosExceptionTest {
@@ -55,14 +58,49 @@ public final class QosExceptionTest {
         assertThat(QosException.unavailable().accept(visitor)).isEqualTo(QosException.Unavailable.class);
     }
 
-    @Test
-    public void testReason() {
-        QosReason reason = QosReason.of("custom-reason");
+    private enum QosExceptionFactory {
+        THROTTLE() {
+            @Override
+            QosException create(QosReason reason) {
+                return QosException.throttle(reason);
+            }
+        },
+        UNAVAILABLE {
+            @Override
+            QosException create(QosReason reason) {
+                return QosException.unavailable(reason);
+            }
+        },
+        RETRY_OTHER {
+            @Override
+            QosException create(QosReason reason) {
+                try {
+                    return QosException.retryOther(reason, new URL("http://foo"));
+                } catch (MalformedURLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+
+        abstract QosException create(QosReason reason);
+    }
+
+    @ParameterizedTest
+    @EnumSource(QosExceptionFactory.class)
+    void testReason(QosExceptionFactory qosException) {
+        QosReason reason = QosReason.builder()
+                .reason("custom-reason")
+                .dueTo(DueTo.CUSTOM)
+                .retryHint(RetryHint.DO_NOT_RETRY)
+                .build();
         assertThat(QosException.throttle(reason).getReason()).isEqualTo(reason);
         assertThatLoggableExceptionThrownBy(() -> {
-                    throw QosException.throttle(reason);
+                    throw qosException.create(reason);
                 })
-                .containsArgs(SafeArg.of("reason", reason));
+                .containsArgs(
+                        SafeArg.of("reason", "custom-reason"),
+                        SafeArg.of("retryHint", RetryHint.DO_NOT_RETRY),
+                        SafeArg.of("dueTo", DueTo.CUSTOM));
     }
 
     @ParameterizedTest

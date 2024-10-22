@@ -1,0 +1,5 @@
+type: improvement
+improvement:
+  description: Include dueTo and retryHint in QosException SafeLoggable args
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/1248
