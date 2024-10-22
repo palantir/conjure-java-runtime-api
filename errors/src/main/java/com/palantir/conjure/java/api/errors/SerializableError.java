@@ -26,13 +26,12 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.palantir.logsafe.Arg;
 import com.palantir.logsafe.exceptions.SafeIllegalStateException;
-import org.immutables.value.Value;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import org.immutables.value.Value;
 
 /**
  * A JSON-serializable representation of an exception/error, represented by its error code, an error name identifying
@@ -118,19 +117,6 @@ public abstract class SerializableError implements Serializable {
      * message, as well as the {@link Arg#isSafeForLogging safe} and unsafe {@link ServiceException#args parameters}.
      */
     public static SerializableError forException(ServiceException exception) {
-        Builder builder = new Builder()
-                .errorCode(exception.getErrorType().code().name())
-                .errorName(exception.getErrorType().name())
-                .errorInstanceId(exception.getErrorInstanceId());
-
-        for (Arg<?> arg : exception.getArgs()) {
-            builder.putParameters(arg.getName(), Objects.toString(arg.getValue()));
-        }
-
-        return builder.build();
-    }
-
-    public static SerializableError forExceptionWithSerializedArgs(ServiceException exception) {
         Builder builder = new Builder()
                 .errorCode(exception.getErrorType().code().name())
                 .errorName(exception.getErrorType().name())

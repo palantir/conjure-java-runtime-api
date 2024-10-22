@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2017 Palantir Technologies Inc. All rights reserved.
+ * (c) Copyright 2024 Palantir Technologies Inc. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.palantir.conjure.java.api.errors;
 
 import com.palantir.logsafe.Arg;
 import java.util.List;
 import javax.annotation.Nullable;
 
-/** A {@link ServiceException} thrown in server-side code to indicate server-side {@link ErrorType error states}. */
-public final class ServiceException extends RuntimeException implements SafeLoggableError {
-    private static final String EXCEPTION_NAME = "ServiceException";
+public abstract class CheckedServiceException extends Exception implements SafeLoggableError {
+    private static final String EXCEPTION_NAME = "CheckedServiceException";
+
     private final ErrorType errorType;
     private final List<Arg<?>> args; // unmodifiable
 
@@ -32,20 +31,17 @@ public final class ServiceException extends RuntimeException implements SafeLogg
 
     /**
      * Creates a new exception for the given error. All {@link com.palantir.logsafe.Arg parameters} are propagated to
-     * clients; they are serialized via {@link Object#toString}.
+     * clients.
      */
-    public ServiceException(ErrorType errorType, Arg<?>... parameters) {
+    public CheckedServiceException(ErrorType errorType, Arg<?>... parameters) {
         this(errorType, null, parameters);
     }
 
     /** As above, but additionally records the cause of this exception. */
-    public ServiceException(ErrorType errorType, @Nullable Throwable cause, Arg<?>... args) {
-        // TODO(rfink): Memoize formatting?
+    public CheckedServiceException(ErrorType errorType, @Nullable Throwable cause, Arg<?>... args) {
         super(cause);
-
         this.errorInstanceId = SafeLoggableErrorUtils.generateErrorInstanceId(cause);
         this.errorType = errorType;
-        // Note that instantiators cannot mutate List<> args since it comes through copyToList in all code paths.
         this.args = SafeLoggableErrorUtils.copyToUnmodifiableList(args);
         this.unsafeMessage = SafeLoggableErrorUtils.renderUnsafeMessage(EXCEPTION_NAME, errorType, args);
         this.noArgsMessage = SafeLoggableErrorUtils.renderNoArgsMessage(EXCEPTION_NAME, errorType);
@@ -63,30 +59,29 @@ public final class ServiceException extends RuntimeException implements SafeLogg
         return errorInstanceId;
     }
 
+    /**
+     * Java doc.
+     */
     @Override
     public String getMessage() {
         // Including all args here since any logger not configured with safe-logging will log this message.
         return unsafeMessage;
     }
 
+    /**
+     * Java doc.
+     */
     @Override
     public String getLogMessage() {
         // Not returning safe args here since the safe-logging framework will log this message + args explicitly.
         return noArgsMessage;
     }
 
+    /**
+     * Java doc.
+     */
     @Override
     public List<Arg<?>> getArgs() {
         return args;
-    }
-
-    /**
-     * Deprecated.
-     *
-     * @deprecated use {@link #getArgs}.
-     */
-    @Deprecated
-    public List<Arg<?>> getParameters() {
-        return getArgs();
     }
 }
