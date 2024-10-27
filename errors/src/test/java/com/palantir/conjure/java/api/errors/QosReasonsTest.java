@@ -45,7 +45,9 @@ class QosReasonsTest {
                 .retryHint(RetryHint.DO_NOT_RETRY)
                 .build();
         QosReasons.encodeToResponse(reason, headers, Encoder.INSTANCE);
-        assertThat(headers).isEqualTo(ImmutableMap.of("Qos-Due-To", "custom", "Qos-Retry-Hint", "do-not-retry"));
+        assertThat(headers)
+                .containsExactlyInAnyOrderEntriesOf(
+                        ImmutableMap.of("Qos-Due-To", "custom", "Qos-Retry-Hint", "do-not-retry"));
     }
 
     @Test
@@ -77,7 +79,7 @@ class QosReasonsTest {
                 .hasValueSatisfying(dueTo -> assertThat(dueTo).asString().isEqualTo("retry-hint-test"));
         Map<String, String> propagatedHeaders = new HashMap<>();
         QosReasons.encodeToResponse(parsed, propagatedHeaders, Encoder.INSTANCE);
-        assertThat(propagatedHeaders).isEqualTo(originalHeaders);
+        assertThat(propagatedHeaders).containsExactlyInAnyOrderEntriesOf(originalHeaders);
     }
 
     @Test
