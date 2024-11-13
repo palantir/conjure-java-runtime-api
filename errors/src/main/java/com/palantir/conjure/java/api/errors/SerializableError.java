@@ -114,7 +114,7 @@ public abstract class SerializableError implements Serializable {
 
     /**
      * Creates a {@link SerializableError} representation of this exception that derives from the error code and
-     * message, as well as the {@link Arg#isSafeForLogging safe} and unsafe {@link ServiceException#args parameters}.
+     * type, as well as the {@link Arg#isSafeForLogging safe} and unsafe {@link ServiceException#args parameters}.
      */
     public static SerializableError forException(ServiceException exception) {
         Builder builder = new Builder()
