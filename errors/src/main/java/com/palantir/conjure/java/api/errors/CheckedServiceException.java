@@ -51,31 +51,31 @@ public abstract class CheckedServiceException extends Exception implements SafeL
     }
 
     /** The {@link ErrorType} that gave rise to this exception. */
-    public ErrorType getErrorType() {
+    public final ErrorType getErrorType() {
         return errorType;
     }
 
     /** A unique identifier for (this instance of) this error. */
-    public String getErrorInstanceId() {
+    public final String getErrorInstanceId() {
         return errorInstanceId;
     }
 
     /** A string that includes the exception name, error type, and all arguments irrespective of log-safety. */
     @Override
-    public String getMessage() {
+    public final String getMessage() {
         // Including all args here since any logger not configured with safe-logging will log this message.
         return unsafeMessage;
     }
 
     /** A string that includes the exception name and error type, without any arguments. */
     @Override
-    public String getLogMessage() {
+    public final String getLogMessage() {
         return noArgsMessage;
     }
 
     /** The list of arguments. */
     @Override
-    public List<Arg<?>> getArgs() {
+    public final List<Arg<?>> getArgs() {
         return args;
     }
 }
