@@ -18,12 +18,12 @@ package com.palantir.conjure.java.api.errors;
 
 import com.palantir.logsafe.Arg;
 
-final class TestCheckedServiceException extends CheckedServiceException {
-    TestCheckedServiceException(ErrorType errorType, Arg<?>... parameters) {
+final class TestError extends CheckedServiceException {
+    TestError(ErrorType errorType, Arg<?>... parameters) {
         super(errorType, parameters);
     }
 
-    TestCheckedServiceException(ErrorType errorType, Throwable cause, Arg<?>... parameters) {
+    TestError(ErrorType errorType, Throwable cause, Arg<?>... parameters) {
         super(errorType, cause, parameters);
     }
 }

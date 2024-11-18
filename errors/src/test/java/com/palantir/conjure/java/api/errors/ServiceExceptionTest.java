@@ -97,7 +97,7 @@ public final class ServiceExceptionTest {
 
     @Test
     public void testErrorIdsAreInheritedFromCheckedServiceExceptions() {
-        CheckedServiceException rootCause = new TestCheckedServiceException(ERROR);
+        CheckedServiceException rootCause = new TestError(ERROR);
         SafeRuntimeException intermediate = new SafeRuntimeException("Handled an exception", rootCause);
         ServiceException parent = new ServiceException(ERROR, intermediate);
         assertThat(parent.getErrorInstanceId()).isEqualTo(rootCause.getErrorInstanceId());
