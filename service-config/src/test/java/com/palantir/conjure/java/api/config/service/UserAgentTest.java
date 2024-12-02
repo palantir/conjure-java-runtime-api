@@ -220,6 +220,7 @@ public class UserAgentTest {
                 .isEqualTo("serviceA");
         assertThat(UserAgents.tryParsePrimaryName(" serviceA/1.2.3")).isEqualTo("serviceA");
         assertThat(UserAgents.tryParsePrimaryName("\tserviceA/1.2.3")).isEqualTo("serviceA");
+        assertThat(UserAgents.tryParsePrimaryName("&/1.2.3")).isEqualTo("unknown");
 
         // tryParsePrimaryName explicitly tries to avoid doing extra work like parsing a version string, which
         // relies on a regex match that could be expensive (and we're not interested in it anyway)

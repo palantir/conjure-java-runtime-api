@@ -115,6 +115,10 @@ public final class UserAgents {
         }
         // lindex points to the first invalid character encountered walking backwards, which we want to exclude
         ++lindex;
+        if (lindex == split) {
+            // empty substring
+            return "unknown";
+        }
         // the first character must match isAlpha()
         if (!isAlpha(userAgent.charAt(lindex))) {
             return "unknown";
