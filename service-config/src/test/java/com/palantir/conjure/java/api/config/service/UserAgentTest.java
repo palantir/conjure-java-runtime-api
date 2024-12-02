@@ -190,10 +190,42 @@ public class UserAgentTest {
         assertThat(UserAgents.format(UserAgents.tryParse(""))).isEqualTo("unknown/0.0.0");
         assertThat(UserAgents.format(UserAgents.tryParse("serviceA|1.2.3"))).isEqualTo("unknown/0.0.0");
         assertThat(UserAgents.format(UserAgents.tryParse("foo serviceA/1.2.3"))).isEqualTo("serviceA/1.2.3");
+        assertThat(UserAgents.format(UserAgents.tryParse("foo&serviceA/1.2.3"))).isEqualTo("serviceA/1.2.3");
 
         // Omits malformed informational agents
         assertThat(UserAgents.format(UserAgents.tryParse("serviceA/1.2.3 bogus|1.2.3 foo bar (boom)")))
                 .isEqualTo("serviceA/1.2.3");
+    }
+
+    @Test
+    public void tryParsePrimaryName_ignoresExtraStuff() {
+        assertThat(UserAgents.tryParsePrimaryName("serviceA/1.2.3")).isEqualTo("serviceA");
+        assertThat(UserAgents.tryParsePrimaryName("serviceA/1.2.3 (foobar)")).isEqualTo("serviceA");
+        assertThat(UserAgents.tryParsePrimaryName("serviceA/1.2.3 serviceB/4.5.6 (foobar fizz buzz"))
+                .isEqualTo("serviceA");
+    }
+
+    @Test
+    public void tryParserPrimaryName_parsesWithBestEffort() {
+        assertThat(UserAgents.tryParsePrimaryName(null)).isEqualTo("unknown");
+        assertThat(UserAgents.tryParsePrimaryName("")).isEqualTo("unknown");
+        assertThat(UserAgents.tryParsePrimaryName("a")).isEqualTo("unknown");
+
+        assertThat(UserAgents.tryParsePrimaryName("serviceA|1.2.3")).isEqualTo("unknown");
+        assertThat(UserAgents.tryParsePrimaryName("foo serviceA/1.2.3")).isEqualTo("serviceA");
+        assertThat(UserAgents.tryParsePrimaryName("foo&serviceA/1.2.3")).isEqualTo("serviceA");
+        assertThat(UserAgents.tryParsePrimaryName("serviceA/1.2.3 bogus|1.2.3 foo bar (boom)"))
+                .isEqualTo("serviceA");
+        assertThat(UserAgents.tryParsePrimaryName("foo bar baz serviceA/1.2.3 (some stuff)"))
+                .isEqualTo("serviceA");
+        assertThat(UserAgents.tryParsePrimaryName(" serviceA/1.2.3")).isEqualTo("serviceA");
+        assertThat(UserAgents.tryParsePrimaryName("\tserviceA/1.2.3")).isEqualTo("serviceA");
+
+        // tryParsePrimaryName explicitly tries to avoid doing extra work like parsing a version string, which
+        // relies on a regex match that could be expensive (and we're not interested in it anyway)
+        // this means calls can sometimes have unintended behavior for a user-agent string that's not well formed,
+        // but that's probably okay for most use cases
+        assertThat(UserAgents.tryParsePrimaryName("foo/")).isEqualTo("foo");
     }
 
     @Test
