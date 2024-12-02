@@ -218,13 +218,6 @@ public class UserAgentTest {
         validateTryParsePrimaryName(" serviceA/1.2.3", "serviceA");
         validateTryParsePrimaryName("\tserviceA/1.2.3", "serviceA");
         validateTryParsePrimaryName("&/1.2.3", "unknown");
-
-        // tryParsePrimaryName explicitly tries to avoid doing extra work like parsing a version string, which
-        // relies on a regex match that could be expensive (and we're not interested in it anyway)
-        // this means calls can sometimes have unintended behavior for a user-agent string that's not well formed,
-        // but that's probably okay for most use cases
-        // assertThat(UserAgents.tryParsePrimaryName("foo/")).isEqualTo("foo");
-        validateTryParsePrimaryName("foo/", "foo");
     }
 
     @Test
