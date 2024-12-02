@@ -98,11 +98,7 @@ public final class UserAgents {
             return "unknown";
         }
         int split = userAgent.indexOf('/');
-        if (split < 0) {
-            return "unknown";
-        }
-        String primaryName = userAgent.substring(0, split);
-        if (primaryName.isEmpty()) {
+        if (split <= 0) {
             return "unknown";
         }
         // the regex-based logic will only match on blocks of the form "foo/1.2.3 (some extra stuff)", where the name
@@ -110,22 +106,22 @@ public final class UserAgents {
         // it will possibly ignore leading characters (even non-whitespace) up until the "foo/1.2.3" part
         // so we further split primaryName into _just_ the set of characters immediately preceding
         // the "/" for which isValidCharForName() returns true.
-        int lindex = primaryName.length() - 1;
+        int lindex = split - 1;
         while (lindex >= 0) {
-            if (!isValidCharForName(primaryName.charAt(lindex))) {
+            if (!isValidCharForName(userAgent.charAt(lindex))) {
                 break;
             }
             --lindex;
         }
         // lindex points to the first invalid character encountered walking backwards, which we want to exclude
-        primaryName = primaryName.substring(lindex + 1);
+        ++lindex;
         // the first character must match isAlpha()
-        if (!isAlpha(primaryName.charAt(0))) {
+        if (!isAlpha(userAgent.charAt(lindex))) {
             return "unknown";
         }
         // we can avoid an extra call to isValidName() now, since we have validated that the first character matches
         // isAlpha(), and every character thereafter matches isValidCharForName()
-        return primaryName;
+        return userAgent.substring(lindex, split);
     }
 
     private static UserAgent parseInternal(String userAgent, boolean lenient) {
