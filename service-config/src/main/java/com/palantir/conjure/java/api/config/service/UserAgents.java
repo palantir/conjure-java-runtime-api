@@ -119,9 +119,12 @@ public final class UserAgents {
         }
         // lindex points to the first invalid character encountered walking backwards, which we want to exclude
         primaryName = primaryName.substring(lindex + 1);
-        if (!isValidName(primaryName)) {
+        // the first character must match isAlpha()
+        if (!isAlpha(primaryName.charAt(0))) {
             return "unknown";
         }
+        // we can avoid an extra call to isValidName() now, since we have validated that the first character matches
+        // isAlpha(), and every character thereafter matches isValidCharForName()
         return primaryName;
     }
 
