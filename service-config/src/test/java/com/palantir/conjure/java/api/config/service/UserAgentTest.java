@@ -190,10 +190,55 @@ public class UserAgentTest {
         assertThat(UserAgents.format(UserAgents.tryParse(""))).isEqualTo("unknown/0.0.0");
         assertThat(UserAgents.format(UserAgents.tryParse("serviceA|1.2.3"))).isEqualTo("unknown/0.0.0");
         assertThat(UserAgents.format(UserAgents.tryParse("foo serviceA/1.2.3"))).isEqualTo("serviceA/1.2.3");
+        assertThat(UserAgents.format(UserAgents.tryParse("foo&serviceA/1.2.3"))).isEqualTo("serviceA/1.2.3");
 
         // Omits malformed informational agents
         assertThat(UserAgents.format(UserAgents.tryParse("serviceA/1.2.3 bogus|1.2.3 foo bar (boom)")))
                 .isEqualTo("serviceA/1.2.3");
+    }
+
+    @Test
+    public void tryParsePrimaryName_ignoresExtraStuff() {
+        validateTryParsePrimaryName("serviceA/1.2.3", "serviceA");
+        validateTryParsePrimaryName("serviceA/1.2.3", "serviceA");
+        validateTryParsePrimaryName("serviceA/1.2.3 (foobar)", "serviceA");
+        validateTryParsePrimaryName("serviceA/1.2.3 serviceB/4.5.6 (foobar fizz buzz", "serviceA");
+    }
+
+    @Test
+    public void tryParserPrimaryName_parsesWithBestEffort() {
+        validateTryParsePrimaryName(null, "unknown");
+        validateTryParsePrimaryName("", "unknown");
+        validateTryParsePrimaryName("a", "unknown");
+        validateTryParsePrimaryName("serviceA|1.2.3", "unknown");
+        validateTryParsePrimaryName("foo serviceA/1.2.3", "serviceA");
+        validateTryParsePrimaryName("foo&serviceA/1.2.3", "serviceA");
+        validateTryParsePrimaryName("serviceA/1.2.3 bogus|1.2.3 foo bar (boom)", "serviceA");
+        validateTryParsePrimaryName("foo bar baz serviceA/1.2.3 (some stuff)", "serviceA");
+        validateTryParsePrimaryName(" serviceA/1.2.3", "serviceA");
+        validateTryParsePrimaryName("\tserviceA/1.2.3", "serviceA");
+        validateTryParsePrimaryName("&/1.2.3", "unknown");
+    }
+
+    @Test
+    public void tryParsePrimaryName_stillParsesOnInvalidUserAgentString() {
+        // tryParsePrimaryName explicitly tries to avoid doing extra work like parsing a version string, which
+        // relies on a regex match that could be expensive (and we're not interested in it anyway)
+        // this means calls can sometimes have unintended behavior for a user-agent string that's not well formed,
+        // but that's probably okay for most use cases.
+
+        // note that this is distinct from calling UserAgents.tryParse("foo/").primary().name(), which would return
+        // "unknown"
+        assertThat(UserAgents.tryParsePrimaryName("foo/")).isEqualTo("foo");
+    }
+
+    // validates that UserAgents.tryParsePrimaryName both:
+    //    - matches the expected primary name output
+    //    - matches the output of UserAgents.tryParse(input).primary().name()
+    private static void validateTryParsePrimaryName(String userAgent, String expectedResult) {
+        assertThat(UserAgents.tryParsePrimaryName(userAgent)).isEqualTo(expectedResult);
+        assertThat(UserAgents.tryParsePrimaryName(userAgent))
+                .isEqualTo(UserAgents.tryParse(userAgent).primary().name());
     }
 
     @Test

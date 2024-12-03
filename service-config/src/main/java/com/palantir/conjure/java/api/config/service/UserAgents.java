@@ -86,6 +86,48 @@ public final class UserAgents {
         return parseInternal(userAgent == null ? "" : userAgent, true /* lenient */);
     }
 
+    /**
+     * Parse and return only the `name` component of the primary user-agent string, or "unknown" if no valid primary
+     * agent name can be parsed.
+     *
+     * This is functionally similar to calling `tryParse(userAgent).primary().name()`, but optimized to not use
+     * regular expressions.
+     */
+    public static String tryParsePrimaryName(String userAgent) {
+        if (userAgent == null) {
+            return "unknown";
+        }
+        int split = userAgent.indexOf('/');
+        if (split <= 0) {
+            return "unknown";
+        }
+        // the regex-based logic will only match on blocks of the form "foo/1.2.3 (some extra stuff)", where the name
+        // component "foo" must match NAME_REGEX (or return true from isValidName()). this means that
+        // it will possibly ignore leading characters (even non-whitespace) up until the "foo/1.2.3" part
+        // so we further split primaryName into _just_ the set of characters immediately preceding
+        // the "/" for which isValidCharForName() returns true.
+        int lindex = split - 1;
+        while (lindex >= 0) {
+            if (!isValidCharForName(userAgent.charAt(lindex))) {
+                break;
+            }
+            --lindex;
+        }
+        // lindex points to the first invalid character encountered walking backwards, which we want to exclude
+        ++lindex;
+        if (lindex == split) {
+            // empty substring
+            return "unknown";
+        }
+        // the first character must match isAlpha()
+        if (!isAlpha(userAgent.charAt(lindex))) {
+            return "unknown";
+        }
+        // we can avoid an extra call to isValidName() now, since we have validated that the first character matches
+        // isAlpha(), and every character thereafter matches isValidCharForName()
+        return userAgent.substring(lindex, split);
+    }
+
     private static UserAgent parseInternal(String userAgent, boolean lenient) {
         ImmutableUserAgent.Builder builder = ImmutableUserAgent.builder();
 
@@ -157,12 +199,16 @@ public final class UserAgents {
 
         for (int i = 1; i < name.length(); i++) {
             ch = name.charAt(i);
-            if (!isAlpha(ch) && !isNumeric(ch) && ch != '-') {
+            if (!isValidCharForName(ch)) {
                 return false;
             }
         }
 
         return true;
+    }
+
+    private static boolean isValidCharForName(char ch) {
+        return isAlpha(ch) || isNumeric(ch) || ch == '-';
     }
 
     private static boolean isAlpha(char ch) {
