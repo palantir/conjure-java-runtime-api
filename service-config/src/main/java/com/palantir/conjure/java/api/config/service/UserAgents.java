@@ -16,6 +16,8 @@
 
 package com.palantir.conjure.java.api.config.service;
 
+import com.google.common.base.CharMatcher;
+import com.google.common.base.Splitter;
 import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
@@ -40,9 +42,11 @@ public final class UserAgents {
     private static final Pattern LENIENT_VERSION_REGEX = Pattern.compile("[0-9a-z.-]+");
     private static final Pattern NODE_REGEX = Pattern.compile("[a-zA-Z0-9][a-zA-Z0-9.\\-]*");
     private static final Pattern VERSION_REGEX =
-            Pattern.compile("^[0-9]+(\\.[0-9]+)*(-rc[0-9]+)?(-[0-9]+-g[a-f0-9]+)?$");
+            Pattern.compile("^[0-9]+(?:\\.[0-9]+)*(?:-rc[0-9]+)?(?:-[0-9]+-g[a-f0-9]+)?$");
     private static final Pattern SEGMENT_PATTERN =
             Pattern.compile(String.format("(%s)/(%s)( \\((.+?)\\))?", NAME_REGEX, LENIENT_VERSION_REGEX));
+    private static final Splitter COMMA_OR_SEMICOLON_SPLITTER =
+            Splitter.on(CharMatcher.anyOf(",;").precomputed()).trimResults().omitEmptyStrings();
 
     private UserAgents() {}
 
@@ -175,7 +179,7 @@ public final class UserAgents {
 
     private static Map<String, String> parseComments(String commentsString) {
         Map<String, String> comments = new HashMap<>();
-        for (String comment : commentsString.split("[,;]")) {
+        for (String comment : COMMA_OR_SEMICOLON_SPLITTER.split(commentsString)) {
             String[] fields = comment.split(":");
             if (fields.length == 2) {
                 comments.put(fields[0], fields[1]);
