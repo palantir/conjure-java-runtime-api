@@ -45,10 +45,8 @@ public final class UserAgents {
             Pattern.compile("^[0-9]+(?:\\.[0-9]+)*(?:-rc[0-9]+)?(?:-[0-9]+-g[a-f0-9]+)?$");
     private static final Pattern SEGMENT_PATTERN =
             Pattern.compile(String.format("(%s)/(%s)( \\((.+?)\\))?", NAME_REGEX, LENIENT_VERSION_REGEX));
-    private static final Splitter COMMA_OR_SEMICOLON_SPLITTER = Splitter.on(
-                    CharMatcher.anyOf(",;").precomputed())
-            .omitEmptyStrings()
-            .trimResults();
+    private static final Splitter COMMA_OR_SEMICOLON_SPLITTER =
+            Splitter.on(CharMatcher.anyOf(",;").precomputed()).trimResults().omitEmptyStrings();
 
     private UserAgents() {}
 
