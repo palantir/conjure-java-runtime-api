@@ -44,6 +44,11 @@ public interface UserAgent {
      */
     List<Agent> informational();
 
+    @Value.Lazy
+    default String formatted() {
+        return UserAgents.format(this);
+    }
+
     /** Creates a new {@link UserAgent} with the given {@link #primary} agent and originating node id. */
     static UserAgent of(Agent agent, String nodeId) {
         return ImmutableUserAgent.builder().nodeId(nodeId).primary(agent).build();

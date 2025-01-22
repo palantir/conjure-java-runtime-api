@@ -48,19 +48,25 @@ public class UserAgentTest {
     @Test
     public void testCorrectHeaderFormatWithNodeId() {
         UserAgent baseUserAgent = UserAgent.of(UserAgent.Agent.of("service", "1.0.0"), "myNode");
-        assertThat(UserAgents.format(baseUserAgent)).isEqualTo("service/1.0.0 (nodeId:myNode)");
+        assertThat(UserAgents.format(baseUserAgent))
+                .isEqualTo("service/1.0.0 (nodeId:myNode)")
+                .isEqualTo(baseUserAgent.formatted());
 
         UserAgent derivedAgent = baseUserAgent.addAgent(UserAgent.Agent.of("conjure", "2.0.0"));
-        assertThat(UserAgents.format(derivedAgent)).isEqualTo("service/1.0.0 (nodeId:myNode) conjure/2.0.0");
+        assertThat(UserAgents.format(derivedAgent))
+                .isEqualTo("service/1.0.0 (nodeId:myNode) conjure/2.0.0")
+                .isEqualTo(derivedAgent.formatted());
     }
 
     @Test
     public void testCorrectHeaderFormatWithoutNodeId() {
         UserAgent baseUserAgent = UserAgent.of(UserAgent.Agent.of("service", "1.0.0"));
-        assertThat(UserAgents.format(baseUserAgent)).isEqualTo("service/1.0.0");
+        assertThat(UserAgents.format(baseUserAgent)).isEqualTo("service/1.0.0").isEqualTo(baseUserAgent.formatted());
 
         UserAgent derivedAgent = baseUserAgent.addAgent(UserAgent.Agent.of("conjure", "2.0.0"));
-        assertThat(UserAgents.format(derivedAgent)).isEqualTo("service/1.0.0 conjure/2.0.0");
+        assertThat(UserAgents.format(derivedAgent))
+                .isEqualTo("service/1.0.0 conjure/2.0.0")
+                .isEqualTo(derivedAgent.formatted());
     }
 
     @Test
@@ -71,8 +77,12 @@ public class UserAgentTest {
         assertThat(first).satisfies(agent -> {
             assertThat(agent.primary()).isEqualTo(baseUserAgent.primary());
             assertThat(agent.informational()).hasSize(2).containsExactlyElementsOf(info);
-            assertThat(UserAgents.format(agent)).isEqualTo("service/1.0.0 conjure/1.2.3 jdk/17.0.4.1");
-            assertThat(UserAgents.parse(UserAgents.format(agent))).isEqualTo(agent);
+            assertThat(UserAgents.format(agent))
+                    .isEqualTo("service/1.0.0 conjure/1.2.3 jdk/17.0.4.1")
+                    .isEqualTo(agent.formatted());
+            assertThat(UserAgents.parse(UserAgents.format(agent)))
+                    .isEqualTo(agent)
+                    .isEqualTo(UserAgents.parse(agent.formatted()));
             assertThat(UserAgent.of(agent, ImmutableList.of())).isEqualTo(agent);
         });
 
@@ -80,8 +90,12 @@ public class UserAgentTest {
         assertThat(UserAgent.of(first, moreInfo)).satisfies(agent -> {
             assertThat(agent.primary()).isEqualTo(baseUserAgent.primary());
             assertThat(agent.informational()).hasSize(3).containsExactlyElementsOf(Iterables.concat(info, moreInfo));
-            assertThat(UserAgents.format(agent)).isEqualTo("service/1.0.0 conjure/1.2.3 jdk/17.0.4.1 test/4.5.6");
-            assertThat(UserAgents.parse(UserAgents.format(agent))).isEqualTo(agent);
+            assertThat(UserAgents.format(agent))
+                    .isEqualTo("service/1.0.0 conjure/1.2.3 jdk/17.0.4.1 test/4.5.6")
+                    .isEqualTo(agent.formatted());
+            assertThat(UserAgents.parse(UserAgents.format(agent)))
+                    .isEqualTo(agent)
+                    .isEqualTo(UserAgents.parse(agent.formatted()));
             assertThat(UserAgent.of(agent, ImmutableList.of())).isEqualTo(agent);
         });
     }
@@ -119,9 +133,11 @@ public class UserAgentTest {
             "service/10.20.30",
             "service/10.20.30 (nodeId:myNode)",
         }) {
-            assertThat(UserAgents.format(UserAgents.parse(agent)))
+            UserAgent userAgent = UserAgents.parse(agent);
+            assertThat(UserAgents.format(userAgent))
                     .withFailMessage(agent)
-                    .isEqualTo(agent);
+                    .isEqualTo(agent)
+                    .isEqualTo(userAgent.formatted());
         }
 
         // Formatting ignores non-nodeId comments
@@ -151,9 +167,11 @@ public class UserAgentTest {
         // Valid strings
         for (String agent :
                 new String[] {"serviceA/1.2.3 serviceB/4.5.6", "serviceB/1.2.3 (nodeId:myNode) serviceB/4.5.6"}) {
-            assertThat(UserAgents.format(UserAgents.parse(agent)))
+            UserAgent userAgent = UserAgents.parse(agent);
+            assertThat(UserAgents.format(userAgent))
                     .withFailMessage(agent)
-                    .isEqualTo(agent);
+                    .isEqualTo(agent)
+                    .isEqualTo(UserAgents.parse(userAgent.formatted()).formatted());
         }
 
         // nodeId on informational agents is omitted
@@ -170,8 +188,12 @@ public class UserAgentTest {
         String chrome = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) "
                 + "Chrome/61.0.3163.100 Safari/537.36";
         String expected = "Mozilla/5.0 AppleWebKit/537.36 Chrome/61.0.3163.100 Safari/537.36";
-        assertThat(UserAgents.format(UserAgents.tryParse(chrome))).isEqualTo(expected);
-        assertThat(UserAgents.format(UserAgents.parse(chrome))).isEqualTo(expected);
+        assertThat(UserAgents.format(UserAgents.tryParse(chrome)))
+                .isEqualTo(expected)
+                .isEqualTo(UserAgents.tryParse(chrome).formatted());
+        assertThat(UserAgents.format(UserAgents.parse(chrome)))
+                .isEqualTo(expected)
+                .isEqualTo(UserAgents.parse(chrome).formatted());
     }
 
     @Test
@@ -179,8 +201,12 @@ public class UserAgentTest {
         String chrome =
                 "Mozilla/5.0 ( ) AppleWebKit/537.36 (KHTML, like Gecko) " + "Chrome/61.0.3163.100 Safari/537.36";
         String expected = "Mozilla/5.0 AppleWebKit/537.36 Chrome/61.0.3163.100 Safari/537.36";
-        assertThat(UserAgents.format(UserAgents.tryParse(chrome))).isEqualTo(expected);
-        assertThat(UserAgents.format(UserAgents.parse(chrome))).isEqualTo(expected);
+        assertThat(UserAgents.format(UserAgents.tryParse(chrome)))
+                .isEqualTo(expected)
+                .isEqualTo(UserAgents.tryParse(chrome).formatted());
+        assertThat(UserAgents.format(UserAgents.parse(chrome)))
+                .isEqualTo(expected)
+                .isEqualTo(UserAgents.parse(chrome).formatted());
     }
 
     @Test
@@ -209,6 +235,10 @@ public class UserAgentTest {
     public void tryParserPrimaryName_parsesWithBestEffort() {
         validateTryParsePrimaryName(null, "unknown");
         validateTryParsePrimaryName("", "unknown");
+        validateTryParsePrimaryName("/", "unknown");
+        validateTryParsePrimaryName("/ ", "unknown");
+        validateTryParsePrimaryName(" /", "unknown");
+        validateTryParsePrimaryName(" / ", "unknown");
         validateTryParsePrimaryName("a", "unknown");
         validateTryParsePrimaryName("serviceA|1.2.3", "unknown");
         validateTryParsePrimaryName("foo serviceA/1.2.3", "serviceA");
