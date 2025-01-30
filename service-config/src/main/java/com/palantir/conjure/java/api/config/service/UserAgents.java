@@ -23,8 +23,7 @@ import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import com.palantir.logsafe.logger.SafeLogger;
 import com.palantir.logsafe.logger.SafeLoggerFactory;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,6 +46,11 @@ public final class UserAgents {
             Pattern.compile(String.format("(%s)/(%s)( \\((.+?)\\))?", NAME_REGEX, LENIENT_VERSION_REGEX));
     private static final Splitter COMMA_OR_SEMICOLON_SPLITTER =
             Splitter.on(CharMatcher.anyOf(",;").precomputed()).trimResults().omitEmptyStrings();
+    private static final CharMatcher COMMENT_VALID_CHARS = CharMatcher.inRange('a', 'z')
+            .or(CharMatcher.inRange('A', 'Z'))
+            .or(CharMatcher.inRange('0', '9'))
+            .or(CharMatcher.anyOf(".-:_/ "))
+            .precomputed();
 
     private UserAgents() {}
 
@@ -54,8 +58,16 @@ public final class UserAgents {
     public static String format(UserAgent userAgent) {
         StringBuilder formatted = new StringBuilder(64); // preallocate larger buffer for longer agents
         formatSimpleAgent(userAgent.primary(), formatted);
-        if (userAgent.nodeId().isPresent()) {
-            formatted.append(" (nodeId:").append(userAgent.nodeId().get()).append(')');
+        List<String> comments = userAgent.comments();
+        if (!comments.isEmpty()) {
+            formatted.append(" (");
+            for (int i = 0; i < comments.size(); i++) {
+                if (i > 0) {
+                    formatted.append("; ");
+                }
+                formatted.append(comments.get(i));
+            }
+            formatted.append(')');
         }
         for (UserAgent.Agent informationalAgent : userAgent.informational()) {
             formatted.append(' ');
@@ -146,10 +158,8 @@ public final class UserAgents {
                 // primary
                 builder.primary(UserAgent.Agent.of(name, version));
                 comments.ifPresent(c -> {
-                    Map<String, String> parsedComments = parseComments(c);
-                    if (parsedComments.containsKey("nodeId")) {
-                        builder.nodeId(parsedComments.get("nodeId"));
-                    }
+                    List<String> parsedComments = parseComments(c);
+                    builder.addAllComments(parsedComments);
                 });
             } else {
                 // informational
@@ -177,17 +187,46 @@ public final class UserAgents {
         return builder.build();
     }
 
-    private static Map<String, String> parseComments(String commentsString) {
-        Map<String, String> comments = new HashMap<>();
-        for (String comment : COMMA_OR_SEMICOLON_SPLITTER.split(commentsString)) {
-            String[] fields = comment.split(":");
-            if (fields.length == 2) {
-                comments.put(fields[0], fields[1]);
-            } else {
-                comments.put(comment, comment);
+    private static List<String> parseComments(String commentsString) {
+        List<String> results = COMMA_OR_SEMICOLON_SPLITTER.splitToList(commentsString);
+        for (int i = 0; i < results.size(); ++i) {
+            // In most cases, all comments will be valid, so we avoid stream overhead.
+            if (!isValidComment(results.get(i))) {
+                return results.stream().filter(UserAgents::isValidComment).toList();
             }
         }
-        return comments;
+        return results;
+    }
+
+    static void checkComment(String comment) {
+        if (comment == null) {
+            throw new SafeIllegalArgumentException("Comment must not be null");
+        }
+        if (comment.isEmpty()) {
+            throw new SafeIllegalArgumentException("Comment must not be empty");
+        }
+        if (comment.startsWith(" ")) {
+            throw new SafeIllegalArgumentException(
+                    "Comment must not start with whitespace", SafeArg.of("comment", comment));
+        }
+        if (comment.endsWith(" ")) {
+            throw new SafeIllegalArgumentException(
+                    "Comment must not end with whitespace", SafeArg.of("comment", comment));
+        }
+        if (!COMMENT_VALID_CHARS.matchesAllOf(comment)) {
+            throw new SafeIllegalArgumentException(
+                    "Comment contains disallowed characters",
+                    SafeArg.of("allowed", "a-zA-Z0-9.-:_/ "),
+                    SafeArg.of("comment", comment));
+        }
+    }
+
+    static boolean isValidComment(String comment) {
+        return comment != null
+                && !comment.isEmpty()
+                && !comment.startsWith(" ")
+                && !comment.endsWith(" ")
+                && COMMENT_VALID_CHARS.matchesAllOf(comment);
     }
 
     static boolean isValidName(String name) {

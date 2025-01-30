@@ -18,6 +18,7 @@ package com.palantir.conjure.java.api.config.service;
 
 import static com.palantir.logsafe.testing.Assertions.assertThatLoggableExceptionThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -119,14 +120,15 @@ public class UserAgentTest {
             "service/10.20.30",
             "service/10.20.30 (nodeId:myNode)",
         }) {
-            assertThat(UserAgents.format(UserAgents.parse(agent)))
-                    .withFailMessage(agent)
-                    .isEqualTo(agent);
+            assertThat(UserAgents.format(UserAgents.parse(agent))).isEqualTo(agent);
         }
 
-        // Formatting ignores non-nodeId comments
+        // Formatting ignores invalid comments
+        assertThat(UserAgents.format(UserAgents.parse("service/1.2.3 (())"))).isEqualTo("service/1.2.3");
+
+        // Formatting retains valid comments
         assertThat(UserAgents.format(UserAgents.parse("service/1.2.3 (foo:bar)")))
-                .isEqualTo("service/1.2.3");
+                .isEqualTo("service/1.2.3 (foo:bar)");
 
         // Finds primary agent even when there is a prefix
         assertThat(UserAgents.format(UserAgents.parse("  service/1.2.3"))).isEqualTo("service/1.2.3");
@@ -169,7 +171,8 @@ public class UserAgentTest {
     public void parse_canParseBrowserAgent() {
         String chrome = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) "
                 + "Chrome/61.0.3163.100 Safari/537.36";
-        String expected = "Mozilla/5.0 AppleWebKit/537.36 Chrome/61.0.3163.100 Safari/537.36";
+        String expected =
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 Chrome/61.0.3163.100 Safari/537.36";
         assertThat(UserAgents.format(UserAgents.tryParse(chrome))).isEqualTo(expected);
         assertThat(UserAgents.format(UserAgents.parse(chrome))).isEqualTo(expected);
     }
@@ -261,6 +264,31 @@ public class UserAgentTest {
         assertThat("service name").satisfies(UserAgentTest::isNotValidName);
         assertThat("service.name").satisfies(UserAgentTest::isNotValidName);
         assertThat("service_name").satisfies(UserAgentTest::isNotValidName);
+    }
+
+    @Test
+    public void invalid_comment() {
+        UserAgent agent = UserAgent.of(Agent.of("name", "0.0.0"));
+        assertThatThrownBy(() -> agent.addComment(";"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Comment contains disallowed characters");
+        assertThat(UserAgents.isValidComment(";")).isFalse();
+        assertThatThrownBy(() -> agent.addComment(null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Comment must not be null");
+        assertThat(UserAgents.isValidComment(null)).isFalse();
+        assertThatThrownBy(() -> agent.addComment(""))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Comment must not be empty");
+        assertThat(UserAgents.isValidComment("")).isFalse();
+        assertThatThrownBy(() -> agent.addComment(" leading whitespace"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Comment must not start with whitespace");
+        assertThat(UserAgents.isValidComment(" leading whitespace")).isFalse();
+        assertThatThrownBy(() -> agent.addComment("trailing whitespace "))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Comment must not end with whitespace");
+        assertThat(UserAgents.isValidComment("trailing whitespace ")).isFalse();
     }
 
     private static void isValidName(String name) {

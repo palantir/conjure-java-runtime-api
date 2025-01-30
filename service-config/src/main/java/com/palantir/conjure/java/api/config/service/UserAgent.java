@@ -16,7 +16,6 @@
 
 package com.palantir.conjure.java.api.config.service;
 
-import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import java.util.List;
@@ -33,7 +32,17 @@ import org.immutables.value.Value;
 public interface UserAgent {
 
     /** Identifies the node (e.g., IP address, container identifier, etc) on which this user agent was constructed. */
-    Optional<String> nodeId();
+    @Value.Lazy
+    default Optional<String> nodeId() {
+        if (comments().isEmpty()) {
+            // fast path to avoid stream overhead
+            return Optional.empty();
+        }
+        return comments().stream()
+                .filter(item -> item.startsWith("nodeId:"))
+                .map(item -> item.substring(7).trim())
+                .findFirst();
+    }
 
     /** The primary user agent, typically the name/version of the service initiating an RPC call. */
     Agent primary();
@@ -44,9 +53,14 @@ public interface UserAgent {
      */
     List<Agent> informational();
 
+    List<String> comments();
+
     /** Creates a new {@link UserAgent} with the given {@link #primary} agent and originating node id. */
     static UserAgent of(Agent agent, String nodeId) {
-        return ImmutableUserAgent.builder().nodeId(nodeId).primary(agent).build();
+        return ImmutableUserAgent.builder()
+                .addComments("nodeId:" + nodeId)
+                .primary(agent)
+                .build();
     }
 
     /**
@@ -75,13 +89,17 @@ public interface UserAgent {
         return ImmutableUserAgent.builder().from(this).addInformational(agent).build();
     }
 
+    default UserAgent addComment(String comment) {
+        UserAgents.checkComment(comment);
+        return ImmutableUserAgent.builder().from(this).addComments(comment).build();
+    }
+
     @Value.Check
     default void check() {
         if (nodeId().isPresent()) {
-            Preconditions.checkArgument(
-                    UserAgents.isValidNodeId(nodeId().get()),
-                    "Illegal node id format",
-                    SafeArg.of("nodeId", nodeId().get()));
+            if (!UserAgents.isValidNodeId(nodeId().get())) {
+                throw new SafeIllegalArgumentException("Illegal node id format", SafeArg.of("nodeId", nodeId().get()));
+            }
         }
     }
 
