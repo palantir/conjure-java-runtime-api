@@ -16,10 +16,12 @@
 
 package com.palantir.conjure.java.api.config.service;
 
+import com.google.common.collect.ImmutableList;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.immutables.value.Value;
 
 /**
@@ -34,13 +36,14 @@ public interface UserAgent {
     /** Identifies the node (e.g., IP address, container identifier, etc) on which this user agent was constructed. */
     @Value.Lazy
     default Optional<String> nodeId() {
-        if (comments().isEmpty()) {
+        if (primary().comments().isEmpty()) {
             // fast path to avoid stream overhead
             return Optional.empty();
         }
-        return comments().stream()
+        return primary().comments().stream()
                 .filter(item -> item.startsWith("nodeId:"))
                 .map(item -> item.substring(7).trim())
+                .filter(UserAgents::isValidNodeId)
                 .findFirst();
     }
 
@@ -53,13 +56,15 @@ public interface UserAgent {
      */
     List<Agent> informational();
 
-    List<String> comments();
-
     /** Creates a new {@link UserAgent} with the given {@link #primary} agent and originating node id. */
     static UserAgent of(Agent agent, String nodeId) {
+        UserAgents.checkNodeId(nodeId);
+        List<String> comments = Stream.concat(
+                        agent.comments().stream().filter(item -> !item.startsWith("nodeId:")),
+                        Stream.of("nodeId:" + nodeId))
+                .toList();
         return ImmutableUserAgent.builder()
-                .addComments("nodeId:" + nodeId)
-                .primary(agent)
+                .primary(Agent.of(agent.name(), agent.version(), comments))
                 .build();
     }
 
@@ -89,20 +94,6 @@ public interface UserAgent {
         return ImmutableUserAgent.builder().from(this).addInformational(agent).build();
     }
 
-    default UserAgent addComment(String comment) {
-        UserAgents.checkComment(comment);
-        return ImmutableUserAgent.builder().from(this).addComments(comment).build();
-    }
-
-    @Value.Check
-    default void check() {
-        if (nodeId().isPresent()) {
-            if (!UserAgents.isValidNodeId(nodeId().get())) {
-                throw new SafeIllegalArgumentException("Illegal node id format", SafeArg.of("nodeId", nodeId().get()));
-            }
-        }
-    }
-
     /** Specifies an agent that participates (client-side) in an RPC call in terms of its name and version. */
     @Value.Immutable
     @ImmutablesStyle
@@ -112,6 +103,8 @@ public interface UserAgent {
         String name();
 
         String version();
+
+        List<String> comments();
 
         @Value.Check
         default void check() {
@@ -129,6 +122,19 @@ public interface UserAgent {
             return ImmutableAgent.builder()
                     .name(name)
                     .version(UserAgents.isValidVersion(version) ? version : DEFAULT_VERSION)
+                    .build();
+        }
+
+        static Agent of(String name, String version, Iterable<String> comments) {
+            ImmutableList<String> immutableComments = ImmutableList.copyOf(comments);
+            for (int i = 0; i < immutableComments.size(); i++) {
+                String comment = immutableComments.get(i);
+                UserAgents.checkComment(comment);
+            }
+            return ImmutableAgent.builder()
+                    .name(name)
+                    .version(UserAgents.isValidVersion(version) ? version : DEFAULT_VERSION)
+                    .comments(immutableComments)
                     .build();
         }
     }

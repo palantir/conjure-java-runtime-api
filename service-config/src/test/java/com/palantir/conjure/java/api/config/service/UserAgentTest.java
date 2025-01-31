@@ -25,7 +25,10 @@ import com.google.common.collect.Iterables;
 import com.palantir.conjure.java.api.config.service.UserAgent.Agent;
 import com.palantir.logsafe.SafeArg;
 import java.util.List;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class UserAgentTest {
 
@@ -158,9 +161,12 @@ public class UserAgentTest {
                     .isEqualTo(agent);
         }
 
-        // nodeId on informational agents is omitted
-        assertThat(UserAgents.format(UserAgents.parse("serviceA/1.2.3 serviceB/4.5.6 (nodeId:myNode)")))
-                .isEqualTo("serviceA/1.2.3 serviceB/4.5.6");
+        // nodeId on informational agents is retained
+        UserAgent nodeIdOnInformational = UserAgents.parse("serviceA/1.2.3 serviceB/4.5.6 (nodeId:myNode)");
+        assertThat(UserAgents.format(nodeIdOnInformational)).isEqualTo("serviceA/1.2.3 serviceB/4.5.6 (nodeId:myNode)");
+        assertThat(nodeIdOnInformational.nodeId())
+                .as("Only primary agents nodeId should be reported")
+                .isEmpty();
 
         // Malformed informational agents are omitted
         assertThat(UserAgents.format(UserAgents.parse("serviceA/1.2.3 serviceB|4.5.6")))
@@ -171,17 +177,18 @@ public class UserAgentTest {
     public void parse_canParseBrowserAgent() {
         String chrome = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) "
                 + "Chrome/61.0.3163.100 Safari/537.36";
-        String expected =
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 Chrome/61.0.3163.100 Safari/537.36";
+        // Note the delimiter recombination from 'KHTML, like Gecko' to 'KHTML; like Gecko' because we split on
+        // both comma and semicolon.
+        String expected = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML; like Gecko) "
+                + "Chrome/61.0.3163.100 Safari/537.36";
         assertThat(UserAgents.format(UserAgents.tryParse(chrome))).isEqualTo(expected);
         assertThat(UserAgents.format(UserAgents.parse(chrome))).isEqualTo(expected);
     }
 
     @Test
     public void parse_canParseBrowserAgentWithEmptyComment() {
-        String chrome =
-                "Mozilla/5.0 ( ) AppleWebKit/537.36 (KHTML, like Gecko) " + "Chrome/61.0.3163.100 Safari/537.36";
-        String expected = "Mozilla/5.0 AppleWebKit/537.36 Chrome/61.0.3163.100 Safari/537.36";
+        String chrome = "Mozilla/5.0 ( ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36";
+        String expected = "Mozilla/5.0 AppleWebKit/537.36 (KHTML; like Gecko) Chrome/61.0.3163.100 Safari/537.36";
         assertThat(UserAgents.format(UserAgents.tryParse(chrome))).isEqualTo(expected);
         assertThat(UserAgents.format(UserAgents.parse(chrome))).isEqualTo(expected);
     }
@@ -267,28 +274,60 @@ public class UserAgentTest {
     }
 
     @Test
-    public void invalid_comment() {
-        UserAgent agent = UserAgent.of(Agent.of("name", "0.0.0"));
-        assertThatThrownBy(() -> agent.addComment(";"))
+    public void invalid_comment_messages() {
+        assertThatThrownBy(() -> UserAgents.checkComment(";"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Comment contains disallowed characters");
         assertThat(UserAgents.isValidComment(";")).isFalse();
-        assertThatThrownBy(() -> agent.addComment(null))
+        assertThatThrownBy(() -> UserAgents.checkComment(null))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Comment must not be null");
         assertThat(UserAgents.isValidComment(null)).isFalse();
-        assertThatThrownBy(() -> agent.addComment(""))
+        assertThatThrownBy(() -> UserAgents.checkComment(""))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Comment must not be empty");
         assertThat(UserAgents.isValidComment("")).isFalse();
-        assertThatThrownBy(() -> agent.addComment(" leading whitespace"))
+        assertThatThrownBy(() -> UserAgents.checkComment(" leading whitespace"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Comment must not start with whitespace");
         assertThat(UserAgents.isValidComment(" leading whitespace")).isFalse();
-        assertThatThrownBy(() -> agent.addComment("trailing whitespace "))
+        assertThatThrownBy(() -> UserAgents.checkComment("trailing whitespace "))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Comment must not end with whitespace");
         assertThat(UserAgents.isValidComment("trailing whitespace ")).isFalse();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"nodeId:nodeId", "MyResource/ri.abc.def.ghi-jkl"})
+    public void valid_comments(String comment) {
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(UserAgents.isValidComment(comment)).isTrue();
+        softly.assertThatCode(() -> UserAgents.checkComment(comment)).doesNotThrowAnyException();
+        softly.assertAll();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {";", "", " leading", "trailing ", "(parens)"})
+    public void invalid_comments(String comment) {
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(UserAgents.isValidComment(comment)).isFalse();
+        softly.assertThatThrownBy(() -> UserAgents.checkComment(comment)).isInstanceOf(IllegalArgumentException.class);
+        softly.assertAll();
+    }
+
+    @Test
+    public void testNodeIdReplacement() {
+        UserAgent original = UserAgent.of(Agent.of("name", "0.0.0"), "nodeId1");
+        UserAgent replacement = UserAgent.of(original.primary(), "nodeId2");
+        assertThat(UserAgents.format(replacement)).isEqualTo("name/0.0.0 (nodeId:nodeId2)");
+    }
+
+    @Test
+    public void testNodeIdOnInformationalAgent() {
+        UserAgent original = UserAgent.of(Agent.of("primary", "0.0.0"), "nodeId1");
+        UserAgent updated = original.addAgent(
+                UserAgent.of(Agent.of("info", "0.0.0"), "nodeId2").primary());
+        assertThat(UserAgents.format(updated)).isEqualTo("primary/0.0.0 (nodeId:nodeId1) info/0.0.0 (nodeId:nodeId2)");
     }
 
     private static void isValidName(String name) {

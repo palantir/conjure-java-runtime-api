@@ -18,6 +18,7 @@ package com.palantir.conjure.java.api.config.service;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
 import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
@@ -58,17 +59,6 @@ public final class UserAgents {
     public static String format(UserAgent userAgent) {
         StringBuilder formatted = new StringBuilder(64); // preallocate larger buffer for longer agents
         formatSimpleAgent(userAgent.primary(), formatted);
-        List<String> comments = userAgent.comments();
-        if (!comments.isEmpty()) {
-            formatted.append(" (");
-            for (int i = 0; i < comments.size(); i++) {
-                if (i > 0) {
-                    formatted.append("; ");
-                }
-                formatted.append(comments.get(i));
-            }
-            formatted.append(')');
-        }
         for (UserAgent.Agent informationalAgent : userAgent.informational()) {
             formatted.append(' ');
             formatSimpleAgent(informationalAgent, formatted);
@@ -80,6 +70,17 @@ public final class UserAgents {
         output.ensureCapacity(
                 output.length() + 1 + agent.name().length() + agent.version().length());
         output.append(agent.name()).append('/').append(agent.version());
+        List<String> comments = agent.comments();
+        if (!comments.isEmpty()) {
+            output.append(" (");
+            for (int i = 0; i < comments.size(); i++) {
+                if (i > 0) {
+                    output.append("; ");
+                }
+                output.append(comments.get(i));
+            }
+            output.append(')');
+        }
     }
 
     /**
@@ -154,16 +155,14 @@ public final class UserAgents {
             String version = matcher.group(2);
             Optional<String> comments = Optional.ofNullable(matcher.group(4));
 
+            UserAgent.Agent agent = UserAgent.Agent.of(
+                    name, version, comments.map(UserAgents::parseComments).orElseGet(ImmutableList::of));
             if (!foundFirst) {
                 // primary
-                builder.primary(UserAgent.Agent.of(name, version));
-                comments.ifPresent(c -> {
-                    List<String> parsedComments = parseComments(c);
-                    builder.addAllComments(parsedComments);
-                });
+                builder.primary(agent);
             } else {
                 // informational
-                builder.addInformational(UserAgent.Agent.of(name, version));
+                builder.addInformational(agent);
             }
 
             foundFirst = true;
@@ -264,6 +263,12 @@ public final class UserAgents {
 
     static boolean isValidNodeId(String instanceId) {
         return NODE_REGEX.matcher(instanceId).matches();
+    }
+
+    static void checkNodeId(String instanceId) {
+        if (!isValidNodeId(instanceId)) {
+            throw new SafeIllegalArgumentException("Illegal node id format", SafeArg.of("nodeId", instanceId));
+        }
     }
 
     static boolean isValidVersion(String version) {
