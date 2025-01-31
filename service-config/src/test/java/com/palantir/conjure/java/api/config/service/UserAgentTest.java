@@ -177,9 +177,7 @@ public class UserAgentTest {
     public void parse_canParseBrowserAgent() {
         String chrome = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) "
                 + "Chrome/61.0.3163.100 Safari/537.36";
-        // Note the delimiter recombination from 'KHTML, like Gecko' to 'KHTML; like Gecko' because we split on
-        // both comma and semicolon.
-        String expected = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML; like Gecko) "
+        String expected = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) "
                 + "Chrome/61.0.3163.100 Safari/537.36";
         assertThat(UserAgents.format(UserAgents.tryParse(chrome))).isEqualTo(expected);
         assertThat(UserAgents.format(UserAgents.parse(chrome))).isEqualTo(expected);
@@ -188,7 +186,7 @@ public class UserAgentTest {
     @Test
     public void parse_canParseBrowserAgentWithEmptyComment() {
         String chrome = "Mozilla/5.0 ( ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36";
-        String expected = "Mozilla/5.0 AppleWebKit/537.36 (KHTML; like Gecko) Chrome/61.0.3163.100 Safari/537.36";
+        String expected = "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36";
         assertThat(UserAgents.format(UserAgents.tryParse(chrome))).isEqualTo(expected);
         assertThat(UserAgents.format(UserAgents.parse(chrome))).isEqualTo(expected);
     }
@@ -298,7 +296,7 @@ public class UserAgentTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"nodeId:nodeId", "MyResource/ri.abc.def.ghi-jkl"})
+    @ValueSource(strings = {"nodeId:nodeId", "MyResource/ri.abc.def.ghi-jkl", "KHTML, like Gecko"})
     public void valid_comments(String comment) {
         SoftAssertions softly = new SoftAssertions();
         softly.assertThat(UserAgents.isValidComment(comment)).isTrue();

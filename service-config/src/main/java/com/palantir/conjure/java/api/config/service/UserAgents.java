@@ -45,12 +45,12 @@ public final class UserAgents {
             Pattern.compile("^[0-9]+(?:\\.[0-9]+)*(?:-rc[0-9]+)?(?:-[0-9]+-g[a-f0-9]+)?$");
     private static final Pattern SEGMENT_PATTERN =
             Pattern.compile(String.format("(%s)/(%s)( \\((.+?)\\))?", NAME_REGEX, LENIENT_VERSION_REGEX));
-    private static final Splitter COMMA_OR_SEMICOLON_SPLITTER =
-            Splitter.on(CharMatcher.anyOf(",;").precomputed()).trimResults().omitEmptyStrings();
+    private static final Splitter SEMICOLON_SPLITTER =
+            Splitter.on(CharMatcher.is(';').precomputed()).trimResults().omitEmptyStrings();
     private static final CharMatcher COMMENT_VALID_CHARS = CharMatcher.inRange('a', 'z')
             .or(CharMatcher.inRange('A', 'Z'))
             .or(CharMatcher.inRange('0', '9'))
-            .or(CharMatcher.anyOf(".-:_/ "))
+            .or(CharMatcher.anyOf(".-:_/ ,"))
             .precomputed();
 
     private UserAgents() {}
@@ -187,7 +187,7 @@ public final class UserAgents {
     }
 
     private static List<String> parseComments(String commentsString) {
-        List<String> results = COMMA_OR_SEMICOLON_SPLITTER.splitToList(commentsString);
+        List<String> results = SEMICOLON_SPLITTER.splitToList(commentsString);
         for (int i = 0; i < results.size(); ++i) {
             // In most cases, all comments will be valid, so we avoid stream overhead.
             if (!isValidComment(results.get(i))) {
