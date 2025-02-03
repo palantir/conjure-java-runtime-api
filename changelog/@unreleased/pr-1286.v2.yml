@@ -1,0 +1,6 @@
+type: improvement
+improvement:
+  description: Conjure User-Agents supports arbitrary comment metadata, for observability
+    metadata similar to the existing `nodeId` parameter.
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/1286
