@@ -17,6 +17,7 @@
 package com.palantir.conjure.java.api.config.service;
 
 import com.google.common.collect.ImmutableList;
+import com.palantir.logsafe.Safe;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import java.util.List;
@@ -35,7 +36,7 @@ public interface UserAgent {
 
     /** Identifies the node (e.g., IP address, container identifier, etc) on which this user agent was constructed. */
     @Value.Lazy
-    default Optional<String> nodeId() {
+    default Optional<@Safe String> nodeId() {
         if (primary().comments().isEmpty()) {
             // fast path to avoid stream overhead
             return Optional.empty();
@@ -57,7 +58,7 @@ public interface UserAgent {
     List<Agent> informational();
 
     /** Creates a new {@link UserAgent} with the given {@link #primary} agent and originating node id. */
-    static UserAgent of(Agent agent, String nodeId) {
+    static UserAgent of(Agent agent, @Safe String nodeId) {
         UserAgents.checkNodeId(nodeId);
         List<String> comments = Stream.concat(
                         agent.comments().stream().filter(item -> !item.startsWith("nodeId:")),
@@ -97,14 +98,24 @@ public interface UserAgent {
     /** Specifies an agent that participates (client-side) in an RPC call in terms of its name and version. */
     @Value.Immutable
     @ImmutablesStyle
+    @Safe
     interface Agent {
         String DEFAULT_VERSION = "0.0.0";
 
+        @Safe
         String name();
 
+        @Safe
         String version();
 
-        List<String> comments();
+        /**
+         * <a href="https://datatracker.ietf.org/doc/html/rfc7231#section-5.5.3>rfc7231 section-5.5.3</a> comment
+         * metadata (as described by
+         * <a href="https://datatracker.ietf.org/doc/html/rfc7230#section-3.2.6">rfc7230 section-3.2.6</a>)
+         * for additional diagnostic information. Note that this library provides a much stricter set of allowed
+         * characters within comments than the linked RFCs to reduce complexity.
+         */
+        List<@Safe String> comments();
 
         @Value.Check
         default void check() {
@@ -118,14 +129,14 @@ public interface UserAgent {
             }
         }
 
-        static Agent of(String name, String version) {
+        static Agent of(@Safe String name, @Safe String version) {
             return ImmutableAgent.builder()
                     .name(name)
                     .version(UserAgents.isValidVersion(version) ? version : DEFAULT_VERSION)
                     .build();
         }
 
-        static Agent of(String name, String version, Iterable<String> comments) {
+        static Agent of(@Safe String name, @Safe String version, @Safe Iterable<@Safe String> comments) {
             ImmutableList<String> immutableComments = ImmutableList.copyOf(comments);
             for (int i = 0; i < immutableComments.size(); i++) {
                 String comment = immutableComments.get(i);

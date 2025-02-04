@@ -20,6 +20,7 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.palantir.logsafe.Preconditions;
+import com.palantir.logsafe.Safe;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import com.palantir.logsafe.logger.SafeLogger;
@@ -56,7 +57,8 @@ public final class UserAgents {
     private UserAgents() {}
 
     /** Returns the canonical string format for the given {@link UserAgent}. */
-    public static String format(UserAgent userAgent) {
+    @Safe
+    public static String format(@Safe UserAgent userAgent) {
         StringBuilder formatted = new StringBuilder(64); // preallocate larger buffer for longer agents
         formatSimpleAgent(userAgent.primary(), formatted);
         for (UserAgent.Agent informationalAgent : userAgent.informational()) {
@@ -89,7 +91,7 @@ public final class UserAgents {
      *
      * <p>Valid user agent strings loosely follow RFC 7230 (https://tools.ietf.org/html/rfc7230#section-3.2.6).
      */
-    public static UserAgent parse(String userAgent) {
+    public static UserAgent parse(@Safe String userAgent) {
         Preconditions.checkNotNull(userAgent, "userAgent must not be null");
         return parseInternal(userAgent, false /* strict */);
     }
@@ -98,7 +100,7 @@ public final class UserAgents {
      * Like {@link #parse}, but never fails and returns the primary agent {@code unknown/0.0.0} if no valid primary
      * agent can be parsed.
      */
-    public static UserAgent tryParse(String userAgent) {
+    public static UserAgent tryParse(@Safe String userAgent) {
 
         return parseInternal(userAgent == null ? "" : userAgent, true /* lenient */);
     }
@@ -110,7 +112,7 @@ public final class UserAgents {
      * This is functionally similar to calling `tryParse(userAgent).primary().name()`, but optimized to not use
      * regular expressions.
      */
-    public static String tryParsePrimaryName(String userAgent) {
+    public static String tryParsePrimaryName(@Safe String userAgent) {
         if (userAgent == null) {
             return "unknown";
         }
@@ -145,7 +147,7 @@ public final class UserAgents {
         return userAgent.substring(lindex, split);
     }
 
-    private static UserAgent parseInternal(String userAgent, boolean lenient) {
+    private static UserAgent parseInternal(@Safe String userAgent, boolean lenient) {
         ImmutableUserAgent.Builder builder = ImmutableUserAgent.builder();
 
         Matcher matcher = SEGMENT_PATTERN.matcher(userAgent);
@@ -197,7 +199,7 @@ public final class UserAgents {
         return results;
     }
 
-    static void checkComment(String comment) {
+    static void checkComment(@Safe String comment) {
         if (comment == null) {
             throw new SafeIllegalArgumentException("Comment must not be null");
         }
@@ -220,7 +222,7 @@ public final class UserAgents {
         }
     }
 
-    static boolean isValidComment(String comment) {
+    static boolean isValidComment(@Safe String comment) {
         return comment != null
                 && !comment.isEmpty()
                 && !comment.startsWith(" ")
@@ -265,13 +267,13 @@ public final class UserAgents {
         return NODE_REGEX.matcher(instanceId).matches();
     }
 
-    static void checkNodeId(String instanceId) {
+    static void checkNodeId(@Safe String instanceId) {
         if (!isValidNodeId(instanceId)) {
             throw new SafeIllegalArgumentException("Illegal node id format", SafeArg.of("nodeId", instanceId));
         }
     }
 
-    static boolean isValidVersion(String version) {
+    static boolean isValidVersion(@Safe String version) {
         if (VersionParser.countNumericDotGroups(version) >= 2 // fast path for numeric & dot only version numbers
                 || versionMatchesRegex(version)) {
             return true;
