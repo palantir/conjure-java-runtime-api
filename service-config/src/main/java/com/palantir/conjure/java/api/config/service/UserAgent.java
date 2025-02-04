@@ -16,11 +16,13 @@
 
 package com.palantir.conjure.java.api.config.service;
 
-import com.palantir.logsafe.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.palantir.logsafe.Safe;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.immutables.value.Value;
 
 /**
@@ -33,7 +35,18 @@ import org.immutables.value.Value;
 public interface UserAgent {
 
     /** Identifies the node (e.g., IP address, container identifier, etc) on which this user agent was constructed. */
-    Optional<String> nodeId();
+    @Value.Lazy
+    default Optional<@Safe String> nodeId() {
+        if (primary().comments().isEmpty()) {
+            // fast path to avoid stream overhead
+            return Optional.empty();
+        }
+        return primary().comments().stream()
+                .filter(item -> item.startsWith("nodeId:"))
+                .map(item -> item.substring(7).trim())
+                .filter(UserAgents::isValidNodeId)
+                .findFirst();
+    }
 
     /** The primary user agent, typically the name/version of the service initiating an RPC call. */
     Agent primary();
@@ -45,8 +58,15 @@ public interface UserAgent {
     List<Agent> informational();
 
     /** Creates a new {@link UserAgent} with the given {@link #primary} agent and originating node id. */
-    static UserAgent of(Agent agent, String nodeId) {
-        return ImmutableUserAgent.builder().nodeId(nodeId).primary(agent).build();
+    static UserAgent of(Agent agent, @Safe String nodeId) {
+        UserAgents.checkNodeId(nodeId);
+        List<String> comments = Stream.concat(
+                        agent.comments().stream().filter(item -> !item.startsWith("nodeId:")),
+                        Stream.of("nodeId:" + nodeId))
+                .toList();
+        return ImmutableUserAgent.builder()
+                .primary(Agent.of(agent.name(), agent.version(), comments))
+                .build();
     }
 
     /**
@@ -75,25 +95,27 @@ public interface UserAgent {
         return ImmutableUserAgent.builder().from(this).addInformational(agent).build();
     }
 
-    @Value.Check
-    default void check() {
-        if (nodeId().isPresent()) {
-            Preconditions.checkArgument(
-                    UserAgents.isValidNodeId(nodeId().get()),
-                    "Illegal node id format",
-                    SafeArg.of("nodeId", nodeId().get()));
-        }
-    }
-
     /** Specifies an agent that participates (client-side) in an RPC call in terms of its name and version. */
     @Value.Immutable
     @ImmutablesStyle
+    @Safe
     interface Agent {
         String DEFAULT_VERSION = "0.0.0";
 
+        @Safe
         String name();
 
+        @Safe
         String version();
+
+        /**
+         * <a href="https://datatracker.ietf.org/doc/html/rfc7231#section-5.5.3>rfc7231 section-5.5.3</a> comment
+         * metadata (as described by
+         * <a href="https://datatracker.ietf.org/doc/html/rfc7230#section-3.2.6">rfc7230 section-3.2.6</a>)
+         * for additional diagnostic information. Note that this library provides a much stricter set of allowed
+         * characters within comments than the linked RFCs to reduce complexity.
+         */
+        List<@Safe String> comments();
 
         @Value.Check
         default void check() {
@@ -107,10 +129,23 @@ public interface UserAgent {
             }
         }
 
-        static Agent of(String name, String version) {
+        static Agent of(@Safe String name, @Safe String version) {
             return ImmutableAgent.builder()
                     .name(name)
                     .version(UserAgents.isValidVersion(version) ? version : DEFAULT_VERSION)
+                    .build();
+        }
+
+        static Agent of(@Safe String name, @Safe String version, @Safe Iterable<@Safe String> comments) {
+            ImmutableList<String> immutableComments = ImmutableList.copyOf(comments);
+            for (int i = 0; i < immutableComments.size(); i++) {
+                String comment = immutableComments.get(i);
+                UserAgents.checkComment(comment);
+            }
+            return ImmutableAgent.builder()
+                    .name(name)
+                    .version(UserAgents.isValidVersion(version) ? version : DEFAULT_VERSION)
+                    .comments(immutableComments)
                     .build();
         }
     }

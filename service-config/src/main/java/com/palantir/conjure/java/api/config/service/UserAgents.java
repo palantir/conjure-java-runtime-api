@@ -18,13 +18,14 @@ package com.palantir.conjure.java.api.config.service;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
 import com.palantir.logsafe.Preconditions;
+import com.palantir.logsafe.Safe;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import com.palantir.logsafe.logger.SafeLogger;
 import com.palantir.logsafe.logger.SafeLoggerFactory;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,18 +46,21 @@ public final class UserAgents {
             Pattern.compile("^[0-9]+(?:\\.[0-9]+)*(?:-rc[0-9]+)?(?:-[0-9]+-g[a-f0-9]+)?$");
     private static final Pattern SEGMENT_PATTERN =
             Pattern.compile(String.format("(%s)/(%s)( \\((.+?)\\))?", NAME_REGEX, LENIENT_VERSION_REGEX));
-    private static final Splitter COMMA_OR_SEMICOLON_SPLITTER =
-            Splitter.on(CharMatcher.anyOf(",;").precomputed()).trimResults().omitEmptyStrings();
+    private static final Splitter SEMICOLON_SPLITTER =
+            Splitter.on(CharMatcher.is(';').precomputed()).trimResults().omitEmptyStrings();
+    private static final CharMatcher COMMENT_VALID_CHARS = CharMatcher.inRange('a', 'z')
+            .or(CharMatcher.inRange('A', 'Z'))
+            .or(CharMatcher.inRange('0', '9'))
+            .or(CharMatcher.anyOf(".-:_/ ,"))
+            .precomputed();
 
     private UserAgents() {}
 
     /** Returns the canonical string format for the given {@link UserAgent}. */
-    public static String format(UserAgent userAgent) {
+    @Safe
+    public static String format(@Safe UserAgent userAgent) {
         StringBuilder formatted = new StringBuilder(64); // preallocate larger buffer for longer agents
         formatSimpleAgent(userAgent.primary(), formatted);
-        if (userAgent.nodeId().isPresent()) {
-            formatted.append(" (nodeId:").append(userAgent.nodeId().get()).append(')');
-        }
         for (UserAgent.Agent informationalAgent : userAgent.informational()) {
             formatted.append(' ');
             formatSimpleAgent(informationalAgent, formatted);
@@ -68,6 +72,17 @@ public final class UserAgents {
         output.ensureCapacity(
                 output.length() + 1 + agent.name().length() + agent.version().length());
         output.append(agent.name()).append('/').append(agent.version());
+        List<String> comments = agent.comments();
+        if (!comments.isEmpty()) {
+            output.append(" (");
+            for (int i = 0; i < comments.size(); i++) {
+                if (i > 0) {
+                    output.append("; ");
+                }
+                output.append(comments.get(i));
+            }
+            output.append(')');
+        }
     }
 
     /**
@@ -76,7 +91,7 @@ public final class UserAgents {
      *
      * <p>Valid user agent strings loosely follow RFC 7230 (https://tools.ietf.org/html/rfc7230#section-3.2.6).
      */
-    public static UserAgent parse(String userAgent) {
+    public static UserAgent parse(@Safe String userAgent) {
         Preconditions.checkNotNull(userAgent, "userAgent must not be null");
         return parseInternal(userAgent, false /* strict */);
     }
@@ -85,7 +100,7 @@ public final class UserAgents {
      * Like {@link #parse}, but never fails and returns the primary agent {@code unknown/0.0.0} if no valid primary
      * agent can be parsed.
      */
-    public static UserAgent tryParse(String userAgent) {
+    public static UserAgent tryParse(@Safe String userAgent) {
 
         return parseInternal(userAgent == null ? "" : userAgent, true /* lenient */);
     }
@@ -97,7 +112,7 @@ public final class UserAgents {
      * This is functionally similar to calling `tryParse(userAgent).primary().name()`, but optimized to not use
      * regular expressions.
      */
-    public static String tryParsePrimaryName(String userAgent) {
+    public static String tryParsePrimaryName(@Safe String userAgent) {
         if (userAgent == null) {
             return "unknown";
         }
@@ -132,7 +147,7 @@ public final class UserAgents {
         return userAgent.substring(lindex, split);
     }
 
-    private static UserAgent parseInternal(String userAgent, boolean lenient) {
+    private static UserAgent parseInternal(@Safe String userAgent, boolean lenient) {
         ImmutableUserAgent.Builder builder = ImmutableUserAgent.builder();
 
         Matcher matcher = SEGMENT_PATTERN.matcher(userAgent);
@@ -142,18 +157,14 @@ public final class UserAgents {
             String version = matcher.group(2);
             Optional<String> comments = Optional.ofNullable(matcher.group(4));
 
+            UserAgent.Agent agent = UserAgent.Agent.of(
+                    name, version, comments.map(UserAgents::parseComments).orElseGet(ImmutableList::of));
             if (!foundFirst) {
                 // primary
-                builder.primary(UserAgent.Agent.of(name, version));
-                comments.ifPresent(c -> {
-                    Map<String, String> parsedComments = parseComments(c);
-                    if (parsedComments.containsKey("nodeId")) {
-                        builder.nodeId(parsedComments.get("nodeId"));
-                    }
-                });
+                builder.primary(agent);
             } else {
                 // informational
-                builder.addInformational(UserAgent.Agent.of(name, version));
+                builder.addInformational(agent);
             }
 
             foundFirst = true;
@@ -177,17 +188,46 @@ public final class UserAgents {
         return builder.build();
     }
 
-    private static Map<String, String> parseComments(String commentsString) {
-        Map<String, String> comments = new HashMap<>();
-        for (String comment : COMMA_OR_SEMICOLON_SPLITTER.split(commentsString)) {
-            String[] fields = comment.split(":");
-            if (fields.length == 2) {
-                comments.put(fields[0], fields[1]);
-            } else {
-                comments.put(comment, comment);
+    private static List<String> parseComments(String commentsString) {
+        List<String> results = SEMICOLON_SPLITTER.splitToList(commentsString);
+        for (int i = 0; i < results.size(); ++i) {
+            // In most cases, all comments will be valid, so we avoid stream overhead.
+            if (!isValidComment(results.get(i))) {
+                return results.stream().filter(UserAgents::isValidComment).toList();
             }
         }
-        return comments;
+        return results;
+    }
+
+    static void checkComment(@Safe String comment) {
+        if (comment == null) {
+            throw new SafeIllegalArgumentException("Comment must not be null");
+        }
+        if (comment.isEmpty()) {
+            throw new SafeIllegalArgumentException("Comment must not be empty");
+        }
+        if (comment.startsWith(" ")) {
+            throw new SafeIllegalArgumentException(
+                    "Comment must not start with whitespace", SafeArg.of("comment", comment));
+        }
+        if (comment.endsWith(" ")) {
+            throw new SafeIllegalArgumentException(
+                    "Comment must not end with whitespace", SafeArg.of("comment", comment));
+        }
+        if (!COMMENT_VALID_CHARS.matchesAllOf(comment)) {
+            throw new SafeIllegalArgumentException(
+                    "Comment contains disallowed characters",
+                    SafeArg.of("allowed", "a-zA-Z0-9.-:_/ "),
+                    SafeArg.of("comment", comment));
+        }
+    }
+
+    static boolean isValidComment(@Safe String comment) {
+        return comment != null
+                && !comment.isEmpty()
+                && !comment.startsWith(" ")
+                && !comment.endsWith(" ")
+                && COMMENT_VALID_CHARS.matchesAllOf(comment);
     }
 
     static boolean isValidName(String name) {
@@ -227,7 +267,13 @@ public final class UserAgents {
         return NODE_REGEX.matcher(instanceId).matches();
     }
 
-    static boolean isValidVersion(String version) {
+    static void checkNodeId(@Safe String instanceId) {
+        if (!isValidNodeId(instanceId)) {
+            throw new SafeIllegalArgumentException("Illegal node id format", SafeArg.of("nodeId", instanceId));
+        }
+    }
+
+    static boolean isValidVersion(@Safe String version) {
         if (VersionParser.countNumericDotGroups(version) >= 2 // fast path for numeric & dot only version numbers
                 || versionMatchesRegex(version)) {
             return true;
