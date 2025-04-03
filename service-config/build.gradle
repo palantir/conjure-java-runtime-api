@@ -1,18 +1,19 @@
 apply plugin: "org.inferred.processors"
-
 apply plugin: 'com.palantir.external-publish-jar'
 apply plugin: 'com.palantir.revapi'
-apply plugin: 'me.champeau.jmh'
 
-// https://github.com/melix/jmh-gradle-plugin/issues/248
-plugins.withId('me.champeau.jmh') {
-    tasks.jmhCompileGeneratedClasses {
-        options.annotationProcessorPath = configurations.jmhAnnotationProcessor
-        options.errorprone {
-            enabled = true
-            disable('HidingField')
+sourceSets {
+    jmh {
+        java {
+            compileClasspath += sourceSets.main.output
+            runtimeClasspath += sourceSets.main.output
         }
     }
+}
+
+configurations {
+    jmhImplementation.extendsFrom(implementation)
+    jmhRuntimeOnly.extendsFrom(runtimeOnly)
 }
 
 dependencies {
@@ -32,4 +33,8 @@ dependencies {
 
     annotationProcessor "org.immutables:value"
     compileOnly 'org.immutables:value::annotations'
+
+    jmhAnnotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess'
+    jmhImplementation sourceSets.main.output
+    jmhImplementation 'org.openjdk.jmh:jmh-core'
 }
