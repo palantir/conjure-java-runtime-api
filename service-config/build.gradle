@@ -4,6 +4,17 @@ apply plugin: 'com.palantir.external-publish-jar'
 apply plugin: 'com.palantir.revapi'
 apply plugin: 'me.champeau.jmh'
 
+// https://github.com/melix/jmh-gradle-plugin/issues/248
+plugins.withId('me.champeau.jmh') {
+    tasks.jmhCompileGeneratedClasses {
+        options.annotationProcessorPath = configurations.jmhAnnotationProcessor
+        options.errorprone {
+            enabled = true
+            disable('HidingField')
+        }
+    }
+}
+
 dependencies {
     api project(":ssl-config")
     api "com.palantir.safe-logging:safe-logging"
