@@ -38,3 +38,14 @@ dependencies {
     jmhImplementation sourceSets.main.output
     jmhImplementation 'org.openjdk.jmh:jmh-core'
 }
+
+// Convenience method to run benchmarks.
+// example usage: ./gradlew benchmark -Pjmh="UserAgentsBenchmark -wi 2 -i 8"
+tasks.register('benchmark', JavaExec) {
+    mainClass = 'org.openjdk.jmh.Main'
+    classpath = sourceSets.jmh.runtimeClasspath
+
+    if (project.hasProperty('jmh')) {
+        args(project.property('jmh').split(' '))
+    }
+}
