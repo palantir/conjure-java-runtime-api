@@ -1,8 +1,20 @@
 apply plugin: "org.inferred.processors"
-
 apply plugin: 'com.palantir.external-publish-jar'
 apply plugin: 'com.palantir.revapi'
-apply plugin: 'me.champeau.jmh'
+
+sourceSets {
+    jmh {
+        java {
+            compileClasspath += sourceSets.main.output
+            runtimeClasspath += sourceSets.main.output
+        }
+    }
+}
+
+configurations {
+    jmhImplementation.extendsFrom(implementation)
+    jmhRuntimeOnly.extendsFrom(runtimeOnly)
+}
 
 dependencies {
     api project(":ssl-config")
@@ -21,4 +33,19 @@ dependencies {
 
     annotationProcessor "org.immutables:value"
     compileOnly 'org.immutables:value::annotations'
+
+    jmhAnnotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess'
+    jmhImplementation sourceSets.main.output
+    jmhImplementation 'org.openjdk.jmh:jmh-core'
+}
+
+// Convenience method to run benchmarks.
+// example usage: ./gradlew benchmark -Pjmh="UserAgentsBenchmark -wi 2 -i 8"
+tasks.register('benchmark', JavaExec) {
+    mainClass = 'org.openjdk.jmh.Main'
+    classpath = sourceSets.jmh.runtimeClasspath
+
+    if (project.hasProperty('jmh')) {
+        args(project.property('jmh').split(' '))
+    }
 }
