@@ -1,0 +1,5 @@
+type: feature
+feature:
+  description: Support adding docs in error messages from conjure YAML
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/1316
