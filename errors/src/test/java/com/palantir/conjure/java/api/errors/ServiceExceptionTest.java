@@ -31,6 +31,10 @@ public final class ServiceExceptionTest {
     private static final ErrorType ERROR = ErrorType.create(ErrorType.Code.CUSTOM_CLIENT, ERROR_NAME);
     private static final String EXPECTED_ERROR_MSG = "ServiceException: CUSTOM_CLIENT (Namespace:MyDesc)";
 
+    private static final ErrorType ERROR_WITH_DOCS = ErrorType.create(ErrorType.Code.CUSTOM_CLIENT, ERROR_NAME, "docs");
+    private static final String EXPECTED_ERROR_WITH_DOCS_MSG =
+            "ServiceException: CUSTOM_CLIENT (Namespace:MyDesc) docs";
+
     @Test
     public void testExceptionMessageContainsNoArgs_safeLogMessageContainsSafeArgsOnly() {
         Arg<?>[] args = {SafeArg.of("arg1", "foo"), UnsafeArg.of("arg2", 2), UnsafeArg.of("arg3", null)};
@@ -126,5 +130,12 @@ public final class ServiceExceptionTest {
         // invoke getErrorInstanceId to ensure this is tested even if future developers
         // optimize generation to occur lazily.
         assertThat(new ServiceException(ERROR, second).getErrorInstanceId()).isNotNull();
+    }
+
+    @Test
+    public void testSafeLogMessageContainsSafeDocs() {
+        ServiceException ex = new ServiceException(ERROR_WITH_DOCS);
+
+        assertThat(ex.getLogMessage()).isEqualTo(EXPECTED_ERROR_WITH_DOCS_MSG);
     }
 }
