@@ -95,7 +95,8 @@ final class ServiceExceptionUtils {
      * @return a message string
      */
     static String renderNoArgsMessage(String exceptionName, ErrorType errorType) {
-        return exceptionName + ": " + errorType.code() + " (" + errorType.name() + ")";
+        return exceptionName + ": " + errorType.code() + " (" + errorType.name() + ")"
+                + errorType.docs().map(" "::concat).orElse("");
     }
 
     /**

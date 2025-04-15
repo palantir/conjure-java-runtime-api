@@ -16,8 +16,10 @@
 
 package com.palantir.conjure.java.api.errors;
 
+import com.palantir.logsafe.Safe;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import org.immutables.value.Value;
 
@@ -27,7 +29,7 @@ import org.immutables.value.Value;
  * the HTTP specification, errors associated with a {@code 4xx} HTTP status code are client errors, and errors
  * associated with a {@code 5xx} status are server errors.
  */
-@Value.Immutable(builder = false)
+@Value.Immutable
 @ImmutablesStyle
 public abstract class ErrorType {
 
@@ -82,6 +84,9 @@ public abstract class ErrorType {
     @Value.Parameter
     public abstract int httpErrorCode();
 
+    @Value.Auxiliary
+    public abstract Optional<String> docs();
+
     @Value.Check
     final void check() {
         if (!ERROR_NAME_PATTERN.matcher(name()).matches()) {
@@ -94,5 +99,14 @@ public abstract class ErrorType {
     /** Constructs an {@link ErrorType} with the given error {@link Code} and name. */
     public static ErrorType create(Code code, String name) {
         return ImmutableErrorType.of(code, name, code.httpErrorCode);
+    }
+
+    public static ErrorType create(Code code, String name, @Safe String docs) {
+        return ImmutableErrorType.builder()
+                .code(code)
+                .name(name)
+                .httpErrorCode(code.httpErrorCode)
+                .docs(docs)
+                .build();
     }
 }
