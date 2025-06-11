@@ -62,6 +62,7 @@ public final class PathDeserializer extends StdScalarDeserializer<Path> {
             return logMessage;
         }
 
+        @SuppressWarnings("for-rollout:Java8ApiChecker")
         @Override
         public List<Arg<?>> getArgs() {
             return List.of();

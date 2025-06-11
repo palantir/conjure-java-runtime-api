@@ -95,10 +95,13 @@ public final class HumanReadableDuration implements Comparable<HumanReadableDura
 
     @JsonCreator
     public static HumanReadableDuration valueOf(String duration) {
+        @SuppressWarnings({"for-rollout:UnnecessaryFinal", "for-rollout:Var"})
         final Matcher matcher = DURATION_PATTERN.matcher(duration);
         Preconditions.checkArgument(matcher.matches(), "Invalid duration", SafeArg.of("duration", duration));
 
+        @SuppressWarnings({"for-rollout:UnnecessaryFinal", "for-rollout:Var"})
         final long count = Long.parseLong(matcher.group(1));
+        @SuppressWarnings({"for-rollout:UnnecessaryFinal", "for-rollout:Var"})
         final TimeUnit unit = SUFFIXES.get(matcher.group(2));
         if (unit == null) {
             throw new SafeIllegalArgumentException("Invalid duration", SafeArg.of("duration", duration));
@@ -165,6 +168,7 @@ public final class HumanReadableDuration implements Comparable<HumanReadableDura
      * @implNote This method can be removed in JDK9
      * @see <a href="https://bugs.openjdk.java.net/browse/JDK-8141452">JDK-8141452</a>
      */
+    @SuppressWarnings({"for-rollout:StatementSwitchToExpressionSwitch", "for-rollout:UnnecessaryDefaultInEnumSwitch"})
     private static ChronoUnit chronoUnit(TimeUnit unit) {
         switch (Preconditions.checkNotNull(unit, "unit")) {
             case NANOSECONDS:
@@ -194,6 +198,7 @@ public final class HumanReadableDuration implements Comparable<HumanReadableDura
         if ((obj == null) || (getClass() != obj.getClass())) {
             return false;
         }
+        @SuppressWarnings({"for-rollout:UnnecessaryFinal", "for-rollout:Var"})
         final HumanReadableDuration duration = (HumanReadableDuration) obj;
         return (count == duration.count) && (unit == duration.unit);
     }
@@ -206,6 +211,7 @@ public final class HumanReadableDuration implements Comparable<HumanReadableDura
     @Override
     @JsonValue
     public String toString() {
+        @SuppressWarnings("for-rollout:Var")
         String units = unit.toString().toLowerCase(Locale.ENGLISH);
         if (count == 1) {
             units = units.substring(0, units.length() - 1);

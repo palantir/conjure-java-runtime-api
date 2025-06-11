@@ -52,6 +52,7 @@ public final class UnknownRemoteException extends RuntimeException implements Sa
         return getMessage();
     }
 
+    @SuppressWarnings("for-rollout:Java8ApiChecker")
     @Unsafe
     @Override
     public List<Arg<?>> getArgs() {

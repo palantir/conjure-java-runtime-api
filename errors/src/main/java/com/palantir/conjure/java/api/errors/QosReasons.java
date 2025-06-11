@@ -42,6 +42,7 @@ public final class QosReasons {
         }
     }
 
+    @SuppressWarnings("for-rollout:Java8ApiChecker")
     public static <T> QosReason parseFromResponse(T response, QosResponseDecodingAdapter<? super T> adapter) {
         Optional<String> maybeDueTo = adapter.getFirstHeader(response, DUE_TO_HEADER);
         Optional<String> maybeRetryHint = adapter.getFirstHeader(response, RETRY_HINT_HEADER);

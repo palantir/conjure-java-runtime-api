@@ -70,6 +70,7 @@ final class ServiceExceptionUtils {
 
         StringBuilder builder = new StringBuilder();
         builder.append(message).append(": {");
+        @SuppressWarnings("for-rollout:Var")
         boolean first = true;
         for (Arg<?> arg : args) {
             if (arg == null) {
@@ -116,14 +117,14 @@ final class ServiceExceptionUtils {
             // we don't need cryptographically secure random UUIDs
             return UniqueIds.pseudoRandomUuidV4().toString();
         }
-        if (cause instanceof ServiceException) {
-            return ((ServiceException) cause).getErrorInstanceId();
+        if (cause instanceof ServiceException serviceException) {
+            return serviceException.getErrorInstanceId();
         }
-        if (cause instanceof CheckedServiceException) {
-            return ((CheckedServiceException) cause).getErrorInstanceId();
+        if (cause instanceof CheckedServiceException checkedServiceException) {
+            return checkedServiceException.getErrorInstanceId();
         }
-        if (cause instanceof RemoteException) {
-            return ((RemoteException) cause).getError().errorInstanceId();
+        if (cause instanceof RemoteException remoteException) {
+            return remoteException.getError().errorInstanceId();
         }
         return generateErrorInstanceId(cause.getCause(), dejaVu);
     }

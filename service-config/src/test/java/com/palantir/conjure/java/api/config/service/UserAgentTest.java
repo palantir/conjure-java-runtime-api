@@ -32,6 +32,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 public class UserAgentTest {
 
+    @SuppressWarnings("for-rollout:DifferentNameButSame")
     @Test
     public void validAndInvalidNodeSyntax() {
         // Valid nodeId
@@ -51,18 +52,22 @@ public class UserAgentTest {
 
     @Test
     public void testCorrectHeaderFormatWithNodeId() {
+        @SuppressWarnings("for-rollout:DifferentNameButSame")
         UserAgent baseUserAgent = UserAgent.of(UserAgent.Agent.of("service", "1.0.0"), "myNode");
         assertThat(UserAgents.format(baseUserAgent)).isEqualTo("service/1.0.0 (nodeId:myNode)");
 
+        @SuppressWarnings("for-rollout:DifferentNameButSame")
         UserAgent derivedAgent = baseUserAgent.addAgent(UserAgent.Agent.of("conjure", "2.0.0"));
         assertThat(UserAgents.format(derivedAgent)).isEqualTo("service/1.0.0 (nodeId:myNode) conjure/2.0.0");
     }
 
     @Test
     public void testCorrectHeaderFormatWithoutNodeId() {
+        @SuppressWarnings("for-rollout:DifferentNameButSame")
         UserAgent baseUserAgent = UserAgent.of(UserAgent.Agent.of("service", "1.0.0"));
         assertThat(UserAgents.format(baseUserAgent)).isEqualTo("service/1.0.0");
 
+        @SuppressWarnings("for-rollout:DifferentNameButSame")
         UserAgent derivedAgent = baseUserAgent.addAgent(UserAgent.Agent.of("conjure", "2.0.0"));
         assertThat(UserAgents.format(derivedAgent)).isEqualTo("service/1.0.0 conjure/2.0.0");
     }
@@ -70,6 +75,7 @@ public class UserAgentTest {
     @Test
     void testPrimaryWithInformational() {
         UserAgent baseUserAgent = UserAgent.of(Agent.of("service", "1.0.0"));
+        @SuppressWarnings("for-rollout:PreferredInterfaceType")
         List<Agent> info = ImmutableList.of(Agent.of("conjure", "1.2.3"), Agent.of("jdk", "17.0.4.1"));
         UserAgent first = UserAgent.of(baseUserAgent, info);
         assertThat(first).satisfies(agent -> {
@@ -80,6 +86,7 @@ public class UserAgentTest {
             assertThat(UserAgent.of(agent, ImmutableList.of())).isEqualTo(agent);
         });
 
+        @SuppressWarnings("for-rollout:PreferredInterfaceType")
         List<Agent> moreInfo = ImmutableList.of(Agent.of("test", "4.5.6"));
         assertThat(UserAgent.of(first, moreInfo)).satisfies(agent -> {
             assertThat(agent.primary()).isEqualTo(baseUserAgent.primary());
@@ -90,6 +97,7 @@ public class UserAgentTest {
         });
     }
 
+    @SuppressWarnings("for-rollout:DifferentNameButSame")
     @Test
     public void testInvalidServiceName() {
         assertThatLoggableExceptionThrownBy(() -> UserAgent.Agent.of("invalid service name", "1.0.0"))
@@ -98,6 +106,7 @@ public class UserAgentTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @SuppressWarnings("for-rollout:DifferentNameButSame")
     @Test
     public void testInvalidNodeId() {
         assertThatLoggableExceptionThrownBy(
@@ -107,6 +116,7 @@ public class UserAgentTest {
                 .hasLogMessage("Illegal node id format");
     }
 
+    @SuppressWarnings("for-rollout:DifferentNameButSame")
     @Test
     public void testInvalidVersion() {
         assertThat(UserAgents.format(UserAgent.of(UserAgent.Agent.of("serviceName", "1 0 0"), "myNode")))
