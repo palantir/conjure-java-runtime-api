@@ -27,12 +27,15 @@ public final class RemoteExceptionTest {
     @Test
     public void testJavaSerialization() {
         // With explicit error instance
+        @SuppressWarnings("for-rollout:Var")
         SerializableError error = new SerializableError.Builder()
                 .errorCode("errorCode")
                 .errorName("errorName")
                 .errorInstanceId("errorId")
                 .build();
+        @SuppressWarnings("for-rollout:Var")
         RemoteException expected = new RemoteException(error, 500);
+        @SuppressWarnings("for-rollout:Var")
         RemoteException actual = SerializationUtils.deserialize(SerializationUtils.serialize(expected));
         assertThat(actual).isEqualToComparingFieldByField(expected);
 

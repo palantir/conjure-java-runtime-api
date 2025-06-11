@@ -73,6 +73,7 @@ public abstract class SslConfiguration {
         }
     }
 
+    @SuppressWarnings("for-rollout:AnnotationPosition")
     @JsonAlias("key-store-key-alias")
     /** Alias of the key that should be used in the key store. If absent, first entry returned by key store is used. */
     public abstract Optional<String> keyStoreKeyAlias();

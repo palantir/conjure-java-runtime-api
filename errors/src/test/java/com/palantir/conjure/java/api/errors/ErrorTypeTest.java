@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 
 public final class ErrorTypeTest {
 
+    @SuppressWarnings("for-rollout:DifferentNameButSame")
     @Test
     public void testNameMustBeCamelCaseWithOptionalNameSpace() throws Exception {
         String[] badNames = new String[] {":", "foo:Bar", ":Bar", "Bar:", "foo:bar", "Foo:bar", "Foo:2Bar"};
@@ -64,21 +65,26 @@ public final class ErrorTypeTest {
         assertThat(ErrorType.INTERNAL.httpErrorCode()).isEqualTo(500);
     }
 
+    @SuppressWarnings("for-rollout:DifferentNameButSame")
     @Test
     public void testCanCreateCustomClientAndServerErrors() throws Exception {
+        @SuppressWarnings("for-rollout:DifferentNameButSame")
         ErrorType customClient = ErrorType.create(ErrorType.Code.CUSTOM_CLIENT, "Namespace:MyDesc");
         assertThat(customClient.code()).isEqualTo(ErrorType.Code.CUSTOM_CLIENT);
         assertThat(customClient.httpErrorCode()).isEqualTo(400);
         assertThat(customClient.name()).isEqualTo("Namespace:MyDesc");
 
+        @SuppressWarnings("for-rollout:DifferentNameButSame")
         ErrorType customServer = ErrorType.create(ErrorType.Code.CUSTOM_SERVER, "Namespace:MyDesc");
         assertThat(customServer.code()).isEqualTo(ErrorType.Code.CUSTOM_SERVER);
         assertThat(customServer.httpErrorCode()).isEqualTo(500);
         assertThat(customServer.name()).isEqualTo("Namespace:MyDesc");
     }
 
+    @SuppressWarnings("for-rollout:DifferentNameButSame")
     @Test
     public void testCanCreateNewErrorTypes() throws Exception {
+        @SuppressWarnings("for-rollout:DifferentNameButSame")
         ErrorType error = ErrorType.create(ErrorType.Code.FAILED_PRECONDITION, "Namespace:MyDesc");
         assertThat(error.code()).isEqualTo(ErrorType.Code.FAILED_PRECONDITION);
         assertThat(error.httpErrorCode()).isEqualTo(500);

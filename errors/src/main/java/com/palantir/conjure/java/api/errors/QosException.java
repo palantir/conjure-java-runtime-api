@@ -43,6 +43,7 @@ public abstract class QosException extends RuntimeException {
         this.reason = Preconditions.checkNotNull(reason, "QosReason is required");
     }
 
+    @SuppressWarnings("for-rollout:InconsistentOverloads")
     private QosException(String message, Throwable cause, QosReason reason) {
         super(message, cause);
         this.reason = Preconditions.checkNotNull(reason, "QosReason is required");
@@ -131,6 +132,7 @@ public abstract class QosException extends RuntimeException {
     /**
      * Like {@link #retryOther(URL)}, but includes a reason.
      */
+    @SuppressWarnings("for-rollout:InconsistentOverloads")
     public static RetryOther retryOther(QosReason reason, URL redirectTo) {
         return new RetryOther(redirectTo, reason);
     }
@@ -145,6 +147,7 @@ public abstract class QosException extends RuntimeException {
     /**
      * Like {@link #retryOther(URL)}, but includes a reason, and a cause.
      */
+    @SuppressWarnings("for-rollout:InconsistentOverloads")
     public static RetryOther retryOther(QosReason reason, URL redirectTo, Throwable cause) {
         return new RetryOther(redirectTo, cause, reason);
     }
@@ -221,6 +224,7 @@ public abstract class QosException extends RuntimeException {
             return "Suggested request throttling";
         }
 
+        @SuppressWarnings("for-rollout:Java8ApiChecker")
         @Override
         public List<Arg<?>> getArgs() {
             return List.of(
@@ -272,6 +276,7 @@ public abstract class QosException extends RuntimeException {
             return this.getClass().getSimpleName() + ": Requesting retry";
         }
 
+        @SuppressWarnings("for-rollout:Java8ApiChecker")
         @Unsafe
         @Override
         public List<Arg<?>> getArgs() {
@@ -315,6 +320,7 @@ public abstract class QosException extends RuntimeException {
             return SERVER_UNAVAILABLE;
         }
 
+        @SuppressWarnings("for-rollout:Java8ApiChecker")
         @Override
         public List<Arg<?>> getArgs() {
             return List.of(

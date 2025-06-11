@@ -53,7 +53,11 @@ public final class QosReason {
     }
 
     public static QosReason of(
-            @Safe @CompileTimeConstant @org.intellij.lang.annotations.Pattern(PATTERN_STRING) String reason) {
+            @SuppressWarnings("for-rollout:UnnecessarilyFullyQualified")
+                    @Safe
+                    @CompileTimeConstant
+                    @org.intellij.lang.annotations.Pattern(PATTERN_STRING)
+                    String reason) {
         return new QosReason(reason, Optional.empty(), Optional.empty());
     }
 
@@ -117,7 +121,11 @@ public final class QosReason {
         }
 
         public Builder reason(
-                @Safe @CompileTimeConstant @org.intellij.lang.annotations.Pattern(PATTERN_STRING) String value) {
+                @SuppressWarnings("for-rollout:UnnecessarilyFullyQualified")
+                        @Safe
+                        @CompileTimeConstant
+                        @org.intellij.lang.annotations.Pattern(PATTERN_STRING)
+                        String value) {
             this.reason = Preconditions.checkNotNull(value, "reason");
             return this;
         }
