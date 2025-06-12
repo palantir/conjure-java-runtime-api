@@ -70,7 +70,6 @@ final class ServiceExceptionUtils {
 
         StringBuilder builder = new StringBuilder();
         builder.append(message).append(": {");
-        @SuppressWarnings("for-rollout:Var")
         boolean first = true;
         for (Arg<?> arg : args) {
             if (arg == null) {

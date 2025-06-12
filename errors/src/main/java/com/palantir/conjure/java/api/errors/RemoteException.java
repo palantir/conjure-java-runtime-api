@@ -63,7 +63,6 @@ public final class RemoteException extends RuntimeException implements SafeLogga
     @Override
     public String getMessage() {
         // This field is not used in most environments so the cost of computation may be avoided.
-        @SuppressWarnings("for-rollout:Var")
         String messageValue = unsafeMessage;
         if (messageValue == null) {
             messageValue = renderUnsafeMessage();

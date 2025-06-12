@@ -75,7 +75,6 @@ public final class SerializableErrorTest {
     @Test
     public void forException_listArgValue_serializesWithToString() {
         ErrorType error = ErrorType.INTERNAL;
-        @SuppressWarnings("for-rollout:Java8ApiChecker")
         ServiceException exception = new ServiceException(
                 error, SafeArg.of("safe-list", List.of("1", "2")), UnsafeArg.of("unsafe-list", List.of("3", "4")));
 
@@ -92,7 +91,6 @@ public final class SerializableErrorTest {
     @Test
     public void forException_mapArgValue_serializesWithToString() {
         ErrorType error = ErrorType.INTERNAL;
-        @SuppressWarnings("for-rollout:Java8ApiChecker")
         ServiceException exception = new ServiceException(
                 error, SafeArg.of("safe-map", Map.of("1", "2")), UnsafeArg.of("unsafe-map", Map.of("ABC", "DEF")));
 

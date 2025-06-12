@@ -39,7 +39,6 @@ final class VersionParser {
 
     /** Returns the count of version number groups parsed if a valid version string, or -1 otherwise. */
     public static int countNumericDotGroups(String string) {
-        @SuppressWarnings("for-rollout:Var")
         long state = 0;
         for (int i = 1; getIndex(state) < string.length(); i++) {
             state = number(string, getIndex(state));
@@ -64,7 +63,6 @@ final class VersionParser {
     private static final int PARSE_FAILED = Integer.MIN_VALUE;
 
     static long number(String string, int startIndex) {
-        @SuppressWarnings("for-rollout:Var")
         int next = startIndex;
         int len = string.length();
         while (next < len) {
@@ -81,7 +79,6 @@ final class VersionParser {
             return ok(next, Character.digit(string.codePointAt(startIndex), 10));
         } else {
             try {
-                @SuppressWarnings("for-rollout:Java8ApiChecker")
                 int result = Integer.parseUnsignedInt(string, startIndex, next, 10);
                 if (result < 0) {
                     // i.e. we overflowed the int
