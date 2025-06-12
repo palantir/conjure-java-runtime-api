@@ -27,7 +27,6 @@ public final class ShimJdk7Module extends SimpleModule {
     public ShimJdk7Module() {
         super(ShimJdk7Module.class.getCanonicalName());
 
-        @SuppressWarnings({"for-rollout:UnnecessaryFinal", "for-rollout:Var"})
         final JsonSerializer<Object> stringSer = ToStringSerializer.instance;
         addSerializer(Path.class, stringSer);
         addDeserializer(Path.class, new PathDeserializer());

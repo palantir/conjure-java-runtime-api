@@ -125,7 +125,6 @@ public final class UserAgents {
         // it will possibly ignore leading characters (even non-whitespace) up until the "foo/1.2.3" part
         // so we further split primaryName into _just_ the set of characters immediately preceding
         // the "/" for which isValidCharForName() returns true.
-        @SuppressWarnings("for-rollout:Var")
         int lindex = split - 1;
         while (lindex >= 0) {
             if (!isValidCharForName(userAgent.charAt(lindex))) {
@@ -152,7 +151,6 @@ public final class UserAgents {
         ImmutableUserAgent.Builder builder = ImmutableUserAgent.builder();
 
         Matcher matcher = SEGMENT_PATTERN.matcher(userAgent);
-        @SuppressWarnings("for-rollout:Var")
         boolean foundFirst = false;
         while (matcher.find()) {
             String name = matcher.group(1);
@@ -238,7 +236,6 @@ public final class UserAgents {
         if (name == null || name.isEmpty()) {
             return false;
         }
-        @SuppressWarnings("for-rollout:Var")
         char ch = name.charAt(0);
         if (!isAlpha(ch)) {
             return false;

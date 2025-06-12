@@ -95,11 +95,7 @@ public abstract class ProxyConfiguration {
         return Type.HTTP;
     }
 
-    @SuppressWarnings({
-        "for-rollout:Java8ApiChecker",
-        "for-rollout:StatementSwitchToExpressionSwitch",
-        "for-rollout:UnnecessaryDefaultInEnumSwitch"
-    })
+    @SuppressWarnings({"for-rollout:StatementSwitchToExpressionSwitch", "for-rollout:UnnecessaryDefaultInEnumSwitch"})
     @Value.Check
     protected final void check() {
         switch (type()) {

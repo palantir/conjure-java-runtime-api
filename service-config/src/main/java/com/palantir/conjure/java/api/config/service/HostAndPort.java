@@ -61,7 +61,6 @@ public final class HostAndPort {
     public static HostAndPort fromString(String hostPortString) {
         Preconditions.checkNotNull(hostPortString, "hostPortString");
         String host;
-        @SuppressWarnings("for-rollout:Var")
         String portString = null;
 
         if (hostPortString.startsWith("[")) {
@@ -80,7 +79,6 @@ public final class HostAndPort {
             }
         }
 
-        @SuppressWarnings("for-rollout:Var")
         int port = NO_PORT;
         if (portString != null && portString.length() > 0) {
             // Try to parse the whole port string as a number.

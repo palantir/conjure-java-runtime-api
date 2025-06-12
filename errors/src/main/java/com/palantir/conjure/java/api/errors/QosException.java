@@ -224,7 +224,6 @@ public abstract class QosException extends RuntimeException {
             return "Suggested request throttling";
         }
 
-        @SuppressWarnings("for-rollout:Java8ApiChecker")
         @Override
         public List<Arg<?>> getArgs() {
             return List.of(
@@ -276,7 +275,6 @@ public abstract class QosException extends RuntimeException {
             return this.getClass().getSimpleName() + ": Requesting retry";
         }
 
-        @SuppressWarnings("for-rollout:Java8ApiChecker")
         @Unsafe
         @Override
         public List<Arg<?>> getArgs() {
@@ -320,7 +318,6 @@ public abstract class QosException extends RuntimeException {
             return SERVER_UNAVAILABLE;
         }
 
-        @SuppressWarnings("for-rollout:Java8ApiChecker")
         @Override
         public List<Arg<?>> getArgs() {
             return List.of(
