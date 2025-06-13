@@ -240,7 +240,6 @@ public final class ServiceConfigurationFactoryTests {
                 .isEqualTo(deserialized);
     }
 
-    @SuppressWarnings("for-rollout:UnusedException")
     private ServicesConfigBlock deserialize(String file) {
         URL resource = Resources.getResource(file);
         try {

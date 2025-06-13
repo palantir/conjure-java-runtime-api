@@ -57,7 +57,6 @@ public final class HostAndPort {
         return port >= 0;
     }
 
-    @SuppressWarnings("for-rollout:UnusedException")
     public static HostAndPort fromString(String hostPortString) {
         Preconditions.checkNotNull(hostPortString, "hostPortString");
         String host;
@@ -99,9 +98,7 @@ public final class HostAndPort {
     }
 
     private static String[] getHostAndPortFromBracketedHost(String hostPortString) {
-        @SuppressWarnings("for-rollout:InitializeInline")
         int colonIndex;
-        @SuppressWarnings("for-rollout:InitializeInline")
         int closeBracketIndex;
         Preconditions.checkArgument(
                 hostPortString.charAt(0) == '[',

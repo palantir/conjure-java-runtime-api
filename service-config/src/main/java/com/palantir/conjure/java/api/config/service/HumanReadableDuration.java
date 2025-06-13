@@ -165,7 +165,7 @@ public final class HumanReadableDuration implements Comparable<HumanReadableDura
      * @implNote This method can be removed in JDK9
      * @see <a href="https://bugs.openjdk.java.net/browse/JDK-8141452">JDK-8141452</a>
      */
-    @SuppressWarnings({"for-rollout:StatementSwitchToExpressionSwitch", "for-rollout:UnnecessaryDefaultInEnumSwitch"})
+    @SuppressWarnings("for-rollout:StatementSwitchToExpressionSwitch")
     private static ChronoUnit chronoUnit(TimeUnit unit) {
         switch (Preconditions.checkNotNull(unit, "unit")) {
             case NANOSECONDS:
