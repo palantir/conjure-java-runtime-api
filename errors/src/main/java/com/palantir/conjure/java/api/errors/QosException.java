@@ -43,7 +43,6 @@ public abstract class QosException extends RuntimeException {
         this.reason = Preconditions.checkNotNull(reason, "QosReason is required");
     }
 
-    @SuppressWarnings("for-rollout:InconsistentOverloads")
     private QosException(String message, Throwable cause, QosReason reason) {
         super(message, cause);
         this.reason = Preconditions.checkNotNull(reason, "QosReason is required");
@@ -132,7 +131,6 @@ public abstract class QosException extends RuntimeException {
     /**
      * Like {@link #retryOther(URL)}, but includes a reason.
      */
-    @SuppressWarnings("for-rollout:InconsistentOverloads")
     public static RetryOther retryOther(QosReason reason, URL redirectTo) {
         return new RetryOther(redirectTo, reason);
     }
@@ -147,7 +145,6 @@ public abstract class QosException extends RuntimeException {
     /**
      * Like {@link #retryOther(URL)}, but includes a reason, and a cause.
      */
-    @SuppressWarnings("for-rollout:InconsistentOverloads")
     public static RetryOther retryOther(QosReason reason, URL redirectTo, Throwable cause) {
         return new RetryOther(redirectTo, cause, reason);
     }

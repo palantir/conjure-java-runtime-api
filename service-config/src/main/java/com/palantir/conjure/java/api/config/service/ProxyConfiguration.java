@@ -95,7 +95,7 @@ public abstract class ProxyConfiguration {
         return Type.HTTP;
     }
 
-    @SuppressWarnings({"for-rollout:StatementSwitchToExpressionSwitch", "for-rollout:UnnecessaryDefaultInEnumSwitch"})
+    @SuppressWarnings("for-rollout:StatementSwitchToExpressionSwitch")
     @Value.Check
     protected final void check() {
         switch (type()) {
