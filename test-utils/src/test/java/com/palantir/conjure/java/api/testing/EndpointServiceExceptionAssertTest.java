@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2017 Palantir Technologies Inc. All rights reserved.
+ * (c) Copyright 2025 Palantir Technologies Inc. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,8 +43,8 @@ public class EndpointServiceExceptionAssertTest {
 
         Assertions.assertThat(new EndpointServiceException(actualType) {}).hasNoArgs();
 
-        assertThatThrownBy(() ->
-                        Assertions.assertThat(new EndpointServiceException(actualType) {}).hasCode(ErrorType.Code.INTERNAL))
+        assertThatThrownBy(() -> Assertions.assertThat(new EndpointServiceException(actualType) {})
+                        .hasCode(ErrorType.Code.INTERNAL))
                 .isInstanceOf(AssertionError.class)
                 .hasMessageContaining(
                         "Expected ErrorType.Code to be %s, but found %s", ErrorType.Code.INTERNAL, actualType.code());
