@@ -1,47 +1,33 @@
-/*
- * (c) Copyright 2017 Palantir Technologies Inc. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.palantir.conjure.java.api.testing;
 
+import com.palantir.conjure.java.api.errors.EndpointServiceException;
 import com.palantir.conjure.java.api.errors.ErrorType;
-import com.palantir.conjure.java.api.errors.ServiceException;
 import com.palantir.logsafe.Arg;
-import org.assertj.core.api.AbstractThrowableAssert;
-import org.assertj.core.api.InstanceOfAssertFactory;
-import org.assertj.core.util.Throwables;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import org.assertj.core.api.AbstractThrowableAssert;
+import org.assertj.core.api.InstanceOfAssertFactory;
+import org.assertj.core.util.Throwables;
 
-public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExceptionAssert, ServiceException> {
+public class EndpointServiceExceptionAssert
+        extends AbstractThrowableAssert<EndpointServiceExceptionAssert, EndpointServiceException> {
 
-    private static final InstanceOfAssertFactory<ServiceException, ServiceExceptionAssert> INSTANCE_OF_ASSERT_FACTORY =
-            new InstanceOfAssertFactory<>(ServiceException.class, ServiceExceptionAssert::new);
+    private static final InstanceOfAssertFactory<EndpointServiceException, EndpointServiceExceptionAssert>
+            INSTANCE_OF_ASSERT_FACTORY =
+                    new InstanceOfAssertFactory<>(EndpointServiceException.class, EndpointServiceExceptionAssert::new);
 
-    ServiceExceptionAssert(ServiceException actual) {
-        super(actual, ServiceExceptionAssert.class);
+    EndpointServiceExceptionAssert(EndpointServiceException actual) {
+        super(actual, EndpointServiceExceptionAssert.class);
     }
 
-    public static InstanceOfAssertFactory<ServiceException, ServiceExceptionAssert> instanceOfAssertFactory() {
+    public static InstanceOfAssertFactory<EndpointServiceException, EndpointServiceExceptionAssert>
+            instanceOfAssertFactory() {
         return INSTANCE_OF_ASSERT_FACTORY;
     }
 
-    public final ServiceExceptionAssert hasCode(ErrorType.Code code) {
+    public final EndpointServiceExceptionAssert hasCode(ErrorType.Code code) {
         isNotNull();
         failIfNotEqual(
                 "Expected ErrorType.Code to be %s, but found %s",
@@ -49,13 +35,13 @@ public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExcep
         return this;
     }
 
-    public final ServiceExceptionAssert hasType(ErrorType type) {
+    public final EndpointServiceExceptionAssert hasType(ErrorType type) {
         isNotNull();
         failIfNotEqual("Expected ErrorType to be %s, but found %s", type, actual.getErrorType());
         return this;
     }
 
-    public final ServiceExceptionAssert hasArgs(Arg<?>... args) {
+    public final EndpointServiceExceptionAssert hasArgs(Arg<?>... args) {
         isNotNull();
 
         AssertableArgs actualArgs = new AssertableArgs(actual.getArgs());
@@ -68,7 +54,7 @@ public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExcep
         return this;
     }
 
-    public final ServiceExceptionAssert hasNoArgs() {
+    public final EndpointServiceExceptionAssert hasNoArgs() {
         isNotNull();
 
         AssertableArgs actualArgs = new AssertableArgs(actual.getArgs());
@@ -90,7 +76,7 @@ public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExcep
         }
     }
 
-    public final ServiceExceptionAssert containsArgs(Arg<?>... args) {
+    public final EndpointServiceExceptionAssert containsArgs(Arg<?>... args) {
         isNotNull();
 
         AssertableArgs actualArgs = new AssertableArgs(actual.getArgs());
