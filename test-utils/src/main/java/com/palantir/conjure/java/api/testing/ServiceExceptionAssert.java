@@ -16,8 +16,8 @@
 
 package com.palantir.conjure.java.api.testing;
 
+import com.palantir.conjure.java.api.errors.BaseServiceException;
 import com.palantir.conjure.java.api.errors.ErrorType;
-import com.palantir.conjure.java.api.errors.ServiceException;
 import com.palantir.logsafe.Arg;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,16 +28,17 @@ import org.assertj.core.api.AbstractThrowableAssert;
 import org.assertj.core.api.InstanceOfAssertFactory;
 import org.assertj.core.util.Throwables;
 
-public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExceptionAssert, ServiceException> {
+public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExceptionAssert, BaseServiceException> {
 
-    private static final InstanceOfAssertFactory<ServiceException, ServiceExceptionAssert> INSTANCE_OF_ASSERT_FACTORY =
-            new InstanceOfAssertFactory<>(ServiceException.class, ServiceExceptionAssert::new);
+    private static final InstanceOfAssertFactory<BaseServiceException, ServiceExceptionAssert>
+            INSTANCE_OF_ASSERT_FACTORY =
+                    new InstanceOfAssertFactory<>(BaseServiceException.class, ServiceExceptionAssert::new);
 
-    ServiceExceptionAssert(ServiceException actual) {
+    ServiceExceptionAssert(BaseServiceException actual) {
         super(actual, ServiceExceptionAssert.class);
     }
 
-    public static InstanceOfAssertFactory<ServiceException, ServiceExceptionAssert> instanceOfAssertFactory() {
+    public static InstanceOfAssertFactory<BaseServiceException, ServiceExceptionAssert> instanceOfAssertFactory() {
         return INSTANCE_OF_ASSERT_FACTORY;
     }
 
