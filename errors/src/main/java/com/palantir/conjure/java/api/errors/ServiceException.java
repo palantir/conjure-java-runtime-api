@@ -21,62 +21,24 @@ import com.palantir.logsafe.SafeLoggable;
 import java.util.List;
 import javax.annotation.Nullable;
 
-/** A {@link ServiceException} thrown in server-side code to indicate server-side {@link ErrorType error states}. */
-public final class ServiceException extends RuntimeException implements SafeLoggable {
+/**
+ * A {@link ServiceException} thrown in server-side code to indicate server-side {@link ErrorType error states}.
+ */
+public final class ServiceException extends BaseServiceException implements SafeLoggable {
+
     private static final String EXCEPTION_NAME = "ServiceException";
-    private final ErrorType errorType;
-    private final List<Arg<?>> args; // unmodifiable
 
-    private final String errorInstanceId;
-    private final String unsafeMessage;
-    private final String noArgsMessage;
-
-    /**
-     * Creates a new exception for the given error. All {@link com.palantir.logsafe.Arg parameters} are propagated to
-     * clients; they are serialized via {@link Object#toString}.
-     */
     public ServiceException(ErrorType errorType, Arg<?>... parameters) {
-        this(errorType, null, parameters);
+        super(errorType, parameters);
     }
 
-    /** As above, but additionally records the cause of this exception. */
     public ServiceException(ErrorType errorType, @Nullable Throwable cause, Arg<?>... args) {
-        // TODO(rfink): Memoize formatting?
-        super(cause);
-
-        this.errorInstanceId = ServiceExceptionUtils.generateErrorInstanceId(cause);
-        this.errorType = errorType;
-        // Note that instantiators cannot mutate List<> args since it comes through copyToList in all code paths.
-        this.args = ServiceExceptionUtils.arrayToUnmodifiableList(args);
-        this.unsafeMessage = ServiceExceptionUtils.renderUnsafeMessage(EXCEPTION_NAME, errorType, args);
-        this.noArgsMessage = ServiceExceptionUtils.renderNoArgsMessage(EXCEPTION_NAME, errorType);
-    }
-
-    /** The {@link ErrorType} that gave rise to this exception. */
-    public ErrorType getErrorType() {
-        return errorType;
-    }
-
-    /** A unique identifier for (this instance of) this error. */
-    public String getErrorInstanceId() {
-        return errorInstanceId;
+        super(errorType, cause, args);
     }
 
     @Override
-    public String getMessage() {
-        // Including all args here since any logger not configured with safe-logging will log this message.
-        return unsafeMessage;
-    }
-
-    @Override
-    public String getLogMessage() {
-        // Not returning safe args here since the safe-logging framework will log this message + args explicitly.
-        return noArgsMessage;
-    }
-
-    @Override
-    public List<Arg<?>> getArgs() {
-        return args;
+    protected String exceptionName() {
+        return EXCEPTION_NAME;
     }
 
     /**
