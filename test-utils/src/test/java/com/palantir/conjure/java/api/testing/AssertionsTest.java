@@ -82,7 +82,7 @@ public final class AssertionsTest {
     @Test
     public void testAssertThatEndpointServiceExceptionThrownBy_catchesEndpointServiceException() {
         assertThatEndpointServiceExceptionThrownBy(() -> {
-                    throw new EndpointServiceException(ErrorType.INTERNAL) {};
+                    throw new EndpointServiceException(ErrorType.INTERNAL);
                 })
                 .hasType(ErrorType.INTERNAL);
     }
