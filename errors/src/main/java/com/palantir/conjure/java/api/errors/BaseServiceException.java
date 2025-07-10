@@ -22,14 +22,14 @@ import javax.annotation.Nullable;
 
 public abstract class BaseServiceException extends RuntimeException {
 
-    protected final ErrorType errorType;
+    private final ErrorType errorType;
 
-    protected final List<Arg<?>> args; // unmodifiable
+    private final List<Arg<?>> args; // unmodifiable
 
-    protected final String errorInstanceId;
+    private final String errorInstanceId;
 
-    protected final String unsafeMessage;
-    protected final String noArgsMessage;
+    private final String unsafeMessage;
+    private final String noArgsMessage;
 
     /**
      * Creates a new exception for the given error. All {@link com.palantir.logsafe.Arg parameters} are propagated to
@@ -64,29 +64,29 @@ public abstract class BaseServiceException extends RuntimeException {
     /**
      * The {@link ErrorType} that gave rise to this exception.
      */
-    public ErrorType getErrorType() {
+    public final ErrorType getErrorType() {
         return errorType;
     }
 
     /**
      * A unique identifier for (this instance of) this error.
      */
-    public String getErrorInstanceId() {
+    public final String getErrorInstanceId() {
         return errorInstanceId;
     }
 
     @Override
-    public String getMessage() {
+    public final String getMessage() {
         // Including all args here since any logger not configured with safe-logging will log this message.
         return unsafeMessage;
     }
 
-    public String getLogMessage() {
+    public final String getLogMessage() {
         // Not returning safe args here since the safe-logging framework will log this message + args explicitly.
         return noArgsMessage;
     }
 
-    public List<Arg<?>> getArgs() {
+    public final List<Arg<?>> getArgs() {
         return args;
     }
 }

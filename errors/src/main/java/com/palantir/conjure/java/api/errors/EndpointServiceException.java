@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
  * This is identical to ServiceException, but is used in Conjure-generated code to indicate that an exception was thrown
  * from a service endpoint.
  */
-public class EndpointServiceException extends BaseServiceException implements SafeLoggable {
+public final class EndpointServiceException extends BaseServiceException implements SafeLoggable {
 
     private static final String EXCEPTION_NAME = "EndpointServiceException";
 
