@@ -42,14 +42,14 @@ public class EndpointServiceExceptionAssertTest {
 
         Assertions.assertThat(new EndpointServiceException(actualType)).hasNoArgs();
 
-        assertThatThrownBy(() ->
-                        Assertions.assertThat(new EndpointServiceException(actualType)).hasCode(ErrorType.Code.INTERNAL))
+        assertThatThrownBy(() -> Assertions.assertThat(new EndpointServiceException(actualType))
+                        .hasCode(ErrorType.Code.INTERNAL))
                 .isInstanceOf(AssertionError.class)
                 .hasMessageContaining(
                         "Expected ErrorType.Code to be %s, but found %s", ErrorType.Code.INTERNAL, actualType.code());
 
-        assertThatThrownBy(() ->
-                        Assertions.assertThat(new EndpointServiceException(actualType)).hasType(ErrorType.INTERNAL))
+        assertThatThrownBy(() -> Assertions.assertThat(new EndpointServiceException(actualType))
+                        .hasType(ErrorType.INTERNAL))
                 .isInstanceOf(AssertionError.class)
                 .hasMessageContaining("Expected ErrorType to be %s, but found %s", ErrorType.INTERNAL, actualType);
 
