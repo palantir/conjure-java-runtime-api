@@ -16,17 +16,24 @@
 
 package com.palantir.conjure.java.api.testing;
 
+import static com.palantir.conjure.java.api.testing.Assertions.assertThatEndpointServiceExceptionThrownBy;
 import static com.palantir.conjure.java.api.testing.Assertions.assertThatQosExceptionThrownBy;
 import static com.palantir.conjure.java.api.testing.Assertions.assertThatRemoteExceptionThrownBy;
 import static com.palantir.conjure.java.api.testing.Assertions.assertThatServiceExceptionThrownBy;
 import static com.palantir.conjure.java.api.testing.Assertions.assertThatThrownBy;
 
+import com.palantir.conjure.java.api.errors.EndpointServiceException;
 import com.palantir.conjure.java.api.errors.ErrorType;
 import com.palantir.conjure.java.api.errors.QosException;
 import com.palantir.conjure.java.api.errors.QosReason;
 import com.palantir.conjure.java.api.errors.RemoteException;
 import com.palantir.conjure.java.api.errors.SerializableError;
 import com.palantir.conjure.java.api.errors.ServiceException;
+import com.palantir.logsafe.Safe;
+import com.palantir.logsafe.SafeArg;
+import com.palantir.logsafe.Unsafe;
+import com.palantir.logsafe.UnsafeArg;
+import javax.annotation.Nullable;
 import org.junit.jupiter.api.Test;
 
 public final class AssertionsTest {
@@ -48,6 +55,20 @@ public final class AssertionsTest {
                         "com.palantir.conjure.java.api.errors.ServiceException",
                         "java.lang.RuntimeException",
                         "My message");
+    }
+
+    public static final class EndpointError extends EndpointServiceException {
+        private EndpointError(@Safe String typeName, @Unsafe Object typeDef, @Nullable Throwable cause) {
+            super(ErrorType.CONFLICT, cause, SafeArg.of("typeName", typeName), UnsafeArg.of("typeDef", typeDef));
+        }
+    }
+
+    @Test
+    public void testAssertEndpointErrorIsThrown() {
+        assertThatEndpointServiceExceptionThrownBy(() -> {
+                    throw new EndpointError("typeName", "typeDef", null);
+                })
+                .hasType(ErrorType.CONFLICT);
     }
 
     @Test

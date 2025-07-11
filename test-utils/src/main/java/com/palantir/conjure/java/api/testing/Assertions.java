@@ -46,6 +46,13 @@ public class Assertions extends org.assertj.core.api.Assertions {
     }
 
     @CanIgnoreReturnValue
+    public static EndpointServiceExceptionAssert assertThatEndpointServiceExceptionThrownBy(
+            ThrowingCallable shouldRaiseThrowable) {
+        return assertThatThrownBy(shouldRaiseThrowable)
+                .asInstanceOf(EndpointServiceExceptionAssert.instanceOfAssertFactory());
+    }
+
+    @CanIgnoreReturnValue
     public static RemoteExceptionAssert assertThatRemoteExceptionThrownBy(ThrowingCallable shouldRaiseThrowable) {
         return assertThatThrownBy(shouldRaiseThrowable).asInstanceOf(RemoteExceptionAssert.instanceOfAssertFactory());
     }
