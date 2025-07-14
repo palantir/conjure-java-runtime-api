@@ -16,6 +16,7 @@
 
 package com.palantir.conjure.java.api.testing;
 
+import com.palantir.conjure.java.api.errors.EndpointServiceException;
 import com.palantir.conjure.java.api.errors.QosException;
 import com.palantir.conjure.java.api.errors.RemoteException;
 import com.palantir.conjure.java.api.errors.ServiceException;
@@ -29,6 +30,10 @@ public class Assertions extends org.assertj.core.api.Assertions {
     Assertions() {}
 
     public static ServiceExceptionAssert assertThat(ServiceException actual) {
+        return new ServiceExceptionAssert(actual);
+    }
+
+    public static ServiceExceptionAssert assertThat(EndpointServiceException actual) {
         return new ServiceExceptionAssert(actual);
     }
 
