@@ -49,6 +49,12 @@ public abstract class ProxyConfiguration {
         FROM_ENVIRONMENT,
 
         /**
+         * Use an http-proxy with {@link ProxyConfiguration#hostAndPort()} extracted from environment's "https_proxy",
+         * respecting the environment's "no_proxy" setting.
+         */
+        FROM_ENVIRONMENT_NO_PROXY_AWARE,
+
+        /**
          * Use an http-proxy specified by {@link ProxyConfiguration#hostAndPort()} and (optionally)
          * {@link ProxyConfiguration#credentials()}.
          */
