@@ -16,7 +16,7 @@
 
 package com.palantir.conjure.java.api.testing;
 
-import com.palantir.conjure.java.api.errors.AbstractServiceError;
+import com.palantir.conjure.java.api.errors.AbstractServiceException;
 import com.palantir.conjure.java.api.errors.ErrorType;
 import com.palantir.logsafe.Arg;
 import java.util.Arrays;
@@ -28,17 +28,17 @@ import org.assertj.core.api.AbstractThrowableAssert;
 import org.assertj.core.api.InstanceOfAssertFactory;
 import org.assertj.core.util.Throwables;
 
-public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExceptionAssert, AbstractServiceError> {
+public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExceptionAssert, AbstractServiceException> {
 
-    private static final InstanceOfAssertFactory<AbstractServiceError, ServiceExceptionAssert>
+    private static final InstanceOfAssertFactory<AbstractServiceException, ServiceExceptionAssert>
             INSTANCE_OF_ASSERT_FACTORY =
-                    new InstanceOfAssertFactory<>(AbstractServiceError.class, ServiceExceptionAssert::new);
+                    new InstanceOfAssertFactory<>(AbstractServiceException.class, ServiceExceptionAssert::new);
 
-    ServiceExceptionAssert(AbstractServiceError actual) {
+    ServiceExceptionAssert(AbstractServiceException actual) {
         super(actual, ServiceExceptionAssert.class);
     }
 
-    public static InstanceOfAssertFactory<AbstractServiceError, ServiceExceptionAssert> instanceOfAssertFactory() {
+    public static InstanceOfAssertFactory<AbstractServiceException, ServiceExceptionAssert> instanceOfAssertFactory() {
         return INSTANCE_OF_ASSERT_FACTORY;
     }
 

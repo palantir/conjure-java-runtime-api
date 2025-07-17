@@ -21,10 +21,10 @@ import com.palantir.logsafe.SafeLoggable;
 /**
  * This class should not be used directly. The parent class for ServiceException and EndpointServiceException.
  */
-public abstract class AbstractServiceError extends RuntimeException implements SafeLoggable {
+public abstract class AbstractServiceException extends RuntimeException implements SafeLoggable {
     public abstract ErrorType getErrorType();
 
-    protected AbstractServiceError(Throwable cause) {
+    protected AbstractServiceException(Throwable cause) {
         super(cause);
     }
 }

@@ -21,7 +21,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 /** A {@link ServiceException} thrown in server-side code to indicate server-side {@link ErrorType error states}. */
-public final class ServiceException extends AbstractServiceError {
+public final class ServiceException extends AbstractServiceException {
     private static final String EXCEPTION_NAME = "ServiceException";
     private final ErrorType errorType;
     private final List<Arg<?>> args; // unmodifiable
