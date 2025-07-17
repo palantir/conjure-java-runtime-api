@@ -24,6 +24,7 @@ import com.palantir.conjure.java.api.errors.QosReason.DueTo;
 import com.palantir.conjure.java.api.errors.QosReason.RetryHint;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
+import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.junit.jupiter.api.Test;
@@ -72,13 +73,12 @@ public final class QosExceptionTest {
             }
         },
         RETRY_OTHER {
-            @SuppressWarnings("for-rollout:PreferUncheckedIoException")
             @Override
             QosException create(QosReason reason) {
                 try {
                     return QosException.retryOther(reason, new URL("http://foo"));
                 } catch (MalformedURLException e) {
-                    throw new RuntimeException(e);
+                    throw new UncheckedIOException(e);
                 }
             }
         };
