@@ -72,6 +72,7 @@ public final class QosExceptionTest {
             }
         },
         RETRY_OTHER {
+            @SuppressWarnings("for-rollout:PreferUncheckedIoException")
             @Override
             QosException create(QosReason reason) {
                 try {
