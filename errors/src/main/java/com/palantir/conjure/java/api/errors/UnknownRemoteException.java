@@ -46,7 +46,6 @@ public final class UnknownRemoteException extends RuntimeException implements Sa
         this.body = body;
     }
 
-    @SuppressWarnings("for-rollout:IllegalSafeLoggingArgument")
     @Override
     public String getLogMessage() {
         return getMessage();
