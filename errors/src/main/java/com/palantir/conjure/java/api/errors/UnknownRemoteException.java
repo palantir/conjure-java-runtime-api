@@ -17,6 +17,7 @@
 package com.palantir.conjure.java.api.errors;
 
 import com.palantir.logsafe.Arg;
+import com.palantir.logsafe.Safe;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.SafeLoggable;
 import com.palantir.logsafe.Unsafe;
@@ -30,6 +31,9 @@ public final class UnknownRemoteException extends RuntimeException implements Sa
     private final int status;
     private final String body;
 
+    @Safe
+    private final String message;
+
     /** The HTTP status code of the HTTP response conveying the error. */
     public int getStatus() {
         return status;
@@ -41,14 +45,19 @@ public final class UnknownRemoteException extends RuntimeException implements Sa
     }
 
     public UnknownRemoteException(int status, String body) {
-        super("Response status: " + status);
+        this(status, body, "Response status: " + status);
+    }
+
+    private UnknownRemoteException(int status, String body, @Safe String message) {
+        super(message);
         this.status = status;
         this.body = body;
+        this.message = message;
     }
 
     @Override
     public String getLogMessage() {
-        return getMessage();
+        return message;
     }
 
     @Unsafe
