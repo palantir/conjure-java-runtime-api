@@ -197,55 +197,65 @@ public final class SerializableErrorTest {
     public void testDeserializeWithJsonObjectParameter() throws Exception {
         String serialized = "{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
                 + "\"parameters\":{\"key\":{\"nested\": \"value\"}}}";
-        assertThat(deserialize(serialized))
+        SerializableError result = deserialize(serialized);
+        assertThat(result)
                 .isEqualTo(SerializableError.builder()
                         .from(ERROR)
                         .putParameters("key", "{\"nested\":\"value\"}")
                         .build());
+        assertThat(result.legacyParameters()).containsExactlyEntriesOf(Map.of("key", "{\"nested\":\"value\"}"));
     }
 
     @Test
     public void testDeserializeWithJsonArrayParameter() throws Exception {
         String serialized = "{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
                 + "\"parameters\":{\"key\":[\"nested\"]}}";
-        assertThat(deserialize(serialized))
+        SerializableError result = deserialize(serialized);
+        assertThat(result)
                 .isEqualTo(SerializableError.builder()
                         .from(ERROR)
                         .putParameters("key", "[\"nested\"]")
                         .build());
+        assertThat(result.legacyParameters()).containsExactlyEntriesOf(Map.of("key", "[\"nested\"]"));
     }
 
     @Test
     public void testDeserializeWithJsonBooleanParameter() throws Exception {
         String serialized = "{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
                 + "\"parameters\":{\"key\":true}}";
-        assertThat(deserialize(serialized))
+        SerializableError result = deserialize(serialized);
+        assertThat(result)
                 .isEqualTo(SerializableError.builder()
                         .from(ERROR)
                         .putParameters("key", "true")
                         .build());
+        assertThat(result.legacyParameters()).containsExactlyEntriesOf(Map.of("key", "true"));
     }
 
     @Test
     public void testDeserializeWithJsonNumberParameter() throws Exception {
         String serialized = "{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
                 + "\"parameters\":{\"key\":1.1}}";
-        assertThat(deserialize(serialized))
+        SerializableError result = deserialize(serialized);
+        assertThat(result)
                 .isEqualTo(SerializableError.builder()
                         .from(ERROR)
                         .putParameters("key", "1.1")
                         .build());
+        assertThat(result.legacyParameters()).containsExactlyEntriesOf(Map.of("key", "1.1"));
     }
 
     @Test
     public void testDeserializeWithJsonStringParameter() throws Exception {
         String serialized = "{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
                 + "\"parameters\":{\"key\":\"value\"}}";
-        assertThat(deserialize(serialized))
+        SerializableError result = deserialize(serialized);
+        assertThat(result)
                 .isEqualTo(SerializableError.builder()
                         .from(ERROR)
                         .putParameters("key", "value")
                         .build());
+        assertThat(result.legacyParameters()).containsExactlyEntriesOf(Map.of("key", "value"));
     }
 
     private static SerializableError deserialize(String serialized) throws IOException {

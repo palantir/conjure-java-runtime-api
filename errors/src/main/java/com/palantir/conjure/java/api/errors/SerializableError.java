@@ -16,6 +16,7 @@
 
 package com.palantir.conjure.java.api.errors;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
@@ -45,7 +46,7 @@ import org.immutables.value.Value;
 @Value.Immutable
 @Value.Style(overshadowImplementation = false)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class SerializableError implements Serializable {
+public abstract class SerializableError implements Serializable, AbstractSerializableError<Map<String, String>> {
 
     /**
      * A fixed code word identifying the type of error. For errors generated from {@link ServiceException}, this
@@ -55,6 +56,7 @@ public abstract class SerializableError implements Serializable {
      */
     @JsonProperty("errorCode")
     @Value.Default
+    @Override
     public String errorCode() {
         return getExceptionClass()
                 .orElseThrow(() ->
@@ -68,6 +70,7 @@ public abstract class SerializableError implements Serializable {
      */
     @JsonProperty("errorName")
     @Value.Default
+    @Override
     public String errorName() {
         return getMessage()
                 .orElseThrow(() -> new SafeIllegalStateException("Expected either 'errorName' or 'message' to be set"));
@@ -81,6 +84,7 @@ public abstract class SerializableError implements Serializable {
      */
     @JsonProperty("errorInstanceId")
     @Value.Default
+    @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String errorInstanceId() {
         return "";
@@ -88,7 +92,18 @@ public abstract class SerializableError implements Serializable {
 
     /** A set of parameters that further explain the error. */
     @JsonDeserialize(contentUsing = ParameterDeserializer.class)
+    @Override
     public abstract Map<String, String> parameters();
+
+    /**
+     * Legacy parameters.
+     */
+    @JsonIgnore
+    @Value.Derived
+    @Override
+    public Map<String, String> legacyParameters() {
+        return parameters();
+    }
 
     /**
      * Returns the deprecated "exceptionClass" field returned by remoting2 servers.
