@@ -165,26 +165,17 @@ public final class HumanReadableDuration implements Comparable<HumanReadableDura
      * @implNote This method can be removed in JDK9
      * @see <a href="https://bugs.openjdk.java.net/browse/JDK-8141452">JDK-8141452</a>
      */
-    @SuppressWarnings("for-rollout:StatementSwitchToExpressionSwitch")
     private static ChronoUnit chronoUnit(TimeUnit unit) {
-        switch (Preconditions.checkNotNull(unit, "unit")) {
-            case NANOSECONDS:
-                return ChronoUnit.NANOS;
-            case MICROSECONDS:
-                return ChronoUnit.MICROS;
-            case MILLISECONDS:
-                return ChronoUnit.MILLIS;
-            case SECONDS:
-                return ChronoUnit.SECONDS;
-            case MINUTES:
-                return ChronoUnit.MINUTES;
-            case HOURS:
-                return ChronoUnit.HOURS;
-            case DAYS:
-                return ChronoUnit.DAYS;
-            default:
-                throw new SafeIllegalArgumentException("Unknown TimeUnit constant", SafeArg.of("unit", unit));
-        }
+        return switch (Preconditions.checkNotNull(unit, "unit")) {
+            case NANOSECONDS -> ChronoUnit.NANOS;
+            case MICROSECONDS -> ChronoUnit.MICROS;
+            case MILLISECONDS -> ChronoUnit.MILLIS;
+            case SECONDS -> ChronoUnit.SECONDS;
+            case MINUTES -> ChronoUnit.MINUTES;
+            case HOURS -> ChronoUnit.HOURS;
+            case DAYS -> ChronoUnit.DAYS;
+            default -> throw new SafeIllegalArgumentException("Unknown TimeUnit constant", SafeArg.of("unit", unit));
+        };
     }
 
     @Override

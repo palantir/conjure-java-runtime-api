@@ -95,29 +95,24 @@ public abstract class ProxyConfiguration {
         return Type.HTTP;
     }
 
-    @SuppressWarnings("for-rollout:StatementSwitchToExpressionSwitch")
     @Value.Check
     protected final void check() {
         switch (type()) {
-            case MESH:
-            case HTTP:
-            case HTTPS:
+            case MESH, HTTP, HTTPS -> {
                 Preconditions.checkArgument(
                         hostAndPort().isPresent(), "host-and-port must be configured for an HTTP proxy");
                 HostAndPort host = HostAndPort.fromString(hostAndPort().get());
                 Preconditions.checkArgument(
                         host.hasPort(), "Given hostname does not contain a port number", SafeArg.of("hostname", host));
-                break;
-            case DIRECT:
+            }
+            case DIRECT ->
                 Preconditions.checkArgument(
                         hostAndPort().isEmpty() && credentials().isEmpty(),
                         "Neither credential nor host-and-port may be configured for DIRECT proxies");
-                break;
-            case FROM_ENVIRONMENT:
+            case FROM_ENVIRONMENT ->
                 Preconditions.checkArgument(
                         hostAndPort().isEmpty(), "Host-and-port may not be configured for FROM_ENVIRONMENT proxies");
-                break;
-            case SOCKS:
+            case SOCKS -> {
                 Preconditions.checkArgument(
                         hostAndPort().isPresent(), "host-and-port must be configured for a SOCKS proxy");
                 HostAndPort socksHostAndPort =
@@ -126,9 +121,8 @@ public abstract class ProxyConfiguration {
                         socksHostAndPort.hasPort(),
                         "Given hostname does not contain a port number",
                         SafeArg.of("hostname", socksHostAndPort));
-                break;
-            default:
-                throw new SafeIllegalStateException("Unrecognized case; this is a library bug");
+            }
+            default -> throw new SafeIllegalStateException("Unrecognized case; this is a library bug");
         }
 
         if (credentials().isPresent()) {
