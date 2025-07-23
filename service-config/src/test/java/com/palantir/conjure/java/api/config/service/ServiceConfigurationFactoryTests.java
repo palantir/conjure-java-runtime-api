@@ -245,7 +245,7 @@ public final class ServiceConfigurationFactoryTests {
         try {
             return mapper.readValue(resource.openStream(), ServicesConfigBlock.class);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to open file: " + file);
+            throw new RuntimeException("Failed to open file: " + file, e);
         }
     }
 }

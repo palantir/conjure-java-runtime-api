@@ -57,6 +57,7 @@ public final class HostAndPort {
         return port >= 0;
     }
 
+    @SuppressWarnings("for-rollout:UnusedException")
     public static HostAndPort fromString(String hostPortString) {
         Preconditions.checkNotNull(hostPortString, "hostPortString");
         String host;
