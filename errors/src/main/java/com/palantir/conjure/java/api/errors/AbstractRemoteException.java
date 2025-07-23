@@ -18,7 +18,10 @@ package com.palantir.conjure.java.api.errors;
 
 import com.palantir.logsafe.SafeLoggable;
 
-// Note: abstract classes cannot extend Throwable
+// Note: abstract classes cannot extend Throwable, and classes can extend only one class.
+// Note: I don't think people should use `getMessage` for anything moving forward. They will be able to access the
+// arguments using the `getArgs` method. No need to get the unsafe message.
+// The classes that implement this class should also extend RuntimeException.
 public interface AbstractRemoteException<T extends AbstractSerializableError<?>> extends SafeLoggable {
     T getError();
 
