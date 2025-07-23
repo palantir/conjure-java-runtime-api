@@ -32,6 +32,7 @@ import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import com.palantir.tokens.auth.BearerToken;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.time.Duration;
@@ -245,7 +246,7 @@ public final class ServiceConfigurationFactoryTests {
         try {
             return mapper.readValue(resource.openStream(), ServicesConfigBlock.class);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to open file: " + file);
+            throw new UncheckedIOException("Failed to open file: " + file, e);
         }
     }
 }

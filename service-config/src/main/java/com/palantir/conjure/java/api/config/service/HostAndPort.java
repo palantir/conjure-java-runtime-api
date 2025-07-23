@@ -88,7 +88,7 @@ public final class HostAndPort {
                 port = Integer.parseInt(portString);
             } catch (NumberFormatException e) {
                 throw new SafeIllegalArgumentException(
-                        "Unparseable port number", SafeArg.of("hostPort", hostPortString));
+                        "Unparseable port number", e, SafeArg.of("hostPort", hostPortString));
             }
             Preconditions.checkArgument(
                     isValidPort(port), "Port number out of range", SafeArg.of("hostPort", hostPortString));
