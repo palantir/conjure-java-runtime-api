@@ -16,27 +16,11 @@
 
 package com.palantir.conjure.java.api.errors;
 
-import com.palantir.logsafe.Safe;
-import java.util.Map;
-
 public abstract class AbstractSerializableError<T> {
-    @Safe
     private final String errorCode;
-
-    @Safe
     private final String errorName;
-
-    @Safe
     private final String errorInstanceId;
-
-    private final T params;
-
-    protected AbstractSerializableError(String errorCode, String errorName, String errorInstanceId, T params) {
-        this.errorCode = errorCode;
-        this.errorName = errorName;
-        this.errorInstanceId = errorInstanceId;
-        this.params = params;
-    }
+    private final T errorParameters;
 
     public final String errorCode() {
         return errorCode;
@@ -50,12 +34,14 @@ public abstract class AbstractSerializableError<T> {
         return errorInstanceId;
     }
 
-    public final T parameters() {
-        return params;
+    public final T errorParameters() {
+        return errorParameters;
     }
 
-    /**
-     * Returns the legacy parameters.
-     */
-    public abstract Map<String, String> legacyParameters();
+    protected AbstractSerializableError(String errorCode, String errorName, String errorInstanceId, T errorParameters) {
+        this.errorCode = errorCode;
+        this.errorName = errorName;
+        this.errorInstanceId = errorInstanceId;
+        this.errorParameters = errorParameters;
+    }
 }
