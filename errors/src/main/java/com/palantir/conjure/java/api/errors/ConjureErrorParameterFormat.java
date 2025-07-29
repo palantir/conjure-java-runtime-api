@@ -21,6 +21,14 @@ import com.palantir.logsafe.Safe;
 
 /**
  * A class representing the Conjure error parameter format that a client expects to receive from a server.
+ *
+ * <p>Built-in formats are:
+ * <ul>
+ *   <li>{@link #JSON_FORMAT}: Parameters are expected to be serialized as JSON</li>
+ * </ul>
+ *
+ * <p>Clients should use the utility methods in {@link ConjureErrorParameterFormats} rather than
+ * directly constructing instances of this class.
  */
 @Safe
 public final class ConjureErrorParameterFormat {

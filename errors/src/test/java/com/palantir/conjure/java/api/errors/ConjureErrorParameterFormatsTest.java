@@ -55,6 +55,7 @@ public final class ConjureErrorParameterFormatsTest {
                 .isInstanceOf(SafeNullPointerException.class)
                 .hasMessage("Adapter is required");
     }
+
     @Test
     public void parseFromRequest_headerPresent_returnsFormat() {
         Map<String, String> request = new HashMap<>();
@@ -66,14 +67,16 @@ public final class ConjureErrorParameterFormatsTest {
     @Test
     public void parseFromRequest_headerMissing_returnsEmpty() {
         Map<String, String> request = new HashMap<>();
-        assertThat(ConjureErrorParameterFormats.parseFromRequest(request, Decoder.INSTANCE)).isEmpty();
+        assertThat(ConjureErrorParameterFormats.parseFromRequest(request, Decoder.INSTANCE))
+                .isEmpty();
     }
 
     @Test
     public void parseFromRequest_headerEmpty_returnsEmpty() {
         Map<String, String> request = new HashMap<>();
         request.put(HEADER_NAME, "");
-        assertThat(ConjureErrorParameterFormats.parseFromRequest(request, Decoder.INSTANCE)).isEmpty();
+        assertThat(ConjureErrorParameterFormats.parseFromRequest(request, Decoder.INSTANCE))
+                .isEmpty();
     }
 
     @Test
