@@ -78,11 +78,11 @@ public final class ConjureErrorParameterFormats {
     }
 
     public interface ConjureErrorParameterFormatRequestEncodingAdapter<REQUEST> {
-        void setHeader(REQUEST response, String headerName, String headerValue);
+        void setHeader(REQUEST request, String headerName, String headerValue);
     }
 
     public interface ConjureErrorParameterFormatRequestDecodingAdapter<REQUEST> {
-        String getFirstHeader(REQUEST response, String headerName);
+        String getFirstHeader(REQUEST request, String headerName);
     }
 
     private ConjureErrorParameterFormats() {}
