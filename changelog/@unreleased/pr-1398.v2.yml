@@ -1,0 +1,6 @@
+type: improvement
+improvement:
+  description: Add `ConjureErrorParameterFormat` with utility to encode and parse
+    HTTP header
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/1398
