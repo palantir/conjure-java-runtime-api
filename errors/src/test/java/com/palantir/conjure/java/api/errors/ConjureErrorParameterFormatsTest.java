@@ -29,14 +29,13 @@ import org.junit.jupiter.api.Test;
 
 public final class ConjureErrorParameterFormatsTest {
 
-    private static final String HEADER_NAME = "Accept-Conjure-Error-Parameter-Format";
-
     @Test
     public void encodeToRequest_setsHeaderCorrectly() {
         Map<String, String> request = new HashMap<>();
         ConjureErrorParameterFormat format = ConjureErrorParameterFormat.JSON_FORMAT;
         ConjureErrorParameterFormats.encodeToRequest(format, request, Encoder.INSTANCE);
-        assertThat(request).containsEntry(HEADER_NAME, "JSON");
+        assertThat(request)
+                .containsEntry(ConjureErrorParameterFormats.ACCEPT_CONJURE_ERROR_PARAMETER_FORMAT_HEADER, "JSON");
     }
 
     @Test
@@ -59,7 +58,7 @@ public final class ConjureErrorParameterFormatsTest {
     @Test
     public void parseFromRequest_headerPresent_returnsFormat() {
         Map<String, String> request = new HashMap<>();
-        request.put(HEADER_NAME, "JSON");
+        request.put(ConjureErrorParameterFormats.ACCEPT_CONJURE_ERROR_PARAMETER_FORMAT_HEADER, "JSON");
         assertThat(ConjureErrorParameterFormats.parseFromRequest(request, Decoder.INSTANCE))
                 .contains(ConjureErrorParameterFormat.JSON_FORMAT);
     }
@@ -74,7 +73,7 @@ public final class ConjureErrorParameterFormatsTest {
     @Test
     public void parseFromRequest_headerEmpty_returnsEmpty() {
         Map<String, String> request = new HashMap<>();
-        request.put(HEADER_NAME, "");
+        request.put(ConjureErrorParameterFormats.ACCEPT_CONJURE_ERROR_PARAMETER_FORMAT_HEADER, "");
         assertThat(ConjureErrorParameterFormats.parseFromRequest(request, Decoder.INSTANCE))
                 .isEmpty();
     }
@@ -94,7 +93,7 @@ public final class ConjureErrorParameterFormatsTest {
     @Test
     public void parseFromRequest_customFormat_returnsCorrectFormat() {
         Map<String, String> request = new HashMap<>();
-        request.put(HEADER_NAME, "CUSTOM_FORMAT");
+        request.put(ConjureErrorParameterFormats.ACCEPT_CONJURE_ERROR_PARAMETER_FORMAT_HEADER, "CUSTOM_FORMAT");
         Optional<ConjureErrorParameterFormat> result =
                 ConjureErrorParameterFormats.parseFromRequest(request, Decoder.INSTANCE);
         assertThat(result).isPresent();
