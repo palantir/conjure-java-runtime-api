@@ -60,7 +60,7 @@ public final class ConjureErrorParameterFormatsTest {
         Map<String, String> request = new HashMap<>();
         request.put(ConjureErrorParameterFormats.ACCEPT_CONJURE_ERROR_PARAMETER_FORMAT_HEADER, "JSON");
         assertThat(ConjureErrorParameterFormats.parseFromRequest(request, Decoder.INSTANCE))
-                .contains(ConjureErrorParameterFormat.JSON_FORMAT);
+                .containsSame(ConjureErrorParameterFormat.JSON_FORMAT);
     }
 
     @Test
@@ -107,7 +107,7 @@ public final class ConjureErrorParameterFormatsTest {
         ConjureErrorParameterFormats.encodeToRequest(originalFormat, request, Encoder.INSTANCE);
         Optional<ConjureErrorParameterFormat> parsedFormat =
                 ConjureErrorParameterFormats.parseFromRequest(request, Decoder.INSTANCE);
-        assertThat(parsedFormat).contains(originalFormat);
+        assertThat(parsedFormat).containsSame(originalFormat);
     }
 
     private enum Encoder implements ConjureErrorParameterFormatRequestEncodingAdapter<Map<String, String>> {

@@ -77,12 +77,12 @@ public final class ConjureErrorParameterFormats {
         return Optional.of(ConjureErrorParameterFormat.valueOf(headerValue));
     }
 
-    public interface ConjureErrorParameterFormatRequestEncodingAdapter<RESPONSE> {
-        void setHeader(RESPONSE response, String headerName, String headerValue);
+    public interface ConjureErrorParameterFormatRequestEncodingAdapter<REQUEST> {
+        void setHeader(REQUEST response, String headerName, String headerValue);
     }
 
-    public interface ConjureErrorParameterFormatRequestDecodingAdapter<RESPONSE> {
-        String getFirstHeader(RESPONSE response, String headerName);
+    public interface ConjureErrorParameterFormatRequestDecodingAdapter<REQUEST> {
+        String getFirstHeader(REQUEST response, String headerName);
     }
 
     private ConjureErrorParameterFormats() {}
