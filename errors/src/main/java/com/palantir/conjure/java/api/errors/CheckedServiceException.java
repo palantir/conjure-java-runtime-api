@@ -35,12 +35,20 @@ public abstract class CheckedServiceException extends Exception implements SafeL
     /**
      * Creates a new exception for the given error. All {@link com.palantir.logsafe.Arg parameters} are propagated to
      * clients.
+     * <p>
+     * @deprecated Do not extend this class, it will be removed in a future version.
      */
+    @Deprecated
     public CheckedServiceException(ErrorType errorType, Arg<?>... parameters) {
         this(errorType, null, parameters);
     }
 
-    /** As above, but additionally records the cause of this exception. */
+    /**
+     * As above, but additionally records the cause of this exception.
+     * <p>
+     * @deprecated Do not extend this class, it will be removed in a future version.
+     */
+    @Deprecated
     public CheckedServiceException(ErrorType errorType, @Nullable Throwable cause, Arg<?>... args) {
         super(cause);
         this.errorInstanceId = ServiceExceptionUtils.generateErrorInstanceId(cause);
