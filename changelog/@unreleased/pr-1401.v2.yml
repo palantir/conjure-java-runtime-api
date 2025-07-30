@@ -1,0 +1,5 @@
+type: deprecation
+deprecation:
+  description: Deprecate `CheckedServiceException`
+  links:
+  - https://github.com/palantir/conjure-java-runtime-api/pull/1401
