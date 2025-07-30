@@ -38,7 +38,7 @@ public abstract class CheckedServiceException extends Exception implements SafeL
      * <p>
      * @deprecated Do not extend this class, it will be removed in a future version.
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public CheckedServiceException(ErrorType errorType, Arg<?>... parameters) {
         this(errorType, null, parameters);
     }
@@ -48,7 +48,7 @@ public abstract class CheckedServiceException extends Exception implements SafeL
      * <p>
      * @deprecated Do not extend this class, it will be removed in a future version.
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public CheckedServiceException(ErrorType errorType, @Nullable Throwable cause, Arg<?>... args) {
         super(cause);
         this.errorInstanceId = ServiceExceptionUtils.generateErrorInstanceId(cause);
