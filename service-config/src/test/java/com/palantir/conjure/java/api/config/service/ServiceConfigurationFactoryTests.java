@@ -203,9 +203,11 @@ public final class ServiceConfigurationFactoryTests {
             + "{\"service\":{\"apiToken\":null,\"security\":null,\"uris\":[\"uri\"],\"connectTimeout\":null,"
             + "\"readTimeout\":null,\"writeTimeout\":null,\"maxNumRetries\":null,\"backoffSlotSize\":null,"
             + "\"enableGcmCipherSuites\":null,\"enableHttp2\":null,\"fallbackToCommonNameVerification\":null,"
-            + "\"proxyConfiguration\":null,\"poolReusePolicy\":null}},\"proxyConfiguration\":{\"hostAndPort\":\"host:80\",\"credentials\":null,\"type\":\"HTTP\"},\"connectTimeout\":\"1"
-            + " day\",\"readTimeout\":\"1 day\",\"writeTimeout\":\"1 day\",\"backoffSlotSize\":\"1 day\","
-            + "\"enableGcmCipherSuites\":null,\"enableHttp2\":null,\"fallbackToCommonNameVerification\":null,\"poolReusePolicy\":null}";
+            + "\"proxyConfiguration\":null,\"poolReusePolicy\":null}},\"proxyConfiguration\":{\"hostAndPort\":"
+            + "\"host:80\",\"credentials\":null,\"type\":\"HTTP\"},\"connectTimeout\":\"1 day\","
+            + "\"readTimeout\":\"1 day\",\"writeTimeout\":\"1 day\",\"backoffSlotSize\":\"1 day\","
+            + "\"enableGcmCipherSuites\":null,\"enableHttp2\":null,\"fallbackToCommonNameVerification\":null,"
+            + "\"poolReusePolicy\":null}";
         String kebabCase = "{\"api-token\":\"bearerToken\",\"security\":"
                 + "{\"trust-store-path\":\"truststore.jks\",\"trust-store-type\":\"JKS\",\"key-store-path\":null,"
                 + "\"key-store-password\":null,\"key-store-type\":\"JKS\",\"key-store-key-alias\":null},\"services\":"
