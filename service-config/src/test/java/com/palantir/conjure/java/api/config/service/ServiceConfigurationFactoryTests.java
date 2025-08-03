@@ -198,15 +198,14 @@ public final class ServiceConfigurationFactoryTests {
                 .defaultBackoffSlotSize(HumanReadableDuration.days(1))
                 .build();
         String camelCase = "{\"apiToken\":\"bearerToken\",\"security\":"
-                + "{\"trustStorePath\":\"truststore.jks\",\"trustStoreType\":\"JKS\",\"keyStorePath\":null,"
-                + "\"keyStorePassword\":null,\"keyStoreType\":\"JKS\",\"keyStoreKeyAlias\":null},\"services\":"
-                + "{\"service\":{\"apiToken\":null,\"security\":null,\"uris\":[\"uri\"],\"connectTimeout\":null,"
-                + "\"readTimeout\":null,\"writeTimeout\":null,\"maxNumRetries\":null,\"backoffSlotSize\":null,"
-                + "\"enableGcmCipherSuites\":null,\"enableHttp2\":null,\"fallbackToCommonNameVerification\":null,"
-                + "\"proxyConfiguration\":null,\"poolReusePolicy\":null}},\"proxyConfiguration\":"
-                + "{\"hostAndPort\":\"host:80\",\"credentials\":null,\"type\":\"HTTP\"},\"connectTimeout\":\"1 day\","
-                + "\"readTimeout\":\"1 day\",\"writeTimeout\":\"1 day\",\"backoffSlotSize\":\"1 day\","
-                + "\"enableGcmCipherSuites\":null,\"enableHttp2\":null,\"fallbackToCommonNameVerification\":null,\"poolReusePolicy\":null}";
+            + "{\"trustStorePath\":\"truststore.jks\",\"trustStoreType\":\"JKS\",\"keyStorePath\":null,"
+            + "\"keyStorePassword\":null,\"keyStoreType\":\"JKS\",\"keyStoreKeyAlias\":null},\"services\":"
+            + "{\"service\":{\"apiToken\":null,\"security\":null,\"uris\":[\"uri\"],\"connectTimeout\":null,"
+            + "\"readTimeout\":null,\"writeTimeout\":null,\"maxNumRetries\":null,\"backoffSlotSize\":null,"
+            + "\"enableGcmCipherSuites\":null,\"enableHttp2\":null,\"fallbackToCommonNameVerification\":null,"
+            + "\"proxyConfiguration\":null,\"poolReusePolicy\":null}},\"proxyConfiguration\":{\"hostAndPort\":\"host:80\",\"credentials\":null,\"type\":\"HTTP\"},\"connectTimeout\":\"1"
+            + " day\",\"readTimeout\":\"1 day\",\"writeTimeout\":\"1 day\",\"backoffSlotSize\":\"1 day\","
+            + "\"enableGcmCipherSuites\":null,\"enableHttp2\":null,\"fallbackToCommonNameVerification\":null,\"poolReusePolicy\":null}";
         String kebabCase = "{\"api-token\":\"bearerToken\",\"security\":"
                 + "{\"trust-store-path\":\"truststore.jks\",\"trust-store-type\":\"JKS\",\"key-store-path\":null,"
                 + "\"key-store-password\":null,\"key-store-type\":\"JKS\",\"key-store-key-alias\":null},\"services\":"
