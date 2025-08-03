@@ -62,6 +62,8 @@ public final class ServiceConfigurationFactoryTests {
     private static final boolean enableGcm = false;
     private static final boolean defaultFallbackToCn = true;
     private static final boolean fallbackToCn = false;
+    private static final PoolReusePolicy poolReusePolicy = PoolReusePolicy.FIFO;
+    private static final PoolReusePolicy defaultPoolReusePolicy = PoolReusePolicy.LIFO;
 
     private final ObjectMapper mapper = new ObjectMapper(new YAMLFactory())
             .registerModule(new ShimJdk7Module())
@@ -136,12 +138,14 @@ public final class ServiceConfigurationFactoryTests {
                 .enableGcmCipherSuites(enableGcm)
                 .fallbackToCommonNameVerification(fallbackToCn)
                 .proxyConfiguration(proxy)
+                .poolReusePolicy(poolReusePolicy)
                 .build();
         ServicesConfigBlock services = ServicesConfigBlock.builder()
                 .putAllServices(ImmutableMap.of("service1", partial))
                 .defaultSecurity(defaultSecurity)
                 .defaultApiToken(defaultApiToken)
                 .defaultProxyConfiguration(defaultProxyConfiguration)
+                .defaultPoolReusePolicy(defaultPoolReusePolicy)
                 .defaultConnectTimeout(defaultConnectTimeout)
                 .defaultReadTimeout(defaultReadTimeout)
                 .defaultWriteTimeout(defaultWriteTimeout)
@@ -163,6 +167,7 @@ public final class ServiceConfigurationFactoryTests {
                 .enableGcmCipherSuites(enableGcm)
                 .fallbackToCommonNameVerification(fallbackToCn)
                 .proxy(proxy)
+                .poolReusePolicy(poolReusePolicy)
                 .build();
 
         assertThat(service).isEqualTo(expected);
@@ -198,10 +203,10 @@ public final class ServiceConfigurationFactoryTests {
                 + "{\"service\":{\"apiToken\":null,\"security\":null,\"uris\":[\"uri\"],\"connectTimeout\":null,"
                 + "\"readTimeout\":null,\"writeTimeout\":null,\"maxNumRetries\":null,\"backoffSlotSize\":null,"
                 + "\"enableGcmCipherSuites\":null,\"enableHttp2\":null,\"fallbackToCommonNameVerification\":null,"
-                + "\"proxyConfiguration\":null}},\"proxyConfiguration\":"
+                + "\"proxyConfiguration\":null,\"poolReusePolicy\":null}},\"proxyConfiguration\":"
                 + "{\"hostAndPort\":\"host:80\",\"credentials\":null,\"type\":\"HTTP\"},\"connectTimeout\":\"1 day\","
                 + "\"readTimeout\":\"1 day\",\"writeTimeout\":\"1 day\",\"backoffSlotSize\":\"1 day\","
-                + "\"enableGcmCipherSuites\":null,\"enableHttp2\":null,\"fallbackToCommonNameVerification\":null}";
+                + "\"enableGcmCipherSuites\":null,\"enableHttp2\":null,\"fallbackToCommonNameVerification\":null,\"poolReusePolicy\":null}";
         String kebabCase = "{\"api-token\":\"bearerToken\",\"security\":"
                 + "{\"trust-store-path\":\"truststore.jks\",\"trust-store-type\":\"JKS\",\"key-store-path\":null,"
                 + "\"key-store-password\":null,\"key-store-type\":\"JKS\",\"key-store-key-alias\":null},\"services\":"
@@ -209,7 +214,7 @@ public final class ServiceConfigurationFactoryTests {
                 + "\"write-timeout\":null,\"max-num-retries\":null,\"backoffSlotSize\":null,\"uris\":[\"uri\"],"
                 + "\"enable-gcm-cipher-suites\":null,\"enable-http2\":null,"
                 + "\"fallback-to-common-name-verification\":null,"
-                + "\"proxy-configuration\":null}},\"proxy-configuration\":"
+                + "\"proxy-configuration\":null,\"pool-reuse-policy\":null}},\"proxy-configuration\":"
                 + "{\"host-and-port\":\"host:80\",\"credentials\":null},\"connect-timeout\":\"1 day\","
                 + "\"read-timeout\":\"1 day\",\"write-timeout\":\"1 day\",\"backoff-slot-size\":\"1 day\"}";
 
@@ -227,11 +232,11 @@ public final class ServiceConfigurationFactoryTests {
         String serializedCamelCase = "{\"apiToken\":null,\"security\":null,\"services\":{},"
                 + "\"proxyConfiguration\":null,\"connectTimeout\":null,\"readTimeout\":null,\"writeTimeout\":null,"
                 + "\"backoffSlotSize\":null,\"enableGcmCipherSuites\":null,\"enableHttp2\":null,"
-                + "\"fallbackToCommonNameVerification\":null}";
+                + "\"fallbackToCommonNameVerification\":null,\"poolReusePolicy\":null}";
         String serializedKebabCase = "{\"api-token\":null,\"security\":null,\"services\":{},"
                 + "\"proxy-configuration\":null,\"connect-timeout\":null,\"read-timeout\":null,\"write-timeout\":null,"
                 + "\"backoff-slot-size\":null,\"enable-gcm-cipher-suites\":null,\"enable-http2\":null,"
-                + "\"fallback-to-common-name-verification\":null}";
+                + "\"fallback-to-common-name-verification\":null,\"pool-reuse-policy\":null}";
 
         assertThat(ObjectMappers.newClientObjectMapper().writeValueAsString(deserialized))
                 .isEqualTo(serializedCamelCase);
