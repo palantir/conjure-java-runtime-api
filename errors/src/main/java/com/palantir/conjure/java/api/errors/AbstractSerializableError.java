@@ -20,7 +20,7 @@ public abstract class AbstractSerializableError<T> {
     private final String errorCode;
     private final String errorName;
     private final String errorInstanceId;
-    private final T errorParameters;
+    private final T parameters;
 
     public final String errorCode() {
         return errorCode;
@@ -34,14 +34,14 @@ public abstract class AbstractSerializableError<T> {
         return errorInstanceId;
     }
 
-    public final T errorParameters() {
-        return errorParameters;
+    public final T parameters() {
+        return parameters;
     }
 
-    protected AbstractSerializableError(String errorCode, String errorName, String errorInstanceId, T errorParameters) {
+    protected AbstractSerializableError(String errorCode, String errorName, String errorInstanceId, T parameters) {
         this.errorCode = errorCode;
         this.errorName = errorName;
         this.errorInstanceId = errorInstanceId;
-        this.errorParameters = errorParameters;
+        this.parameters = parameters;
     }
 }
