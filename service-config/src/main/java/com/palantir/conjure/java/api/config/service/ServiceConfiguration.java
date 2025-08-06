@@ -49,6 +49,10 @@ public interface ServiceConfiguration {
 
     Optional<Duration> backoffSlotSize();
 
+    Optional<Integer> backoffFactor();
+
+    Optional<Duration> maxBackoff();
+
     Optional<Boolean> enableGcmCipherSuites();
 
     Optional<Boolean> enableHttp2();
