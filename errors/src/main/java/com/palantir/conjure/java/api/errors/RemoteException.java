@@ -61,7 +61,9 @@ public class RemoteException extends RuntimeException implements SafeLoggable {
     }
 
     /**
-     * TODO.
+     * Returns a message that includes the error code, name, instance ID and parameters (if any).
+     * <p>
+     * This may contain sensitive information and should not be exposed to external callers.
      */
     @Override
     public String getMessage() {
@@ -93,7 +95,9 @@ public class RemoteException extends RuntimeException implements SafeLoggable {
     }
 
     /**
-     * TODO.
+     * Returns a stable message for this exception that does not include parameters.
+     * <p>
+     * This message is safe to expose to external callers and will not expose sensitive information.
      */
     @Override
     public String getLogMessage() {
@@ -101,7 +105,9 @@ public class RemoteException extends RuntimeException implements SafeLoggable {
     }
 
     /**
-     * TODO.
+     * Returns the safe arguments associated with this exception.
+     * <p>
+     * The arguments include the error instance ID, error name, and error code.
      */
     @Override
     public List<Arg<?>> getArgs() {
