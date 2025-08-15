@@ -25,6 +25,10 @@ import com.palantir.logsafe.Safe;
  * <p>Built-in formats are:
  * <ul>
  *   <li>{@link #JSON_FORMAT}: Parameters are expected to be serialized as JSON</li>
+ *   <li>
+ *       {@link #JSON_JAVA_STRING_FORMAT}: Parameters are expected to be serialized as JSON and Java strings (using
+ *       {@code Objects.toString()})
+ *   </li>
  * </ul>
  *
  * <p>Clients should use the utility methods in {@link ConjureErrorParameterFormats} rather than
@@ -33,7 +37,10 @@ import com.palantir.logsafe.Safe;
 @Safe
 public final class ConjureErrorParameterFormat {
     private static final String JSON = "JSON";
+    private static final String JSON_AND_JAVA_STRING = "JSON+JAVA-STRING";
     public static final ConjureErrorParameterFormat JSON_FORMAT = new ConjureErrorParameterFormat(JSON);
+    public static final ConjureErrorParameterFormat JSON_JAVA_STRING_FORMAT =
+            new ConjureErrorParameterFormat(JSON_AND_JAVA_STRING);
 
     @Safe
     private final String value;
@@ -46,6 +53,9 @@ public final class ConjureErrorParameterFormat {
         Preconditions.checkNotNull(value, "Value is required");
         if (JSON.equalsIgnoreCase(value)) {
             return JSON_FORMAT;
+        }
+        if (JSON_AND_JAVA_STRING.equalsIgnoreCase(value)) {
+            return JSON_JAVA_STRING_FORMAT;
         }
         return new ConjureErrorParameterFormat(value);
     }
