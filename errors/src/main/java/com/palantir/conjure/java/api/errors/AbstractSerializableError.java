@@ -16,6 +16,28 @@
 
 package com.palantir.conjure.java.api.errors;
 
+/**
+ * Base class for serializable Conjure errors with generic parameter type support.
+ * <p>
+ * This abstract class represents serialized Conjure errors. It supports generic parameter types to allow for
+ * deserialization of custom error parameters.
+ * <p>
+ * Usage example where {@code CustomErrorParameters} is a user-defined class representing the error parameters:
+ * <pre>
+ * {@code
+ * class CustomError extends AbstractSerializableError<CustomErrorParameters> {
+ *     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+ *     CustomError(
+ *         @JsonProperty("errorCode") String errorCode,
+ *         @JsonProperty("errorName") String errorName,
+ *         @JsonProperty("errorInstanceId") String errorInstanceId,
+ *         @JsonProperty("parameters") CustomErrorParameters parameters) {
+ *         super(errorCode, errorName, errorInstanceId, parameters);
+ *     }
+ * }
+ * }
+ * </pre>
+ */
 public abstract class AbstractSerializableError<T> {
     private final String errorCode;
     private final String errorName;

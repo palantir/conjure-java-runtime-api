@@ -23,7 +23,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/** An exception thrown by an RPC client to indicate remote/server-side failure. */
+/**
+ * An exception thrown by an RPC client to indicate remote/server-side failure.
+ * <p>
+ * WARNING: Users should not subclass this exception.
+ * This class is not final to allow Conjure-Java to extend it and create custom RemoteExceptions.
+ * */
 public class RemoteException extends RuntimeException implements SafeLoggable {
     private static final long serialVersionUID = 1L;
     private static final String ERROR_INSTANCE_ID = "errorInstanceId";
