@@ -23,8 +23,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/** An exception thrown by an RPC client to indicate remote/server-side failure. */
-public final class RemoteException extends RuntimeException implements SafeLoggable {
+/**
+ * An exception thrown by an RPC client to indicate remote/server-side failure.
+ * <p>
+ * WARNING: Users should not subclass this exception.
+ * This class is not final to allow Conjure-Java to extend it and create custom RemoteExceptions.
+ * */
+public class RemoteException extends RuntimeException implements SafeLoggable {
     private static final long serialVersionUID = 1L;
     private static final String ERROR_INSTANCE_ID = "errorInstanceId";
     private static final String ERROR_CODE = "errorCode";
@@ -60,6 +65,11 @@ public final class RemoteException extends RuntimeException implements SafeLogga
                 SafeArg.of(ERROR_CODE, error.errorCode())));
     }
 
+    /**
+     * Returns a message that includes the error code, name, instance ID and parameters (if any).
+     * <p>
+     * This may contain sensitive information and should not be exposed to external callers.
+     */
     @Override
     public String getMessage() {
         // This field is not used in most environments so the cost of computation may be avoided.
@@ -89,11 +99,21 @@ public final class RemoteException extends RuntimeException implements SafeLogga
         return builder.toString();
     }
 
+    /**
+     * Returns a stable message for this exception that does not include parameters.
+     * <p>
+     * This message is safe to expose to external callers and will not expose sensitive information.
+     */
     @Override
     public String getLogMessage() {
         return stableMessage;
     }
 
+    /**
+     * Returns the safe arguments associated with this exception.
+     * <p>
+     * The arguments include the error instance ID, error name, and error code.
+     */
     @Override
     public List<Arg<?>> getArgs() {
         // RemoteException explicitly does not support arguments because they have already been recorded
