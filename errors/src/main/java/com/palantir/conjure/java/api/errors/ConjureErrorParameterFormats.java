@@ -29,8 +29,7 @@ import java.util.Optional;
  */
 public final class ConjureErrorParameterFormats {
     // The HTTP header name used to specify the expected Conjure error parameter format.
-    // VisibleForTesting
-    static final String ACCEPT_CONJURE_ERROR_PARAMETER_FORMAT_HEADER = "Accept-Conjure-Error-Parameter-Format";
+    public static final String ACCEPT_CONJURE_ERROR_PARAMETER_FORMAT_HEADER = "Accept-Conjure-Error-Parameter-Format";
 
     /**
      * Encodes the error parameter format into an outgoing request via HTTP header.
