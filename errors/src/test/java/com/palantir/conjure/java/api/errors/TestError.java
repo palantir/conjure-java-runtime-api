@@ -19,10 +19,12 @@ package com.palantir.conjure.java.api.errors;
 import com.palantir.logsafe.Arg;
 
 final class TestError extends CheckedServiceException {
+    @SuppressWarnings("for-rollout:removal")
     TestError(ErrorType errorType, Arg<?>... parameters) {
         super(errorType, parameters);
     }
 
+    @SuppressWarnings("for-rollout:removal")
     TestError(ErrorType errorType, Throwable cause, Arg<?>... parameters) {
         super(errorType, cause, parameters);
     }
