@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 
 public final class RemoteExceptionTest {
 
+    @SuppressWarnings("for-rollout:deprecation")
     @Test
     public void testJavaSerialization() {
         // With explicit error instance

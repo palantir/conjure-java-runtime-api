@@ -92,6 +92,7 @@ public final class ServiceConfigurationFactoryTests {
     @Test
     public void testUsesDefaultConfigurationWhenNoExplicitConfigIsGiven() {
         PartialServiceConfiguration partial = PartialServiceConfiguration.of(uris, Optional.empty());
+        @SuppressWarnings("for-rollout:deprecation")
         ServicesConfigBlock services = ServicesConfigBlock.builder()
                 .putAllServices(ImmutableMap.of("service1", partial))
                 .defaultSecurity(defaultSecurity)
@@ -124,6 +125,7 @@ public final class ServiceConfigurationFactoryTests {
 
     @Test
     public void testServiceSpecificConfigTrumpsDefaultConfig() {
+        @SuppressWarnings("for-rollout:deprecation")
         PartialServiceConfiguration partial = PartialServiceConfiguration.builder()
                 .apiToken(apiToken)
                 .uris(uris)
@@ -137,6 +139,7 @@ public final class ServiceConfigurationFactoryTests {
                 .fallbackToCommonNameVerification(fallbackToCn)
                 .proxyConfiguration(proxy)
                 .build();
+        @SuppressWarnings("for-rollout:deprecation")
         ServicesConfigBlock services = ServicesConfigBlock.builder()
                 .putAllServices(ImmutableMap.of("service1", partial))
                 .defaultSecurity(defaultSecurity)
