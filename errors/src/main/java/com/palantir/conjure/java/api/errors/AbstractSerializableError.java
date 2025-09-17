@@ -16,6 +16,8 @@
 
 package com.palantir.conjure.java.api.errors;
 
+import java.util.Map;
+
 /**
  * Base class for serializable Conjure errors with generic parameter type support.
  * <p>
@@ -43,6 +45,7 @@ public abstract class AbstractSerializableError<T> {
     private final String errorName;
     private final String errorInstanceId;
     private final T parameters;
+    private final Map<String, Object> parameterMap;
 
     public final String errorCode() {
         return errorCode;
@@ -60,10 +63,20 @@ public abstract class AbstractSerializableError<T> {
         return parameters;
     }
 
-    protected AbstractSerializableError(String errorCode, String errorName, String errorInstanceId, T parameters) {
+    public final Map<String, Object> parameterMap() {
+        return parameterMap;
+    }
+
+    protected AbstractSerializableError(
+            String errorCode,
+            String errorName,
+            String errorInstanceId,
+            T parameters,
+            Map<String, Object> parameterMap) {
         this.errorCode = errorCode;
         this.errorName = errorName;
         this.errorInstanceId = errorInstanceId;
         this.parameters = parameters;
+        this.parameterMap = parameterMap;
     }
 }
