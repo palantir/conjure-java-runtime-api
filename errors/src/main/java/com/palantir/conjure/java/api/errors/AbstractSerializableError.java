@@ -34,7 +34,7 @@ import java.util.Map;
  *         @JsonProperty("errorName") String errorName,
  *         @JsonProperty("errorInstanceId") String errorInstanceId,
  *         @JsonProperty("parameters") CustomErrorParameters parameters) {
- *         super(errorCode, errorName, errorInstanceId, parameters);
+ *         super(errorCode, errorName, errorInstanceId, parameters, Map.of("param1", parameters.param1()));
  *     }
  * }
  * }
@@ -63,6 +63,12 @@ public abstract class AbstractSerializableError<T> {
         return parameters;
     }
 
+    /**
+     * A map of parameter names to their values. Ideally, {@code parameters()} should be used if the specific type
+     * {@code T} is known. For clients that do not know (and do not need to know) the specific type {@code T}, this map
+     * provides a way to access the error parameters. For example, a client may want to access the parameters for any
+     * error and serialize them in a custom format.
+     */
     public final Map<String, Object> parameterMap() {
         return parameterMap;
     }
