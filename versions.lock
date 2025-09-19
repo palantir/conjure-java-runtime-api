@@ -40,11 +40,11 @@ com.palantir.tokens:auth-tokens:3.19.0 (1 constraints: 3f05503b)
 
 com.palantir.tritium:tritium-ids:0.109.0 (1 constraints: 6c05a340)
 
-net.bytebuddy:byte-buddy:1.17.6 (2 constraints: c716ff4f)
+net.bytebuddy:byte-buddy:1.17.7 (2 constraints: 9e161a3f)
 
 net.bytebuddy:byte-buddy-agent:1.17.6 (1 constraints: 490b4dde)
 
-org.assertj:assertj-core:3.27.4 (2 constraints: a5195ae0)
+org.assertj:assertj-core:3.27.5 (2 constraints: a61994e0)
 
 org.immutables:value:2.11.3 (1 constraints: 3905353b)
 
