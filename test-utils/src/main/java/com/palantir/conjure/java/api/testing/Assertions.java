@@ -23,6 +23,7 @@ import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.assertj.core.util.CanIgnoreReturnValue;
 import org.assertj.core.util.CheckReturnValue;
 
+@SuppressWarnings("for-rollout:deprecation")
 @CheckReturnValue
 public class Assertions extends org.assertj.core.api.Assertions {
 
@@ -40,16 +41,19 @@ public class Assertions extends org.assertj.core.api.Assertions {
         return new QosExceptionAssert(actual);
     }
 
+    @SuppressWarnings("for-rollout:deprecation")
     @CanIgnoreReturnValue
     public static ServiceExceptionAssert assertThatServiceExceptionThrownBy(ThrowingCallable shouldRaiseThrowable) {
         return assertThatThrownBy(shouldRaiseThrowable).asInstanceOf(ServiceExceptionAssert.instanceOfAssertFactory());
     }
 
+    @SuppressWarnings("for-rollout:deprecation")
     @CanIgnoreReturnValue
     public static RemoteExceptionAssert assertThatRemoteExceptionThrownBy(ThrowingCallable shouldRaiseThrowable) {
         return assertThatThrownBy(shouldRaiseThrowable).asInstanceOf(RemoteExceptionAssert.instanceOfAssertFactory());
     }
 
+    @SuppressWarnings("for-rollout:deprecation")
     @CanIgnoreReturnValue
     public static QosExceptionAssert assertThatQosExceptionThrownBy(ThrowingCallable shouldRaiseThrowable) {
         return assertThatThrownBy(shouldRaiseThrowable).asInstanceOf(QosExceptionAssert.instanceOfAssertFactory());
