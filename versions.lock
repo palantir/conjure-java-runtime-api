@@ -16,15 +16,15 @@ com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.19.2 (1 constraints: 40
 
 com.google.code.findbugs:jsr305:3.0.2 (1 constraints: 0705fc35)
 
-com.google.errorprone:error_prone_annotations:2.36.0 (5 constraints: ab492398)
+com.google.errorprone:error_prone_annotations:2.41.0 (5 constraints: a7493495)
 
 com.google.guava:failureaccess:1.0.3 (1 constraints: 160ae3b4)
 
-com.google.guava:guava:33.4.8-jre (2 constraints: b127e513)
+com.google.guava:guava:33.5.0-jre (2 constraints: aa27c413)
 
 com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava (1 constraints: bd17c918)
 
-com.google.j2objc:j2objc-annotations:3.0.0 (1 constraints: 150aeab4)
+com.google.j2objc:j2objc-annotations:3.1 (1 constraints: b809f1a0)
 
 com.palantir.safe-logging:logger:3.9.0 (3 constraints: 4421498a)
 
@@ -38,7 +38,7 @@ com.palantir.safe-logging:safe-logging:3.9.0 (5 constraints: ca472212)
 
 com.palantir.tokens:auth-tokens:3.19.0 (1 constraints: 3f05503b)
 
-com.palantir.tritium:tritium-ids:0.109.0 (1 constraints: 6c05a340)
+com.palantir.tritium:tritium-ids:0.110.0 (1 constraints: 64058c40)
 
 net.bytebuddy:byte-buddy:1.17.7 (2 constraints: 9f161b3f)
 
