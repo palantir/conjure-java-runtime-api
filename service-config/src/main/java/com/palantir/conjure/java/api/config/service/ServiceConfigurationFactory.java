@@ -68,7 +68,6 @@ public final class ServiceConfigurationFactory {
      * {@link PartialServiceConfiguration} and then filling in absent optional values with defaults from this
      * {@link ServicesConfigBlock}.
      */
-    @SuppressWarnings("for-rollout:deprecation")
     private ServiceConfiguration propagateDefaults(String serviceName, PartialServiceConfiguration partial) {
         return ServiceConfiguration.builder()
                 .apiToken(orElse(partial.apiToken(), services.defaultApiToken()))
