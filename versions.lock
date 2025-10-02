@@ -38,7 +38,7 @@ com.palantir.safe-logging:safe-logging:3.9.0 (5 constraints: ca472212)
 
 com.palantir.tokens:auth-tokens:3.19.0 (1 constraints: 3f05503b)
 
-com.palantir.tritium:tritium-ids:0.110.0 (1 constraints: 64058c40)
+com.palantir.tritium:tritium-ids:0.111.0 (1 constraints: 65058f40)
 
 net.bytebuddy:byte-buddy:1.17.7 (2 constraints: 9f161b3f)
 
