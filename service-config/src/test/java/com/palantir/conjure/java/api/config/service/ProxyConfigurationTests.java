@@ -22,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.google.errorprone.annotations.MustBeClosed;
 import com.palantir.conjure.java.api.ext.jackson.ObjectMappers;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import java.io.IOException;
@@ -32,6 +33,7 @@ import org.junit.jupiter.api.Test;
 public final class ProxyConfigurationTests {
     private final ObjectMapper mapper = new ObjectMapper(new YAMLFactory()).registerModule(new Jdk8Module());
 
+    @MustBeClosed
     private static InputStream resourceStream(String path) {
         InputStream stream = ProxyConfigurationTests.class.getResourceAsStream(path);
         if (stream == null) {
