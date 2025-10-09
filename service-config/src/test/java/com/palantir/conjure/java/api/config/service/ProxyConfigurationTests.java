@@ -22,63 +22,72 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.google.common.io.Resources;
 import com.palantir.conjure.java.api.ext.jackson.ObjectMappers;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
 import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("CheckReturnValue") // .build() is used to throw validation exceptions
 public final class ProxyConfigurationTests {
     private final ObjectMapper mapper = new ObjectMapper(new YAMLFactory()).registerModule(new Jdk8Module());
 
+    private static InputStream resourceStream(String path) {
+        InputStream stream = ProxyConfigurationTests.class.getResourceAsStream(path);
+        if (stream == null) {
+            throw new IllegalArgumentException("Resource " + path + " not found.");
+        }
+        return stream;
+    }
+
     @Test
     public void testDeserializationWithoutCredentials() throws IOException {
-        URL resource = Resources.getResource("configs/proxy-config-without-credentials.yml");
-        ProxyConfiguration actualProxyConfiguration = mapper.readValue(resource.openStream(), ProxyConfiguration.class);
-
-        ProxyConfiguration expectedProxyConfiguration = ProxyConfiguration.of("squid:3128");
-        assertThat(expectedProxyConfiguration).isEqualTo(actualProxyConfiguration);
+        try (InputStream resource = resourceStream("/configs/proxy-config-without-credentials.yml")) {
+            ProxyConfiguration actualProxyConfiguration = mapper.readValue(resource, ProxyConfiguration.class);
+            ProxyConfiguration expectedProxyConfiguration = ProxyConfiguration.of("squid:3128");
+            assertThat(expectedProxyConfiguration).isEqualTo(actualProxyConfiguration);
+        }
     }
 
     @Test
     public void testDeserializationWithCredentials() throws IOException {
-        URL resource = Resources.getResource("configs/proxy-config-with-credentials.yml");
-        ProxyConfiguration actualProxyConfiguration = mapper.readValue(resource.openStream(), ProxyConfiguration.class);
-
-        ProxyConfiguration expectedProxyConfiguration =
-                ProxyConfiguration.of("squid:3128", BasicCredentials.of("username", "password"));
-
-        assertThat(expectedProxyConfiguration).isEqualTo(actualProxyConfiguration);
+        try (InputStream resource = resourceStream("/configs/proxy-config-with-credentials.yml")) {
+            ProxyConfiguration actualProxyConfiguration = mapper.readValue(resource, ProxyConfiguration.class);
+            ProxyConfiguration expectedProxyConfiguration =
+                    ProxyConfiguration.of("squid:3128", BasicCredentials.of("username", "password"));
+            assertThat(expectedProxyConfiguration).isEqualTo(actualProxyConfiguration);
+        }
     }
 
     @Test
     public void testDeserializationDirect() throws Exception {
-        URL resource = Resources.getResource("configs/proxy-config-direct.yml");
-        ProxyConfiguration config = mapper.readValue(resource, ProxyConfiguration.class);
-        assertThat(config).isEqualTo(ProxyConfiguration.DIRECT);
+        try (InputStream resource = resourceStream("/configs/proxy-config-direct.yml")) {
+            ProxyConfiguration config = mapper.readValue(resource, ProxyConfiguration.class);
+            assertThat(config).isEqualTo(ProxyConfiguration.DIRECT);
+        }
     }
 
     @Test
     public void testDeserializationFromEnvironment() throws Exception {
-        URL resource = Resources.getResource("configs/proxy-config-from-environment.yml");
-        ProxyConfiguration config = mapper.readValue(resource, ProxyConfiguration.class);
-        assertThat(config)
-                .isEqualTo(ProxyConfiguration.builder()
-                        .type(ProxyConfiguration.Type.FROM_ENVIRONMENT)
-                        .build());
+        try (InputStream resource = resourceStream("/configs/proxy-config-from-environment.yml")) {
+            ProxyConfiguration config = mapper.readValue(resource, ProxyConfiguration.class);
+            assertThat(config)
+                    .isEqualTo(ProxyConfiguration.builder()
+                            .type(ProxyConfiguration.Type.FROM_ENVIRONMENT)
+                            .build());
+        }
     }
 
     @Test
     public void testDeserializationMesh() throws Exception {
-        URL resource = Resources.getResource("configs/proxy-config-mesh.yml");
-        ProxyConfiguration config = mapper.readValue(resource, ProxyConfiguration.class);
-        assertThat(config)
-                .isEqualTo(ProxyConfiguration.builder()
-                        .type(ProxyConfiguration.Type.MESH)
-                        .hostAndPort("localhost:123")
-                        .build());
+        try (InputStream resource = resourceStream("/configs/proxy-config-mesh.yml")) {
+            ProxyConfiguration config = mapper.readValue(resource, ProxyConfiguration.class);
+            assertThat(config)
+                    .isEqualTo(ProxyConfiguration.builder()
+                            .type(ProxyConfiguration.Type.MESH)
+                            .hostAndPort("localhost:123")
+                            .build());
+        }
     }
 
     @Test
