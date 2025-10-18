@@ -45,7 +45,7 @@ public final class AssertionsTest {
                     throw new RuntimeException("My message");
                 }))
                 .hasMessageContaining(
-                        "com.palantir.conjure.java.api.errors.ServiceException",
+                        "com.palantir.conjure.java.api.errors.AbstractServiceException",
                         "java.lang.RuntimeException",
                         "My message");
     }

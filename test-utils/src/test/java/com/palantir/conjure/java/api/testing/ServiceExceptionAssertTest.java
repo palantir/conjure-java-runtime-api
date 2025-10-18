@@ -18,13 +18,21 @@ package com.palantir.conjure.java.api.testing;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.palantir.conjure.java.api.errors.EndpointServiceException;
 import com.palantir.conjure.java.api.errors.ErrorType;
 import com.palantir.conjure.java.api.errors.ServiceException;
+import com.palantir.logsafe.Arg;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.UnsafeArg;
 import org.junit.jupiter.api.Test;
 
 public class ServiceExceptionAssertTest {
+
+    private static class TestEndpointServiceException extends EndpointServiceException {
+        TestEndpointServiceException(ErrorType errorType, Arg<?>... safeArgs) {
+            super(errorType, safeArgs);
+        }
+    }
 
     @Test
     public void testSanity() {
@@ -35,15 +43,33 @@ public class ServiceExceptionAssertTest {
                 .hasType(actualType)
                 .hasArgs(SafeArg.of("a", "b"), UnsafeArg.of("c", "d"));
 
+        Assertions.assertThat(
+                        new TestEndpointServiceException(actualType, SafeArg.of("a", "b"), UnsafeArg.of("c", "d")))
+                .hasCode(actualType.code())
+                .hasType(actualType)
+                .hasArgs(SafeArg.of("a", "b"), UnsafeArg.of("c", "d"));
+
         Assertions.assertThat(new ServiceException(actualType, SafeArg.of("a", "b"), UnsafeArg.of("c", "d")))
                 .hasCode(actualType.code())
                 .hasType(actualType)
                 .hasArgs(UnsafeArg.of("c", "d"), SafeArg.of("a", "b")); // Order doesn't matter
 
+        Assertions.assertThat(
+                        new TestEndpointServiceException(actualType, SafeArg.of("a", "b"), UnsafeArg.of("c", "d")))
+                .hasCode(actualType.code())
+                .hasType(actualType)
+                .hasArgs(UnsafeArg.of("c", "d"), SafeArg.of("a", "b")); // Order doesn't matter
+
         Assertions.assertThat(new ServiceException(actualType)).hasNoArgs();
+        Assertions.assertThat(new TestEndpointServiceException(actualType)).hasNoArgs();
 
         assertThatThrownBy(() ->
                         Assertions.assertThat(new ServiceException(actualType)).hasCode(ErrorType.Code.INTERNAL))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining(
+                        "Expected ErrorType.Code to be %s, but found %s", ErrorType.Code.INTERNAL, actualType.code());
+        assertThatThrownBy(() -> Assertions.assertThat(new TestEndpointServiceException(actualType))
+                        .hasCode(ErrorType.Code.INTERNAL))
                 .isInstanceOf(AssertionError.class)
                 .hasMessageContaining(
                         "Expected ErrorType.Code to be %s, but found %s", ErrorType.Code.INTERNAL, actualType.code());
@@ -52,13 +78,27 @@ public class ServiceExceptionAssertTest {
                         Assertions.assertThat(new ServiceException(actualType)).hasType(ErrorType.INTERNAL))
                 .isInstanceOf(AssertionError.class)
                 .hasMessageContaining("Expected ErrorType to be %s, but found %s", ErrorType.INTERNAL, actualType);
+        assertThatThrownBy(() -> Assertions.assertThat(new TestEndpointServiceException(actualType))
+                        .hasType(ErrorType.INTERNAL))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("Expected ErrorType to be %s, but found %s", ErrorType.INTERNAL, actualType);
 
         assertThatThrownBy(() -> Assertions.assertThat(new ServiceException(actualType, SafeArg.of("a", "b")))
                         .hasArgs(SafeArg.of("c", "d")))
                 .isInstanceOf(AssertionError.class)
                 .hasMessageContaining("Expected safe args to be {c=d}, but found {a=b}");
+        assertThatThrownBy(
+                        () -> Assertions.assertThat(new TestEndpointServiceException(actualType, SafeArg.of("a", "b")))
+                                .hasArgs(SafeArg.of("c", "d")))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("Expected safe args to be {c=d}, but found {a=b}");
 
         assertThatThrownBy(() -> Assertions.assertThat(new ServiceException(actualType, UnsafeArg.of("a", "b")))
+                        .hasArgs(UnsafeArg.of("c", "d")))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("Expected unsafe args to be {c=d}, but found {a=b}");
+        assertThatThrownBy(() -> Assertions.assertThat(
+                                new TestEndpointServiceException(actualType, UnsafeArg.of("a", "b")))
                         .hasArgs(UnsafeArg.of("c", "d")))
                 .isInstanceOf(AssertionError.class)
                 .hasMessageContaining("Expected unsafe args to be {c=d}, but found {a=b}");
@@ -67,14 +107,27 @@ public class ServiceExceptionAssertTest {
                         .hasNoArgs())
                 .isInstanceOf(AssertionError.class)
                 .hasMessageContaining("Expected no args, but found {a=b}");
+        assertThatThrownBy(
+                        () -> Assertions.assertThat(new TestEndpointServiceException(actualType, SafeArg.of("a", "b")))
+                                .hasNoArgs())
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("Expected no args, but found {a=b}");
 
         assertThatThrownBy(() -> Assertions.assertThat(
                                 new ServiceException(actualType, SafeArg.of("a", "b"), UnsafeArg.of("c", "d")))
                         .hasNoArgs())
                 .isInstanceOf(AssertionError.class)
                 .hasMessageContaining("Expected no args, but found {a=b, c=d}");
+        assertThatThrownBy(() -> Assertions.assertThat(new TestEndpointServiceException(
+                                actualType, SafeArg.of("a", "b"), UnsafeArg.of("c", "d")))
+                        .hasNoArgs())
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("Expected no args, but found {a=b, c=d}");
 
         Assertions.assertThat(new ServiceException(actualType, UnsafeArg.of("a", "b"), UnsafeArg.of("c", "d")))
+                .containsArgs(UnsafeArg.of("a", "b"));
+        Assertions.assertThat(
+                        new TestEndpointServiceException(actualType, UnsafeArg.of("a", "b"), UnsafeArg.of("c", "d")))
                 .containsArgs(UnsafeArg.of("a", "b"));
 
         // Safety matters
@@ -83,13 +136,28 @@ public class ServiceExceptionAssertTest {
                         .containsArgs(UnsafeArg.of("a", "b")))
                 .isInstanceOf(AssertionError.class)
                 .hasMessageContaining("Expected unsafe args to contain {a=b}, but found {c=d}");
+        assertThatThrownBy(() -> Assertions.assertThat(new TestEndpointServiceException(
+                                actualType, SafeArg.of("a", "b"), UnsafeArg.of("c", "d")))
+                        .containsArgs(UnsafeArg.of("a", "b")))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("Expected unsafe args to contain {a=b}, but found {c=d}");
 
         assertThatThrownBy(() -> Assertions.assertThat(new ServiceException(actualType, SafeArg.of("a", "b")))
                         .containsArgs(SafeArg.of("c", "d")))
                 .isInstanceOf(AssertionError.class)
                 .hasMessageContaining("Expected safe args to contain {c=d}, but found {a=b}");
+        assertThatThrownBy(
+                        () -> Assertions.assertThat(new TestEndpointServiceException(actualType, SafeArg.of("a", "b")))
+                                .containsArgs(SafeArg.of("c", "d")))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("Expected safe args to contain {c=d}, but found {a=b}");
 
         assertThatThrownBy(() -> Assertions.assertThat(new ServiceException(actualType, UnsafeArg.of("a", "b")))
+                        .containsArgs(UnsafeArg.of("c", "d")))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("Expected unsafe args to contain {c=d}, but found {a=b}");
+        assertThatThrownBy(() -> Assertions.assertThat(
+                                new TestEndpointServiceException(actualType, UnsafeArg.of("a", "b")))
                         .containsArgs(UnsafeArg.of("c", "d")))
                 .isInstanceOf(AssertionError.class)
                 .hasMessageContaining("Expected unsafe args to contain {c=d}, but found {a=b}");

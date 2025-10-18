@@ -17,7 +17,6 @@
 package com.palantir.conjure.java.api.errors;
 
 import com.palantir.logsafe.Arg;
-import com.palantir.logsafe.SafeLoggable;
 import java.util.List;
 import javax.annotation.Nullable;
 
@@ -25,7 +24,7 @@ import javax.annotation.Nullable;
  * This is identical to ServiceException, but is used in Conjure-generated code to indicate that an exception was thrown
  * from a service endpoint.
  */
-public abstract class EndpointServiceException extends RuntimeException implements SafeLoggable {
+public abstract class EndpointServiceException extends AbstractServiceException {
     private static final String EXCEPTION_NAME = "EndpointServiceException";
     private final ErrorType errorType;
     private final List<Arg<?>> args; // This is an unmodifiable list.
@@ -52,6 +51,7 @@ public abstract class EndpointServiceException extends RuntimeException implemen
     }
 
     /** The {@link ErrorType} that gave rise to this exception. */
+    @Override
     public final ErrorType getErrorType() {
         return errorType;
     }
