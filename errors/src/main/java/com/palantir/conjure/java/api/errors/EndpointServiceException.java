@@ -18,65 +18,26 @@ package com.palantir.conjure.java.api.errors;
 
 import com.palantir.logsafe.Arg;
 import com.palantir.logsafe.SafeLoggable;
-import java.util.List;
 import javax.annotation.Nullable;
 
 /*
  * This is identical to ServiceException, but is used in Conjure-generated code to indicate that an exception was thrown
  * from a service endpoint.
  */
-public abstract class EndpointServiceException extends RuntimeException implements SafeLoggable {
+public final class EndpointServiceException extends BaseServiceException implements SafeLoggable {
+
     private static final String EXCEPTION_NAME = "EndpointServiceException";
-    private final ErrorType errorType;
-    private final List<Arg<?>> args; // This is an unmodifiable list.
-    private final String errorInstanceId;
-    private final String unsafeMessage;
-    private final String noArgsMessage;
 
-    /**
-     * Creates a new exception for the given error. All {@link com.palantir.logsafe.Arg parameters} are propagated to
-     * clients.
-     */
     public EndpointServiceException(ErrorType errorType, Arg<?>... parameters) {
-        this(errorType, null, parameters);
+        super(errorType, parameters);
     }
 
-    /** As above, but additionally records the cause of this exception. */
     public EndpointServiceException(ErrorType errorType, @Nullable Throwable cause, Arg<?>... args) {
-        super(cause);
-        this.errorInstanceId = ServiceExceptionUtils.generateErrorInstanceId(cause);
-        this.errorType = errorType;
-        this.args = ServiceExceptionUtils.arrayToUnmodifiableList(args);
-        this.unsafeMessage = ServiceExceptionUtils.renderUnsafeMessage(EXCEPTION_NAME, errorType, args);
-        this.noArgsMessage = ServiceExceptionUtils.renderNoArgsMessage(EXCEPTION_NAME, errorType);
+        super(errorType, cause, args);
     }
 
-    /** The {@link ErrorType} that gave rise to this exception. */
-    public final ErrorType getErrorType() {
-        return errorType;
-    }
-
-    /** A unique identifier for (this instance of) this error. */
-    public final String getErrorInstanceId() {
-        return errorInstanceId;
-    }
-
-    /** A string that includes the exception name, error type, and all arguments irrespective of log-safety. */
     @Override
-    public final String getMessage() {
-        // Including all args here since any logger not configured with safe-logging will log this message.
-        return unsafeMessage;
-    }
-
-    /** A string that includes the exception name and error type, without any arguments. */
-    @Override
-    public final String getLogMessage() {
-        return noArgsMessage;
-    }
-
-    /** The list of arguments. */
-    @Override
-    public final List<Arg<?>> getArgs() {
-        return args;
+    protected String exceptionName() {
+        return EXCEPTION_NAME;
     }
 }
