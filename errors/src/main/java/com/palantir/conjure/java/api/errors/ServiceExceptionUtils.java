@@ -17,6 +17,8 @@
 package com.palantir.conjure.java.api.errors;
 
 import com.palantir.logsafe.Arg;
+import com.palantir.logsafe.Safe;
+import com.palantir.logsafe.Unsafe;
 import com.palantir.tritium.ids.UniqueIds;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,6 +63,7 @@ final class ServiceExceptionUtils {
      * @param args the arguments to be included in the message
      * @return a message string that includes the exception name, error type, and arguments
      */
+    @Unsafe
     static String renderUnsafeMessage(String exceptionName, ErrorType errorType, Arg<?>... args) {
         String message = renderNoArgsMessage(exceptionName, errorType);
 
@@ -94,6 +97,7 @@ final class ServiceExceptionUtils {
      * @param errorType the error type the exception represents
      * @return a message string
      */
+    @Safe
     static String renderNoArgsMessage(String exceptionName, ErrorType errorType) {
         return exceptionName + ": " + errorType.code() + " (" + errorType.name() + ")";
     }
@@ -104,6 +108,7 @@ final class ServiceExceptionUtils {
      * suppressed causes}.
      */
     // VisibleForTesting
+    @Safe
     static String generateErrorInstanceId(@Nullable Throwable cause) {
         return generateErrorInstanceId(cause, Collections.newSetFromMap(new IdentityHashMap<>()));
     }
