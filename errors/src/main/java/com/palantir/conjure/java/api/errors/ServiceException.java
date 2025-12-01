@@ -17,7 +17,9 @@
 package com.palantir.conjure.java.api.errors;
 
 import com.palantir.logsafe.Arg;
+import com.palantir.logsafe.Safe;
 import com.palantir.logsafe.SafeLoggable;
+import com.palantir.logsafe.Unsafe;
 import java.util.List;
 import javax.annotation.Nullable;
 
@@ -27,8 +29,13 @@ public final class ServiceException extends RuntimeException implements SafeLogg
     private final ErrorType errorType;
     private final List<Arg<?>> args; // unmodifiable
 
+    @Safe
     private final String errorInstanceId;
+
+    @Unsafe
     private final String unsafeMessage;
+
+    @Safe
     private final String noArgsMessage;
 
     /**
@@ -58,16 +65,19 @@ public final class ServiceException extends RuntimeException implements SafeLogg
     }
 
     /** A unique identifier for (this instance of) this error. */
+    @Safe
     public String getErrorInstanceId() {
         return errorInstanceId;
     }
 
+    @Unsafe
     @Override
     public String getMessage() {
         // Including all args here since any logger not configured with safe-logging will log this message.
         return unsafeMessage;
     }
 
+    @Safe
     @Override
     public String getLogMessage() {
         // Not returning safe args here since the safe-logging framework will log this message + args explicitly.
