@@ -17,7 +17,9 @@
 package com.palantir.conjure.java.api.errors;
 
 import com.palantir.logsafe.Arg;
+import com.palantir.logsafe.Safe;
 import com.palantir.logsafe.SafeLoggable;
+import com.palantir.logsafe.Unsafe;
 import java.util.List;
 import javax.annotation.Nullable;
 
@@ -29,8 +31,14 @@ public abstract class EndpointServiceException extends RuntimeException implemen
     private static final String EXCEPTION_NAME = "EndpointServiceException";
     private final ErrorType errorType;
     private final List<Arg<?>> args; // This is an unmodifiable list.
+
+    @Safe
     private final String errorInstanceId;
+
+    @Unsafe
     private final String unsafeMessage;
+
+    @Safe
     private final String noArgsMessage;
 
     /**
@@ -57,11 +65,13 @@ public abstract class EndpointServiceException extends RuntimeException implemen
     }
 
     /** A unique identifier for (this instance of) this error. */
+    @Safe
     public final String getErrorInstanceId() {
         return errorInstanceId;
     }
 
     /** A string that includes the exception name, error type, and all arguments irrespective of log-safety. */
+    @Unsafe
     @Override
     public final String getMessage() {
         // Including all args here since any logger not configured with safe-logging will log this message.
@@ -69,6 +79,7 @@ public abstract class EndpointServiceException extends RuntimeException implemen
     }
 
     /** A string that includes the exception name and error type, without any arguments. */
+    @Safe
     @Override
     public final String getLogMessage() {
         return noArgsMessage;
