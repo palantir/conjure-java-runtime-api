@@ -16,11 +16,13 @@
 
 package com.palantir.conjure.java.api.testing;
 
+import static com.palantir.conjure.java.api.testing.Assertions.assertThatEndpointServiceExceptionThrownBy;
 import static com.palantir.conjure.java.api.testing.Assertions.assertThatQosExceptionThrownBy;
 import static com.palantir.conjure.java.api.testing.Assertions.assertThatRemoteExceptionThrownBy;
 import static com.palantir.conjure.java.api.testing.Assertions.assertThatServiceExceptionThrownBy;
 import static com.palantir.conjure.java.api.testing.Assertions.assertThatThrownBy;
 
+import com.palantir.conjure.java.api.errors.EndpointServiceException;
 import com.palantir.conjure.java.api.errors.ErrorType;
 import com.palantir.conjure.java.api.errors.QosException;
 import com.palantir.conjure.java.api.errors.QosReason;
@@ -54,6 +56,39 @@ public final class AssertionsTest {
     public void testAssertThatServiceExceptionThrownBy_catchesServiceException() {
         assertThatServiceExceptionThrownBy(() -> {
                     throw new ServiceException(ErrorType.INTERNAL);
+                })
+                .hasType(ErrorType.INTERNAL);
+    }
+
+    @Test
+    public void testAssertThatEndpointServiceExceptionThrownBy_failsIfNothingThrown() {
+        assertThatThrownBy(() -> assertThatEndpointServiceExceptionThrownBy(() -> {
+                    // Not going to throw anything
+                }))
+                .hasMessageContaining("Expecting code to raise a throwable.");
+    }
+
+    @Test
+    public void testAssertThatEndpointServiceExceptionThrownBy_failsIfWrongExceptionThrown() {
+        assertThatThrownBy(() -> assertThatEndpointServiceExceptionThrownBy(() -> {
+                    throw new RuntimeException("My message");
+                }))
+                .hasMessageContaining(
+                        "com.palantir.conjure.java.api.errors.EndpointServiceException",
+                        "java.lang.RuntimeException",
+                        "My message");
+    }
+
+    private static final class DummyEndpointServiceException extends EndpointServiceException {
+        private DummyEndpointServiceException() {
+            super(ErrorType.INTERNAL, null);
+        }
+    }
+
+    @Test
+    public void testAssertThatEndpointServiceExceptionThrownBy_catchesServiceException() {
+        assertThatEndpointServiceExceptionThrownBy(() -> {
+                    throw new DummyEndpointServiceException();
                 })
                 .hasType(ErrorType.INTERNAL);
     }
