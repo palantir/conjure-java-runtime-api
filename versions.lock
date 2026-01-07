@@ -4,7 +4,7 @@ com.fasterxml.jackson.core:jackson-annotations:2.20 (5 constraints: ec5047cc)
 
 com.fasterxml.jackson.core:jackson-core:2.20.1 (6 constraints: 0f85f5f8)
 
-com.fasterxml.jackson.core:jackson-databind:2.20.1 (7 constraints: c38595d7)
+com.fasterxml.jackson.core:jackson-databind:2.20.1 (7 constraints: c48596d7)
 
 com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.20.1 (1 constraints: 3705343b)
 
@@ -16,7 +16,7 @@ com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.20.1 (1 constraints: 37
 
 com.google.code.findbugs:jsr305:3.0.2 (1 constraints: 0705fc35)
 
-com.google.errorprone:error_prone_annotations:2.41.0 (5 constraints: a7493495)
+com.google.errorprone:error_prone_annotations:2.41.0 (5 constraints: db48a599)
 
 com.google.guava:failureaccess:1.0.3 (1 constraints: 160ae3b4)
 
@@ -26,17 +26,17 @@ com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava (1 c
 
 com.google.j2objc:j2objc-annotations:3.1 (1 constraints: b809f1a0)
 
-com.palantir.safe-logging:logger:3.9.0 (3 constraints: 4421498a)
+com.palantir.safe-logging:logger:3.10.0 (3 constraints: 6c21119c)
 
-com.palantir.safe-logging:logger-slf4j:3.9.0 (1 constraints: 070e6e42)
+com.palantir.safe-logging:logger-slf4j:3.10.0 (1 constraints: 2f0e8750)
 
-com.palantir.safe-logging:logger-spi:3.9.0 (2 constraints: 1d1e0c7c)
+com.palantir.safe-logging:logger-spi:3.10.0 (2 constraints: 6d1ed4af)
 
-com.palantir.safe-logging:preconditions:3.9.0 (4 constraints: 7435ea6d)
+com.palantir.safe-logging:preconditions:3.10.0 (4 constraints: c43592ae)
 
-com.palantir.safe-logging:safe-logging:3.9.0 (5 constraints: ca472212)
+com.palantir.safe-logging:safe-logging:3.10.0 (5 constraints: 92482c18)
 
-com.palantir.tokens:auth-tokens:3.20.0 (1 constraints: 3705393b)
+com.palantir.tokens:auth-tokens:3.21.0 (1 constraints: 38053c3b)
 
 com.palantir.tritium:tritium-ids:0.122.0 (1 constraints: 67059640)
 
@@ -44,7 +44,7 @@ net.bytebuddy:byte-buddy:1.17.7 (2 constraints: 9f161b3f)
 
 net.bytebuddy:byte-buddy-agent:1.17.7 (1 constraints: 4a0b4ede)
 
-org.assertj:assertj-core:3.27.6 (2 constraints: a719cee0)
+org.assertj:assertj-core:3.27.6 (2 constraints: aa19d1e0)
 
 org.immutables:value:2.12.1 (1 constraints: 3805363b)
 
@@ -64,7 +64,7 @@ org.slf4j:slf4j-api:2.0.17 (2 constraints: 4f1e7197)
 
 com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.20.1 (1 constraints: 3705343b)
 
-com.palantir.safe-logging:preconditions-assertj:3.9.0 (1 constraints: 0e051536)
+com.palantir.safe-logging:preconditions-assertj:3.10.0 (1 constraints: 3605353b)
 
 net.sf.jopt-simple:jopt-simple:5.0.4 (1 constraints: be0ad6cc)
 
