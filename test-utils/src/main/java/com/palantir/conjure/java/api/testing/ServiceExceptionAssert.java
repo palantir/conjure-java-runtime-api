@@ -19,16 +19,9 @@ package com.palantir.conjure.java.api.testing;
 import com.palantir.conjure.java.api.errors.ErrorType;
 import com.palantir.conjure.java.api.errors.ServiceException;
 import com.palantir.logsafe.Arg;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import org.assertj.core.api.AbstractThrowableAssert;
 import org.assertj.core.api.InstanceOfAssertFactory;
-import org.assertj.core.util.Throwables;
 
-public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExceptionAssert, ServiceException> {
+public class ServiceExceptionAssert extends AbstractServiceExceptionAssert<ServiceExceptionAssert, ServiceException> {
 
     private static final InstanceOfAssertFactory<ServiceException, ServiceExceptionAssert> INSTANCE_OF_ASSERT_FACTORY =
             new InstanceOfAssertFactory<>(ServiceException.class, ServiceExceptionAssert::new);
@@ -42,103 +35,27 @@ public class ServiceExceptionAssert extends AbstractThrowableAssert<ServiceExcep
     }
 
     public final ServiceExceptionAssert hasCode(ErrorType.Code code) {
-        isNotNull();
-        failIfNotEqual(
-                "Expected ErrorType.Code to be %s, but found %s",
-                code, actual.getErrorType().code());
+        hasCode(code, actual.getErrorType().code());
         return this;
     }
 
     public final ServiceExceptionAssert hasType(ErrorType type) {
-        isNotNull();
-        failIfNotEqual("Expected ErrorType to be %s, but found %s", type, actual.getErrorType());
+        hasType(type, actual.getErrorType());
         return this;
     }
 
     public final ServiceExceptionAssert hasArgs(Arg<?>... args) {
-        isNotNull();
-
-        AssertableArgs actualArgs = new AssertableArgs(actual.getArgs());
-        AssertableArgs expectedArgs = new AssertableArgs(Arrays.asList(args));
-
-        failIfNotEqual("Expected safe args to be %s, but found %s", expectedArgs.safeArgs, actualArgs.safeArgs);
-        failIfNotEqual("Expected unsafe args to be %s, but found %s", expectedArgs.unsafeArgs, actualArgs.unsafeArgs);
-
+        hasArgs(actual.getArgs(), args);
         return this;
     }
 
     public final ServiceExceptionAssert hasNoArgs() {
-        isNotNull();
-
-        AssertableArgs actualArgs = new AssertableArgs(actual.getArgs());
-        if (!actualArgs.safeArgs.isEmpty() || !actualArgs.unsafeArgs.isEmpty()) {
-            Map<String, Object> allArgs = new HashMap<>();
-            allArgs.putAll(actualArgs.safeArgs);
-            allArgs.putAll(actualArgs.unsafeArgs);
-            failWithMessage(
-                    "Expected no args, but found %s; service exception: %s", allArgs, Throwables.getStackTrace(actual));
-        }
-
+        hasNoArgs(actual.getArgs());
         return this;
-    }
-
-    private <T> void failIfNotEqual(String message, T expectedValue, T actualValue) {
-        if (!Objects.equals(expectedValue, actualValue)) {
-            failWithMessage(
-                    message + "; service exception: ", expectedValue, actualValue, Throwables.getStackTrace(actual));
-        }
     }
 
     public final ServiceExceptionAssert containsArgs(Arg<?>... args) {
-        isNotNull();
-
-        AssertableArgs actualArgs = new AssertableArgs(actual.getArgs());
-        AssertableArgs expectedArgs = new AssertableArgs(Arrays.asList(args));
-
-        failIfDoesNotContain(
-                "Expected safe args to contain %s, but found %s", expectedArgs.safeArgs, actualArgs.safeArgs);
-        failIfDoesNotContain(
-                "Expected unsafe args to contain %s, but found %s", expectedArgs.unsafeArgs, actualArgs.unsafeArgs);
-
+        containsArgs(actual.getArgs(), args);
         return this;
-    }
-
-    private void failIfDoesNotContain(
-            String message, Map<String, Object> expectedArgs, Map<String, Object> actualArgs) {
-        if (!actualArgs.entrySet().containsAll(expectedArgs.entrySet())) {
-            failWithMessage(
-                    message + "; service exception: %s", expectedArgs, actualArgs, Throwables.getStackTrace(actual));
-        }
-    }
-
-    private static final class AssertableArgs {
-        private final Map<String, Object> safeArgs = new HashMap<>();
-        private final Map<String, Object> unsafeArgs = new HashMap<>();
-
-        private AssertableArgs(List<Arg<?>> args) {
-            args.forEach(arg -> {
-                if (arg.isSafeForLogging()) {
-                    assertPutSafe(arg);
-                } else {
-                    assertPutUnsafe(arg);
-                }
-            });
-        }
-
-        private void assertPutSafe(Arg<?> arg) {
-            assertPut(safeArgs, arg.getName(), arg.getValue(), "safe");
-        }
-
-        private void assertPutUnsafe(Arg<?> arg) {
-            assertPut(unsafeArgs, arg.getName(), arg.getValue(), "unsafe");
-        }
-
-        private static void assertPut(Map<String, Object> map, String key, Object value, String name) {
-            Object previous = map.put(key, value);
-            if (previous != null) {
-                throw new AssertionError(String.format(
-                        "Duplicate %s arg name '%s', first value: %s, second value: %s", name, key, previous, value));
-            }
-        }
     }
 }
