@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Test;
 
 public final class RemoteExceptionTest {
 
-    @SuppressWarnings("for-rollout:deprecation")
     @Test
     public void testJavaSerialization() {
         // With explicit error instance
@@ -35,7 +34,7 @@ public final class RemoteExceptionTest {
                 .build();
         RemoteException expected = new RemoteException(error, 500);
         RemoteException actual = SerializationUtils.deserialize(SerializationUtils.serialize(expected));
-        assertThat(actual).isEqualToComparingFieldByField(expected);
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
 
         // Without error instance
         error = new SerializableError.Builder()
@@ -44,7 +43,7 @@ public final class RemoteExceptionTest {
                 .build();
         expected = new RemoteException(error, 500);
         actual = SerializationUtils.deserialize(SerializationUtils.serialize(expected));
-        assertThat(actual).isEqualToComparingFieldByField(expected);
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
