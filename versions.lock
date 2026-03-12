@@ -52,7 +52,7 @@ org.jetbrains:annotations:26.1.0 (1 constraints: 351170d1)
 
 org.jspecify:jspecify:1.0.0 (7 constraints: 5370d26f)
 
-org.mockito:mockito-core:5.22.0 (1 constraints: 3b054b3b)
+org.mockito:mockito-core:5.23.0 (1 constraints: 3c054e3b)
 
 org.objenesis:objenesis:3.3 (1 constraints: b20a14bd)
 
