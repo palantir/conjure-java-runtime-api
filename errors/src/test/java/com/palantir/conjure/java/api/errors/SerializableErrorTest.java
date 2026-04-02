@@ -107,6 +107,7 @@ public final class SerializableErrorTest {
     @Test
     public void forException_mapArrayArgValue_serializesWithToString() {
         ErrorType error = ErrorType.INTERNAL;
+        @SuppressWarnings("for-rollout:LogsafeArrayArg")
         ServiceException exception = new ServiceException(
                 error,
                 SafeArg.of("safe-array", new long[] {1L, 2L, 3L}),
