@@ -27,6 +27,7 @@ import java.util.Optional;
 import org.immutables.value.Value;
 import org.immutables.value.Value.Immutable;
 
+@SuppressWarnings("for-rollout:DangerousImmutablesToStringDoNotLog")
 @DoNotLog
 @Immutable
 @JsonSerialize(as = ImmutablePartialServiceConfiguration.class)

@@ -34,6 +34,7 @@ import org.immutables.value.Value.Immutable;
  * {@link ServiceConfigurationFactory} to propagate the defaults to the partially-specified services and obtain
  * fully-specified {@link ServiceConfiguration} objects.
  */
+@SuppressWarnings("for-rollout:DangerousImmutablesToStringDoNotLog")
 @DoNotLog
 @Immutable(singleton = true)
 @JsonSerialize(as = ImmutableServicesConfigBlock.class)

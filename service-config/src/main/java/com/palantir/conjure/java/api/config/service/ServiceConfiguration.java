@@ -26,6 +26,7 @@ import java.util.Optional;
 import org.immutables.value.Value;
 
 /** A variant of {@link PartialServiceConfiguration} in which some fields (e.g., {@link #security}) are required. */
+@SuppressWarnings("for-rollout:DangerousImmutablesToStringDoNotLog")
 @DoNotLog
 @JsonDeserialize(as = ImmutableServiceConfiguration.class)
 @Value.Immutable
