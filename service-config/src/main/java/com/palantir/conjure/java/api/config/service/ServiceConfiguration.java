@@ -50,6 +50,8 @@ public interface ServiceConfiguration {
 
     Optional<Duration> backoffSlotSize();
 
+    Optional<Duration> queueTimeout();
+
     Optional<Boolean> enableGcmCipherSuites();
 
     Optional<Boolean> enableHttp2();

@@ -45,12 +45,12 @@ public final class PartialServiceConfigurationTest {
                 .build();
         String camelCase = "{\"apiToken\":\"bearerToken\",\"security\":"
                 + "{\"trustStorePath\":\"truststore.jks\",\"trustStoreType\":\"JKS\",\"keyStorePath\":null,"
-                + "\"keyStorePassword\":null,\"keyStoreType\":\"JKS\",\"keyStoreKeyAlias\":null},\"uris\":[\"uri1\"],"
-                + "\"connectTimeout\":\"1 day\",\"readTimeout\":\"1 day\",\"writeTimeout\":\"1 day\","
-                + "\"maxNumRetries\":5,\"backoffSlotSize\":\"1 day\","
-                + "\"enableGcmCipherSuites\":null,\"enableHttp2\":null,\"fallbackToCommonNameVerification\":null,"
-                + "\"proxyConfiguration\":{\"hostAndPort\":\"host:80\",\"credentials\":null,"
-                + "\"type\":\"HTTP\"}}";
+                + "\"keyStorePassword\":null,\"keyStoreType\":\"JKS\",\"keyStoreKeyAlias\":null},"
+                + "\"uris\":[\"uri1\"],\"connectTimeout\":\"1 day\",\"readTimeout\":\"1 day\","
+                + "\"writeTimeout\":\"1 day\",\"maxNumRetries\":5,\"backoffSlotSize\":\"1 day\","
+                + "\"enableGcmCipherSuites\":null,\"enableHttp2\":null,"
+                + "\"fallbackToCommonNameVerification\":null,\"queueTimeout\":null,"
+                + "\"proxyConfiguration\":{\"hostAndPort\":\"host:80\",\"credentials\":null,\"type\":\"HTTP\"}}";
         String kebabCase = "{\"api-token\":\"bearerToken\",\"security\":"
                 + "{\"trust-store-path\":\"truststore.jks\",\"trust-store-type\":\"JKS\",\"key-store-path\":null,"
                 + "\"key-store-password\":null,\"key-store-type\":\"JKS\",\"key-store-key-alias\":null},"
@@ -72,13 +72,15 @@ public final class PartialServiceConfigurationTest {
         PartialServiceConfiguration serialized =
                 PartialServiceConfiguration.builder().build();
         String camelCase = "{\"apiToken\":null,\"security\":null,\"uris\":[],\"connectTimeout\":null,"
-                + "\"readTimeout\":null,\"writeTimeout\":null,\"maxNumRetries\":null,\"backoffSlotSize\":null,"
-                + "\"enableGcmCipherSuites\":null,\"enableHttp2\":null,\"fallbackToCommonNameVerification\":null,"
+                + "\"readTimeout\":null,\"writeTimeout\":null,\"maxNumRetries\":null,"
+                + "\"backoffSlotSize\":null,\"enableGcmCipherSuites\":null,\"enableHttp2\":null,"
+                + "\"fallbackToCommonNameVerification\":null,\"queueTimeout\":null,"
                 + "\"proxyConfiguration\":null}";
         String kebabCase = "{\"api-token\":null,\"security\":null,\"connect-timeout\":null,"
                 + "\"read-timeout\":null,\"write-timeout\":null,\"max-num-retries\":null,\"backoff-slot-size\":null,"
                 + "\"enable-gcm-cipher-suites\":null,\"enable-http2\":null,"
                 + "\"fallback-to-common-name-verification\":null,"
+                + "\"queue-timeout\":null,"
                 + "\"uris\":[],\"proxy-configuration\":null}";
 
         assertThat(ObjectMappers.newClientObjectMapper().writeValueAsString(serialized))

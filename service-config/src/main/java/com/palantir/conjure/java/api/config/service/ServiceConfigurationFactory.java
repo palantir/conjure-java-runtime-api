@@ -85,6 +85,7 @@ public final class ServiceConfigurationFactory {
                 .maxNumRetries(partial.maxNumRetries())
                 .backoffSlotSize(orElse(partial.backoffSlotSize(), services.defaultBackoffSlotSize())
                         .map(t -> Duration.ofMillis(t.toMilliseconds())))
+                .queueTimeout(partial.queueTimeout().map(t -> Duration.ofMillis(t.toMilliseconds())))
                 .proxy(orElse(partial.proxyConfiguration(), services.defaultProxyConfiguration()))
                 .enableGcmCipherSuites(orElse(partial.enableGcmCipherSuites(), services.defaultEnableGcmCipherSuites()))
                 .enableHttp2(orElse(partial.enableHttp2(), services.defaultEnableHttp2()))
