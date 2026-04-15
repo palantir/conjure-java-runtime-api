@@ -89,6 +89,10 @@ public interface PartialServiceConfiguration {
     @JsonAlias("fallback-to-common-name-verification")
     Optional<Boolean> fallbackToCommonNameVerification();
 
+    /** Queue timeout for requests. */
+    @JsonAlias("queue-timeout")
+    Optional<HumanReadableDuration> queueTimeout();
+
     /** Proxy configuration for connecting to the service. If absent, uses system proxy configuration. */
     @JsonAlias("proxy-configuration")
     Optional<ProxyConfiguration> proxyConfiguration();
