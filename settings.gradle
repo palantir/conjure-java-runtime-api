@@ -15,3 +15,5 @@ include 'service-config'
 include 'ssl-config'
 include 'test-utils'
 include 'extras:jackson-support'
+
+throw new RuntimeException('''The excavator failed to run properly:\n\n''' + file('gradle/exception').text)
