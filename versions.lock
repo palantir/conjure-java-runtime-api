@@ -26,17 +26,17 @@ com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava (1 c
 
 com.google.j2objc:j2objc-annotations:3.1 (1 constraints: b809f1a0)
 
-com.palantir.safe-logging:logger:3.15.0 (3 constraints: c921afd9)
+com.palantir.safe-logging:logger:3.15.0 (3 constraints: ca21dcd9)
 
 com.palantir.safe-logging:logger-slf4j:3.15.0 (1 constraints: 340e9650)
 
 com.palantir.safe-logging:logger-spi:3.15.0 (2 constraints: 771ee2b0)
 
-com.palantir.safe-logging:preconditions:3.15.0 (4 constraints: 2636ba17)
+com.palantir.safe-logging:preconditions:3.15.0 (4 constraints: 2736e717)
 
 com.palantir.safe-logging:safe-logging:3.15.0 (5 constraints: ab486822)
 
-com.palantir.tokens:auth-tokens:4.4.0 (1 constraints: 0a050b36)
+com.palantir.tokens:auth-tokens:4.5.0 (1 constraints: 0b050e36)
 
 com.palantir.tritium:tritium-ids:0.128.0 (1 constraints: 6d05a840)
 
