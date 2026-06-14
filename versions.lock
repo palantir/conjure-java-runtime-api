@@ -4,7 +4,7 @@ com.fasterxml.jackson.core:jackson-annotations:2.21 (5 constraints: f1504fce)
 
 com.fasterxml.jackson.core:jackson-core:2.21.4 (6 constraints: 27851408)
 
-com.fasterxml.jackson.core:jackson-databind:2.21.4 (7 constraints: dd8581ea)
+com.fasterxml.jackson.core:jackson-databind:2.21.4 (7 constraints: e08584ea)
 
 com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.21.4 (1 constraints: 3b053a3b)
 
@@ -26,17 +26,17 @@ com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava (1 c
 
 com.google.j2objc:j2objc-annotations:3.1 (1 constraints: b809f1a0)
 
-com.palantir.safe-logging:logger:3.16.0 (3 constraints: cb2132da)
+com.palantir.safe-logging:logger:3.16.0 (3 constraints: cc215fda)
 
 com.palantir.safe-logging:logger-slf4j:3.16.0 (1 constraints: 350e9950)
 
 com.palantir.safe-logging:logger-spi:3.16.0 (2 constraints: 791e18b1)
 
-com.palantir.safe-logging:preconditions:3.16.0 (4 constraints: 2936cc18)
+com.palantir.safe-logging:preconditions:3.16.0 (4 constraints: 2a36f918)
 
 com.palantir.safe-logging:safe-logging:3.16.0 (5 constraints: b0487424)
 
-com.palantir.tokens:auth-tokens:4.5.0 (1 constraints: 0b050e36)
+com.palantir.tokens:auth-tokens:4.6.0 (1 constraints: 0c051136)
 
 com.palantir.tritium:tritium-ids:0.128.0 (1 constraints: 6d05a840)
 
