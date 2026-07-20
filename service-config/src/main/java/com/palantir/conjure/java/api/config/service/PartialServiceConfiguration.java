@@ -93,6 +93,10 @@ public interface PartialServiceConfiguration {
     @JsonAlias("proxy-configuration")
     Optional<ProxyConfiguration> proxyConfiguration();
 
+    /** Reuse policy for connection pooling. If absent, uses client implementation default. */
+    @JsonAlias("pool-reuse-policy")
+    Optional<PoolReusePolicy> poolReusePolicy();
+
     static PartialServiceConfiguration of(List<String> uris, Optional<SslConfiguration> sslConfig) {
         return PartialServiceConfiguration.builder()
                 .uris(uris)

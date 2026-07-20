@@ -106,6 +106,11 @@ public abstract class ServicesConfigBlock {
     @JsonAlias("fallback-to-common-name-verification")
     public abstract Optional<Boolean> defaultFallbackToCommonNameVerification();
 
+    /** Default global pool reuse policy. */
+    @JsonProperty("poolReusePolicy")
+    @JsonAlias("pool-reuse-policy")
+    public abstract Optional<PoolReusePolicy> defaultPoolReusePolicy();
+
     public static ServicesConfigBlock empty() {
         return ImmutableServicesConfigBlock.of();
     }

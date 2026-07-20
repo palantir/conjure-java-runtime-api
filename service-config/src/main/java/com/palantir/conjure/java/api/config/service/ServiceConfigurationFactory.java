@@ -90,6 +90,7 @@ public final class ServiceConfigurationFactory {
                 .enableHttp2(orElse(partial.enableHttp2(), services.defaultEnableHttp2()))
                 .fallbackToCommonNameVerification(orElse(
                         partial.fallbackToCommonNameVerification(), services.defaultFallbackToCommonNameVerification()))
+                .poolReusePolicy(orElse(partial.poolReusePolicy(), services.defaultPoolReusePolicy()))
                 .build();
     }
 

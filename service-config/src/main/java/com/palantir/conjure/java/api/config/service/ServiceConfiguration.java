@@ -58,6 +58,8 @@ public interface ServiceConfiguration {
 
     Optional<ProxyConfiguration> proxy();
 
+    Optional<PoolReusePolicy> poolReusePolicy();
+
     static ImmutableServiceConfiguration.Builder builder() {
         return new Builder();
     }
