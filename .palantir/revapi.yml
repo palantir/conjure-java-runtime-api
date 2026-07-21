@@ -18,7 +18,7 @@ acceptedBreaks:
       new: "method java.util.Optional<java.lang.Boolean> com.palantir.conjure.java.api.config.service.ServiceConfiguration::enableHttp2()"
       justification: "Added a new field to ServiceConfiguration, @Immutables annotated\
         \ types are not meant for extension"
-  "2.71.0":
+  "2.75.0":
     com.palantir.conjure.java.api:service-config:
     - code: "java.method.addedToInterface"
       new: "method java.util.Optional<com.palantir.conjure.java.api.config.service.HumanReadableDuration>\
