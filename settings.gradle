@@ -11,6 +11,7 @@ apply plugin: 'com.palantir.jdks.settings'
 rootProject.name = 'conjure-java-runtime-api'
 
 include 'errors'
+include 'orca'
 include 'service-config'
 include 'ssl-config'
 include 'test-utils'
