@@ -1,18 +1,18 @@
 # Run ./gradlew writeVersionsLocks to regenerate this file. Blank lines are to minimize merge conflicts.
 
-com.fasterxml.jackson.core:jackson-annotations:2.21 (5 constraints: f1504fce)
+com.fasterxml.jackson.core:jackson-annotations:2.22 (5 constraints: f55056d0)
 
-com.fasterxml.jackson.core:jackson-core:2.21.4 (6 constraints: 27851408)
+com.fasterxml.jackson.core:jackson-core:2.22.1 (6 constraints: 1b859e00)
 
-com.fasterxml.jackson.core:jackson-databind:2.21.4 (7 constraints: e08584ea)
+com.fasterxml.jackson.core:jackson-databind:2.22.1 (7 constraints: d48522e1)
 
-com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.21.4 (1 constraints: 3b053a3b)
+com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.22.1 (1 constraints: 39053a3b)
 
-com.fasterxml.jackson.datatype:jackson-datatype-guava:2.21.4 (1 constraints: 3b053a3b)
+com.fasterxml.jackson.datatype:jackson-datatype-guava:2.22.1 (1 constraints: 39053a3b)
 
-com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.21.4 (1 constraints: 3b053a3b)
+com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.22.1 (1 constraints: 39053a3b)
 
-com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.21.4 (1 constraints: 3b053a3b)
+com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.22.1 (1 constraints: 39053a3b)
 
 com.google.code.findbugs:jsr305:3.0.2 (1 constraints: 0705fc35)
 
@@ -62,7 +62,7 @@ org.slf4j:slf4j-api:2.0.17 (2 constraints: 4f1e7197)
 
 [Test dependencies]
 
-com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.21.4 (1 constraints: 3b053a3b)
+com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.22.1 (1 constraints: 39053a3b)
 
 com.palantir.safe-logging:preconditions-assertj:3.17.0 (1 constraints: 3d054a3b)
 
