@@ -21,10 +21,11 @@ import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.Safe;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
-import java.util.Objects;
-import java.util.Optional;
+
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * A class representing the reason why a {@link QosException} was created.
@@ -211,6 +212,8 @@ public final class QosReason {
     @Safe
     public static final class DueTo {
         private static final String CUSTOM_STRING = "custom";
+        private static final String SHUTDOWN_STRING = "shutdown";
+        private static final String NOT_READY_STRING = "not-ready";
 
         /**
          * A cause that the RPC system isn't directly aware of, for example a user or user-agent specific limit, or
@@ -218,6 +221,9 @@ public final class QosReason {
          * QosReasons with this cause shouldn't impact things like the dialogue concurrency limiters.
          */
         public static final DueTo CUSTOM = new DueTo(CUSTOM_STRING);
+
+        public static final DueTo SHUTDOWN = new DueTo(SHUTDOWN_STRING);
+        public static final DueTo NOT_READY = new DueTo(NOT_READY_STRING);
 
         @Safe
         private final String value;
