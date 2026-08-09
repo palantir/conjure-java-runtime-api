@@ -21,11 +21,10 @@ import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.Safe;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.Optional;
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nullable;
 
 /**
  * A class representing the reason why a {@link QosException} was created.
