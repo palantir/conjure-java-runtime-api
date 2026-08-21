@@ -1,6 +1,0 @@
-type: feature
-feature:
-  description: Implement additional QoS metadata to convey server intent to calling
-    clients
-  links:
-  - https://github.com/palantir/conjure-java-runtime-api/pull/1231

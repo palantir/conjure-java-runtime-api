@@ -1,5 +1,0 @@
-type: improvement
-improvement:
-  description: Optimize `UserAgents.format`
-  links:
-  - https://github.com/palantir/conjure-java-runtime-api/pull/551

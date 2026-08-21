@@ -1,5 +1,0 @@
-type: improvement
-improvement:
-  description: Add SOCKS proxy support to the API
-  links:
-  - https://github.com/palantir/conjure-java-runtime-api/pull/699
