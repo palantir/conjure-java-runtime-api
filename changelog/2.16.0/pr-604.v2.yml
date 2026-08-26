@@ -1,6 +1,0 @@
-type: improvement
-improvement:
-  description: move `RemoteException`s errorInstanceId from exception message into
-    exception args
-  links:
-  - https://github.com/palantir/conjure-java-runtime-api/pull/604

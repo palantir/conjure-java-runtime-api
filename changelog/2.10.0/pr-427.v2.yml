@@ -1,5 +1,0 @@
-type: improvement
-improvement:
-  description: Don't require passwords for non jks keystores
-  links:
-  - https://github.com/palantir/conjure-java-runtime-api/pull/427

@@ -1,5 +1,0 @@
-type: improvement
-improvement:
-  description: Service exception assert for no args.
-  links:
-  - https://github.com/palantir/conjure-java-runtime-api/pull/702
