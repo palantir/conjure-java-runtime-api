@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import org.junit.jupiter.api.Test;
 
-@SuppressWarnings("CheckReturnValue") // .build() is used to throw validation exceptions
+// .build() is used to throw validation exceptions
 public final class ProxyConfigurationTests {
     private final ObjectMapper mapper = new ObjectMapper(new YAMLFactory()).registerModule(new Jdk8Module());
 
