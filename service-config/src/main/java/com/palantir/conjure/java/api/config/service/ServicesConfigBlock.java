@@ -39,7 +39,6 @@ import org.immutables.value.Value.Immutable;
 @Immutable(singleton = true)
 @JsonSerialize(as = ImmutableServicesConfigBlock.class)
 @JsonDeserialize(builder = ServicesConfigBlock.Builder.class)
-@ImmutablesStyle
 public abstract class ServicesConfigBlock {
 
     /**

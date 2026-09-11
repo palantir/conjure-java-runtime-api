@@ -28,7 +28,6 @@ import org.immutables.value.Value;
 @DoNotLog
 @JsonDeserialize(builder = SslConfiguration.Builder.class)
 @Value.Immutable
-@ImmutablesStyle
 public abstract class SslConfiguration {
 
     private static final ImmutableSet<String> PEM_EXTENSIONS = ImmutableSet.of("key", "pem", "cer", "crt");
