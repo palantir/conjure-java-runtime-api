@@ -31,7 +31,6 @@ import org.immutables.value.Value;
  * {@link Agent} header strings must never contain commas.
  */
 @Value.Immutable
-@ImmutablesStyle
 public interface UserAgent {
 
     /** Identifies the node (e.g., IP address, container identifier, etc) on which this user agent was constructed. */
@@ -97,7 +96,6 @@ public interface UserAgent {
 
     /** Specifies an agent that participates (client-side) in an RPC call in terms of its name and version. */
     @Value.Immutable
-    @ImmutablesStyle
     @Safe
     interface Agent {
         String DEFAULT_VERSION = "0.0.0";

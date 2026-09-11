@@ -22,7 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.immutables.value.Value;
 
-@Target({ElementType.PACKAGE, ElementType.TYPE})
+@Target(ElementType.PACKAGE)
 @Retention(RetentionPolicy.SOURCE)
 @Value.Style(visibility = Value.Style.ImplementationVisibility.PACKAGE, overshadowImplementation = true, jdkOnly = true)
 @interface ImmutablesStyle {}

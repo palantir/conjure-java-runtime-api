@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.palantir.conjure.java.api.config.ssl;
+package com.palantir.conjure.java.api.errors;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -22,7 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.immutables.value.Value;
 
-@Target(ElementType.PACKAGE)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.SOURCE)
-@Value.Style(visibility = Value.Style.ImplementationVisibility.PACKAGE, overshadowImplementation = true, jdkOnly = true)
-@interface ImmutablesStyle {}
+@Value.Style
+@interface SerializableErrorStyle {}

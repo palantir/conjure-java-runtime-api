@@ -33,7 +33,6 @@ import org.immutables.value.Value.Immutable;
 @Immutable
 @JsonSerialize(as = ImmutableProxyConfiguration.class)
 @JsonDeserialize(builder = ProxyConfiguration.Builder.class)
-@ImmutablesStyle
 public abstract class ProxyConfiguration {
 
     public static final ProxyConfiguration DIRECT =

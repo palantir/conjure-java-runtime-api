@@ -28,7 +28,6 @@ import org.immutables.value.Value;
  * associated with a {@code 5xx} status are server errors.
  */
 @Value.Immutable(builder = false)
-@ImmutablesStyle
 public abstract class ErrorType {
 
     private static final String UPPER_CAMEL_CASE = "(([A-Z][a-z0-9]+)+)";

@@ -26,7 +26,6 @@ import org.immutables.value.Value.Immutable;
 @Immutable(builder = false)
 @JsonSerialize(as = ImmutableBasicCredentials.class)
 @JsonDeserialize(as = ImmutableBasicCredentials.class)
-@ImmutablesStyle
 public abstract class BasicCredentials {
 
     @Value.Parameter

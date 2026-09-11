@@ -1,5 +1,5 @@
 /*
- * (c) Copyright 2017 Palantir Technologies Inc. All rights reserved.
+ * (c) Copyright 2026 Palantir Technologies Inc. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,5 @@
  * limitations under the License.
  */
 
-package com.palantir.conjure.java.api.config.ssl;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import org.immutables.value.Value;
-
-@Target(ElementType.PACKAGE)
-@Retention(RetentionPolicy.SOURCE)
-@Value.Style(visibility = Value.Style.ImplementationVisibility.PACKAGE, overshadowImplementation = true, jdkOnly = true)
-@interface ImmutablesStyle {}
+@ImmutablesStyle
+package com.palantir.conjure.java.api.errors;

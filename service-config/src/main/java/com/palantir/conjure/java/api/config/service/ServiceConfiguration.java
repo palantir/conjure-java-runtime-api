@@ -30,7 +30,6 @@ import org.immutables.value.Value;
 @DoNotLog
 @JsonDeserialize(as = ImmutableServiceConfiguration.class)
 @Value.Immutable
-@ImmutablesStyle
 public interface ServiceConfiguration {
 
     @Value.Redacted
