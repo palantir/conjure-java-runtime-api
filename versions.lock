@@ -2,17 +2,17 @@
 
 com.fasterxml.jackson.core:jackson-annotations:2.22 (5 constraints: f65057d0)
 
-com.fasterxml.jackson.core:jackson-core:2.22.1 (6 constraints: 1b859e00)
+com.fasterxml.jackson.core:jackson-core:2.22.2 (6 constraints: 21855f04)
 
-com.fasterxml.jackson.core:jackson-databind:2.22.1 (7 constraints: d28522e1)
+com.fasterxml.jackson.core:jackson-databind:2.22.2 (7 constraints: d885d9e5)
 
-com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.22.1 (1 constraints: 39053a3b)
+com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.22.2 (1 constraints: 3a053b3b)
 
-com.fasterxml.jackson.datatype:jackson-datatype-guava:2.22.1 (1 constraints: 39053a3b)
+com.fasterxml.jackson.datatype:jackson-datatype-guava:2.22.2 (1 constraints: 3a053b3b)
 
-com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.22.1 (1 constraints: 39053a3b)
+com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.22.2 (1 constraints: 3a053b3b)
 
-com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.22.1 (1 constraints: 39053a3b)
+com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.22.2 (1 constraints: 3a053b3b)
 
 com.google.code.findbugs:jsr305:3.0.2 (1 constraints: 0705fc35)
 
@@ -62,7 +62,7 @@ org.slf4j:slf4j-api:2.0.17 (2 constraints: 4f1e7197)
 
 [Test dependencies]
 
-com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.22.1 (1 constraints: 39053a3b)
+com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.22.2 (1 constraints: 3a053b3b)
 
 com.palantir.safe-logging:preconditions-assertj:3.19.0 (1 constraints: 3f05503b)
 
