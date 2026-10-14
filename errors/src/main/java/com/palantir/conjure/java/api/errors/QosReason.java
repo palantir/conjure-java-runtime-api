@@ -42,19 +42,25 @@ public final class QosReason {
 
     private final Optional<RetryHint> retryHint;
     private final Optional<DueTo> dueTo;
+    private final Optional<AttributionQos> attributionQos;
 
     private static final String PATTERN_STRING = "^[a-z0-9\\-]{1,50}$";
 
-    private QosReason(@Safe String reason, Optional<RetryHint> retryHint, Optional<DueTo> dueTo) {
+    private QosReason(
+            @Safe String reason,
+            Optional<RetryHint> retryHint,
+            Optional<DueTo> dueTo,
+            Optional<AttributionQos> attributionQos) {
         checkReason(reason);
         this.reason = reason;
         this.retryHint = retryHint;
         this.dueTo = dueTo;
+        this.attributionQos = attributionQos;
     }
 
     public static QosReason of(
             @Safe @CompileTimeConstant @org.intellij.lang.annotations.Pattern(PATTERN_STRING) String reason) {
-        return new QosReason(reason, Optional.empty(), Optional.empty());
+        return new QosReason(reason, Optional.empty(), Optional.empty(), Optional.empty());
     }
 
     @Safe
@@ -70,6 +76,10 @@ public final class QosReason {
         return dueTo;
     }
 
+    public Optional<AttributionQos> attributionQos() {
+        return attributionQos;
+    }
+
     /** Returns the {@link #reason()} for historical reasons, and should not be updated. */
     @Override
     public String toString() {
@@ -83,7 +93,8 @@ public final class QosReason {
         } else if (other instanceof QosReason otherReason) {
             return Objects.equals(this.reason, otherReason.reason)
                     && Objects.equals(this.retryHint, otherReason.retryHint)
-                    && Objects.equals(this.dueTo, otherReason.dueTo);
+                    && Objects.equals(this.dueTo, otherReason.dueTo)
+                    && Objects.equals(this.attributionQos, otherReason.attributionQos);
         } else {
             return false;
         }
@@ -108,12 +119,29 @@ public final class QosReason {
         @Nullable
         private DueTo dueTo;
 
+        @Nullable
+        private AttributionQos attributionQos;
+
         private Builder() {}
 
         // other.reason must be a compile-time-constant
         @SuppressWarnings("CompileTimeConstant")
         public Builder from(QosReason other) {
-            return reason(other.reason()).retryHint(other.retryHint()).dueTo(other.dueTo());
+            return reason(other.reason())
+                    .retryHint(other.retryHint())
+                    .dueTo(other.dueTo())
+                    .attributionQos(other.attributionQos());
+        }
+
+        public Builder attributionQos(AttributionQos value) {
+            this.attributionQos = Preconditions.checkNotNull(value, "attributionQos");
+            return this;
+        }
+
+        public Builder attributionQos(Optional<AttributionQos> value) {
+            this.attributionQos =
+                    Preconditions.checkNotNull(value, "attributionQos").orElse(null);
+            return this;
         }
 
         public Builder reason(
@@ -146,7 +174,70 @@ public final class QosReason {
             return new QosReason(
                     Preconditions.checkNotNull(reason, "reason"),
                     Optional.ofNullable(retryHint),
-                    Optional.ofNullable(dueTo));
+                    Optional.ofNullable(dueTo),
+                    Optional.ofNullable(attributionQos));
+        }
+    }
+
+    @Safe
+    public static final class AttributionQos {
+        @Safe
+        private final String rejectionId;
+
+        @Safe
+        private final String qosOrigin;
+
+        @Safe
+        private final String qosScope;
+
+        private AttributionQos(@Safe String rejectionId, @Safe String qosOrigin, @Safe String qosScope) {
+            this.rejectionId = Preconditions.checkNotNull(rejectionId, "rejectionId is required");
+            this.qosOrigin = Preconditions.checkNotNull(qosOrigin, "qosOrigin is required");
+            this.qosScope = Preconditions.checkNotNull(qosScope, "qosScope is required");
+        }
+
+        public static AttributionQos of(@Safe String rejectionId, @Safe String qosOrigin, @Safe String qosScope) {
+            return new AttributionQos(rejectionId, qosOrigin, qosScope);
+        }
+
+        @Safe
+        public String rejectionId() {
+            return rejectionId;
+        }
+
+        @Safe
+        public String qosOrigin() {
+            return qosOrigin;
+        }
+
+        @Safe
+        public String qosScope() {
+            return qosScope;
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (this == other) {
+                return true;
+            }
+            if (other == null || getClass() != other.getClass()) {
+                return false;
+            }
+            AttributionQos attributionQos = (AttributionQos) other;
+            return rejectionId.equals(attributionQos.rejectionId)
+                    && qosOrigin.equals(attributionQos.qosOrigin)
+                    && qosScope.equals(attributionQos.qosScope);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(rejectionId, qosOrigin, qosScope);
+        }
+
+        @Override
+        public String toString() {
+            return "AttributionQos{rejectionId=" + rejectionId + ", qosOrigin=" + qosOrigin + ", qosScope=" + qosScope
+                    + '}';
         }
     }
 

@@ -16,6 +16,7 @@
 
 package com.palantir.conjure.java.api.errors;
 
+import com.palantir.conjure.java.api.errors.QosReason.AttributionQos;
 import com.palantir.conjure.java.api.errors.QosReason.DueTo;
 import com.palantir.conjure.java.api.errors.QosReason.RetryHint;
 import java.util.Optional;
@@ -26,6 +27,10 @@ public final class QosReasons {
     private static final QosReason DEFAULT_CLIENT_REASON = QosReason.of(CLIENT_REASON);
     private static final String DUE_TO_HEADER = "Qos-Due-To";
     private static final String RETRY_HINT_HEADER = "Qos-Retry-Hint";
+
+    private static final String REJECTION_ID_HEADER = "Rejection-Id";
+    private static final String QOS_ORIGIN_HEADER = "Qos-Origin";
+    private static final String QOS_SCOPE_HEADER = "Qos-Scope";
 
     public static <T> void encodeToResponse(
             QosReason reason, T response, QosResponseEncodingAdapter<? super T> adapter) {
@@ -40,19 +45,41 @@ public final class QosReasons {
                     RETRY_HINT_HEADER,
                     toHeaderValue(reason.retryHint().get()));
         }
+        if (reason.attributionQos().isPresent()) {
+            AttributionQos attributionQos = reason.attributionQos().get();
+            adapter.setHeader(response, REJECTION_ID_HEADER, attributionQos.rejectionId());
+            adapter.setHeader(response, QOS_ORIGIN_HEADER, attributionQos.qosOrigin());
+            adapter.setHeader(response, QOS_SCOPE_HEADER, attributionQos.qosScope());
+        }
     }
 
     public static <T> QosReason parseFromResponse(T response, QosResponseDecodingAdapter<? super T> adapter) {
         Optional<String> maybeDueTo = adapter.getFirstHeader(response, DUE_TO_HEADER);
         Optional<String> maybeRetryHint = adapter.getFirstHeader(response, RETRY_HINT_HEADER);
-        if (maybeDueTo.isEmpty() && maybeRetryHint.isEmpty()) {
+        Optional<AttributionQos> maybeAttributionQos = parseAttributionQos(response, adapter);
+        if (maybeDueTo.isEmpty() && maybeRetryHint.isEmpty() && maybeAttributionQos.isEmpty()) {
             return DEFAULT_CLIENT_REASON;
         }
         return QosReason.builder()
                 .reason(CLIENT_REASON)
                 .dueTo(maybeDueTo.map(QosReasons::parseDueTo))
                 .retryHint(maybeRetryHint.map(QosReasons::parseRetryHint))
+                .attributionQos(maybeAttributionQos)
                 .build();
+    }
+
+    private static <T> Optional<AttributionQos> parseAttributionQos(
+            T response, QosResponseDecodingAdapter<? super T> adapter) {
+        Optional<String> maybeRejectionId = adapter.getFirstHeader(response, REJECTION_ID_HEADER);
+        if (maybeRejectionId.isEmpty()) {
+            return Optional.empty();
+        }
+        Optional<String> maybeQosOrigin = adapter.getFirstHeader(response, QOS_ORIGIN_HEADER);
+        Optional<String> maybeQosScope = adapter.getFirstHeader(response, QOS_SCOPE_HEADER);
+        if (maybeQosOrigin.isEmpty() || maybeQosScope.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(AttributionQos.of(maybeRejectionId.get(), maybeQosOrigin.get(), maybeQosScope.get()));
     }
 
     public interface QosResponseEncodingAdapter<RESPONSE> {
