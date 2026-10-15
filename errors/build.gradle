@@ -9,6 +9,7 @@ dependencies {
 
     api "com.fasterxml.jackson.core:jackson-databind"
     api "com.google.code.findbugs:jsr305"
+    api 'com.google.guava:guava'
     api "com.palantir.safe-logging:safe-logging"
     api "org.jetbrains:annotations"
 

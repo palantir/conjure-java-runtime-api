@@ -24,5 +24,5 @@ import org.immutables.value.Value;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.SOURCE)
-@Value.Style
+@Value.Style(jdkOnly = true)
 @interface SerializableErrorStyle {}

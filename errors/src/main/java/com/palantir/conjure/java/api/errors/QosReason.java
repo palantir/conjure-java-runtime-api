@@ -16,6 +16,7 @@
 
 package com.palantir.conjure.java.api.errors;
 
+import com.google.common.annotations.Beta;
 import com.google.errorprone.annotations.CompileTimeConstant;
 import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.Safe;
@@ -180,39 +181,42 @@ public final class QosReason {
     }
 
     @Safe
+    @Beta
     public static final class AttributionQos {
         @Safe
-        private final String rejectionId;
+        private final String rejectionPolicy;
 
         @Safe
-        private final String qosOrigin;
+        private final String rejectionAttribute;
 
         @Safe
-        private final String qosScope;
+        private final String errorMessage;
 
-        private AttributionQos(@Safe String rejectionId, @Safe String qosOrigin, @Safe String qosScope) {
-            this.rejectionId = Preconditions.checkNotNull(rejectionId, "rejectionId is required");
-            this.qosOrigin = Preconditions.checkNotNull(qosOrigin, "qosOrigin is required");
-            this.qosScope = Preconditions.checkNotNull(qosScope, "qosScope is required");
+        private AttributionQos(
+                @Safe String rejectionPolicy, @Safe String rejectionAttribute, @Safe String errorMessage) {
+            this.rejectionPolicy = Preconditions.checkNotNull(rejectionPolicy, "rejectionPolicy is required");
+            this.rejectionAttribute = Preconditions.checkNotNull(rejectionAttribute, "rejectionAttribute is required");
+            this.errorMessage = Preconditions.checkNotNull(errorMessage, "errorMessage is required");
         }
 
-        public static AttributionQos of(@Safe String rejectionId, @Safe String qosOrigin, @Safe String qosScope) {
-            return new AttributionQos(rejectionId, qosOrigin, qosScope);
-        }
-
-        @Safe
-        public String rejectionId() {
-            return rejectionId;
+        public static AttributionQos of(
+                @Safe String rejectionPolicy, @Safe String rejectionAttribute, @Safe String errorMessage) {
+            return new AttributionQos(rejectionPolicy, rejectionAttribute, errorMessage);
         }
 
         @Safe
-        public String qosOrigin() {
-            return qosOrigin;
+        public String rejectionPolicy() {
+            return rejectionPolicy;
         }
 
         @Safe
-        public String qosScope() {
-            return qosScope;
+        public String rejectionAttribute() {
+            return rejectionAttribute;
+        }
+
+        @Safe
+        public String errorMessage() {
+            return errorMessage;
         }
 
         @Override
@@ -224,20 +228,20 @@ public final class QosReason {
                 return false;
             }
             AttributionQos attributionQos = (AttributionQos) other;
-            return rejectionId.equals(attributionQos.rejectionId)
-                    && qosOrigin.equals(attributionQos.qosOrigin)
-                    && qosScope.equals(attributionQos.qosScope);
+            return rejectionPolicy.equals(attributionQos.rejectionPolicy)
+                    && rejectionAttribute.equals(attributionQos.rejectionAttribute)
+                    && errorMessage.equals(attributionQos.errorMessage);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(rejectionId, qosOrigin, qosScope);
+            return Objects.hash(rejectionPolicy, rejectionAttribute, errorMessage);
         }
 
         @Override
         public String toString() {
-            return "AttributionQos{rejectionId=" + rejectionId + ", qosOrigin=" + qosOrigin + ", qosScope=" + qosScope
-                    + '}';
+            return "AttributionQos{rejectionPolicy=" + rejectionPolicy + ", rejectionAttribute=" + rejectionAttribute
+                    + ", errorMessage=" + errorMessage + '}';
         }
     }
 

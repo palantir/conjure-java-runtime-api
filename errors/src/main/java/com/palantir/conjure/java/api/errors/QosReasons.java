@@ -28,9 +28,9 @@ public final class QosReasons {
     private static final String DUE_TO_HEADER = "Qos-Due-To";
     private static final String RETRY_HINT_HEADER = "Qos-Retry-Hint";
 
-    private static final String REJECTION_ID_HEADER = "Rejection-Id";
-    private static final String QOS_ORIGIN_HEADER = "Qos-Origin";
-    private static final String QOS_SCOPE_HEADER = "Qos-Scope";
+    private static final String REJECTION_POLICY_HEADER = "Rejection-Policy";
+    private static final String REJECTION_ATTRIBUTE_HEADER = "Rejection-Attribute";
+    private static final String ERROR_MESSAGE_HEADER = "Error-Message";
 
     public static <T> void encodeToResponse(
             QosReason reason, T response, QosResponseEncodingAdapter<? super T> adapter) {
@@ -47,9 +47,9 @@ public final class QosReasons {
         }
         if (reason.attributionQos().isPresent()) {
             AttributionQos attributionQos = reason.attributionQos().get();
-            adapter.setHeader(response, REJECTION_ID_HEADER, attributionQos.rejectionId());
-            adapter.setHeader(response, QOS_ORIGIN_HEADER, attributionQos.qosOrigin());
-            adapter.setHeader(response, QOS_SCOPE_HEADER, attributionQos.qosScope());
+            adapter.setHeader(response, REJECTION_POLICY_HEADER, attributionQos.rejectionPolicy());
+            adapter.setHeader(response, REJECTION_ATTRIBUTE_HEADER, attributionQos.rejectionAttribute());
+            adapter.setHeader(response, ERROR_MESSAGE_HEADER, attributionQos.errorMessage());
         }
     }
 
@@ -70,16 +70,17 @@ public final class QosReasons {
 
     private static <T> Optional<AttributionQos> parseAttributionQos(
             T response, QosResponseDecodingAdapter<? super T> adapter) {
-        Optional<String> maybeRejectionId = adapter.getFirstHeader(response, REJECTION_ID_HEADER);
-        if (maybeRejectionId.isEmpty()) {
+        Optional<String> maybeRejectionPolicy = adapter.getFirstHeader(response, REJECTION_POLICY_HEADER);
+        if (maybeRejectionPolicy.isEmpty()) {
             return Optional.empty();
         }
-        Optional<String> maybeQosOrigin = adapter.getFirstHeader(response, QOS_ORIGIN_HEADER);
-        Optional<String> maybeQosScope = adapter.getFirstHeader(response, QOS_SCOPE_HEADER);
-        if (maybeQosOrigin.isEmpty() || maybeQosScope.isEmpty()) {
+        Optional<String> maybeRejectionAttribute = adapter.getFirstHeader(response, REJECTION_ATTRIBUTE_HEADER);
+        Optional<String> maybeErrorMessage = adapter.getFirstHeader(response, ERROR_MESSAGE_HEADER);
+        if (maybeRejectionAttribute.isEmpty() || maybeErrorMessage.isEmpty()) {
             return Optional.empty();
         }
-        return Optional.of(AttributionQos.of(maybeRejectionId.get(), maybeQosOrigin.get(), maybeQosScope.get()));
+        return Optional.of(
+                AttributionQos.of(maybeRejectionPolicy.get(), maybeRejectionAttribute.get(), maybeErrorMessage.get()));
     }
 
     public interface QosResponseEncodingAdapter<RESPONSE> {
