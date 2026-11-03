@@ -54,15 +54,15 @@ public abstract class SslConfiguration {
     }
 
     /**
-     * A value of {@code true} selects explicitly configured trust anchors without Conjure's bundled default CAs.
-     * The default, {@code false}, preserves existing behavior. This setting controls Conjure's bundled roots,
-     * not JDK/system roots or client identity.
+     * Whether to trust Conjure's bundled default CAs in addition to explicitly configured trust anchors.
+     * Defaults to {@code true}. A value of {@code false} restricts trust to explicitly configured trust anchors.
+     * This setting controls Conjure's bundled roots, not JDK/system roots or client identity.
      */
     @SuppressWarnings("checkstyle:designforextension")
     @Value.Default
-    @JsonAlias("disable-default-cas")
-    public boolean disableDefaultCas() {
-        return false;
+    @JsonAlias("trust-default-cas")
+    public boolean trustDefaultCas() {
+        return true;
     }
 
     @JsonAlias("key-store-path")
