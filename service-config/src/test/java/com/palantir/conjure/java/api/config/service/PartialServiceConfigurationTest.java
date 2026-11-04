@@ -44,7 +44,8 @@ public final class PartialServiceConfigurationTest {
                 .proxyConfiguration(ProxyConfiguration.of("host:80"))
                 .build();
         String camelCase = "{\"apiToken\":\"bearerToken\",\"security\":"
-                + "{\"trustStorePath\":\"truststore.jks\",\"trustStoreType\":\"JKS\",\"keyStorePath\":null,"
+                + "{\"trustStorePath\":\"truststore.jks\",\"trustStoreType\":\"JKS\",\"trustDefaultCas\":true,"
+                + "\"keyStorePath\":null,"
                 + "\"keyStorePassword\":null,\"keyStoreType\":\"JKS\",\"keyStoreKeyAlias\":null},"
                 + "\"uris\":[\"uri1\"],\"connectTimeout\":\"1 day\",\"readTimeout\":\"1 day\","
                 + "\"writeTimeout\":\"1 day\",\"maxNumRetries\":5,\"backoffSlotSize\":\"1 day\","

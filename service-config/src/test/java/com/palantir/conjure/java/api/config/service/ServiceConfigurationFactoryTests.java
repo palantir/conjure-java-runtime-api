@@ -193,7 +193,8 @@ public final class ServiceConfigurationFactoryTests {
                 .defaultBackoffSlotSize(HumanReadableDuration.days(1))
                 .build();
         String camelCase = "{\"apiToken\":\"bearerToken\",\"security\":"
-                + "{\"trustStorePath\":\"truststore.jks\",\"trustStoreType\":\"JKS\",\"keyStorePath\":null,"
+                + "{\"trustStorePath\":\"truststore.jks\",\"trustStoreType\":\"JKS\",\"trustDefaultCas\":true,"
+                + "\"keyStorePath\":null,"
                 + "\"keyStorePassword\":null,\"keyStoreType\":\"JKS\",\"keyStoreKeyAlias\":null},\"services\":"
                 + "{\"service\":{\"apiToken\":null,\"security\":null,\"uris\":[\"uri\"],\"connectTimeout\":null,"
                 + "\"readTimeout\":null,\"writeTimeout\":null,\"maxNumRetries\":null,\"backoffSlotSize\":null,"

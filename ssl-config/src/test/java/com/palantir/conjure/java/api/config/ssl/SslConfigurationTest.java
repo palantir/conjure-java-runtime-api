@@ -25,6 +25,9 @@ import com.palantir.conjure.java.api.ext.jackson.ObjectMappers;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import java.nio.file.Paths;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public final class SslConfigurationTest {
 
@@ -41,7 +44,7 @@ public final class SslConfigurationTest {
                 .keyStorePassword("password")
                 .build();
         String deserializedCamelCase = "{\"trustStorePath\":\"truststore.jks\",\"trustStoreType\":\"JKS\","
-                + "\"keyStorePath\":\"keystore.jks\",\"keyStorePassword\":\"password\","
+                + "\"trustDefaultCas\":true,\"keyStorePath\":\"keystore.jks\",\"keyStorePassword\":\"password\","
                 + "\"keyStoreType\":\"JKS\",\"keyStoreKeyAlias\":\"alias\"}";
         String deserializedKebabCase = "{\"trust-store-path\":\"truststore.jks\",\"trust-store-type\":\"JKS\","
                 + "\"key-store-path\":\"keystore.jks\",\"key-store-password\":\"password\","
@@ -58,7 +61,8 @@ public final class SslConfigurationTest {
     public void serDe_optional() throws Exception {
         SslConfiguration serialized = SslConfiguration.of(Paths.get("trustStore.jks"));
         String deserializedCamelCase = "{\"trustStorePath\":\"trustStore.jks\",\"trustStoreType\":\"JKS\","
-                + "\"keyStorePath\":null,\"keyStorePassword\":null,\"keyStoreType\":\"JKS\",\"keyStoreKeyAlias\":null}";
+                + "\"trustDefaultCas\":true,\"keyStorePath\":null,\"keyStorePassword\":null,"
+                + "\"keyStoreType\":\"JKS\",\"keyStoreKeyAlias\":null}";
         String deserializedKebabCase = "{\"trust-store-path\":\"trustStore.jks\",\"trust-store-type\":\"JKS\","
                 + "\"key-store-path\":null,\"key-store-password\":null,\"key-store-type\":\"JKS\","
                 + "\"key-store-key-alias\":null}";
@@ -68,6 +72,79 @@ public final class SslConfigurationTest {
                 .isEqualTo(serialized);
         assertThat(MAPPER.readValue(deserializedKebabCase, SslConfiguration.class))
                 .isEqualTo(serialized);
+    }
+
+    @Test
+    public void trustDefaultCasDefaultsToTrue() {
+        assertThat(SslConfiguration.builder()
+                        .trustStorePath(Paths.get("truststore.jks"))
+                        .build()
+                        .trustDefaultCas())
+                .isTrue();
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    public void trustDefaultCasExplicitBuilderValue(boolean trustDefaultCas) {
+        assertThat(SslConfiguration.builder()
+                        .trustStorePath(Paths.get("truststore.jks"))
+                        .trustDefaultCas(trustDefaultCas)
+                        .build()
+                        .trustDefaultCas())
+                .isEqualTo(trustDefaultCas);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"trustStorePath", "trust-store-path"})
+    public void trustDefaultCasDefaultsToTrueWhenOmittedFromJson(String trustStoreProperty) throws Exception {
+        SslConfiguration configuration =
+                MAPPER.readValue("{\"" + trustStoreProperty + "\":\"truststore.jks\"}", SslConfiguration.class);
+
+        assertThat(configuration.trustDefaultCas()).isTrue();
+        assertThat(configuration).isEqualTo(SslConfiguration.of(Paths.get("truststore.jks")));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"trustDefaultCas, true", "trustDefaultCas, false", "trust-default-cas, true", "trust-default-cas, false"
+    })
+    public void trustDefaultCasExplicitJsonValue(String property, boolean trustDefaultCas) throws Exception {
+        SslConfiguration configuration = MAPPER.readValue(
+                "{\"trustStorePath\":\"truststore.jks\",\"" + property + "\":" + trustDefaultCas + "}",
+                SslConfiguration.class);
+
+        assertThat(configuration.trustDefaultCas()).isEqualTo(trustDefaultCas);
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    public void trustDefaultCasSerializationRoundTrip(boolean trustDefaultCas) throws Exception {
+        SslConfiguration configuration = SslConfiguration.builder()
+                .trustStorePath(Paths.get("truststore.jks"))
+                .trustDefaultCas(trustDefaultCas)
+                .build();
+
+        assertThat(MAPPER.readValue(MAPPER.writeValueAsBytes(configuration), SslConfiguration.class))
+                .isEqualTo(configuration);
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    public void trustDefaultCasBuilderFromPreservesConfiguration(boolean trustDefaultCas) {
+        SslConfiguration configuration = SslConfiguration.builder()
+                .trustStorePath(Paths.get("truststore.p12"))
+                .trustStoreType(SslConfiguration.StoreType.PKCS12)
+                .trustDefaultCas(trustDefaultCas)
+                .keyStorePath(Paths.get("keystore.p12"))
+                .keyStoreType(SslConfiguration.StoreType.PKCS12)
+                .keyStorePassword("password")
+                .keyStoreKeyAlias("alias")
+                .build();
+
+        assertThat(SslConfiguration.builder()
+                        .trustDefaultCas(!trustDefaultCas)
+                        .from(configuration)
+                        .build())
+                .isEqualTo(configuration);
     }
 
     @Test
