@@ -36,7 +36,7 @@ com.palantir.safe-logging:preconditions:3.21.0 (4 constraints: 1e36b414)
 
 com.palantir.safe-logging:safe-logging:3.21.0 (5 constraints: 9c48491c)
 
-com.palantir.tokens:auth-tokens:4.13.0 (1 constraints: 3a05443b)
+com.palantir.tokens:auth-tokens:4.14.0 (1 constraints: 3b05473b)
 
 com.palantir.tritium:tritium-ids:0.128.0 (1 constraints: 6d05a840)
 
