@@ -16,6 +16,7 @@
 
 package com.palantir.conjure.java.api.testing;
 
+import com.palantir.conjure.java.api.errors.EndpointServiceException;
 import com.palantir.conjure.java.api.errors.QosException;
 import com.palantir.conjure.java.api.errors.RemoteException;
 import com.palantir.conjure.java.api.errors.ServiceException;
@@ -40,6 +41,10 @@ public class Assertions extends org.assertj.core.api.Assertions {
         return new QosExceptionAssert(actual);
     }
 
+    public static EndpointServiceExceptionAssert assertThat(EndpointServiceException actual) {
+        return new EndpointServiceExceptionAssert(actual);
+    }
+
     @CanIgnoreReturnValue
     public static ServiceExceptionAssert assertThatServiceExceptionThrownBy(ThrowingCallable shouldRaiseThrowable) {
         return assertThatThrownBy(shouldRaiseThrowable).asInstanceOf(ServiceExceptionAssert.instanceOfAssertFactory());
@@ -53,5 +58,12 @@ public class Assertions extends org.assertj.core.api.Assertions {
     @CanIgnoreReturnValue
     public static QosExceptionAssert assertThatQosExceptionThrownBy(ThrowingCallable shouldRaiseThrowable) {
         return assertThatThrownBy(shouldRaiseThrowable).asInstanceOf(QosExceptionAssert.instanceOfAssertFactory());
+    }
+
+    @CanIgnoreReturnValue
+    public static EndpointServiceExceptionAssert assertThatEndpointServiceExceptionThrownBy(
+            ThrowingCallable shouldRaiseThrowable) {
+        return assertThatThrownBy(shouldRaiseThrowable)
+                .asInstanceOf(EndpointServiceExceptionAssert.instanceOfAssertFactory());
     }
 }
