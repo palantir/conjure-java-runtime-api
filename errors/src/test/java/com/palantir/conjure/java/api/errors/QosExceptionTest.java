@@ -124,6 +124,17 @@ public final class QosExceptionTest {
     }
 
     @Test
+    void testThrottleDetails() {
+        QosThrottleDetails details = QosThrottleDetails.of("Quota exceeded");
+        QosException.Throttle throttle = QosException.throttle(QosReason.of("custom-reason"), details);
+        assertThat(throttle.getThrottleDetails()).contains(details);
+        assertThatLoggableExceptionThrownBy(() -> {
+                    throw throttle;
+                })
+                .containsArgs(SafeArg.of("throttleDetails", details));
+    }
+
+    @Test
     public void testDefaultReasons() throws MalformedURLException {
         assertThat(QosException.throttle().getReason().toString()).isEqualTo("qos-throttle");
         assertThat(QosException.retryOther(new URL("http://foo")).getReason().toString())
