@@ -16,6 +16,8 @@
 
 package com.palantir.conjure.java.api.errors;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.Safe;
 
@@ -32,11 +34,13 @@ public final class QosThrottleDetails {
         this.details = Preconditions.checkNotNull(details, "details");
     }
 
-    public static QosThrottleDetails of(@Safe String details) {
+    @JsonCreator
+    public static QosThrottleDetails of(@JsonProperty("details") @Safe String details) {
         return new QosThrottleDetails(details);
     }
 
     @Safe
+    @JsonProperty("details")
     public String details() {
         return details;
     }
