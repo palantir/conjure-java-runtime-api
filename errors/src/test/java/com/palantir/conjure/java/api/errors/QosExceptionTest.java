@@ -24,9 +24,11 @@ import com.palantir.conjure.java.api.errors.QosReason.DueTo;
 import com.palantir.conjure.java.api.errors.QosReason.RetryHint;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
+import com.palantir.logsafe.exceptions.SafeRuntimeException;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Duration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -125,13 +127,52 @@ public final class QosExceptionTest {
 
     @Test
     void testThrottleDetails() {
-        QosThrottleDetails details = QosThrottleDetails.of("Quota exceeded");
-        QosException.Throttle throttle = QosException.throttle(QosReason.of("custom-reason"), details);
+        QosThrottleDetails details =
+                QosThrottleDetails.builder().debugMessage("Quota exceeded").build();
+        QosException.Throttle throttle = QosException.throttleBuilder()
+                .reason(QosReason.of("custom-reason"))
+                .details(details)
+                .build();
         assertThat(throttle.getThrottleDetails()).contains(details);
         assertThatLoggableExceptionThrownBy(() -> {
                     throw throttle;
                 })
                 .containsArgs(SafeArg.of("throttleDetails", details));
+    }
+
+    @Test
+    void testThrottleBuilderDefaults() {
+        QosException.Throttle throttle = QosException.throttleBuilder().build();
+        assertThat(throttle.getReason().toString()).isEqualTo("qos-throttle");
+        assertThat(throttle.getRetryAfter()).isEmpty();
+        assertThat(throttle.getThrottleDetails()).isEmpty();
+        assertThat(throttle.getCause()).isNull();
+    }
+
+    @Test
+    void testThrottleBuilderAllFields() {
+        QosReason reason = QosReason.of("custom-reason");
+        QosThrottleDetails details =
+                QosThrottleDetails.builder().debugMessage("Quota exceeded").build();
+        SafeRuntimeException cause = new SafeRuntimeException("cause");
+        QosException.Throttle throttle = QosException.throttleBuilder()
+                .reason(reason)
+                .retryAfter(Duration.ofSeconds(3))
+                .details(details)
+                .cause(cause)
+                .build();
+        assertThat(throttle.getReason()).isEqualTo(reason);
+        assertThat(throttle.getRetryAfter()).contains(Duration.ofSeconds(3));
+        assertThat(throttle.getThrottleDetails()).contains(details);
+        assertThat(throttle.getCause()).isSameAs(cause);
+    }
+
+    @Test
+    void testThrottleBuilderWithoutCauseAllowsInitCause() {
+        SafeRuntimeException cause = new SafeRuntimeException("cause");
+        QosException.Throttle throttle = QosException.throttleBuilder().build();
+        throttle.initCause(cause);
+        assertThat(throttle.getCause()).isSameAs(cause);
     }
 
     @Test

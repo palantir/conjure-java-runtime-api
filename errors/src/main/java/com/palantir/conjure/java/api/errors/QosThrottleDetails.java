@@ -17,46 +17,72 @@
 package com.palantir.conjure.java.api.errors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.Safe;
+import java.util.Objects;
+import java.util.Optional;
+import javax.annotation.Nullable;
 
 /**
- * Additional, free-form details about a {@link QosException.Throttle}, independent of its {@link QosReason}.
- * These details must be safe to log. Unlike a reason, they are not constrained to metric tag values.
+ * Additional details about a {@link QosException.Throttle}, independent of its {@link QosReason}. These are sent in
+ * the response body as {@link QosResponseBody#qosDetails}. Every field is optional and unknown fields are ignored, so
+ * fields can be added later. These details must be safe to log.
  */
 @Safe
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public final class QosThrottleDetails {
     @Safe
-    private final String details;
-
-    private QosThrottleDetails(@Safe String details) {
-        this.details = Preconditions.checkNotNull(details, "details");
-    }
+    @Nullable
+    @JsonProperty("debugMessage")
+    private final String debugMessage;
 
     @JsonCreator
-    public static QosThrottleDetails of(@JsonProperty("details") @Safe String details) {
-        return new QosThrottleDetails(details);
+    private QosThrottleDetails(@JsonProperty("debugMessage") @Safe @Nullable String debugMessage) {
+        this.debugMessage = debugMessage;
     }
 
-    @Safe
-    @JsonProperty("details")
-    public String details() {
-        return details;
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /** A message describing the throttle, intended for debugging. */
+    public Optional<@Safe String> debugMessage() {
+        return Optional.ofNullable(debugMessage);
     }
 
     @Override
-    public boolean equals(Object other) {
-        return this == other || (other instanceof QosThrottleDetails that && details.equals(that.details));
+    public boolean equals(@Nullable Object other) {
+        return this == other
+                || (other instanceof QosThrottleDetails that && Objects.equals(debugMessage, that.debugMessage));
     }
 
     @Override
     public int hashCode() {
-        return details.hashCode();
+        return Objects.hashCode(debugMessage);
     }
 
     @Override
     public String toString() {
-        return details;
+        return "QosThrottleDetails{debugMessage=" + debugMessage() + '}';
+    }
+
+    public static final class Builder {
+        @Nullable
+        private String debugMessage;
+
+        private Builder() {}
+
+        public Builder debugMessage(@Safe String value) {
+            this.debugMessage = Preconditions.checkNotNull(value, "debugMessage");
+            return this;
+        }
+
+        public QosThrottleDetails build() {
+            return new QosThrottleDetails(debugMessage);
+        }
     }
 }
