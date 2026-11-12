@@ -17,6 +17,7 @@
 package com.palantir.conjure.java.api.errors;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -89,6 +90,18 @@ public abstract class SerializableError implements Serializable {
     public abstract Map<String, String> parameters();
 
     /**
+     * Whether the error's {@link ErrorType#propagates() type propagates}, meaning servers that receive it from a service
+     * they call return it, including its parameters, to their own callers. Only serialized when true.
+     */
+    @JsonProperty("propagates")
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    @Value.Default
+    @SuppressWarnings("checkstyle:designforextension")
+    public boolean propagates() {
+        return false;
+    }
+
+    /**
      * Returns the deprecated "exceptionClass" field returned by remoting2 servers.
      *
      * @deprecated Used by the serialization-mechanism for back-compat only. Do not use.
@@ -118,7 +131,8 @@ public abstract class SerializableError implements Serializable {
         Builder builder = new Builder()
                 .errorCode(exception.getErrorType().code().name())
                 .errorName(exception.getErrorType().name())
-                .errorInstanceId(exception.getErrorInstanceId());
+                .errorInstanceId(exception.getErrorInstanceId())
+                .propagates(exception.getErrorType().propagates());
 
         for (Arg<?> arg : exception.getArgs()) {
             builder.putParameters(arg.getName(), Objects.toString(arg.getValue()));

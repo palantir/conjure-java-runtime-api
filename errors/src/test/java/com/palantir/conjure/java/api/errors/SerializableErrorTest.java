@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 public final class SerializableErrorTest {
@@ -247,6 +248,48 @@ public final class SerializableErrorTest {
                         .from(ERROR)
                         .putParameters("key", "value")
                         .build());
+    }
+
+    @Nested
+    class Propagation {
+        @Test
+        void forException_copies_propagates_from_the_error_type() {
+            ErrorType error = ErrorType.createPropagating(ErrorType.Code.CUSTOM_CLIENT, "Product:QuotaExceeded");
+            ServiceException exception = new ServiceException(error, SafeArg.of("limit", 5));
+
+            SerializableError expected = new SerializableError.Builder()
+                    .errorCode("CUSTOM_CLIENT")
+                    .errorName("Product:QuotaExceeded")
+                    .errorInstanceId(exception.getErrorInstanceId())
+                    .putParameters("limit", "5")
+                    .propagates(true)
+                    .build();
+            assertThat(SerializableError.forException(exception)).isEqualTo(expected);
+        }
+
+        @Test
+        void testSerializesPropagatesWhenTrue() throws Exception {
+            // When false, the field is omitted: see testSerializationContainsRedundantParameters
+            assertThat(mapper.writeValueAsString(SerializableError.builder()
+                            .from(ERROR)
+                            .propagates(true)
+                            .build()))
+                    .isEqualTo("{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
+                            + "\"errorInstanceId\":\"\",\"parameters\":{},\"propagates\":true}");
+        }
+
+        @Test
+        void testDeserializesPropagates() throws Exception {
+            String serialized = "{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\","
+                    + "\"propagates\":true}";
+            assertThat(deserialize(serialized).propagates()).isTrue();
+        }
+
+        @Test
+        void testDoesNotPropagateByDefault() throws Exception {
+            String serialized = "{\"errorCode\":\"PERMISSION_DENIED\",\"errorName\":\"Product:SomethingBroke\"}";
+            assertThat(deserialize(serialized).propagates()).isFalse();
+        }
     }
 
     private static SerializableError deserialize(String serialized) throws IOException {

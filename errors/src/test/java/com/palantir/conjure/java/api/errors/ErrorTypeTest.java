@@ -22,7 +22,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.palantir.conjure.java.api.errors.ErrorType.Code;
 import com.palantir.logsafe.SafeArg;
 import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 public final class ErrorTypeTest {
 
@@ -83,5 +86,55 @@ public final class ErrorTypeTest {
         assertThat(error.code()).isEqualTo(ErrorType.Code.FAILED_PRECONDITION);
         assertThat(error.httpErrorCode()).isEqualTo(500);
         assertThat(error.name()).isEqualTo("Namespace:MyDesc");
+    }
+
+    @Nested
+    class Propagation {
+        @Test
+        void testCreatedErrorTypesDoNotPropagate() {
+            assertThat(ErrorType.create(Code.CUSTOM_CLIENT, "Namespace:MyDesc").propagates())
+                    .isFalse();
+            assertThat(ErrorType.PERMISSION_DENIED.propagates()).isFalse();
+        }
+
+        @Test
+        void testCreatePropagating() {
+            ErrorType error = ErrorType.createPropagating(Code.CUSTOM_CLIENT, "Namespace:MyDesc");
+            assertThat(error.propagates()).isTrue();
+            assertThat(error.code()).isEqualTo(Code.CUSTOM_CLIENT);
+            assertThat(error.name()).isEqualTo("Namespace:MyDesc");
+            assertThat(error.httpErrorCode()).isEqualTo(400);
+            assertThat(error)
+                    .as("propagation is part of the error type")
+                    .isNotEqualTo(ErrorType.create(Code.CUSTOM_CLIENT, "Namespace:MyDesc"));
+        }
+
+        @ParameterizedTest
+        @EnumSource(
+                value = Code.class,
+                names = {
+                    "UNAUTHORIZED",
+                    "PERMISSION_DENIED",
+                    "INVALID_ARGUMENT",
+                    "NOT_FOUND",
+                    "CONFLICT",
+                    "REQUEST_ENTITY_TOO_LARGE",
+                    "CUSTOM_CLIENT"
+                })
+        void testClientErrorsCanPropagate(Code code) {
+            assertThat(ErrorType.createPropagating(code, "Namespace:MyDesc").propagates())
+                    .isTrue();
+        }
+
+        @ParameterizedTest
+        @EnumSource(
+                value = Code.class,
+                names = {"FAILED_PRECONDITION", "INTERNAL", "TIMEOUT", "CUSTOM_SERVER"})
+        void testServerErrorsCannotPropagate(Code code) {
+            assertThatLoggableExceptionThrownBy(() -> ErrorType.createPropagating(code, "Namespace:MyDesc"))
+                    .isInstanceOf(SafeIllegalArgumentException.class)
+                    .hasLogMessage("Only client errors (4xx) can propagate")
+                    .hasExactlyArgs(SafeArg.of("name", "Namespace:MyDesc"), SafeArg.of("code", code));
+        }
     }
 }

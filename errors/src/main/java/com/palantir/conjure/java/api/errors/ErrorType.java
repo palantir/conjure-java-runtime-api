@@ -27,7 +27,8 @@ import org.immutables.value.Value;
  * the HTTP specification, errors associated with a {@code 4xx} HTTP status code are client errors, and errors
  * associated with a {@code 5xx} status are server errors.
  */
-@Value.Immutable(builder = false)
+// The builder is package-private (see ImmutablesStyle), and only used for createPropagating
+@Value.Immutable
 public abstract class ErrorType {
 
     private static final String UPPER_CAMEL_CASE = "(([A-Z][a-z0-9]+)+)";
@@ -81,6 +82,19 @@ public abstract class ErrorType {
     @Value.Parameter
     public abstract int httpErrorCode();
 
+    /**
+     * Whether servers propagate this error, including its parameters, to their own callers when it's thrown by a
+     * service they call. Other remote errors are converted to {@link #INTERNAL} by the first service that doesn't
+     * handle them, so callers don't depend on the errors of services they don't call directly.
+     *
+     * <p>Only client errors ({@code 4xx}) can propagate, and only errors caused by the original caller should: every
+     * service between the original caller and this service may return this error, and its parameters.
+     */
+    @Value.Default
+    public boolean propagates() {
+        return false;
+    }
+
     @Value.Check
     final void check() {
         if (!ERROR_NAME_PATTERN.matcher(name()).matches()) {
@@ -88,10 +102,24 @@ public abstract class ErrorType {
                     "ErrorType names must be of the form 'UpperCamelNamespace:UpperCamelName'",
                     SafeArg.of("name", name()));
         }
+        if (propagates() && httpErrorCode() / 100 != 4) {
+            throw new SafeIllegalArgumentException(
+                    "Only client errors (4xx) can propagate", SafeArg.of("name", name()), SafeArg.of("code", code()));
+        }
     }
 
     /** Constructs an {@link ErrorType} with the given error {@link Code} and name. */
     public static ErrorType create(Code code, String name) {
         return ImmutableErrorType.of(code, name, code.httpErrorCode);
+    }
+
+    /** Like {@link #create}, but for an error that {@link #propagates()}. */
+    public static ErrorType createPropagating(Code code, String name) {
+        return ImmutableErrorType.builder()
+                .code(code)
+                .name(name)
+                .httpErrorCode(code.httpErrorCode)
+                .propagates(true)
+                .build();
     }
 }
