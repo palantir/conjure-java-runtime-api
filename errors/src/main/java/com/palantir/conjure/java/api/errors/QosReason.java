@@ -158,11 +158,14 @@ public final class QosReason {
     @Safe
     public static final class RetryHint {
         private static final String DO_NOT_RETRY_STRING = "do-not-retry";
+        private static final String DIAGNOSTIC_DO_NOT_RETRY_STRING = "diagnostic-do-not-retry";
         /**
          * Clients should not attempt to retry this failure,
          * providing the failure as context back to the initial caller.
          */
         public static final RetryHint DO_NOT_RETRY = new RetryHint(DO_NOT_RETRY_STRING);
+
+        public static final RetryHint DIAGNOSTIC_DO_NOT_RETRY = new RetryHint(DIAGNOSTIC_DO_NOT_RETRY_STRING);
 
         @Safe
         private final String value;
@@ -175,6 +178,8 @@ public final class QosReason {
             Preconditions.checkNotNull(value, "Value is required");
             if (DO_NOT_RETRY_STRING.equalsIgnoreCase(value)) {
                 return DO_NOT_RETRY;
+            } else if (DIAGNOSTIC_DO_NOT_RETRY_STRING.equalsIgnoreCase(value)) {
+                return DIAGNOSTIC_DO_NOT_RETRY;
             }
             return new RetryHint(value);
         }
