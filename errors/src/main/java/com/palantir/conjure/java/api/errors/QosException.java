@@ -26,6 +26,7 @@ import java.net.URL;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 /**
  * An exception raised by a service to indicate a potential Quality-of-Service problem, specifically requesting that the
@@ -120,6 +121,11 @@ public abstract class QosException extends RuntimeException {
         return new Throttle(Optional.of(duration), cause, reason);
     }
 
+    /** Returns a builder for a {@link Throttle}, which can additionally include {@link QosThrottleDetails}. */
+    public static Throttle.Builder throttleBuilder() {
+        return new Throttle.Builder();
+    }
+
     /**
      * Returns a {@link RetryOther} exception indicating that the calling client should retry against the given node of
      * this service.
@@ -183,32 +189,48 @@ public abstract class QosException extends RuntimeException {
         private static final QosReason DEFAULT_REASON = QosReason.of("qos-throttle");
 
         private final Optional<Duration> retryAfter;
+        private final Optional<QosThrottleDetails> throttleDetails;
 
         private Throttle(Optional<Duration> retryAfter) {
-            super("Suggesting request throttling with optional retryAfter duration: " + retryAfter, DEFAULT_REASON);
-            this.retryAfter = retryAfter;
+            this(retryAfter, DEFAULT_REASON);
         }
 
         private Throttle(Optional<Duration> retryAfter, QosReason reason) {
-            super("Suggesting request throttling with optional retryAfter duration: " + retryAfter, reason);
-            this.retryAfter = retryAfter;
+            this(retryAfter, reason, Optional.empty());
         }
 
         private Throttle(Optional<Duration> retryAfter, Throwable cause) {
-            super(
-                    "Suggesting request throttling with optional retryAfter duration: " + retryAfter,
-                    cause,
-                    DEFAULT_REASON);
-            this.retryAfter = retryAfter;
+            this(retryAfter, cause, DEFAULT_REASON);
         }
 
         private Throttle(Optional<Duration> retryAfter, Throwable cause, QosReason reason) {
+            this(retryAfter, cause, reason, Optional.empty());
+        }
+
+        private Throttle(
+                Optional<Duration> retryAfter, QosReason reason, Optional<QosThrottleDetails> throttleDetails) {
+            super("Suggesting request throttling with optional retryAfter duration: " + retryAfter, reason);
+            this.retryAfter = retryAfter;
+            this.throttleDetails = throttleDetails;
+        }
+
+        private Throttle(
+                Optional<Duration> retryAfter,
+                Throwable cause,
+                QosReason reason,
+                Optional<QosThrottleDetails> throttleDetails) {
             super("Suggesting request throttling with optional retryAfter duration: " + retryAfter, cause, reason);
             this.retryAfter = retryAfter;
+            this.throttleDetails = throttleDetails;
         }
 
         public Optional<Duration> getRetryAfter() {
             return retryAfter;
+        }
+
+        /** Additional details supplied for this throttle, when available. */
+        public Optional<QosThrottleDetails> getThrottleDetails() {
+            return throttleDetails;
         }
 
         @Override
@@ -227,7 +249,52 @@ public abstract class QosException extends RuntimeException {
                     SafeArg.of("retryAfter", retryAfter.orElse(null)),
                     SafeArg.of("reason", getReason().reason()),
                     SafeArg.of("dueTo", getReason().dueTo().orElse(null)),
-                    SafeArg.of("retryHint", getReason().retryHint().orElse(null)));
+                    SafeArg.of("retryHint", getReason().retryHint().orElse(null)),
+                    SafeArg.of("throttleDetails", getThrottleDetails().orElse(null)));
+        }
+
+        /** See {@link #throttleBuilder}. */
+        public static final class Builder {
+            private QosReason reason = DEFAULT_REASON;
+
+            @Nullable
+            private Duration retryAfter;
+
+            @Nullable
+            private QosThrottleDetails details;
+
+            @Nullable
+            private Throwable cause;
+
+            private Builder() {}
+
+            public Builder reason(QosReason value) {
+                this.reason = Preconditions.checkNotNull(value, "reason");
+                return this;
+            }
+
+            /** Requests that the client wait for at least the given duration before retrying the request. */
+            public Builder retryAfter(Duration value) {
+                this.retryAfter = Preconditions.checkNotNull(value, "retryAfter");
+                return this;
+            }
+
+            public Builder details(QosThrottleDetails value) {
+                this.details = Preconditions.checkNotNull(value, "details");
+                return this;
+            }
+
+            public Builder cause(Throwable value) {
+                this.cause = Preconditions.checkNotNull(value, "cause");
+                return this;
+            }
+
+            public Throttle build() {
+                // Passing a null cause to RuntimeException would prevent a later initCause
+                return cause == null
+                        ? new Throttle(Optional.ofNullable(retryAfter), reason, Optional.ofNullable(details))
+                        : new Throttle(Optional.ofNullable(retryAfter), cause, reason, Optional.ofNullable(details));
+            }
         }
     }
 
