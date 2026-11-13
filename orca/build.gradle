@@ -1,0 +1,13 @@
+apply plugin: 'com.palantir.external-publish-jar'
+apply plugin: 'com.palantir.revapi'
+
+dependencies {
+    annotationProcessor "org.immutables:value"
+
+    compileOnlyApi 'org.immutables:value::annotations'
+
+    implementation 'com.palantir.safe-logging:preconditions'
+
+    testImplementation "org.assertj:assertj-core"
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
