@@ -20,8 +20,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.errorprone.annotations.CompileTimeConstant;
 import com.palantir.logsafe.Preconditions;
 import com.palantir.logsafe.Safe;
+import com.palantir.logsafe.SafeArg;
+import com.palantir.logsafe.exceptions.SafeIllegalArgumentException;
 import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.Nullable;
@@ -40,6 +43,8 @@ import org.jetbrains.annotations.ApiStatus;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public final class QosThrottleDetails {
+    private static final int MAX_USER_MESSAGE_LENGTH = 128;
+
     @Safe
     @Nullable
     @JsonProperty("userMessage")
@@ -47,7 +52,8 @@ public final class QosThrottleDetails {
 
     @JsonCreator
     private QosThrottleDetails(@JsonProperty("userMessage") @Safe @Nullable String userMessage) {
-        this.userMessage = userMessage;
+        // The builder rejects long messages, so this only drops one received from another service
+        this.userMessage = userMessage != null && userMessage.length() <= MAX_USER_MESSAGE_LENGTH ? userMessage : null;
     }
 
     public static Builder builder() {
@@ -57,7 +63,8 @@ public final class QosThrottleDetails {
     /**
      * A message for end users, which UIs show as-is when they have no translation for this throttle. Assume customers
      * will see it: write it in plain language, without internal service names, identifiers or other implementation
-     * details.
+     * details. It is a compile-time constant of at most 128 characters. A longer message received from another
+     * service is dropped.
      */
     public Optional<@Safe String> userMessage() {
         return Optional.ofNullable(userMessage);
@@ -85,9 +92,21 @@ public final class QosThrottleDetails {
 
         private Builder() {}
 
-        /** See {@link QosThrottleDetails#userMessage}. */
-        public Builder userMessage(@Safe String value) {
-            this.userMessage = Preconditions.checkNotNull(value, "userMessage");
+        /**
+         * Sets {@link QosThrottleDetails#userMessage}. The value must be a compile-time constant, which Error Prone
+         * enforces, of at most 128 characters.
+         *
+         * @throws SafeIllegalArgumentException if the message is longer than 128 characters
+         */
+        public Builder userMessage(@CompileTimeConstant @Safe String value) {
+            Preconditions.checkNotNull(value, "userMessage");
+            if (value.length() > MAX_USER_MESSAGE_LENGTH) {
+                throw new SafeIllegalArgumentException(
+                        "userMessage is too long",
+                        SafeArg.of("length", value.length()),
+                        SafeArg.of("maxLength", MAX_USER_MESSAGE_LENGTH));
+            }
+            this.userMessage = value;
             return this;
         }
 
