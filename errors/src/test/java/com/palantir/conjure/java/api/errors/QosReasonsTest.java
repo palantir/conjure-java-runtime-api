@@ -107,6 +107,20 @@ class QosReasonsTest {
         assertThat(QosReasons.parseRetryHint("DO-NOT-RETRY")).isSameAs(RetryHint.DO_NOT_RETRY);
     }
 
+    @Test
+    public void diagnosticRetryHintRoundTrip() {
+        String headerValue = QosReasons.toHeaderValue(RetryHint.DIAGNOSTIC_DO_NOT_RETRY);
+        assertThat(headerValue).isEqualTo("diagnostic-do-not-retry");
+        assertThat(QosReasons.parseRetryHint(headerValue)).isSameAs(RetryHint.DIAGNOSTIC_DO_NOT_RETRY);
+    }
+
+    @Test
+    public void diagnosticRetryHintCaseSensitivity() {
+        assertThat(QosReasons.parseRetryHint("diagnostic-do-not-retry")).isSameAs(RetryHint.DIAGNOSTIC_DO_NOT_RETRY);
+        assertThat(QosReasons.parseRetryHint("Diagnostic-Do-Not-Retry")).isSameAs(RetryHint.DIAGNOSTIC_DO_NOT_RETRY);
+        assertThat(QosReasons.parseRetryHint("DIAGNOSTIC-DO-NOT-RETRY")).isSameAs(RetryHint.DIAGNOSTIC_DO_NOT_RETRY);
+    }
+
     private enum Encoder implements QosReasons.QosResponseEncodingAdapter<Map<String, String>> {
         INSTANCE;
 
