@@ -24,11 +24,13 @@ import com.palantir.logsafe.Preconditions;
 import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.Nullable;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
- * The JSON body of a {@link QosException} response, currently only written for a {@link QosException.Throttle} with
- * {@link QosThrottleDetails}. Unknown fields are ignored, so fields can be added later.
+ * The JSON body of a {@link QosException} response, currently only written for a
+ * {@link QosException.DetailedThrottle}. Unknown fields are ignored, so fields can be added later.
  */
+@ApiStatus.Experimental
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public final class QosResponseBody {

@@ -28,36 +28,36 @@ public final class QosThrottleDetailsTest {
     @Test
     public void testSerialization() throws Exception {
         assertThat(mapper.writeValueAsString(QosThrottleDetails.builder()
-                        .debugMessage("Quota exceeded")
+                        .userMessage("Quota exceeded")
                         .build()))
-                .isEqualTo("{\"debugMessage\":\"Quota exceeded\"}");
+                .isEqualTo("{\"userMessage\":\"Quota exceeded\"}");
     }
 
     @Test
-    public void testSerializationWithoutDebugMessage() throws Exception {
+    public void testSerializationWithoutUserMessage() throws Exception {
         assertThat(mapper.writeValueAsString(QosThrottleDetails.builder().build()))
                 .isEqualTo("{}");
     }
 
     @Test
     public void testDeserialization() throws Exception {
-        assertThat(mapper.readValue("{\"debugMessage\":\"Quota exceeded\"}", QosThrottleDetails.class))
+        assertThat(mapper.readValue("{\"userMessage\":\"Quota exceeded\"}", QosThrottleDetails.class))
                 .isEqualTo(QosThrottleDetails.builder()
-                        .debugMessage("Quota exceeded")
+                        .userMessage("Quota exceeded")
                         .build());
     }
 
     @Test
-    public void testDeserializationWithoutDebugMessage() throws Exception {
-        assertThat(mapper.readValue("{}", QosThrottleDetails.class).debugMessage())
+    public void testDeserializationWithoutUserMessage() throws Exception {
+        assertThat(mapper.readValue("{}", QosThrottleDetails.class).userMessage())
                 .isEmpty();
     }
 
     @Test
     public void testDeserializationIgnoresUnknownFields() throws Exception {
-        assertThat(mapper.readValue("{\"debugMessage\":\"Quota exceeded\",\"newField\":1}", QosThrottleDetails.class))
+        assertThat(mapper.readValue("{\"userMessage\":\"Quota exceeded\",\"newField\":1}", QosThrottleDetails.class))
                 .isEqualTo(QosThrottleDetails.builder()
-                        .debugMessage("Quota exceeded")
+                        .userMessage("Quota exceeded")
                         .build());
     }
 }

@@ -27,24 +27,24 @@ import org.junit.jupiter.params.provider.ValueSource;
 public final class QosResponseBodyTest {
     private static final ObjectMapper mapper = ObjectMappers.newClientObjectMapper();
     private static final QosThrottleDetails DETAILS =
-            QosThrottleDetails.builder().debugMessage("Quota exceeded").build();
+            QosThrottleDetails.builder().userMessage("Quota exceeded").build();
 
     @Test
     public void testSerialization() throws Exception {
         assertThat(mapper.writeValueAsString(QosResponseBody.of(DETAILS)))
-                .isEqualTo("{\"qosDetails\":{\"debugMessage\":\"Quota exceeded\"}}");
+                .isEqualTo("{\"qosDetails\":{\"userMessage\":\"Quota exceeded\"}}");
     }
 
     @Test
     public void testDeserialization() throws Exception {
-        assertThat(mapper.readValue("{\"qosDetails\":{\"debugMessage\":\"Quota exceeded\"}}", QosResponseBody.class))
+        assertThat(mapper.readValue("{\"qosDetails\":{\"userMessage\":\"Quota exceeded\"}}", QosResponseBody.class))
                 .isEqualTo(QosResponseBody.of(DETAILS));
     }
 
     @Test
     public void testDeserializationIgnoresUnknownFields() throws Exception {
         assertThat(mapper.readValue(
-                                "{\"qosDetails\":{\"debugMessage\":\"Quota exceeded\",\"newField\":1},\"other\":2}",
+                                "{\"qosDetails\":{\"userMessage\":\"Quota exceeded\",\"newField\":1},\"other\":2}",
                                 QosResponseBody.class)
                         .qosDetails())
                 .contains(DETAILS);

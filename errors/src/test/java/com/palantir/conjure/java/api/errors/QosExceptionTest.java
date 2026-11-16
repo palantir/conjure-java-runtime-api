@@ -126,51 +126,54 @@ public final class QosExceptionTest {
     }
 
     @Test
-    void testThrottleDetails() {
+    void testDetailedThrottleArgs() {
         QosThrottleDetails details =
-                QosThrottleDetails.builder().debugMessage("Quota exceeded").build();
-        QosException.Throttle throttle = QosException.throttleBuilder()
+                QosThrottleDetails.builder().userMessage("Quota exceeded").build();
+        QosException.DetailedThrottle throttle = QosException.DetailedThrottle.builder(details)
                 .reason(QosReason.of("custom-reason"))
-                .details(details)
                 .build();
-        assertThat(throttle.getThrottleDetails()).contains(details);
+        assertThat(throttle.getThrottleDetails()).isEqualTo(details);
         assertThatLoggableExceptionThrownBy(() -> {
                     throw throttle;
                 })
-                .containsArgs(SafeArg.of("throttleDetails", details));
+                .containsArgs(SafeArg.of("reason", "custom-reason"), SafeArg.of("throttleDetails", details));
     }
 
     @Test
-    void testThrottleBuilderDefaults() {
-        QosException.Throttle throttle = QosException.throttleBuilder().build();
+    void testDetailedThrottleDefaults() {
+        QosException.DetailedThrottle throttle = QosException.DetailedThrottle.builder(QosThrottleDetails.builder()
+                        .userMessage("Quota exceeded")
+                        .build())
+                .build();
         assertThat(throttle.getReason().toString()).isEqualTo("qos-throttle");
         assertThat(throttle.getRetryAfter()).isEmpty();
-        assertThat(throttle.getThrottleDetails()).isEmpty();
         assertThat(throttle.getCause()).isNull();
     }
 
     @Test
-    void testThrottleBuilderAllFields() {
+    void testDetailedThrottleAllFields() {
         QosReason reason = QosReason.of("custom-reason");
         QosThrottleDetails details =
-                QosThrottleDetails.builder().debugMessage("Quota exceeded").build();
+                QosThrottleDetails.builder().userMessage("Quota exceeded").build();
         SafeRuntimeException cause = new SafeRuntimeException("cause");
-        QosException.Throttle throttle = QosException.throttleBuilder()
+        QosException.DetailedThrottle throttle = QosException.DetailedThrottle.builder(details)
                 .reason(reason)
                 .retryAfter(Duration.ofSeconds(3))
-                .details(details)
                 .cause(cause)
                 .build();
         assertThat(throttle.getReason()).isEqualTo(reason);
         assertThat(throttle.getRetryAfter()).contains(Duration.ofSeconds(3));
-        assertThat(throttle.getThrottleDetails()).contains(details);
+        assertThat(throttle.getThrottleDetails()).isEqualTo(details);
         assertThat(throttle.getCause()).isSameAs(cause);
     }
 
     @Test
-    void testThrottleBuilderWithoutCauseAllowsInitCause() {
+    void testDetailedThrottleWithoutCauseAllowsInitCause() {
         SafeRuntimeException cause = new SafeRuntimeException("cause");
-        QosException.Throttle throttle = QosException.throttleBuilder().build();
+        QosException.DetailedThrottle throttle = QosException.DetailedThrottle.builder(QosThrottleDetails.builder()
+                        .userMessage("Quota exceeded")
+                        .build())
+                .build();
         throttle.initCause(cause);
         assertThat(throttle.getCause()).isSameAs(cause);
     }
