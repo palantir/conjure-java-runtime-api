@@ -24,8 +24,12 @@ import com.palantir.logsafe.Unsafe;
 import com.palantir.logsafe.UnsafeArg;
 import java.net.URL;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import javax.annotation.Nullable;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * An exception raised by a service to indicate a potential Quality-of-Service problem, specifically requesting that the
@@ -179,7 +183,7 @@ public abstract class QosException extends RuntimeException {
     }
 
     /** See {@link #throttle}. */
-    public static final class Throttle extends QosException implements SafeLoggable {
+    public static sealed class Throttle extends QosException implements SafeLoggable permits DetailedThrottle {
         private static final QosReason DEFAULT_REASON = QosReason.of("qos-throttle");
 
         private final Optional<Duration> retryAfter;
@@ -228,6 +232,81 @@ public abstract class QosException extends RuntimeException {
                     SafeArg.of("reason", getReason().reason()),
                     SafeArg.of("dueTo", getReason().dueTo().orElse(null)),
                     SafeArg.of("retryHint", getReason().retryHint().orElse(null)));
+        }
+    }
+
+    /**
+     * A {@link Throttle} that also carries {@link QosThrottleDetails}, which servers send to the client in the response
+     * body. This is an experiment and may change or be removed.
+     */
+    @ApiStatus.Experimental
+    public static final class DetailedThrottle extends Throttle {
+        private final QosThrottleDetails throttleDetails;
+
+        private DetailedThrottle(Optional<Duration> retryAfter, QosReason reason, QosThrottleDetails throttleDetails) {
+            super(retryAfter, reason);
+            this.throttleDetails = throttleDetails;
+        }
+
+        private DetailedThrottle(
+                Optional<Duration> retryAfter, Throwable cause, QosReason reason, QosThrottleDetails throttleDetails) {
+            super(retryAfter, cause, reason);
+            this.throttleDetails = throttleDetails;
+        }
+
+        /** Returns a builder for a {@link DetailedThrottle} with the given details. */
+        public static Builder builder(QosThrottleDetails throttleDetails) {
+            return new Builder(throttleDetails);
+        }
+
+        public QosThrottleDetails getThrottleDetails() {
+            return throttleDetails;
+        }
+
+        @Override
+        public List<Arg<?>> getArgs() {
+            List<Arg<?>> args = new ArrayList<>(super.getArgs());
+            args.add(SafeArg.of("throttleDetails", throttleDetails));
+            return Collections.unmodifiableList(args);
+        }
+
+        /** See {@link DetailedThrottle#builder}. */
+        public static final class Builder {
+            private final QosThrottleDetails throttleDetails;
+            private QosReason reason = Throttle.DEFAULT_REASON;
+
+            @Nullable
+            private Duration retryAfter;
+
+            @Nullable
+            private Throwable cause;
+
+            private Builder(QosThrottleDetails throttleDetails) {
+                this.throttleDetails = Preconditions.checkNotNull(throttleDetails, "throttleDetails");
+            }
+
+            public Builder reason(QosReason value) {
+                this.reason = Preconditions.checkNotNull(value, "reason");
+                return this;
+            }
+
+            /** Requests that the client wait for at least the given duration before retrying the request. */
+            public Builder retryAfter(Duration value) {
+                this.retryAfter = Preconditions.checkNotNull(value, "retryAfter");
+                return this;
+            }
+
+            public Builder cause(Throwable value) {
+                this.cause = Preconditions.checkNotNull(value, "cause");
+                return this;
+            }
+
+            public DetailedThrottle build() {
+                // Passing a null cause to RuntimeException would prevent a later initCause
+                return cause == null
+                        ? new DetailedThrottle(Optional.ofNullable(retryAfter), reason, throttleDetails)
+                        : new DetailedThrottle(Optional.ofNullable(retryAfter), cause, reason, throttleDetails);
+            }
         }
     }
 
