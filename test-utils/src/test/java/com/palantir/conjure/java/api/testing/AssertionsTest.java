@@ -16,11 +16,13 @@
 
 package com.palantir.conjure.java.api.testing;
 
+import static com.palantir.conjure.java.api.testing.Assertions.assertThatEndpointServiceExceptionThrownBy;
 import static com.palantir.conjure.java.api.testing.Assertions.assertThatQosExceptionThrownBy;
 import static com.palantir.conjure.java.api.testing.Assertions.assertThatRemoteExceptionThrownBy;
 import static com.palantir.conjure.java.api.testing.Assertions.assertThatServiceExceptionThrownBy;
 import static com.palantir.conjure.java.api.testing.Assertions.assertThatThrownBy;
 
+import com.palantir.conjure.java.api.errors.EndpointServiceException;
 import com.palantir.conjure.java.api.errors.ErrorType;
 import com.palantir.conjure.java.api.errors.QosException;
 import com.palantir.conjure.java.api.errors.QosReason;
@@ -112,5 +114,32 @@ public final class AssertionsTest {
                     throw QosException.unavailable(QosReason.of("reason"));
                 })
                 .hasReason(QosReason.of("reason"));
+    }
+
+    @Test
+    public void testAssertThatEndpointServiceExceptionThrownBy_failsIfNothingThrown() {
+        assertThatThrownBy(() -> assertThatEndpointServiceExceptionThrownBy(() -> {
+                    // Not going to throw anything
+                }))
+                .hasMessageContaining("Expecting code to raise a throwable.");
+    }
+
+    @Test
+    public void testAssertThatEndpointServiceExceptionThrownBy_failsIfWrongExceptionThrown() {
+        assertThatThrownBy(() -> assertThatEndpointServiceExceptionThrownBy(() -> {
+                    throw new RuntimeException("My message");
+                }))
+                .hasMessageContaining(
+                        "com.palantir.conjure.java.api.errors.EndpointServiceException",
+                        "java.lang.RuntimeException",
+                        "My message");
+    }
+
+    @Test
+    public void testAssertThatEndpointServiceExceptionThrownBy_catchesEndpointServiceException() {
+        assertThatEndpointServiceExceptionThrownBy(() -> {
+                    throw new EndpointServiceException(ErrorType.INTERNAL) {};
+                })
+                .hasType(ErrorType.INTERNAL);
     }
 }
