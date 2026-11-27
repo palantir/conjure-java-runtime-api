@@ -40,9 +40,9 @@ com.palantir.tokens:auth-tokens:4.14.0 (1 constraints: 3b05473b)
 
 com.palantir.tritium:tritium-ids:0.128.0 (1 constraints: 6d05a840)
 
-net.bytebuddy:byte-buddy:1.18.3 (2 constraints: 9c16b43e)
+net.bytebuddy:byte-buddy:1.18.17 (2 constraints: ce167f55)
 
-net.bytebuddy:byte-buddy-agent:1.17.7 (1 constraints: 4a0b4ede)
+net.bytebuddy:byte-buddy-agent:1.18.17 (1 constraints: 7c0bc7e9)
 
 org.assertj:assertj-core:3.27.7 (2 constraints: ac190ce1)
 
@@ -52,9 +52,7 @@ org.jetbrains:annotations:26.1.0 (1 constraints: 351170d1)
 
 org.jspecify:jspecify:1.0.1 (8 constraints: 237e10c5)
 
-org.mockito:mockito-core:5.24.0 (1 constraints: 3d05513b)
-
-org.objenesis:objenesis:3.3 (1 constraints: b20a14bd)
+org.mockito:mockito-core:5.25.0 (1 constraints: 3e05543b)
 
 org.slf4j:slf4j-api:2.0.17 (2 constraints: 4f1e7197)
 
